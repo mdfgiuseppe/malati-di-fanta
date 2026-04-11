@@ -1,4 +1,4 @@
-<!-- build:20260411_132920 -->
+<!-- build:20260411_133940 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -5536,9 +5536,14 @@ function admAggiornaDashboard() {
 // ═══════════════════════════════════════════════════════
 function admSaveUsers() {
   localStorage.setItem('admin_users', JSON.stringify(ADMIN_USERS));
-  // Sincronizza ogni utente su GSheets
+  // Salva lista completa su GSheets in una sola chiamata
   if (GS_ONLINE) {
-    ADMIN_USERS.forEach(function(u){ gsSaveUtente(u); });
+    gsCall({action:'saveAllUtenti', data:JSON.stringify(ADMIN_USERS)}, function(err, data) {
+      if (err || !data || !data.ok) {
+        // Fallback: salva uno per uno
+        ADMIN_USERS.forEach(function(u){ gsSaveUtente(u); });
+      }
+    });
   }
 }
 
@@ -5645,13 +5650,24 @@ function admAddUser() {
   var lega = document.getElementById('adm-new-user-lega').value;
   if (!nome || !username || !password) { alert('Compila tutti i campi obbligatori'); return; }
   if (ADMIN_USERS.find(function(u){ return u.username===username; })) { alert('Username già esistente'); return; }
-  ADMIN_USERS.push({ nome:nome, username:username, password:password, lega:lega, attivo:true });
+  var newUser = { nome:nome, username:username, password:password, lega:lega, attivo:true };
+  ADMIN_USERS.push(newUser);
   admSaveUsers();
+  // Rimuovi dalle richieste pendenti se il nome corrisponde
+  var pending = JSON.parse(localStorage.getItem('_pendingRequests') || '[]');
+  var nomeLower = nome.toLowerCase().trim();
+  pending = pending.filter(function(r) {
+    var nc = ((r.cognome||'') + ' ' + (r.nome||'')).toLowerCase().trim();
+    var ni = ((r.nome||'') + ' ' + (r.cognome||'')).toLowerCase().trim();
+    return nc !== nomeLower && ni !== nomeLower;
+  });
+  localStorage.setItem('_pendingRequests', JSON.stringify(pending));
   document.getElementById('adm-new-user-nome').value='';
   document.getElementById('adm-new-user-username').value='';
   document.getElementById('adm-new-user-psw').value='';
   document.getElementById('adm-new-user-lega').value='';
   admRenderUtenti();
+  alert('✅ Utente ' + nome + ' aggiunto correttamente!');
 }
 
 function admToggleUser(i) {
