@@ -362,6 +362,13 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   #page-admin .main{padding:10px!important;}
   #page-admin .topbar .topbar-right{gap:4px!important;}
 }
+
+#adm-mobile-select-wrap { display:none; }
+@media(max-width:768px){
+  #adm-mobile-select-wrap { display:block !important; }
+  #page-admin .sidenav { display:none !important; }
+  #adm-hamburger { display:none !important; }
+}
 </style>
 <style>/* dashboard */
 
@@ -3020,6 +3027,27 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   <!-- MAIN ADMIN -->
   <div class="main" style="padding:24px">
 
+    <!-- Menu dropdown mobile - visibile solo su smartphone -->
+    <div id="adm-mobile-select-wrap" style="margin-bottom:16px">
+      <select id="adm-mobile-select" onchange="showAdminSection(this.value, document.getElementById('adm-nav-'+this.value))"
+        style="width:100%;padding:12px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:14px;font-weight:700;outline:none;cursor:pointer">
+        <option value="">☰ Seleziona sezione...</option>
+        <option value="tornei">🏆 Tornei &amp; Leghe</option>
+        <option value="utenti">👥 Utenti</option>
+        <option value="rose">👤 Rose Squadre</option>
+        <option value="calendario">📅 Calendario</option>
+        <option value="sponsor">❤️ Sponsor</option>
+        <option value="stadio">🏟️ Stadio</option>
+        <option value="multe">⚠️ Multe &amp; Sanzioni</option>
+        <option value="modulistica">📄 Modulistica</option>
+        <option value="coppe">🏆 Coppe</option>
+        <option value="stagioni">🔄 Stagioni</option>
+        <option value="tablestadio">📊 Tabella Stadio</option>
+        <option value="immagini">🖼️ Immagini</option>
+        <option value="impostazioni">⚙️ Impostazioni</option>
+      </select>
+    </div>
+
     <!-- ===== TORNEI & LEGHE ===== -->
     <div id="adm-s-tornei" class="adm-section">
       <div style="font-family:'Bebas Neue';font-size:28px;letter-spacing:2px;margin-bottom:6px">Tornei & <span style="color:#ef4444">Leghe</span></div>
@@ -5287,6 +5315,7 @@ function admSaveMulteEl(el) {
 }
 
 function showAdminSection(id, el) {
+  if (!id) return;
   document.querySelectorAll('.adm-section').forEach(function(s){ s.style.display='none'; });
   var sec = document.getElementById('adm-s-'+id);
   if (sec) sec.style.display='block';
@@ -6634,65 +6663,16 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape'){closeRegMod
 document.addEventListener('DOMContentLoaded',function(){
   // Ping Google Sheets per verificare connessione
   gsPing();
-  // Auto-login se credenziali salvate
-  var saved = localStorage.getItem('saved_credentials');
+  // Ripristina chip utente se già loggato
   var currentUser = localStorage.getItem('current_user');
-  if (saved && !currentUser) {
-    try {
-      var creds = JSON.parse(saved);
-      // Prova login silenzioso
-      setTimeout(function() {
-        if (GS_ONLINE) {
-          gsLogin(creds.u, creds.p, function(ok, user) {
-            if (ok) {
-              localStorage.setItem('current_user', JSON.stringify(user));
-              var initials = user.ruolo==='admin' ? 'AD' : (user.nome||'?').split(' ').map(function(n){return n[0]||'';}).join('').toUpperCase().slice(0,2)||'??';
-              var firstName = user.ruolo==='admin' ? 'Admin' : (user.nome||'').split(' ')[0];
-              var chip = document.getElementById('login-btn');
-              if(chip){chip.innerHTML='<div class="user-av">'+initials+'</div><div style="font-size:12px;font-weight:600">'+firstName+'</div>';chip.onclick=null;chip.style.cursor='default';}
-            }
-          });
-        } else {
-          // Offline: verifica credenziali da localStorage
-          var adminPsw = localStorage.getItem('admin_password') || 'admin2026';
-          var users = JSON.parse(localStorage.getItem('admin_users') || '[]');
-          var u = creds.u, p = creds.p;
-          if (u==='admin' && p===adminPsw) {
-            localStorage.setItem('current_user', JSON.stringify({username:'admin', nome:'Admin', ruolo:'admin'}));
-            var chip = document.getElementById('login-btn');
-            if(chip){chip.innerHTML='<div class="user-av">AD</div><div style="font-size:12px;font-weight:600">Admin</div>';chip.onclick=null;chip.style.cursor='default';}
-          } else {
-            var mu = users.find(function(x){return x.username===u&&x.password===p&&x.attivo!==false;});
-            if(mu){
-              localStorage.setItem('current_user', JSON.stringify({username:mu.username,nome:mu.nome,lega:mu.lega}));
-              var initials2 = (mu.nome||'?').split(' ').map(function(n){return n[0]||'';}).join('').toUpperCase().slice(0,2)||'??';
-              var chip2 = document.getElementById('login-btn');
-              if(chip2){chip2.innerHTML='<div class="user-av">'+initials2+'</div><div style="font-size:12px;font-weight:600">'+mu.nome.split(' ')[0]+'</div>';chip2.onclick=null;chip2.style.cursor='default';}
-            }
-          }
-        }
-      }, 1500);
-    } catch(e) {}
-  } else if (currentUser) {
-    // Ripristina UI chip utente
+  if (currentUser) {
     try {
       var user2 = JSON.parse(currentUser);
       var initials3 = user2.ruolo==='admin' ? 'AD' : (user2.nome||'?').split(' ').map(function(n){return n[0]||'';}).join('').toUpperCase().slice(0,2)||'??';
       var firstName2 = user2.ruolo==='admin' ? 'Admin' : (user2.nome||'').split(' ')[0];
       var chip3 = document.getElementById('login-btn');
       if(chip3){chip3.innerHTML='<div class="user-av">'+initials3+'</div><div style="font-size:12px;font-weight:600">'+firstName2+'</div>';chip3.onclick=null;chip3.style.cursor='default';}
-    } catch(e) {}
-  }
-  // Carica tabella stadio salvata dall'Admin (sovrascrive quella hardcoded)
-  var savedST = localStorage.getItem('adm_stadio_table_global');
-  if (savedST) {
-    try {
-      var ST = JSON.parse(savedST);
-      Object.keys(ST).forEach(function(k) {
-        if (typeof SLIM_STADIO_TABLE !== 'undefined') SLIM_STADIO_TABLE[k] = ST[k];
-        if (typeof TSM_STADIO_TABLE_IT !== 'undefined') TSM_STADIO_TABLE_IT[k] = ST[k];
-      });
-    } catch(e) {}
+    } catch(e) { localStorage.removeItem('current_user'); }
   }
   // Salva copia originale dati Italia per ripristino
   window._TEAMS_ROSE_IT = JSON.parse(JSON.stringify(TEAMS_ROSE));
