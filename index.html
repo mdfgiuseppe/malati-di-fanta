@@ -1,4 +1,4 @@
-<!-- build:20260411_184904 -->
+<!-- build:20260411_192511 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -5727,9 +5727,8 @@ function admLoadRoseSquadre() {
 }
 function admGetTeams(torneoKey, legaKey) {
   if (torneoKey==='slim') {
-    var key = legaKey==='it' ? null : legaKey;
-    if (!key) return Object.keys(TEAMS_ROSE||{}).sort();
-    if (typeof ALL_LEAGUES_DATA!=='undefined' && ALL_LEAGUES_DATA[key]) return Object.keys(ALL_LEAGUES_DATA[key].teams||{}).sort();
+    if (legaKey==='it') return (typeof SLIM_TEAMS!=='undefined') ? SLIM_TEAMS : Object.keys(TEAMS_ROSE||{}).sort();
+    if (typeof ALL_LEAGUES_DATA!=='undefined' && ALL_LEAGUES_DATA[legaKey]) return Object.keys(ALL_LEAGUES_DATA[legaKey].teams||{}).sort();
   }
   if (torneoKey==='tsm' && legaKey==='it') return (typeof TSM_TEAMS_IT!=='undefined') ? TSM_TEAMS_IT : [];
   return [];
