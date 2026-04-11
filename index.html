@@ -1,4 +1,4 @@
-<!-- build:20260411_114418 -->
+<!-- build:20260411_115524 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -2926,6 +2926,10 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
         </div>
       </div>
       <div id="login-error" style="display:none;margin-bottom:12px;padding:8px 12px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);border-radius:8px;font-size:11px;color:#ef4444;text-align:center"></div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+        <input type="checkbox" id="login-remember" style="width:15px;height:15px;accent-color:#10b981;cursor:pointer">
+        <label for="login-remember" style="font-size:12px;color:var(--text2);cursor:pointer">Ricordami su questo dispositivo</label>
+      </div>
       <button onclick="doLogin()" style="width:100%;padding:11px;background:linear-gradient(135deg,#10b981,#059669);border:none;border-radius:10px;color:#fff;font-family:'Barlow',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all .2s" onmouseover="this.style.transform='translateY(-1px)';this.style.boxShadow='0 4px 20px rgba(16,185,129,.4)'" onmouseout="this.style.transform='';this.style.boxShadow=''">Accedi →</button>
       <div style="text-align:center;margin-top:14px;font-size:11px;color:var(--text2)">Credenziali fornite dallo staff &middot; <span style="color:#10b981;cursor:pointer" onclick="alert('Contatta lo staff su WhatsApp per recuperare le credenziali.')">Password dimenticata?</span></div>
     <div style="text-align:center;margin-top:12px;padding-top:12px;border-top:1px solid var(--border)">
@@ -6575,9 +6579,10 @@ function openRegModal(key,title){
   var url=PDF_MAP_REG[key];
   if(!url){alert('Regolamento non disponibile');return;}
   iframe.src=url;
-  // Pulsante download: apre in nuova tab
+  // Pulsante download visibile per regolamenti
   var btn=document.getElementById('reg-dl-btn');
   if(btn){
+    btn.style.display='flex';
     btn.href=url.replace('/preview','/view');
     btn.target='_blank';
     btn.removeAttribute('download');
@@ -6598,8 +6603,9 @@ function openAlboPdf(key, title) {
   document.body.style.overflow = 'hidden';
   var iframe = document.getElementById('reg-iframe');
   iframe.src = url;
+  // Nascondi pulsante download per albi d'oro
   var btn = document.getElementById('reg-dl-btn');
-  if (btn) { btn.href = url.replace('/preview','/view'); btn.target = '_blank'; btn.removeAttribute('download'); }
+  if (btn) btn.style.display = 'none';
 }
 function openAlboBtn(key, title) {
   // Prima mostra il PDF se disponibile, altrimenti il modale interattivo
@@ -6651,16 +6657,49 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape'){closeRegMod
 document.addEventListener('DOMContentLoaded',function(){
   // Ping Google Sheets per verificare connessione
   gsPing();
-  // Ripristina chip utente se già loggato
-  var currentUser = localStorage.getItem('current_user');
-  if (currentUser) {
+  // Sessione non persistente: rimuovi current_user al ricaricamento
+  // Ma se saved_credentials esiste, fai auto-login silenzioso
+  localStorage.removeItem('current_user');
+  var currentUser = null;
+  var savedCreds = localStorage.getItem('saved_credentials');
+  if (savedCreds) {
     try {
-      var user2 = JSON.parse(currentUser);
-      var initials3 = user2.ruolo==='admin' ? 'AD' : (user2.nome||'?').split(' ').map(function(n){return n[0]||'';}).join('').toUpperCase().slice(0,2)||'??';
-      var firstName2 = user2.ruolo==='admin' ? 'Admin' : (user2.nome||'').split(' ')[0];
-      var chip3 = document.getElementById('login-btn');
-      if(chip3){chip3.innerHTML='<div class="user-av">'+initials3+'</div><div style="font-size:12px;font-weight:600">'+firstName2+'</div>';chip3.onclick=null;chip3.style.cursor='default';}
-    } catch(e) { localStorage.removeItem('current_user'); }
+      var sc = JSON.parse(savedCreds);
+      // Auto-login con credenziali salvate
+      setTimeout(function() {
+        if (GS_ONLINE) {
+          gsLogin(sc.u, sc.p, function(ok, user) {
+            if (ok) {
+              localStorage.setItem('current_user', JSON.stringify(user));
+              var initials = user.ruolo==='admin' ? 'AD' : (user.nome||'?').split(' ').map(function(n){return n[0]||'';}).join('').toUpperCase().slice(0,2)||'??';
+              var firstName = user.ruolo==='admin' ? 'Admin' : (user.nome||'').split(' ')[0];
+              var chip = document.getElementById('login-btn');
+              if(chip){chip.innerHTML='<div class="user-av">'+initials+'</div><div style="font-size:12px;font-weight:600">'+firstName+'</div>';chip.onclick=null;chip.style.cursor='default';}
+            } else {
+              localStorage.removeItem('saved_credentials');
+            }
+          });
+        } else {
+          var adminPsw2 = localStorage.getItem('admin_password') || 'admin2026';
+          var users2 = JSON.parse(localStorage.getItem('admin_users') || '[]');
+          var mu2 = null;
+          if (sc.u==='admin' && sc.p===adminPsw2) {
+            mu2 = {username:'admin', nome:'Admin', ruolo:'admin'};
+          } else {
+            for(var i=0;i<users2.length;i++){
+              if(users2[i].username.toLowerCase()===sc.u && users2[i].password===sc.p && users2[i].attivo!==false){mu2=users2[i];break;}
+            }
+          }
+          if (mu2) {
+            localStorage.setItem('current_user', JSON.stringify(mu2));
+            var initials2 = mu2.ruolo==='admin' ? 'AD' : (mu2.nome||'?').split(' ').map(function(n){return n[0]||'';}).join('').toUpperCase().slice(0,2)||'??';
+            var firstName2 = mu2.ruolo==='admin' ? 'Admin' : (mu2.nome||'').split(' ')[0];
+            var chip2 = document.getElementById('login-btn');
+            if(chip2){chip2.innerHTML='<div class="user-av">'+initials2+'</div><div style="font-size:12px;font-weight:600">'+firstName2+'</div>';chip2.onclick=null;chip2.style.cursor='default';}
+          }
+        }
+      }, 1500);
+    } catch(e) { localStorage.removeItem('saved_credentials'); }
   }
   // Salva copia originale dati Italia per ripristino
   window._TEAMS_ROSE_IT = JSON.parse(JSON.stringify(TEAMS_ROSE));
@@ -6972,8 +7011,13 @@ function doLogin(){
     if (ok) {
       var user = userOrError;
       localStorage.setItem('current_user', JSON.stringify(user));
-      // Salva credenziali per auto-login futuro
-      localStorage.setItem('saved_credentials', JSON.stringify({u:u, p:p}));
+      // Salva credenziali solo se "Ricordami" è spuntato
+      var remember = document.getElementById('login-remember');
+      if (remember && remember.checked) {
+        localStorage.setItem('saved_credentials', JSON.stringify({u:u, p:p}));
+      } else {
+        localStorage.removeItem('saved_credentials');
+      }
       closeLoginModal();
       var initials = user.ruolo==='admin' ? 'AD' : (user.nome||'?').split(' ').map(function(n){return n[0]||'';}).join('').toUpperCase().slice(0,2)||'??';
       var firstName = user.ruolo==='admin' ? 'Admin' : (user.nome||'').split(' ')[0];
