@@ -1,4 +1,4 @@
-<!-- build:20260411_171122 -->
+<!-- build:20260411_180919 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -3739,7 +3739,11 @@ function tsmUpdateHeader() {
   if(lo){var fl=FANTASY_LOGOS[tsmCurrentTeam];if(fl){lo.src=fl;lo.style.display='block';}else{lo.style.display='none';}}
   if(nm) nm.textContent=tsmCurrentTeam;
   if(cb) cb.style.display='block';
-  if(cv) cv.textContent=(CREDITS&&CREDITS[tsmCurrentTeam]!==undefined)?CREDITS[tsmCurrentTeam]:'—';
+  if(cv){
+    var _userCredTSM = JSON.parse(localStorage.getItem('user_crediti_tsm_it')||'{}');
+    var _credValTSM = (_userCredTSM[tsmCurrentTeam]!==undefined) ? _userCredTSM[tsmCurrentTeam] : (CREDITS&&CREDITS[tsmCurrentTeam]!==undefined?CREDITS[tsmCurrentTeam]:'—');
+    cv.textContent = _credValTSM;
+  }
   var pl=TEAMS_ROSE[tsmCurrentTeam]||[];
   var por=0,dif=0,cen=0,att=0;
   pl.forEach(function(p){
@@ -5856,6 +5860,17 @@ function admSaveCreditiGestione(torneoKey, legaKey, squadra, val) {
   userMap[squadra] = val;
   userMap[squadra.toUpperCase()] = val;
   localStorage.setItem(userKey, JSON.stringify(userMap));
+  // Aggiorna GSheets
+  gsSaveCrediti(torneoKey, legaKey, squadra, val);
+  // Aggiorna direttamente il chip crediti se la sezione rose è visibile
+  if (typeof updateHeader === 'function') {
+    var roseSection = document.getElementById('s-rose');
+    if (roseSection && roseSection.classList.contains('active')) updateHeader();
+  }
+  if (typeof tsmUpdateHeader === 'function') {
+    var tsmRoseSection = document.getElementById('tsm-s-rose');
+    if (tsmRoseSection && tsmRoseSection.classList.contains('active')) tsmUpdateHeader();
+  }
 }
 
 function admSaveCreditiGestioneEl(el) {
@@ -6687,7 +6702,13 @@ function updateHeader(){
   if(le){if(fl){le.src=fl;le.style.display='block';}else{le.style.display='none';}}
   var nm=document.getElementById('th-name');if(nm)nm.textContent=currentTeam;
   var cb=document.getElementById('th-credits-box');if(cb)cb.style.display='block';
-  var cv=document.getElementById('th-credits-v');if(cv)cv.textContent=CREDITS[currentTeam]||'--';
+  var cv=document.getElementById('th-credits-v');
+  if(cv){
+    var _legaKey = window.currentLeagueKey||'it';
+    var _userCred = JSON.parse(localStorage.getItem('user_crediti_slim_'+_legaKey)||'{}');
+    var _credVal = (_userCred[currentTeam]!==undefined) ? _userCred[currentTeam] : (CREDITS[currentTeam]!==undefined ? CREDITS[currentTeam] : '--');
+    cv.textContent = _credVal;
+  }
   var pl=TEAMS_ROSE[currentTeam]||[];
   var por=pl.filter(function(p){var r=(p.primary||p.ruolo||'').split(';')[0].trim();return r==='Por';}).length;
   var dif=pl.filter(function(p){var r=(p.primary||p.ruolo||'').split(';')[0].trim();return['Dc','B','Dd','Ds'].indexOf(r)>-1;}).length;
@@ -6858,6 +6879,14 @@ document.addEventListener('click', function(e) {
     if (!menu.contains(e.target) && !btn.contains(e.target)) {
       menu.style.display = 'none';
     }
+  }
+});
+
+// Aggiorna crediti automaticamente quando cambiano nel localStorage
+window.addEventListener('storage', function(e) {
+  if (e.key && e.key.startsWith('user_crediti_')) {
+    if (typeof updateHeader === 'function') updateHeader();
+    if (typeof tsmUpdateHeader === 'function') tsmUpdateHeader();
   }
 });
 
