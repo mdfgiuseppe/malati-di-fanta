@@ -1,4 +1,4 @@
-<!-- build:20260411_142953 -->
+<!-- build:20260411_150657 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -6822,7 +6822,7 @@ function closeLogoutModal() {
 function doLogout() {
   closeLogoutModal();
   localStorage.removeItem('current_user');
-  localStorage.removeItem('saved_credentials');
+  // NON rimuovere saved_credentials — servono per pre-compilare il login
   // Ripristina chip login
   var chip = document.getElementById('login-btn');
   if (chip) {
