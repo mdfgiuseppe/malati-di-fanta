@@ -1,3 +1,4 @@
+<!-- build:20260411_103056 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -7003,7 +7004,7 @@ function doLogin(){
     var users = JSON.parse(localStorage.getItem('admin_users') || '[]');
     var matchedUser = null;
     for(var i=0;i<users.length;i++){
-      if(users[i].username===u && users[i].password===p && users[i].attivo!==false){matchedUser=users[i];break;}
+      if(users[i].username.toLowerCase()===u && users[i].password===p && users[i].attivo!==false){matchedUser=users[i];break;}
     }
     if (u==='admin' && p===adminPsw) {
       onLoginResult(true, {username:'admin', nome:'Admin', ruolo:'admin'});
