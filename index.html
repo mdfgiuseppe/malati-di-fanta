@@ -1,4 +1,4 @@
-<!-- build:20260411_220929 -->
+<!-- build:20260411_222410 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -5017,6 +5017,9 @@ function admSaveCoppaEl(el) {
     });
   }
   var data = window._admCoppaTemp && window._admCoppaTemp[cacheKey] ? window._admCoppaTemp[cacheKey] : admGetCoppaData(t,k);
+  // Salva anche il vincitore se presente nel select
+  var vincSel = document.getElementById('adm-coppa-vincitore-'+k);
+  if (vincSel) data.vincitore = vincSel.value || '';
   admSaveCoppaData(t, k, data);
   if(window._admCoppaTemp) delete window._admCoppaTemp[cacheKey];
   var msg=document.createElement('div');msg.textContent='✅ Risultati salvati';msg.style.cssText='position:fixed;top:70px;right:20px;background:#10b981;color:#fff;padding:8px 16px;border-radius:8px;font-weight:700;font-size:12px;z-index:9999';document.body.appendChild(msg);setTimeout(function(){msg.remove();},2000);
@@ -7168,6 +7171,16 @@ function initCoppaLogos() {
     var custom = localStorage.getItem('adm_img_coppa_'+key) || localStorage.getItem('adm_img_'+key);
     if (custom) { img.src = custom; return; }
     if (hubLogos[key]) img.src = hubLogos[key];
+  });
+  // Carica anche i dati delle coppe dal localStorage
+  ['cl','el','conf','sc'].forEach(function(key) {
+    var stored = localStorage.getItem('adm_coppa_data_slim_'+key);
+    if (stored) {
+      try {
+        var parsed = JSON.parse(stored);
+        if (typeof COPPA_DATA !== 'undefined') COPPA_DATA[key] = parsed;
+      } catch(e) {}
+    }
   });
 }
 function openCoppa(key) {
