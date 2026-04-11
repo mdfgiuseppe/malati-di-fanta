@@ -1,4 +1,4 @@
-<!-- build:20260411_193632 -->
+<!-- build:20260411_195424 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -5715,12 +5715,31 @@ function admDeleteUser(i) {
 // ═══════════════════════════════════════════════════════
 function admInitSelettori(prefix) {
   var sel = document.getElementById('adm-'+prefix+'-torneo'); if(!sel) return;
+  var prevVal = sel.value; // salva selezione corrente
   sel.innerHTML = '<option value="">-- Seleziona Torneo --</option>';
   ADMIN_TORNEI.forEach(function(t) {
     var opt = document.createElement('option');
     opt.value = t.key; opt.textContent = t.label;
     sel.appendChild(opt);
   });
+  // Ripristina selezione precedente se valida
+  if (prevVal) {
+    sel.value = prevVal;
+    if (sel.value === prevVal) {
+      // Ripristina anche la lega
+      var legaSel = document.getElementById('adm-'+prefix+'-lega');
+      if (legaSel && legaSel.value) {
+        // La lega è già impostata, ricarica il body
+        if (prefix === 'cal') admLoadCalBody();
+        else if (prefix === 'rose') admLoadRoseSquadre && admLoadRoseSquadre();
+        else if (prefix === 'sp') admLoadSponsorBody && admLoadSponsorBody();
+        else if (prefix === 'stad') admLoadStadioBody && admLoadStadioBody();
+      } else {
+        // Ripopola le leghe
+        if (prefix === 'cal') admLoadCalLeghe();
+      }
+    }
+  }
 }
 
 function admLoadRoseLeghe() {
@@ -6039,23 +6058,35 @@ function admUpdateCalEl(el) {
   admUpdateCal(el.dataset.t, el.dataset.l, +el.dataset.g, el.dataset.team, el.value);
 }
 function admGetCalendar(torneoKey, legaKey) {
-  // Prima controlla modifiche Admin salvate (solo se contiene dati reali)
+  // Ottieni il calendario base embedded
+  var base = {};
+  if (torneoKey==='tsm' && legaKey==='it') {
+    base = (typeof TSM_INITIAL_CALENDAR_IT!=='undefined') ? JSON.parse(JSON.stringify(TSM_INITIAL_CALENDAR_IT)) : {};
+  } else if (torneoKey==='slim') {
+    if (legaKey==='it') {
+      base = (typeof SLIM_INITIAL_CALENDAR!=='undefined') ? JSON.parse(JSON.stringify(SLIM_INITIAL_CALENDAR)) : {};
+    } else if (typeof ALL_SEASON_DATA!=='undefined' && ALL_SEASON_DATA[legaKey]) {
+      base = JSON.parse(JSON.stringify(ALL_SEASON_DATA[legaKey].calendario || {}));
+    }
+  }
+  // Sovrapponi le modifiche Admin salvate (merge, non sostituzione)
   var stored = localStorage.getItem('adm_cal_'+torneoKey+'_'+legaKey);
   if (stored) {
     try {
       var parsed = JSON.parse(stored);
-      // Valido solo se ha almeno una giornata con dati
       var hasData = Object.values(parsed).some(function(g){ return Object.values(g).some(function(v){return v;}); });
-      if (hasData) return parsed;
+      if (hasData) {
+        // Merge: le modifiche admin sovrascrivono il base
+        Object.keys(parsed).forEach(function(g) {
+          if (!base[g]) base[g] = {};
+          Object.keys(parsed[g]).forEach(function(team) {
+            base[g][team] = parsed[g][team];
+          });
+        });
+      }
     } catch(e) {}
   }
-  // Usa dati embedded nel JS (fonte di verità, come per TSM e altre leghe)
-  if (torneoKey==='tsm'&&legaKey==='it') return (typeof TSM_INITIAL_CALENDAR_IT!=='undefined')?JSON.parse(JSON.stringify(TSM_INITIAL_CALENDAR_IT)):{};
-  if (torneoKey==='slim') {
-    if (legaKey==='it') return (typeof SLIM_INITIAL_CALENDAR!=='undefined')?JSON.parse(JSON.stringify(SLIM_INITIAL_CALENDAR)):{};
-    if (typeof ALL_SEASON_DATA!=='undefined'&&ALL_SEASON_DATA[legaKey]) return JSON.parse(JSON.stringify(ALL_SEASON_DATA[legaKey].calendario||{}));
-  }
-  return {};
+  return base;
 }
 function admUpdateCal(t,l,g,team,val) {
   var cal = admGetCalendar(t,l);
