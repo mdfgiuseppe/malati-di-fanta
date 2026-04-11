@@ -1,4 +1,4 @@
-<!-- build:20260411_200153 -->
+<!-- build:20260411_210551 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -5784,8 +5784,10 @@ function admLoadRoseSquadre() {
 }
 function admGetTeams(torneoKey, legaKey) {
   if (torneoKey==='slim') {
-    if (legaKey==='it') return (typeof SLIM_TEAMS!=='undefined') ? SLIM_TEAMS : Object.keys(TEAMS_ROSE||{}).sort();
+    // Usa sempre le costanti, non SLIM_TEAMS che è variabile globale mutabile
+    if (legaKey==='it') return (typeof SLIM_TEAMS_IT!=='undefined') ? SLIM_TEAMS_IT : Object.keys(TEAMS_ROSE||{}).sort();
     if (typeof ALL_LEAGUES_DATA!=='undefined' && ALL_LEAGUES_DATA[legaKey]) return Object.keys(ALL_LEAGUES_DATA[legaKey].teams||{}).sort();
+    if (typeof ALL_SEASON_DATA!=='undefined' && ALL_SEASON_DATA[legaKey]) return ALL_SEASON_DATA[legaKey].teams || [];
   }
   if (torneoKey==='tsm' && legaKey==='it') return (typeof TSM_TEAMS_IT!=='undefined') ? TSM_TEAMS_IT : [];
   return [];
