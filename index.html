@@ -1,4 +1,4 @@
-<!-- build:20260411_192511 -->
+<!-- build:20260411_193632 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -3424,11 +3424,27 @@ var SLIM_INITIAL_STADIO   = {"BARI": 3, "COMO": 2, "JUVENTUS": 1, "MILAN": 4, "N
 
 function slimGetCalendar() {
   var key = window._currentLeagueCalKey || 'slim_calendar';
+  var lk = key.replace('slim_calendar_','');
+  var torneo = 'slim';
+  // Prima cerca la chiave app aggiornata
   var raw = localStorage.getItem(key);
   if (raw) return JSON.parse(raw);
+  // Fallback: cerca in adm_cal_slim_* (dati salvati dall'Admin)
+  var admKey = 'adm_cal_'+torneo+'_'+(lk==='slim_calendar'?'it':lk);
+  var admRaw = localStorage.getItem(admKey);
+  if (admRaw) {
+    try {
+      var parsed = JSON.parse(admRaw);
+      var hasData = Object.values(parsed).some(function(g){ return Object.values(g).some(function(v){return v;}); });
+      if (hasData) {
+        // Copia nella chiave app per uso futuro
+        localStorage.setItem(key, admRaw);
+        return parsed;
+      }
+    } catch(e) {}
+  }
   // Fallback: dati iniziali dal JSON
   if (key !== 'slim_calendar' && typeof ALL_SEASON_DATA !== 'undefined') {
-    var lk = key.replace('slim_calendar_','');
     if (ALL_SEASON_DATA[lk]) return ALL_SEASON_DATA[lk].calendario || {};
   }
   return SLIM_INITIAL_CALENDAR;
@@ -6056,8 +6072,12 @@ function admSaveCalGiornataEl(el) {
   admSaveCalGiornata(el.dataset.t, el.dataset.l, el.dataset.g);
 }
 function admSaveCalGiornata(t,l,g) {
-  // Sincronizza calendario completo su GSheets
   var cal = admGetCalendar(t,l);
+  // Sincronizza con chiave app (lato utente)
+  var appKey = (t==='tsm'&&l==='it') ? 'tsm_calendar_it' : (l==='it'?'slim_calendar':'slim_calendar_'+l);
+  localStorage.setItem(appKey, JSON.stringify(cal));
+  localStorage.setItem('adm_cal_'+t+'_'+l, JSON.stringify(cal));
+  // Sincronizza su GSheets
   gsSaveCalendario(t, l, cal);
   var msg=document.createElement('div');msg.textContent='✅ Giornata '+g+' salvata'+(GS_ONLINE?' · Sincronizzato':'');msg.style.cssText='position:fixed;top:70px;right:20px;background:#10b981;color:#fff;padding:8px 16px;border-radius:8px;font-weight:700;font-size:12px;z-index:9999';document.body.appendChild(msg);setTimeout(function(){msg.remove();},2000);
 }
