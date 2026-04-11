@@ -1,4 +1,4 @@
-<!-- build:20260411_121725 -->
+<!-- build:20260411_122840 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -6734,48 +6734,40 @@ document.addEventListener('click', function(e) {
 document.addEventListener('DOMContentLoaded',function(){
   // Ping Google Sheets per verificare connessione
   gsPing();
-  // Sessione non persistente: rimuovi current_user al ricaricamento
-  // Ma se saved_credentials esiste, fai auto-login silenzioso
-  localStorage.removeItem('current_user');
-  var currentUser = null;
+  // Auto-login se credenziali salvate (Ricordami spuntato)
   var savedCreds = localStorage.getItem('saved_credentials');
   if (savedCreds) {
     try {
       var sc = JSON.parse(savedCreds);
-      // Auto-login con credenziali salvate
+      // Funzione per aggiornare il chip utente
+      function _applyUser(user) {
+        localStorage.setItem('current_user', JSON.stringify(user));
+        var initials = user.ruolo==='admin' ? 'AD' : (user.nome||'?').split(' ').map(function(n){return n[0]||'';}).join('').toUpperCase().slice(0,2)||'??';
+        var firstName = user.ruolo==='admin' ? 'Admin' : (user.nome||'').split(' ')[0];
+        var chip = document.getElementById('login-btn');
+        if(chip){chip.innerHTML='<div class="user-av">'+initials+'</div><div style="font-size:12px;font-weight:600">'+firstName+'</div>';chip.onclick=function(){openLogoutModal();};chip.style.cursor='pointer';}
+      }
+      // Prima prova subito con localStorage (offline)
+      var adminPsw2 = localStorage.getItem('admin_password') || 'admin2026';
+      var users2 = JSON.parse(localStorage.getItem('admin_users') || '[]');
+      if (sc.u==='admin' && sc.p===adminPsw2) {
+        _applyUser({username:'admin', nome:'Admin', ruolo:'admin'});
+      } else {
+        var mu2 = null;
+        for(var i=0;i<users2.length;i++){
+          if(users2[i].username.toLowerCase()===sc.u && users2[i].password===sc.p && users2[i].attivo!==false){mu2=users2[i];break;}
+        }
+        if (mu2) _applyUser({username:mu2.username, nome:mu2.nome, lega:mu2.lega});
+      }
+      // Poi verifica anche con GSheets dopo il ping
       setTimeout(function() {
         if (GS_ONLINE) {
           gsLogin(sc.u, sc.p, function(ok, user) {
-            if (ok) {
-              localStorage.setItem('current_user', JSON.stringify(user));
-              var initials = user.ruolo==='admin' ? 'AD' : (user.nome||'?').split(' ').map(function(n){return n[0]||'';}).join('').toUpperCase().slice(0,2)||'??';
-              var firstName = user.ruolo==='admin' ? 'Admin' : (user.nome||'').split(' ')[0];
-              var chip = document.getElementById('login-btn');
-              if(chip){chip.innerHTML='<div class="user-av">'+initials+'</div><div style="font-size:12px;font-weight:600">'+firstName+'</div>';chip.onclick=null;chip.style.cursor='default';}
-            } else {
-              localStorage.removeItem('saved_credentials');
-            }
+            if (ok) { _applyUser(user); }
+            else { localStorage.removeItem('saved_credentials'); localStorage.removeItem('current_user'); }
           });
-        } else {
-          var adminPsw2 = localStorage.getItem('admin_password') || 'admin2026';
-          var users2 = JSON.parse(localStorage.getItem('admin_users') || '[]');
-          var mu2 = null;
-          if (sc.u==='admin' && sc.p===adminPsw2) {
-            mu2 = {username:'admin', nome:'Admin', ruolo:'admin'};
-          } else {
-            for(var i=0;i<users2.length;i++){
-              if(users2[i].username.toLowerCase()===sc.u && users2[i].password===sc.p && users2[i].attivo!==false){mu2=users2[i];break;}
-            }
-          }
-          if (mu2) {
-            localStorage.setItem('current_user', JSON.stringify(mu2));
-            var initials2 = mu2.ruolo==='admin' ? 'AD' : (mu2.nome||'?').split(' ').map(function(n){return n[0]||'';}).join('').toUpperCase().slice(0,2)||'??';
-            var firstName2 = mu2.ruolo==='admin' ? 'Admin' : (mu2.nome||'').split(' ')[0];
-            var chip2 = document.getElementById('login-btn');
-            if(chip2){chip2.innerHTML='<div class="user-av">'+initials2+'</div><div style="font-size:12px;font-weight:600">'+firstName2+'</div>';chip2.onclick=null;chip2.style.cursor='default';}
-          }
         }
-      }, 1500);
+      }, 2000);
     } catch(e) { localStorage.removeItem('saved_credentials'); }
   }
   // Salva copia originale dati Italia per ripristino
