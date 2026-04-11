@@ -1,4 +1,4 @@
-<!-- build:20260411_134644 -->
+<!-- build:20260411_140245 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -1337,9 +1337,9 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   </div>
   <div class="topbar-right">
     <div id="tsm-pg-theme-btn" onclick="toggleTheme()" title="Cambia tema" style="width:34px;height:34px;border-radius:9px;background:var(--card2,rgba(255,255,255,.08));border:1px solid var(--border,rgba(255,255,255,.1));display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;transition:all .2s">☀️</div>
-    <div class="user-chip" id="lega-user-chip" onclick="openLogoutModal()" style="cursor:pointer">
-      <div class="user-av" id="lega-user-av">?</div>
-      <div style="font-size:12px;font-weight:600" id="lega-user-name">Utente</div>
+    <div class="user-chip" id="tsm-user-chip" onclick="openLogoutModal()" style="cursor:pointer">
+      <div class="user-av" id="tsm-user-av">?</div>
+      <div style="font-size:12px;font-weight:600" id="tsm-user-name">Utente</div>
     </div>
   </div>
 </div>
@@ -3655,8 +3655,8 @@ function enterTSM() {
   // Aggiorna chip utente
   try {
     var u = JSON.parse(loggedUser);
-    var av = document.getElementById('lega-user-av');
-    var nm = document.getElementById('lega-user-name');
+    var av = document.getElementById('tsm-user-av');
+    var nm = document.getElementById('tsm-user-name');
     if (av) av.textContent = u.ruolo==='admin' ? 'AD' : (u.nome||'?').split(' ').map(function(n){return n[0]||'';}).join('').toUpperCase().slice(0,2)||'??';
     if (nm) nm.textContent = u.ruolo==='admin' ? 'Admin' : (u.nome||'').split(' ')[0];
   } catch(e) {}
@@ -6861,45 +6861,24 @@ document.addEventListener('DOMContentLoaded',function(){
   gsPing();
   // Auto-login se credenziali salvate (Ricordami spuntato)
   var savedCreds = localStorage.getItem('saved_credentials');
-  if (savedCreds) {
+  var savedUserData = localStorage.getItem('saved_user_data');
+  if (savedCreds && savedUserData) {
     try {
-      var sc = JSON.parse(savedCreds);
-      // Funzione per aggiornare il chip utente
-      function _applyUser(user) {
-        localStorage.setItem('current_user', JSON.stringify(user));
-        var initials = user.ruolo==='admin' ? 'AD' : (user.nome||'?').split(' ').map(function(n){return n[0]||'';}).join('').toUpperCase().slice(0,2)||'??';
-        var firstName = user.ruolo==='admin' ? 'Admin' : (user.nome||'').split(' ')[0];
-        var chip = document.getElementById('login-btn');
-        if(chip){chip.innerHTML='<div class="user-av">'+initials+'</div><div style="font-size:12px;font-weight:600">'+firstName+'</div>';chip.onclick=function(){openLogoutModal();};chip.style.cursor='pointer';}
+      var savedUser = JSON.parse(savedUserData);
+      // Login immediato con dati salvati
+      localStorage.setItem('current_user', JSON.stringify(savedUser));
+      var _initials = savedUser.ruolo==='admin' ? 'AD' : (savedUser.nome||'?').split(' ').map(function(n){return n[0]||'';}).join('').toUpperCase().slice(0,2)||'??';
+      var _firstName = savedUser.ruolo==='admin' ? 'Admin' : (savedUser.nome||'').split(' ')[0];
+      var _chip = document.getElementById('login-btn');
+      if(_chip){
+        _chip.innerHTML='<div class="user-av">'+_initials+'</div><div style="font-size:12px;font-weight:600">'+_firstName+'</div>';
+        _chip.onclick=function(){openLogoutModal();};
+        _chip.style.cursor='pointer';
       }
-      // Usa saved_user_data per login immediato (funziona sempre, anche offline)
-      var savedUserData = localStorage.getItem('saved_user_data');
-      if (savedUserData) {
-        try { _applyUser(JSON.parse(savedUserData)); } catch(e) {}
-      } else {
-        // Fallback: cerca in admin_users
-        var adminPsw2 = localStorage.getItem('admin_password') || 'admin2026';
-        var users2 = JSON.parse(localStorage.getItem('admin_users') || '[]');
-        if (sc.u==='admin' && sc.p===adminPsw2) {
-          _applyUser({username:'admin', nome:'Admin', ruolo:'admin'});
-        } else {
-          var mu2 = null;
-          for(var i=0;i<users2.length;i++){
-            if(users2[i].username.toLowerCase()===sc.u && users2[i].password===sc.p && users2[i].attivo!==false){mu2=users2[i];break;}
-          }
-          if (mu2) _applyUser({username:mu2.username, nome:mu2.nome, lega:mu2.lega});
-        }
-      }
-      // Poi verifica anche con GSheets dopo il ping
-      setTimeout(function() {
-        if (GS_ONLINE) {
-          gsLogin(sc.u, sc.p, function(ok, user) {
-            if (ok) { _applyUser(user); }
-            else { localStorage.removeItem('saved_credentials'); localStorage.removeItem('current_user'); }
-          });
-        }
-      }, 2000);
-    } catch(e) { localStorage.removeItem('saved_credentials'); }
+    } catch(e) {
+      localStorage.removeItem('saved_credentials');
+      localStorage.removeItem('saved_user_data');
+    }
   }
   // Salva copia originale dati Italia per ripristino
   window._TEAMS_ROSE_IT = JSON.parse(JSON.stringify(TEAMS_ROSE));
