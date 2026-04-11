@@ -1,4 +1,4 @@
-<!-- build:20260411_153436 -->
+<!-- build:20260411_160730 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -377,6 +377,13 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   #page-admin .sidenav { display:none !important; }
   #adm-hamburger { display:none !important; }
 }
+
+@media(max-width:480px){
+  /* Tabella multe - testo su più righe, no troncatura */
+  .multe-col-infrazione { white-space: normal !important; word-break: break-word; }
+  #slim-multe-body td, #tsm-multe-body td { white-space: normal !important; word-break: break-word; font-size:10px !important; padding:4px 5px !important; }
+  #slim-multe-body table, #tsm-multe-body table { table-layout: fixed; }
+}
 </style>
 <style>/* dashboard */
 
@@ -592,13 +599,13 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 .tbtn-inf .tbtn.active{background:rgba(239,68,68,.08);border-color:rgba(239,68,68,.2);}
 
 /* MAIN */
-#page-rose .main{flex:1;padding:20px;min-width:0;}
+#page-rose .main{flex:1;padding:20px;min-width:500px;}
 
 /* TEAM HEADER */
 .team-header{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px 20px;margin-bottom:14px;display:flex;align-items:center;gap:16px;position:relative;overflow:hidden;box-shadow:var(--shadow);}
 .team-header::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--green),transparent);}
 .th-logo{width:60px;height:60px;object-fit:contain;flex-shrink:0;filter:drop-shadow(0 2px 8px rgba(0,0,0,0.3));}
-.th-info{flex:1;min-width:0;}
+.th-info{flex:1;min-width:500px;}
 .th-name{font-family:'Bebas Neue';font-size:26px;letter-spacing:2px;line-height:1;margin-bottom:6px;}
 .th-stats{display:flex;gap:8px;flex-wrap:wrap;}
 .th-stat{display:flex;align-items:center;gap:3px;font-size:11px;color:var(--text2);padding:3px 8px;background:var(--bg3);border-radius:5px;}
@@ -1209,12 +1216,12 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
         <table style="width:100%;border-collapse:collapse;min-width:500px">
           <thead>
             <tr style="background:var(--bg2);font-size:9px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;color:var(--text3)">
-              <th style="padding:8px 14px;text-align:left">Squadra</th>
-              <th style="padding:8px 10px;text-align:center">Richiami</th>
-              <th style="padding:8px 10px;text-align:center">Penalità Pt</th>
-              <th style="padding:8px 10px;text-align:center">Multe Cr</th>
-              <th style="padding:8px 14px;text-align:left">Ultima infrazione</th>
-              <th style="padding:8px 10px;text-align:center">Stato</th>
+              <th style="padding:5px 8px;text-align:left">Squadra</th>
+              <th style="padding:5px 6px;text-align:center">Richiami</th>
+              <th style="padding:5px 6px;text-align:center">Pen.Pt</th>
+              <th style="padding:5px 6px;text-align:center">Mult.Cr</th>
+              <th style="padding:5px 8px;text-align:left">Ultima infrazione</th>
+              <th style="padding:5px 6px;text-align:center">Stato</th>
             </tr>
           </thead>
           <tbody id="slim-multe-body"></tbody>
@@ -1547,12 +1554,12 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
         <table style="width:100%;border-collapse:collapse;min-width:500px">
           <thead>
             <tr style="background:var(--bg2);font-size:9px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;color:var(--text3)">
-              <th style="padding:8px 14px;text-align:left">Squadra</th>
-              <th style="padding:8px 10px;text-align:center">Richiami</th>
-              <th style="padding:8px 10px;text-align:center">Penalità Pt</th>
-              <th style="padding:8px 10px;text-align:center">Multe Cr</th>
-              <th style="padding:8px 14px;text-align:left">Ultima infrazione</th>
-              <th style="padding:8px 10px;text-align:center">Stato</th>
+              <th style="padding:5px 8px;text-align:left">Squadra</th>
+              <th style="padding:5px 6px;text-align:center">Richiami</th>
+              <th style="padding:5px 6px;text-align:center">Pen.Pt</th>
+              <th style="padding:5px 6px;text-align:center">Mult.Cr</th>
+              <th style="padding:5px 8px;text-align:left">Ultima infrazione</th>
+              <th style="padding:5px 6px;text-align:center">Stato</th>
             </tr>
           </thead>
           <tbody id="tsm-multe-body"></tbody>
@@ -3936,7 +3943,7 @@ function tsmRenderMulte() {
     h += '<td style="padding:9px 10px;text-align:center"><span style="font-size:16px;color:'+cR+'">'+d.richiami+'</span></td>';
     h += '<td style="padding:9px 10px;text-align:center"><span style="font-size:16px;color:'+cP+'">'+d.penalita+'</span></td>';
     h += '<td style="padding:9px 10px;text-align:center"><span style="font-size:16px;color:'+cM+'">'+d.multe+'</span></td>';
-    h += '<td style="padding:9px 14px;font-size:11px;color:var(--text3)">'+d.ultima+'</td>';
+    h += '<td class="multe-col-infrazione" style="padding:9px 14px;font-size:11px;color:var(--text3)">'+d.ultima+'</td>';
     h += '<td style="padding:9px 10px;text-align:center">'+(hasIssue
       ? '<span style="display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:20px;font-size:9px;font-weight:800;background:rgba(239,68,68,.1);color:#ef4444;border:1px solid rgba(239,68,68,.2)"><span style="width:5px;height:5px;border-radius:50%;background:#ef4444;display:inline-block"></span>SANZIONATO</span>'
       : '<span style="display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:20px;font-size:9px;font-weight:800;background:rgba(16,185,129,.1);color:#10b981;border:1px solid rgba(16,185,129,.2)"><span style="width:5px;height:5px;border-radius:50%;background:#10b981;display:inline-block"></span>OK</span>')+'</td></tr>';
@@ -3959,11 +3966,11 @@ function tsmRenderMulte(){
     var cP=d.penalita>0?'#ef4444':'var(--text2)';
     var cM=d.multe>0?'#ef4444':'var(--text2)';
     h+='<tr style="border-bottom:1px solid var(--border)">';
-    h+='<td style="padding:9px 14px;font-weight:700;font-size:12px">'+team+'</td>';
-    h+='<td style="padding:9px 10px;text-align:center"><span style="font-size:16px;color:'+cR+'">'+d.richiami+'</span></td>';
-    h+='<td style="padding:9px 10px;text-align:center"><span style="font-size:16px;color:'+cP+'">'+d.penalita+'</span></td>';
-    h+='<td style="padding:9px 10px;text-align:center"><span style="font-size:16px;color:'+cM+'">'+d.multe+'</span></td>';
-    h+='<td style="padding:9px 14px;font-size:11px;color:var(--text3)">'+d.ultima+'</td>';
+    h+='<td style="padding:6px 8px;font-weight:700;font-size:11px">'+team+'</td>';
+    h+='<td style="padding:6px 6px;text-align:center"><span style="font-size:13px;color:'+cR+'">'+d.richiami+'</span></td>';
+    h+='<td style="padding:6px 6px;text-align:center"><span style="font-size:13px;color:'+cP+'">'+d.penalita+'</span></td>';
+    h+='<td style="padding:6px 6px;text-align:center"><span style="font-size:13px;color:'+cM+'">'+d.multe+'</span></td>';
+    h+='<td class="multe-col-infrazione" style="padding:6px 8px;font-size:10px;color:var(--text3)">'+d.ultima+'</td>';
     h+='<td style="padding:9px 10px;text-align:center">'+(hasIssue?'<span style="display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:20px;font-size:9px;font-weight:800;background:rgba(239,68,68,.1);color:#ef4444;border:1px solid rgba(239,68,68,.2)"><span style="width:5px;height:5px;border-radius:50%;background:#ef4444;display:inline-block"></span>SANZIONATO</span>':'<span style="display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:20px;font-size:9px;font-weight:800;background:rgba(16,185,129,.1);color:#10b981;border:1px solid rgba(16,185,129,.2)"><span style="width:5px;height:5px;border-radius:50%;background:#10b981;display:inline-block"></span>OK</span>')+'</td></tr>';
   });
   el.innerHTML=h;
@@ -4300,7 +4307,7 @@ function admLoadStadioBodyFromTemp(t, l, stadio) {
   var h = '<div class="card" style="padding:0;overflow:hidden">'
     +'<table style="width:100%;border-collapse:collapse">'
     +'<thead><tr style="background:var(--bg2);font-size:9px;font-weight:800;text-transform:uppercase;color:var(--text3)">'
-    +'<th style="padding:8px 14px;text-align:left">Squadra</th>'
+    +'<th style="padding:5px 8px;text-align:left">Squadra</th>'
     +'<th style="padding:8px 10px;text-align:center">Livello</th>'
     +'<th style="padding:8px 10px;text-align:left">Descrizione</th>'
     +'<th style="padding:8px 10px;text-align:left">Posti</th>'
@@ -4350,7 +4357,7 @@ function admLoadStadioBody() {
   var h = '<div class="card" style="padding:0;overflow:hidden">'
     +'<table style="width:100%;border-collapse:collapse">'
     +'<thead><tr style="background:var(--bg2);font-size:9px;font-weight:800;text-transform:uppercase;color:var(--text3)">'
-    +'<th style="padding:8px 14px;text-align:left">Squadra</th>'
+    +'<th style="padding:5px 8px;text-align:left">Squadra</th>'
     +'<th style="padding:8px 10px;text-align:center">Livello Attuale</th>'
     +'<th style="padding:8px 10px;text-align:left">Posti</th>'
     +'<th style="padding:8px 10px;text-align:center">Cr Vittoria</th>'
@@ -5276,7 +5283,7 @@ function admLoadMulteBody() {
   var h = '<div class="card" style="padding:0;overflow:hidden">'
     +'<table style="width:100%;border-collapse:collapse">'
     +'<thead><tr style="background:var(--bg2);font-size:9px;font-weight:800;text-transform:uppercase;color:var(--text3)">'
-    +'<th style="padding:8px 14px;text-align:left">Squadra</th>'
+    +'<th style="padding:5px 8px;text-align:left">Squadra</th>'
     +'<th style="padding:8px 10px;text-align:center;color:#f59e0b">Richiami</th>'
     +'<th style="padding:8px 10px;text-align:center;color:#ef4444">Penalità pt</th>'
     +'<th style="padding:8px 10px;text-align:center;color:#ef4444">Multe cr</th>'
@@ -5611,7 +5618,7 @@ function admRenderUtenti() {
         var ts = r.timestamp || '—';
         return '<div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin-bottom:8px">'
           +'<div style="display:flex;justify-content:space-between;align-items:start;gap:10px">'
-          +'<div style="flex:1;min-width:0">'
+          +'<div style="flex:1;min-width:500px">'
           +'<div style="font-weight:700;font-size:13px;color:var(--text)">'+nomeCompleto.trim()+'</div>'
           +'<div style="font-size:11px;color:var(--text2);margin-top:3px">📱 '+wa+' · 🗓 '+ts+'</div>'
           +(dn?'<div style="font-size:11px;color:var(--text2)">🎂 '+dn+'</div>':'')
@@ -6075,7 +6082,7 @@ function admRenderModulistica() {
     d.moduli.forEach(function(m, mi) {
       h += '<div style="display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--border)">'
         +'<span style="font-size:20px;flex-shrink:0">'+m.icona+'</span>'
-        +'<div style="flex:1;min-width:0">'
+        +'<div style="flex:1;min-width:500px">'
         +'<div style="font-size:12px;font-weight:700;margin-bottom:4px">'+m.titolo+'</div>'
         +'<input type="text" value="'+m.link+'" placeholder="https://forms.google.com/..." '
         +'data-key="'+key+'" data-mi="'+mi+'" onchange="admUpdateModuloLinkEl(this)" '
@@ -6644,11 +6651,11 @@ function renderMulte(){
     var cP=d.penalita>0?'#ef4444':'var(--text2)';
     var cM=d.multe>0?'#ef4444':'var(--text2)';
     h+='<tr style="border-bottom:1px solid var(--border)">';
-    h+='<td style="padding:9px 14px;font-weight:700;font-size:12px">'+team+'</td>';
-    h+='<td style="padding:9px 10px;text-align:center"><span style="font-size:16px;color:'+cR+'">'+d.richiami+'</span></td>';
-    h+='<td style="padding:9px 10px;text-align:center"><span style="font-size:16px;color:'+cP+'">'+d.penalita+'</span></td>';
-    h+='<td style="padding:9px 10px;text-align:center"><span style="font-size:16px;color:'+cM+'">'+d.multe+'</span></td>';
-    h+='<td style="padding:9px 14px;font-size:11px;color:var(--text3)">'+d.ultima+'</td>';
+    h+='<td style="padding:6px 8px;font-weight:700;font-size:11px">'+team+'</td>';
+    h+='<td style="padding:6px 6px;text-align:center"><span style="font-size:13px;color:'+cR+'">'+d.richiami+'</span></td>';
+    h+='<td style="padding:6px 6px;text-align:center"><span style="font-size:13px;color:'+cP+'">'+d.penalita+'</span></td>';
+    h+='<td style="padding:6px 6px;text-align:center"><span style="font-size:13px;color:'+cM+'">'+d.multe+'</span></td>';
+    h+='<td class="multe-col-infrazione" style="padding:6px 8px;font-size:10px;color:var(--text3)">'+d.ultima+'</td>';
     h+='<td style="padding:9px 10px;text-align:center">'+(hasIssue?'<span style="display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:20px;font-size:9px;font-weight:800;background:rgba(239,68,68,.1);color:#ef4444;border:1px solid rgba(239,68,68,.2)"><span style="width:5px;height:5px;border-radius:50%;background:#ef4444;display:inline-block"></span>SANZIONATO</span>':'<span style="display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:20px;font-size:9px;font-weight:800;background:rgba(16,185,129,.1);color:#10b981;border:1px solid rgba(16,185,129,.2)"><span style="width:5px;height:5px;border-radius:50%;background:#10b981;display:inline-block"></span>OK</span>')+'</td></tr>';
   });
   el.innerHTML=h;
