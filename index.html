@@ -2929,7 +2929,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
       <div style="text-align:center;margin-top:14px;font-size:11px;color:var(--text2)">Credenziali fornite dallo staff &middot; <span style="color:#10b981;cursor:pointer" onclick="alert('Contatta lo staff su WhatsApp per recuperare le credenziali.')">Password dimenticata?</span></div>
     <div style="text-align:center;margin-top:12px;padding-top:12px;border-top:1px solid var(--border)">
       <span style="font-size:11px;color:var(--text2)">Non hai un account? </span>
-      <span id="login-gform-link" style="font-size:11px;color:#10b981;cursor:pointer;font-weight:700" onclick="var url=localStorage.getItem('admin_gform_url');if(url&&url!=='#')window.open(url,'_blank');else alert('Link registrazione non ancora configurato. Contatta lo staff.');">Richiedi accesso →</span>
+      <span id="login-gform-link" style="font-size:11px;color:#10b981;cursor:pointer;font-weight:700" onclick="var url=localStorage.getItem('admin_gform_url')||'https://docs.google.com/forms/d/e/1FAIpQLScVbdYItr6iYft0amjpwok4-Kw18dqnYx7VPSbSmQ1JeNNr8Q/viewform';window.open(url,'_blank');">Richiedi accesso →</span>
     </div>
     </div>
   </div>
@@ -6316,7 +6316,7 @@ function admSaveSponsor(t,l,s) {
 // ADMIN — Impostazioni
 // ═══════════════════════════════════════════════════════
 function admInitImpostazioni() {
-  var url = localStorage.getItem('admin_gform_url')||'';
+  var url = localStorage.getItem('admin_gform_url')||'https://docs.google.com/forms/d/e/1FAIpQLScVbdYItr6iYft0amjpwok4-Kw18dqnYx7VPSbSmQ1JeNNr8Q/viewform';
   var el = document.getElementById('adm-gform-url');
   if(el) el.value=url;
 }
