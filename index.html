@@ -1,4 +1,4 @@
-<!-- build:20260411_160730 -->
+<!-- build:20260411_162355 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -3966,12 +3966,12 @@ function tsmRenderMulte(){
     var cP=d.penalita>0?'#ef4444':'var(--text2)';
     var cM=d.multe>0?'#ef4444':'var(--text2)';
     h+='<tr style="border-bottom:1px solid var(--border)">';
-    h+='<td style="padding:6px 8px;font-weight:700;font-size:11px">'+team+'</td>';
-    h+='<td style="padding:6px 6px;text-align:center"><span style="font-size:13px;color:'+cR+'">'+d.richiami+'</span></td>';
-    h+='<td style="padding:6px 6px;text-align:center"><span style="font-size:13px;color:'+cP+'">'+d.penalita+'</span></td>';
-    h+='<td style="padding:6px 6px;text-align:center"><span style="font-size:13px;color:'+cM+'">'+d.multe+'</span></td>';
-    h+='<td class="multe-col-infrazione" style="padding:6px 8px;font-size:10px;color:var(--text3)">'+d.ultima+'</td>';
-    h+='<td style="padding:9px 10px;text-align:center">'+(hasIssue?'<span style="display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:20px;font-size:9px;font-weight:800;background:rgba(239,68,68,.1);color:#ef4444;border:1px solid rgba(239,68,68,.2)"><span style="width:5px;height:5px;border-radius:50%;background:#ef4444;display:inline-block"></span>SANZIONATO</span>':'<span style="display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:20px;font-size:9px;font-weight:800;background:rgba(16,185,129,.1);color:#10b981;border:1px solid rgba(16,185,129,.2)"><span style="width:5px;height:5px;border-radius:50%;background:#10b981;display:inline-block"></span>OK</span>')+'</td></tr>';
+    h+='<td style="padding:4px 6px;font-weight:700;font-size:10px;word-break:break-word;white-space:normal;max-width:90px">'+team+'</td>';
+    h+='<td style="padding:4px 4px;text-align:center"><span style="font-size:12px;color:'+cR+'">'+d.richiami+'</span></td>';
+    h+='<td style="padding:4px 4px;text-align:center"><span style="font-size:12px;color:'+cP+'">'+d.penalita+'</span></td>';
+    h+='<td style="padding:4px 4px;text-align:center"><span style="font-size:12px;color:'+cM+'">'+d.multe+'</span></td>';
+    h+='<td class="multe-col-infrazione" style="padding:4px 6px;font-size:10px;color:var(--text3);word-break:break-word;white-space:normal">'+d.ultima+'</td>';
+    h+='<td style="padding:9px 10px;text-align:center">'+(hasIssue?'<span style="display:inline-flex;align-items:center;gap:2px;padding:2px 5px;border-radius:20px;font-size:8px;font-weight:800;background:rgba(239,68,68,.1);color:#ef4444;border:1px solid rgba(239,68,68,.2)">⚠️</span>':'<span style="display:inline-flex;align-items:center;gap:2px;padding:2px 5px;border-radius:20px;font-size:8px;font-weight:800;background:rgba(16,185,129,.1);color:#10b981;border:1px solid rgba(16,185,129,.2)">✅</span>')+'</td></tr>';
   });
   el.innerHTML=h;
 }
@@ -6651,12 +6651,12 @@ function renderMulte(){
     var cP=d.penalita>0?'#ef4444':'var(--text2)';
     var cM=d.multe>0?'#ef4444':'var(--text2)';
     h+='<tr style="border-bottom:1px solid var(--border)">';
-    h+='<td style="padding:6px 8px;font-weight:700;font-size:11px">'+team+'</td>';
-    h+='<td style="padding:6px 6px;text-align:center"><span style="font-size:13px;color:'+cR+'">'+d.richiami+'</span></td>';
-    h+='<td style="padding:6px 6px;text-align:center"><span style="font-size:13px;color:'+cP+'">'+d.penalita+'</span></td>';
-    h+='<td style="padding:6px 6px;text-align:center"><span style="font-size:13px;color:'+cM+'">'+d.multe+'</span></td>';
-    h+='<td class="multe-col-infrazione" style="padding:6px 8px;font-size:10px;color:var(--text3)">'+d.ultima+'</td>';
-    h+='<td style="padding:9px 10px;text-align:center">'+(hasIssue?'<span style="display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:20px;font-size:9px;font-weight:800;background:rgba(239,68,68,.1);color:#ef4444;border:1px solid rgba(239,68,68,.2)"><span style="width:5px;height:5px;border-radius:50%;background:#ef4444;display:inline-block"></span>SANZIONATO</span>':'<span style="display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:20px;font-size:9px;font-weight:800;background:rgba(16,185,129,.1);color:#10b981;border:1px solid rgba(16,185,129,.2)"><span style="width:5px;height:5px;border-radius:50%;background:#10b981;display:inline-block"></span>OK</span>')+'</td></tr>';
+    h+='<td style="padding:4px 6px;font-weight:700;font-size:10px;word-break:break-word;white-space:normal;max-width:90px">'+team+'</td>';
+    h+='<td style="padding:4px 4px;text-align:center"><span style="font-size:12px;color:'+cR+'">'+d.richiami+'</span></td>';
+    h+='<td style="padding:4px 4px;text-align:center"><span style="font-size:12px;color:'+cP+'">'+d.penalita+'</span></td>';
+    h+='<td style="padding:4px 4px;text-align:center"><span style="font-size:12px;color:'+cM+'">'+d.multe+'</span></td>';
+    h+='<td class="multe-col-infrazione" style="padding:4px 6px;font-size:10px;color:var(--text3);word-break:break-word;white-space:normal">'+d.ultima+'</td>';
+    h+='<td style="padding:9px 10px;text-align:center">'+(hasIssue?'<span style="display:inline-flex;align-items:center;gap:2px;padding:2px 5px;border-radius:20px;font-size:8px;font-weight:800;background:rgba(239,68,68,.1);color:#ef4444;border:1px solid rgba(239,68,68,.2)">⚠️</span>':'<span style="display:inline-flex;align-items:center;gap:2px;padding:2px 5px;border-radius:20px;font-size:8px;font-weight:800;background:rgba(16,185,129,.1);color:#10b981;border:1px solid rgba(16,185,129,.2)">✅</span>')+'</td></tr>';
   });
   el.innerHTML=h;
 }
