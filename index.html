@@ -1,4 +1,4 @@
-<!-- build:20260411_115524 -->
+<!-- build:20260411_120851 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -924,9 +924,9 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   </div>
   <div class="topbar-right">
     <div id="pg-theme-btn" onclick="toggleTheme()" title="Cambia tema" style="width:34px;height:34px;border-radius:9px;background:var(--card2,rgba(255,255,255,.08));border:1px solid var(--border,rgba(255,255,255,.1));display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;transition:all .2s">☀️</div>
-    <div class="user-chip">
-      <div class="user-av">MR</div>
-      <div style="font-size:12px;font-weight:600">Marco R.</div>
+    <div class="user-chip" id="lega-user-chip" onclick="openLogoutModal()" style="cursor:pointer">
+      <div class="user-av" id="lega-user-av">?</div>
+      <div style="font-size:12px;font-weight:600" id="lega-user-name">Utente</div>
     </div>
   </div>
 </div>
@@ -1330,9 +1330,9 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   </div>
   <div class="topbar-right">
     <div id="tsm-pg-theme-btn" onclick="toggleTheme()" title="Cambia tema" style="width:34px;height:34px;border-radius:9px;background:var(--card2,rgba(255,255,255,.08));border:1px solid var(--border,rgba(255,255,255,.1));display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;transition:all .2s">☀️</div>
-    <div class="user-chip">
-      <div class="user-av">MR</div>
-      <div style="font-size:12px;font-weight:600">Marco R.</div>
+    <div class="user-chip" id="lega-user-chip" onclick="openLogoutModal()" style="cursor:pointer">
+      <div class="user-av" id="lega-user-av">?</div>
+      <div style="font-size:12px;font-weight:600" id="lega-user-name">Utente</div>
     </div>
   </div>
 </div>
@@ -2806,10 +2806,19 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
     <div id="gs-status" title="Offline" style="width:8px;height:8px;border-radius:50%;background:#6b7280;margin-right:4px;flex-shrink:0;transition:background .3s"></div>
     <div id="dash-theme-btn" onclick="toggleTheme()" title="Cambia tema" style="width:34px;height:34px;border-radius:9px;background:var(--card2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;transition:all .2s">☀️</div>
     <div onclick="openAdminLogin()" title="Pannello Admin" style="width:34px;height:34px;border-radius:9px;background:var(--card2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;transition:all .2s" onmouseover="this.style.background='rgba(239,68,68,.1)'" onmouseout="this.style.background='var(--card2)'">⚙️</div>
-    <div id="login-btn" onclick="openLoginModal()" style="display:flex;align-items:center;gap:7px;padding:6px 14px;background:linear-gradient(135deg,#10b981,#059669);border-radius:9px;cursor:pointer;font-size:12px;font-weight:700;color:#fff;transition:all .2s;box-shadow:0 2px 12px rgba(16,185,129,.3)" onmouseover="this.style.transform='translateY(-1px)';this.style.boxShadow='0 4px 20px rgba(16,185,129,.4)'" onmouseout="this.style.transform='';this.style.boxShadow='0 2px 12px rgba(16,185,129,.3)'">
+    <div style="position:relative">
+    <div id="login-btn" onclick="openLoginModal()"  style="display:flex;align-items:center;gap:7px;padding:6px 14px;background:linear-gradient(135deg,#10b981,#059669);border-radius:9px;cursor:pointer;font-size:12px;font-weight:700;color:#fff;transition:all .2s;box-shadow:0 2px 12px rgba(16,185,129,.3)" onmouseover="this.style.transform='translateY(-1px)';this.style.boxShadow='0 4px 20px rgba(16,185,129,.4)'" onmouseout="this.style.transform='';this.style.boxShadow='0 2px 12px rgba(16,185,129,.3)'">
       <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4M10 17l5-5-5-5M15 12H3"/></svg>
       Accedi
     </div>
+    <div id="user-profile-menu" style="display:none;position:absolute;top:calc(100% + 8px);right:0;background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:8px;min-width:160px;z-index:500;box-shadow:0 8px 24px rgba(0,0,0,.4)">
+      <div id="user-profile-name" style="padding:8px 10px;font-size:12px;font-weight:700;color:var(--text);border-bottom:1px solid var(--border);margin-bottom:6px"></div>
+      <div onclick="doLogout()" style="display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;cursor:pointer;font-size:12px;font-weight:600;color:#ef4444;transition:background .15s" onmouseover="this.style.background='rgba(239,68,68,.1)'" onmouseout="this.style.background='transparent'">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+        Esci
+      </div>
+    </div>
+  </div>
   </div>
 </div>
 
@@ -3637,6 +3646,14 @@ var TSM_FANTASY_LOGOS = {"Atalanta":"data:image/webp;base64,UklGRugJAABXRUJQVlA4
 function enterTSM() {
   var loggedUser = localStorage.getItem('current_user');
   if (!loggedUser) { openLoginModal(); return; }
+  // Aggiorna chip utente
+  try {
+    var u = JSON.parse(loggedUser);
+    var av = document.getElementById('lega-user-av');
+    var nm = document.getElementById('lega-user-name');
+    if (av) av.textContent = u.ruolo==='admin' ? 'AD' : (u.nome||'?').split(' ').map(function(n){return n[0]||'';}).join('').toUpperCase().slice(0,2)||'??';
+    if (nm) nm.textContent = u.ruolo==='admin' ? 'Admin' : (u.nome||'').split(' ')[0];
+  } catch(e) {}
   TEAMS_ROSE = TSM_ROSE_IT || {};
   INFERMERIA = TSM_INFERMERIA_IT || [];
   CREDITS = TSM_CREDITS_IT || {};
@@ -6370,6 +6387,14 @@ function enterLeague(tournament, leagueKey) {
     openLoginModal();
     return;
   }
+  // Aggiorna chip utente nella pagina lega
+  try {
+    var u = JSON.parse(loggedUser);
+    var av = document.getElementById('lega-user-av');
+    var nm = document.getElementById('lega-user-name');
+    if (av) av.textContent = u.ruolo==='admin' ? 'AD' : (u.nome||'?').split(' ').map(function(n){return n[0]||'';}).join('').toUpperCase().slice(0,2)||'??';
+    if (nm) nm.textContent = u.ruolo==='admin' ? 'Admin' : (u.nome||'').split(' ')[0];
+  } catch(e) {}
   if (leagueKey === 'tsm_it') { enterTSM(); return; }
   // Leghe non ancora disponibili → pagina "In Arrivo"
   var comingSoon = ['tr'];  // aggiungere qui future leghe non pronte
@@ -6654,6 +6679,51 @@ function slimRenderClassifica(){
 function slimRenderCalendario(){var el=document.getElementById('slim-calendario-body');if(!el)return;var cal=slimGetCalendar();var RC={VC:'rgba(16,185,129,.15);color:#10b981',VF:'rgba(16,185,129,.1);color:#34d399',PC:'rgba(59,130,246,.12);color:#3b82f6',PF:'rgba(59,130,246,.08);color:#60a5fa',SC:'rgba(239,68,68,.12);color:#ef4444',SF:'rgba(239,68,68,.08);color:#f87171'};var h='';for(var g=1;g<=SLIM_TOTAL_GIORNATE;g++){var gio=cal[String(g)]||{};var hasData=Object.values(gio).some(function(v){return v;});h+='<div style="margin-bottom:10px"><div style="font-family:\'Bebas Neue\';font-size:13px;letter-spacing:1px;color:var(--text2);padding:6px 10px;background:var(--bg2);border-radius:8px 8px 0 0;border:1px solid var(--border);border-bottom:none;display:flex;justify-content:space-between"><span>Giornata '+g+'</span>'+(hasData?'<span style="color:var(--green);font-size:10px">Completata</span>':'<span style="color:var(--text3);font-size:10px">Da giocare</span>')+'</div><div style="background:var(--card);border:1px solid var(--border);border-radius:0 0 8px 8px;padding:8px 10px;display:grid;grid-template-columns:repeat(2,1fr);gap:4px">';SLIM_TEAMS.forEach(function(team){var res=gio[team]||'';var st=RC[res]?'background:'+RC[res]:'background:var(--bg2);color:var(--text3)';h+='<div style="display:flex;align-items:center;justify-content:space-between;padding:3px 6px;border-radius:4px"><span style="font-size:11px;font-weight:700">'+team+'</span><span style="font-size:10px;font-weight:800;padding:1px 6px;border-radius:3px;'+st+'">'+(res||'--')+'</span></div>';});h+='</div></div>';}el.innerHTML=h;}
 function slimRenderStadio(){var el=document.getElementById('slim-stadio-body');if(!el)return;var stadio=slimGetStadio();var res=slimCalcStandings();el.innerHTML=SLIM_TEAMS.slice().sort(function(a,b){return(stadio[b]||1)-(stadio[a]||1);}).map(function(team){var lv=stadio[team]||1;var st=SLIM_STADIO_TABLE[lv]||{};var cr=(res.standings[team]||{}).cr||0;var pct=Math.round(lv/8*100);return'<div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin-bottom:8px"><div style="display:flex;align-items:center;gap:10px;margin-bottom:8px"><div style="font-weight:700;font-size:13px;flex:1">'+team.toUpperCase()+'</div><div style="font-family:\'Bebas Neue\';font-size:20px;color:#f59e0b">Lv '+lv+(st.nome?' — '+st.nome:'')+'</div><div style="font-family:\'Bebas Neue\';font-size:18px;color:#10b981">'+cr.toFixed(1)+' cr</div></div><div style="height:4px;background:var(--bg2);border-radius:2px;margin-bottom:8px"><div style="height:4px;background:linear-gradient(90deg,#10b981,#f59e0b);border-radius:2px;width:'+pct+'%"></div></div><div style="display:flex;gap:12px;font-size:10px;color:var(--text2)"><span>Posti: <b style="color:var(--text)">'+st.posti+'</b></span><span>V: <b style="color:#10b981">+'+st.cr_vittoria+' cr</b></span><span>P: <b style="color:#3b82f6">+'+st.cr_pareggio+' cr</b></span><span>S: <b style="color:#ef4444">'+st.cr_sconfitta+' cr</b></span></div></div>';}).join('');}
 document.addEventListener('keydown',function(e){if(e.key==='Escape'){closeRegModal();closeAlboModal();}});
+function openLogoutModal() {
+  var modal = document.getElementById('logout-modal');
+  if (modal) modal.style.display = 'flex';
+}
+function closeLogoutModal() {
+  var modal = document.getElementById('logout-modal');
+  if (modal) modal.style.display = 'none';
+}
+function doLogout() {
+  closeLogoutModal();
+  localStorage.removeItem('current_user');
+  localStorage.removeItem('saved_credentials');
+  // Ripristina chip login
+  var chip = document.getElementById('login-btn');
+  if (chip) {
+    chip.innerHTML = '<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Accedi';
+    chip.onclick = function(){ openLoginModal(); };
+    chip.style.cursor = 'pointer';
+  }
+  // Chiudi menu profilo se aperto
+  var menu = document.getElementById('user-profile-menu');
+  if (menu) menu.style.display = 'none';
+  // Torna alla dashboard
+  showPage('dashboard');
+}
+
+function toggleProfileMenu() {
+  var user = localStorage.getItem('current_user');
+  if (!user) { openLoginModal(); return; }
+  var menu = document.getElementById('user-profile-menu');
+  if (!menu) return;
+  menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+}
+
+// Chiudi menu cliccando fuori
+document.addEventListener('click', function(e) {
+  var menu = document.getElementById('user-profile-menu');
+  var btn = document.getElementById('login-btn');
+  if (menu && menu.style.display === 'block') {
+    if (!menu.contains(e.target) && !btn.contains(e.target)) {
+      menu.style.display = 'none';
+    }
+  }
+});
+
 document.addEventListener('DOMContentLoaded',function(){
   // Ping Google Sheets per verificare connessione
   gsPing();
@@ -7022,7 +7092,13 @@ function doLogin(){
       var initials = user.ruolo==='admin' ? 'AD' : (user.nome||'?').split(' ').map(function(n){return n[0]||'';}).join('').toUpperCase().slice(0,2)||'??';
       var firstName = user.ruolo==='admin' ? 'Admin' : (user.nome||'').split(' ')[0];
       var chip = document.getElementById('login-btn');
-      if(chip){chip.innerHTML='<div class="user-av">'+initials+'</div><div style="font-size:12px;font-weight:600">'+firstName+'</div>';chip.onclick=null;chip.style.cursor='default';}
+      if(chip){
+        chip.innerHTML='<div class="user-av">'+initials+'</div><div style="font-size:12px;font-weight:600">'+firstName+'</div>';
+        chip.onclick=function(){ openLogoutModal(); };
+        chip.style.cursor='pointer';
+        var nameEl=document.getElementById('user-profile-name');
+        if(nameEl) nameEl.textContent=user.nome||user.username;
+      }
     } else {
       if(e){e.textContent=userOrError||'Credenziali non valide.';e.style.display='block';}
     }
@@ -7047,5 +7123,18 @@ function doLogin(){
   }
 }
 </script>
+
+<!-- MODAL LOGOUT -->
+<div id="logout-modal" onclick="if(event.target===this)closeLogoutModal()" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.7);backdrop-filter:blur(4px);align-items:center;justify-content:center">
+  <div style="background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:28px 24px;width:min(320px,90vw);text-align:center">
+    <div style="font-size:32px;margin-bottom:12px">👋</div>
+    <div style="font-size:16px;font-weight:800;color:var(--text);margin-bottom:8px">Vuoi uscire?</div>
+    <div style="font-size:13px;color:var(--text2);margin-bottom:24px">Verrai reindirizzato alla dashboard principale.</div>
+    <div style="display:flex;gap:10px">
+      <button onclick="closeLogoutModal()" style="flex:1;padding:11px;background:var(--bg3);border:1px solid var(--border);border-radius:10px;color:var(--text);font-weight:700;font-size:13px;cursor:pointer">No, resta</button>
+      <button onclick="doLogout()" style="flex:1;padding:11px;background:linear-gradient(135deg,#ef4444,#dc2626);border:none;border-radius:10px;color:#fff;font-weight:700;font-size:13px;cursor:pointer">Sì, esci</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>
