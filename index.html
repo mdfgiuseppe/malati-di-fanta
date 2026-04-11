@@ -1,4 +1,4 @@
-<!-- build:20260411_130058 -->
+<!-- build:20260411_132132 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -5599,18 +5599,18 @@ function admRenderUtenti() {
     } else {
       if (countEl) countEl.textContent = pending.length;
       pendingEl.innerHTML = pending.map(function(r, i) {
-        var nome = r['Cognome e Nome'] || r['Nome'] || '—';
-        var wa = r['Numero WhatsApp'] || r['WhatsApp'] || '—';
-        var tornei = r['Numero di Tornei a cui partecipo'] || r['Tornei'] || '—';
-        var squadra = r['Nome della tua squadra'] || r['Squadra'] || '—';
-        var ts = r.timestamp ? new Date(r.timestamp).toLocaleDateString('it-IT') : '—';
+        var nomeCompleto = (r.cognome||'') + ' ' + (r.nome||'');
+        var wa = r.whatsapp || '—';
+        var squadra = r.squadra || '—';
+        var dn = r.dataNascita || '';
+        var ts = r.timestamp || '—';
         return '<div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin-bottom:8px">'
           +'<div style="display:flex;justify-content:space-between;align-items:start;gap:10px">'
-          +'<div>'
-          +'<div style="font-weight:700;font-size:13px;color:var(--text)">'+nome+'</div>'
+          +'<div style="flex:1;min-width:0">'
+          +'<div style="font-weight:700;font-size:13px;color:var(--text)">'+nomeCompleto.trim()+'</div>'
           +'<div style="font-size:11px;color:var(--text2);margin-top:3px">📱 '+wa+' · 🗓 '+ts+'</div>'
-          +(tornei!=='—'?'<div style="font-size:11px;color:var(--text2)">Tornei: '+tornei+'</div>':'')
-          +(squadra!=='—'?'<div style="font-size:11px;color:var(--text2)">Squadra: '+squadra+'</div>':'')
+          +(dn?'<div style="font-size:11px;color:var(--text2)">🎂 '+dn+'</div>':'')
+          +(squadra!=='—'?'<div style="font-size:11px;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">⚽ '+squadra+'</div>':'')
           +'</div>'
           +'<button onclick="admPreFillFromRequest('+i+')" style="flex-shrink:0;padding:6px 10px;background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.3);color:#10b981;border-radius:8px;font-size:10px;font-weight:700;cursor:pointer">+ Registra</button>'
           +'</div></div>';
@@ -5626,12 +5626,16 @@ function admPreFillFromRequest(idx) {
   var pending = JSON.parse(localStorage.getItem('_pendingRequests') || '[]');
   var r = pending[idx];
   if (!r) return;
-  var nome = r['Cognome e Nome'] || r['Nome'] || '';
+  var nomeCompleto = ((r.cognome||'') + ' ' + (r.nome||'')).trim();
   var el = document.getElementById('adm-new-user-nome');
-  if (el) el.value = nome;
-  // Scorri fino al form di aggiunta
-  var form = document.getElementById('adm-new-user-nome');
-  if (form) form.scrollIntoView({behavior:'smooth'});
+  if (el) el.value = nomeCompleto;
+  // Pre-compila anche username (cognome.nome in minuscolo)
+  var uEl = document.getElementById('adm-new-user-username');
+  if (uEl && !uEl.value) {
+    uEl.value = ((r.cognome||'').toLowerCase() + '.' + (r.nome||'').toLowerCase()).replace(/\s+/g,'');
+  }
+  // Scorri fino al form
+  if (el) el.scrollIntoView({behavior:'smooth', block:'center'});
 }
 
 function admAddUser() {
