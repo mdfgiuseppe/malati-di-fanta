@@ -1,4 +1,4 @@
-<!-- build:20260411_150657 -->
+<!-- build:20260411_153436 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -6859,27 +6859,9 @@ document.addEventListener('click', function(e) {
 document.addEventListener('DOMContentLoaded',function(){
   // Ping Google Sheets per verificare connessione
   gsPing();
-  // Auto-login se credenziali salvate (Ricordami spuntato)
-  var savedCreds = localStorage.getItem('saved_credentials');
-  var savedUserData = localStorage.getItem('saved_user_data');
-  if (savedCreds && savedUserData) {
-    try {
-      var savedUser = JSON.parse(savedUserData);
-      // Login immediato con dati salvati
-      localStorage.setItem('current_user', JSON.stringify(savedUser));
-      var _initials = savedUser.ruolo==='admin' ? 'AD' : (savedUser.nome||'?').split(' ').map(function(n){return n[0]||'';}).join('').toUpperCase().slice(0,2)||'??';
-      var _firstName = savedUser.ruolo==='admin' ? 'Admin' : (savedUser.nome||'').split(' ')[0];
-      var _chip = document.getElementById('login-btn');
-      if(_chip){
-        _chip.innerHTML='<div class="user-av">'+_initials+'</div><div style="font-size:12px;font-weight:600">'+_firstName+'</div>';
-        _chip.onclick=function(){openLogoutModal();};
-        _chip.style.cursor='pointer';
-      }
-    } catch(e) {
-      localStorage.removeItem('saved_credentials');
-      localStorage.removeItem('saved_user_data');
-    }
-  }
+  // Nessun auto-login — le credenziali vengono pre-compilate solo quando si apre il modal login
+  // Rimuovi current_user al ricaricamento per richiedere login esplicito
+  localStorage.removeItem('current_user');
   // Salva copia originale dati Italia per ripristino
   window._TEAMS_ROSE_IT = JSON.parse(JSON.stringify(TEAMS_ROSE));
   window._CREDITS_IT = JSON.parse(JSON.stringify(CREDITS));
