@@ -1,4 +1,4 @@
-<!-- build:20260411_140245 -->
+<!-- build:20260411_142953 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -7169,7 +7169,22 @@ function buildMatchCard(home, away, scoreH, scoreA, color, large) {
 function openLoginModal(){
   var m=document.getElementById('login-modal');
   if(m){m.style.display='flex';document.body.style.overflow='hidden';}
-  setTimeout(function(){var u=document.getElementById('login-user');if(u)u.focus();},100);
+  setTimeout(function(){
+    // Pre-compila i campi se ci sono credenziali salvate (Ricordami)
+    var saved = localStorage.getItem('saved_credentials');
+    if (saved) {
+      try {
+        var sc = JSON.parse(saved);
+        var uEl = document.getElementById('login-user');
+        var pEl = document.getElementById('login-pass');
+        var rem = document.getElementById('login-remember');
+        if (uEl && sc.u) uEl.value = sc.u;
+        if (pEl && sc.p) pEl.value = sc.p;
+        if (rem) rem.checked = true;
+      } catch(e) {}
+    }
+    var u=document.getElementById('login-user');if(u&&!u.value)u.focus();
+  },100);
 }
 function closeLoginModal(){
   var m=document.getElementById('login-modal');
