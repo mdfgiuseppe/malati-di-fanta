@@ -4895,18 +4895,15 @@ function admLoadCoppaEditor() {
     var size = roundSizes[ri];
     var matches = data[rk] || [];
     // Assicura array della dimensione giusta
-    while(matches.length < size) matches.push({h:'',a:'',rh:'',ra:''});
+    while(matches.length < size) matches.push({h:'',a:'',rh1:'',ra1:'',rh2:'',ra2:'',esito:'',rh:'',ra:''});
 
     h += '<div style="padding:12px 14px;border-bottom:1px solid var(--border)">'
       +'<div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:'+cfg.color+';margin-bottom:10px">'+round+'</div>'
       +'<div style="display:flex;flex-direction:column;gap:8px">';
 
     for(var i=0;i<size;i++) {
-      var m = matches[i]||{h:'',a:'',rh:'',ra:''};
-      var teamOpts = teams.map(function(t){
-        return '<option value="'+t+'"'+(t===m.h||t===m.a?'':'')+'>'+t+'</option>';
-      });
-      // Genera options con optgroup per lega
+      var m = matches[i]||{h:'',a:'',rh1:'',ra1:'',rh2:'',ra2:'',esito:'',rh:'',ra:''};
+      var isFinalRound = (rk === 'finale');
       function buildOpts(selVal) {
         var o = '<option value="BYE"'+(selVal==='BYE'?' selected':'')+'>BYE</option>';
         if (teamsByLega.length) {
@@ -4924,17 +4921,18 @@ function admLoadCoppaEditor() {
       }
       var homeOpts = buildOpts(m.h||'');
       var awayOpts = buildOpts(m.a||'');
+      var inputStyle = 'width:34px;padding:5px 4px;background:var(--card);border:1px solid var(--border);border-radius:6px;font-family:Bebas Neue,sans-serif;font-size:16px;text-align:center;outline:none;';
 
-      h += '<div style="display:flex;align-items:center;gap:8px;background:var(--bg2);padding:8px 10px;border-radius:8px">'
-        +'<select data-t="'+torneoKey+'" data-k="'+coppaKey+'" data-rk="'+rk+'" data-i="'+i+'" data-f="h" onchange="admUpdateMatchEl(this)" style="flex:1;padding:6px 8px;background:var(--card);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:12px;font-weight:700;outline:none">'+homeOpts+'</select>'
-        +'<div style="display:flex;gap:4px;align-items:center">'
-        +'<input type="text" value="'+(m.rh||'')+'" data-t="'+torneoKey+'" data-k="'+coppaKey+'" data-rk="'+rk+'" data-i="'+i+'" data-f="rh" onchange="admUpdateMatchEl(this)" placeholder="—" style="width:36px;padding:6px 4px;background:var(--card);border:1px solid var(--border);border-radius:6px;color:#10b981;font-family:Bebas Neue,sans-serif;font-size:18px;text-align:center;outline:none">'
-        +'<span style="color:var(--text3);font-size:12px">:</span>'
-        +'<input type="text" value="'+(m.ra||'')+'" data-t="'+torneoKey+'" data-k="'+coppaKey+'" data-rk="'+rk+'" data-i="'+i+'" data-f="ra" onchange="admUpdateMatchEl(this)" placeholder="—" style="width:36px;padding:6px 4px;background:var(--card);border:1px solid var(--border);border-radius:6px;color:#ef4444;font-family:Bebas Neue,sans-serif;font-size:18px;text-align:center;outline:none">'
-        +'</div>'
-        +'<select data-t="'+torneoKey+'" data-k="'+coppaKey+'" data-rk="'+rk+'" data-i="'+i+'" data-f="a" onchange="admUpdateMatchEl(this)" style="flex:1;padding:6px 8px;background:var(--card);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:12px;font-weight:700;outline:none">'+awayOpts+'</select>'
-        +'</div>';
+      h += '<div style="background:var(--bg2);padding:8px 10px;border-radius:8px;margin-bottom:4px">';
+      h += '<div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">'        +'<select data-t="'+torneoKey+'" data-k="'+coppaKey+'" data-rk="'+rk+'" data-i="'+i+'" data-f="h" onchange="admUpdateMatchEl(this)" style="flex:1;padding:5px 8px;background:var(--card);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:11px;font-weight:700;outline:none">'+homeOpts+'</select>'        +'<select data-t="'+torneoKey+'" data-k="'+coppaKey+'" data-rk="'+rk+'" data-i="'+i+'" data-f="a" onchange="admUpdateMatchEl(this)" style="flex:1;padding:5px 8px;background:var(--card);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:11px;font-weight:700;outline:none">'+awayOpts+'</select>'        +'</div>';
+      if (isFinalRound) {
+        h += '<div style="display:flex;align-items:center;gap:4px;justify-content:center">'          +'<span style="font-size:9px;color:var(--text3);font-weight:700;margin-right:4px">FINALE</span>'          +'<input type="text" value="'+(m.rh||'')+'" data-t="'+torneoKey+'" data-k="'+coppaKey+'" data-rk="'+rk+'" data-i="'+i+'" data-f="rh" onchange="admUpdateMatchEl(this)" placeholder="—" style="'+inputStyle+'color:#10b981">'          +'<span style="color:var(--text3)">:</span>'          +'<input type="text" value="'+(m.ra||'')+'" data-t="'+torneoKey+'" data-k="'+coppaKey+'" data-rk="'+rk+'" data-i="'+i+'" data-f="ra" onchange="admUpdateMatchEl(this)" placeholder="—" style="'+inputStyle+'color:#ef4444">'          +'</div>';
+      } else {
+        h += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-bottom:4px">'          +'<div style="text-align:center;font-size:8px;color:var(--text3);font-weight:700">ANDATA</div>'          +'<div style="text-align:center;font-size:8px;color:var(--text3);font-weight:700">RITORNO</div>'          +'<div style="display:flex;align-items:center;gap:3px;justify-content:center">'          +'<input type="text" value="'+(m.rh1||'')+'" data-t="'+torneoKey+'" data-k="'+coppaKey+'" data-rk="'+rk+'" data-i="'+i+'" data-f="rh1" onchange="admUpdateMatchEl(this)" placeholder="—" style="'+inputStyle+'color:#10b981">'          +'<span style="color:var(--text3)">:</span>'          +'<input type="text" value="'+(m.ra1||'')+'" data-t="'+torneoKey+'" data-k="'+coppaKey+'" data-rk="'+rk+'" data-i="'+i+'" data-f="ra1" onchange="admUpdateMatchEl(this)" placeholder="—" style="'+inputStyle+'color:#ef4444">'          +'</div>'          +'<div style="display:flex;align-items:center;gap:3px;justify-content:center">'          +'<input type="text" value="'+(m.rh2||'')+'" data-t="'+torneoKey+'" data-k="'+coppaKey+'" data-rk="'+rk+'" data-i="'+i+'" data-f="rh2" onchange="admUpdateMatchEl(this)" placeholder="—" style="'+inputStyle+'color:#10b981">'          +'<span style="color:var(--text3)">:</span>'          +'<input type="text" value="'+(m.ra2||'')+'" data-t="'+torneoKey+'" data-k="'+coppaKey+'" data-rk="'+rk+'" data-i="'+i+'" data-f="ra2" onchange="admUpdateMatchEl(this)" placeholder="—" style="'+inputStyle+'color:#ef4444">'          +'</div>'          +'</div>'          +'<input type="text" value="'+(m.esito||'')+'" data-t="'+torneoKey+'" data-k="'+coppaKey+'" data-rk="'+rk+'" data-i="'+i+'" data-f="esito" onchange="admUpdateMatchEl(this)" placeholder="Esito (es. 3-2 d.c.r.)" style="width:100%;padding:4px 8px;background:var(--card);border:1px solid rgba(245,158,11,.3);border-radius:5px;color:#f59e0b;font-size:10px;font-weight:700;outline:none;box-sizing:border-box">';
+      }
+      h += '</div>';
     }
+
     h += '</div></div>';
   });
 
@@ -7070,7 +7068,12 @@ function renderCoppaPanel(key) {
 
     for (var i = 0; i < size; i++) {
       var m = matches[i] || {};
-      html += renderMatch(m.h||'—', m.a||'—', m.rh||'', m.ra||'', cfg.color, false);
+      var isFinale = (rk === 'finale');
+      if (isFinale) {
+        html += renderMatch(m.h||'—', m.a||'—', m.rh||'', m.ra||'', color, false);
+      } else {
+        html += renderMatchDouble(m, color);
+      }
     }
 
     html += '</div></div>';
@@ -7093,6 +7096,16 @@ function renderCoppaPanel(key) {
 
   html += '</div></div>';
   panel.innerHTML = html;
+}
+
+function renderMatchDouble(m, color) {
+  var home = m.h || '—';
+  var away = m.a || '—';
+  var hasAndata = m.rh1 !== '' && m.ra1 !== '' && m.rh1 !== undefined;
+  var hasRitorno = m.rh2 !== '' && m.ra2 !== '' && m.rh2 !== undefined;
+  var esito = m.esito || '';
+  var scoreStyle = 'font-size:9px;font-weight:800;min-width:14px;text-align:center;';
+  return '<div style="background:var(--card);border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:4px">'    +'<div style="display:flex;align-items:center;justify-content:space-between;padding:5px 8px;border-bottom:1px solid var(--border)">'    +'<span style="font-size:10px;font-weight:700;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+home+'</span>'    +(hasAndata?'<span style="'+scoreStyle+'color:#10b981;margin:0 2px">'+m.rh1+'</span>':'<span style="'+scoreStyle+'color:var(--text3)">·</span>')    +(hasRitorno?'<span style="'+scoreStyle+'color:var(--text3)">|</span><span style="'+scoreStyle+'color:#10b981">'+m.rh2+'</span>':'')    +'</div>'    +'<div style="display:flex;align-items:center;justify-content:space-between;padding:5px 8px'+(esito?';border-bottom:1px solid var(--border)':'')+'">'    +'<span style="font-size:10px;font-weight:700;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+away+'</span>'    +(hasAndata?'<span style="'+scoreStyle+'color:#ef4444;margin:0 2px">'+m.ra1+'</span>':'<span style="'+scoreStyle+'color:var(--text3)">·</span>')    +(hasRitorno?'<span style="'+scoreStyle+'color:var(--text3)">|</span><span style="'+scoreStyle+'color:#ef4444">'+m.ra2+'</span>':'')    +'</div>'    +(esito?'<div style="padding:3px 8px;font-size:9px;font-weight:700;color:#f59e0b;text-align:center">'+esito+'</div>':'')    +'</div>';
 }
 
 function renderMatch(home, away, scoreH, scoreA, color, isFinal) {
@@ -7214,10 +7227,10 @@ function buildBracket(key) {
       html += '<div style="flex:1;display:flex;align-items:center;justify-content:center;padding:0 6px">';
       var finalMatch = data['finale'] && data['finale'][0];
       var champion = '';
-      // Prima controlla vincitore manuale
+      // Vincitore solo manuale
       if (data.vincitore) {
         champion = data.vincitore;
-      } else if (finalMatch && finalMatch.rh !== '' && finalMatch.ra !== '') {
+      } else if (false) { // calcolo automatico disabilitato
         champion = parseInt(finalMatch.rh) > parseInt(finalMatch.ra) ? (finalMatch.h||'') : (finalMatch.a||'');
       }
       var trophyImg = (typeof COPPA_TROPHIES!=='undefined' && COPPA_TROPHIES[key])
