@@ -5848,8 +5848,20 @@ function admImportRoseExcel() {
 }
 
 function admParseRoseCSV(text, torneoKey, legaKey, status) {
-  // Parsa CSV con struttura Leghe FC (2 squadre per riga, separatore ;)
-  var lines = text.split('\n').map(function(l){ return l.split(';'); });
+  function parseCSVLine(line) {
+    var result = [], inQ = false, cur = '';
+    var clean = line.replace(/[\r]+$/, '');
+    for (var i = 0; i < clean.length; i++) {
+      var c = clean[i];
+      if (c === '"') { inQ = !inQ; }
+      else if (c === ';' && !inQ) { result.push(cur.trim()); cur = ''; }
+      else { cur += c; }
+    }
+    result.push(cur.trim());
+    return result;
+  }
+  var t = (text.charCodeAt(0) === 0xFEFF) ? text.slice(1) : text;
+  var lines = t.split('\n').map(function(l){ return parseCSVLine(l); });
   admParseRoseRows(lines, torneoKey, legaKey, status);
 }
 
