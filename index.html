@@ -7021,7 +7021,9 @@ function renderTable(){
   if(currentFilter!=='ALL'){var al=gMap[currentFilter]||[currentFilter];pl=pl.filter(function(p){return p.ruolo.split(';').some(function(r){return al.indexOf(r.trim())>-1;});});}
   if(q)pl=pl.filter(function(p){return p.nome.toLowerCase().indexOf(q)>-1||(REAL_NAMES[p.squadra]||p.squadra||'').toLowerCase().indexOf(q)>-1;});
   if(!pl.length){if(tbody)tbody.innerHTML='';if(empty)empty.style.display='block';return;}
-  if(empty)empty.style.display='none';
+  var ruoloOrder=['Por','Dc','B','Dd','Ds','E','M','C','T','W','A','Pc'];
+  function getRuoloPriority(r){var p=r.split(';')[0].trim();var i=ruoloOrder.indexOf(p);return i>=0?i:99;}
+  pl=pl.slice().sort(function(a,b){return getRuoloPriority(a.ruolo)-getRuoloPriority(b.ruolo);});  if(empty)empty.style.display='none';
   if(tbody)tbody.innerHTML=pl.map(function(p){var col=p.costo>=50?'#ef4444':p.costo>=20?'#f59e0b':'var(--text2)';return'<tr style="border-bottom:1px solid var(--border)"><td style="padding:8px 10px">'+roleBadge(p.ruolo)+'</td><td style="padding:8px 8px;font-weight:700;font-size:13px">'+p.nome+'</td><td style="padding:8px 8px;font-size:12px;color:var(--text2)">'+(REAL_NAMES[p.squadra]||p.squadra||'--')+'</td><td style="padding:8px 10px;text-align:right;font-family:\'Bebas Neue\';font-size:17px;color:'+col+'">'+p.costo+'<span style="font-size:10px;font-weight:700;color:var(--text3);margin-left:1px">cr</span></td></tr>';}).join('');
 }
 var showAllQual=false;
