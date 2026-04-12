@@ -3168,7 +3168,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
       <!-- Import Excel Leghe FC -->
       <div class="card" style="padding:16px;margin-bottom:20px;border:1px solid rgba(16,185,129,.3);background:rgba(16,185,129,.05)">
         <div style="font-size:13px;font-weight:800;color:#10b981;margin-bottom:10px">📥 Import Rose da Excel (Leghe FC)</div>
-        <div style="font-size:11px;color:var(--text2);margin-bottom:12px">Carica il file Excel esportato da Leghe FC. Verranno importate tutte le rose della lega selezionata in un colpo solo.</div>
+        <div style="font-size:11px;color:var(--text2);margin-bottom:12px">Esporta da Leghe FC in formato <b>CSV UTF-8</b> (File → Salva con nome → CSV UTF-8), poi carica qui. Verranno importate tutte le rose in un colpo solo.</div>
         <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
           <select id="adm-import-torneo" style="padding:7px 10px;background:var(--bg2);border:1px solid var(--border);border-radius:7px;color:var(--text);font-size:12px;outline:none">
             <option value="">-- Torneo --</option>
@@ -3177,8 +3177,8 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
             <option value="">-- Lega --</option>
           </select>
           <label style="padding:7px 14px;background:#10b981;color:#fff;border-radius:7px;font-size:11px;font-weight:700;cursor:pointer">
-            📂 Scegli file Excel
-            <input type="file" accept=".xlsx,.xls,.csv" id="adm-import-file" style="display:none" onchange="admImportRoseExcel()">
+            📂 Scegli file .csv
+            <input type="file" accept=".csv,.xlsx,.xls" id="adm-import-file" style="display:none" onchange="admImportRoseExcel()">
           </label>
           <div id="adm-import-status" style="font-size:11px;color:var(--text2)"></div>
           <button id="adm-import-confirm" onclick="admConfirmImport()" style="display:none;padding:7px 16px;background:#10b981;color:#fff;border:none;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer">✅ Conferma Import</button>
@@ -5820,7 +5820,7 @@ function admImportRoseExcel() {
     reader.onload = function(e) {
       admParseRoseCSV(e.target.result, torneoKey, legaKey, status);
     };
-    reader.readAsText(e, 'UTF-8');
+    reader.readAsText(file, 'UTF-8');
     return;
   }
 
