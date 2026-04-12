@@ -7130,7 +7130,7 @@ function renderMatch(home, away, scoreH, scoreA, color, isFinal) {
 var COPPA_COLORS = {cl:'#f59e0b', el:'#f97316', conf:'#10b981', sc:'#8b5cf6'};
 var COPPA_LABELS = {
   cl:'Champions League', el:'Europa League',
-  conf:'Conference League', sc:'European Supercup'
+  conf:'Conference League', sc:'Supercoppa Europea'
 };
 var COPPA_DATA = {
   cl:   {ottavi:[{},{},{},{},{},{},{},{}], quarti:[{},{},{},{}], semifinali:[{},{}], finale:[{}]},
@@ -7210,7 +7210,12 @@ function buildBracket(key) {
     html += '<div style="flex:1;display:flex;flex-direction:column;justify-content:space-around;gap:8px;padding:0 6px">';
     for (var i = 0; i < round.size; i++) {
       var m = matches[i] || {};
-      html += buildMatchCard(m.h||'', m.a||'', m.rh||'', m.ra||'', color, isSC);
+      var isFinaleRound = (round.key === 'finale');
+      if (isFinaleRound || isSC) {
+        html += buildMatchCard(m.h||'', m.a||'', m.rh||'', m.ra||'', color, isSC);
+      } else {
+        html += buildMatchCardDouble(m, color);
+      }
     }
     html += '</div>';
 
@@ -7262,6 +7267,17 @@ function buildBracket(key) {
 
   html += '</div></div>';
   return html;
+}
+
+function buildMatchCardDouble(m, color) {
+  var home = m.h || '';
+  var away = m.a || '';
+  var empty = !home && !away;
+  var hasA = m.rh1 !== '' && m.ra1 !== '' && m.rh1 !== undefined;
+  var hasR = m.rh2 !== '' && m.ra2 !== '' && m.rh2 !== undefined;
+  var esito = m.esito || '';
+  var sc = 'font-size:10px;font-weight:800;min-width:14px;text-align:right;margin-left:4px;';
+  return '<div style="background:var(--card);border:1px solid '+(hasA||hasR?color+'44':'var(--border)')+';border-radius:8px;overflow:hidden;margin-bottom:2px">'    +'<div style="display:flex;align-items:center;padding:6px 10px;border-bottom:1px solid var(--border)">'    +'<span style="flex:1;font-size:11px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:'+(empty?'var(--text3)':'var(--text)')+'">'+(home||'Da definire')+'</span>'    +(hasA?'<span style="font-size:8px;color:var(--text3);margin:0 2px">A</span><span style="'+sc+'color:'+color+'">'+m.rh1+'</span>':'')    +(hasR?'<span style="font-size:8px;color:var(--text3);margin:0 2px">R</span><span style="'+sc+'color:'+color+'">'+m.rh2+'</span>':'')    +'</div>'    +'<div style="display:flex;align-items:center;padding:6px 10px'+(esito?';border-bottom:1px solid var(--border)':'')+'">'    +'<span style="flex:1;font-size:11px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:'+(empty?'var(--text3)':'var(--text)')+'">'+(away||'Da definire')+'</span>'    +(hasA?'<span style="font-size:8px;color:var(--text3);margin:0 2px">A</span><span style="'+sc+'color:'+color+'">'+m.ra1+'</span>':'')    +(hasR?'<span style="font-size:8px;color:var(--text3);margin:0 2px">R</span><span style="'+sc+'color:'+color+'">'+m.ra2+'</span>':'')    +'</div>'    +(esito?'<div style="padding:3px 8px;font-size:9px;font-weight:700;color:#f59e0b;text-align:center">'+esito+'</div>':'')    +'</div>';
 }
 
 function buildMatchCard(home, away, scoreH, scoreA, color, large) {
