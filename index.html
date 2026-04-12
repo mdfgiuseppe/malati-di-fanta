@@ -3181,6 +3181,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
             <input type="file" accept=".xlsx,.xls,.csv" id="adm-import-file" style="display:none" onchange="admImportRoseExcel()">
           </label>
           <div id="adm-import-status" style="font-size:11px;color:var(--text2)"></div>
+          <button id="adm-import-confirm" onclick="admConfirmImport()" style="display:none;padding:7px 16px;background:#10b981;color:#fff;border:none;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer">✅ Conferma Import</button>
         </div>
       </div>
 
@@ -3195,7 +3196,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
         <select id="adm-rose-squadra" onchange="admLoadRosaGiocatori()" style="padding:8px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;outline:none">
           <option value="">-- Seleziona Squadra --</option>
         </select>
-        <button onclick="admImportExcel('rose')" style="padding:8px 14px;background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.3);color:#10b981;border-radius:8px;font-weight:700;font-size:12px;cursor:pointer">📥 Importa da Excel</button>
+        
       </div>
 
       <div id="adm-rose-body"></div>
@@ -5890,6 +5891,8 @@ function admParseRoseRows(rows, torneoKey, legaKey, status) {
   var infermeria = rose['INFERMERIA'] || [];
   delete rose['INFERMERIA'];
 
+  // Salva in memoria per conferma
+  window._admImportPending = {rose: rose, infermeria: infermeria, torneoKey: torneoKey, legaKey: legaKey};
   // Normalizza nomi squadre
   var savedKeys = {};
   Object.keys(rose).forEach(function(squadra) {
@@ -5906,7 +5909,24 @@ function admParseRoseRows(rows, torneoKey, legaKey, status) {
     savedKeys[matchKey] = rose[squadra];
   });
 
-  // Salva
+  window._admImportPending.savedKeys = savedKeys;
+
+  var nGiocatori = Object.values(savedKeys).reduce(function(a,b){return a+b.length;},0);
+  status.textContent = '📋 Pronte ' + Object.keys(savedKeys).length + ' squadre (' + nGiocatori + ' giocatori) — clicca Conferma per salvare';
+  status.style.color = '#f59e0b';
+
+  var confirmBtn = document.getElementById('adm-import-confirm');
+  if (confirmBtn) confirmBtn.style.display = 'inline-block';
+}
+
+function admConfirmImport() {
+  var pending = window._admImportPending;
+  if (!pending || !pending.savedKeys) return;
+  var savedKeys = pending.savedKeys;
+  var infermeria = pending.infermeria;
+  var torneoKey = pending.torneoKey;
+  var legaKey = pending.legaKey;
+
   if (torneoKey === 'slim' && legaKey === 'it') {
     Object.keys(savedKeys).forEach(function(sq) { TEAMS_ROSE[sq] = savedKeys[sq]; });
     localStorage.setItem('adm_rose_slim_it', JSON.stringify(savedKeys));
@@ -5916,13 +5936,19 @@ function admParseRoseRows(rows, torneoKey, legaKey, status) {
   } else {
     localStorage.setItem('adm_rose_'+torneoKey+'_'+legaKey, JSON.stringify(savedKeys));
   }
-  if (infermeria.length > 0) {
+  if (infermeria && infermeria.length > 0) {
     localStorage.setItem('adm_infermeria_'+torneoKey+'_'+legaKey, JSON.stringify(infermeria));
   }
 
   var nGiocatori = Object.values(savedKeys).reduce(function(a,b){return a+b.length;},0);
-  status.textContent = '✅ Importate ' + Object.keys(savedKeys).length + ' squadre (' + nGiocatori + ' giocatori)';
-  status.style.color = '#10b981';
+  var status = document.getElementById('adm-import-status');
+  if (status) {
+    status.textContent = '✅ Salvate ' + Object.keys(savedKeys).length + ' squadre (' + nGiocatori + ' giocatori)';
+    status.style.color = '#10b981';
+  }
+  var confirmBtn = document.getElementById('adm-import-confirm');
+  if (confirmBtn) confirmBtn.style.display = 'none';
+  window._admImportPending = null;
 
   var curT = document.getElementById('adm-rose-torneo');
   var curL = document.getElementById('adm-rose-lega');
