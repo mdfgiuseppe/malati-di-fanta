@@ -4728,7 +4728,7 @@ function admGetCoppeConfig(torneoKey) {
       {key:'cl',   label:'Champions League',   color:'#f59e0b', rounds:['Ottavi','Quarti','Semifinali','Finale'], teams:16},
       {key:'el',   label:'Europa League',       color:'#f97316', rounds:['Ottavi','Quarti','Semifinali','Finale'], teams:16},
       {key:'conf', label:'Conference League',   color:'#10b981', rounds:['Ottavi','Quarti','Semifinali','Finale'], teams:16},
-      {key:'sc',   label:'Supercoppa',          color:'#8b5cf6', rounds:['Finale'], teams:2}
+      {key:'sc',   label:'European Supercup',   color:'#8b5cf6', rounds:['Finale'], teams:2}
     ];
   }
   return [];
@@ -7273,11 +7273,14 @@ function buildMatchCardDouble(m, color) {
   var home = m.h || '';
   var away = m.a || '';
   var empty = !home && !away;
-  var hasA = m.rh1 !== '' && m.ra1 !== '' && m.rh1 !== undefined;
-  var hasR = m.rh2 !== '' && m.ra2 !== '' && m.rh2 !== undefined;
+  var hasA = m.rh1 !== undefined && m.rh1 !== '' && m.ra1 !== undefined && m.ra1 !== '';
+  var hasR = m.rh2 !== undefined && m.rh2 !== '' && m.ra2 !== undefined && m.ra2 !== '';
   var esito = m.esito || '';
-  var sc = 'font-size:10px;font-weight:800;min-width:14px;text-align:right;margin-left:4px;';
-  return '<div style="background:var(--card);border:1px solid '+(hasA||hasR?color+'44':'var(--border)')+';border-radius:8px;overflow:hidden;margin-bottom:2px">'    +'<div style="display:flex;align-items:center;padding:6px 10px;border-bottom:1px solid var(--border)">'    +'<span style="flex:1;font-size:11px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:'+(empty?'var(--text3)':'var(--text)')+'">'+(home||'Da definire')+'</span>'    +(hasA?'<span style="font-size:8px;color:var(--text3);margin:0 2px">A</span><span style="'+sc+'color:'+color+'">'+m.rh1+'</span>':'')    +(hasR?'<span style="font-size:8px;color:var(--text3);margin:0 2px">R</span><span style="'+sc+'color:'+color+'">'+m.rh2+'</span>':'')    +'</div>'    +'<div style="display:flex;align-items:center;padding:6px 10px'+(esito?';border-bottom:1px solid var(--border)':'')+'">'    +'<span style="flex:1;font-size:11px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:'+(empty?'var(--text3)':'var(--text)')+'">'+(away||'Da definire')+'</span>'    +(hasA?'<span style="font-size:8px;color:var(--text3);margin:0 2px">A</span><span style="'+sc+'color:'+color+'">'+m.ra1+'</span>':'')    +(hasR?'<span style="font-size:8px;color:var(--text3);margin:0 2px">R</span><span style="'+sc+'color:'+color+'">'+m.ra2+'</span>':'')    +'</div>'    +(esito?'<div style="padding:3px 8px;font-size:9px;font-weight:700;color:#f59e0b;text-align:center">'+esito+'</div>':'')    +'</div>';
+  // Blocco score: lettera+numero ravvicinati, separati da spazio da altri blocchi
+  function scoreBlock(lbl, s, col) {
+    return '<span style="display:inline-flex;align-items:center;gap:1px;margin-left:5px">'      +'<span style="font-size:7px;font-weight:800;color:var(--text3);line-height:1">'+lbl+'</span>'      +'<span style="font-size:11px;font-weight:800;color:'+col+';min-width:12px;text-align:center;line-height:1">'+s+'</span>'      +'</span>';
+  }
+  return '<div style="background:var(--card);border:1px solid '+(hasA||hasR?color+'44':'var(--border)')+';border-radius:8px;overflow:hidden;margin-bottom:2px">'    +'<div style="display:flex;align-items:center;padding:5px 8px;border-bottom:1px solid var(--border)">'    +'<span style="flex:1;font-size:11px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:'+(empty?'var(--text3)':'var(--text)')+'">'+(home||'Da definire')+'</span>'    +(hasA?scoreBlock('A',m.rh1,color):'')    +(hasR?scoreBlock('R',m.rh2,color):'')    +'</div>'    +'<div style="display:flex;align-items:center;padding:5px 8px'+(esito?';border-bottom:1px solid var(--border)':'')+'">'    +'<span style="flex:1;font-size:11px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:'+(empty?'var(--text3)':'var(--text)')+'">'+(away||'Da definire')+'</span>'    +(hasA?scoreBlock('A',m.ra1,color):'')    +(hasR?scoreBlock('R',m.ra2,color):'')    +'</div>'    +(esito?'<div style="padding:3px 8px;font-size:9px;font-weight:700;color:#f59e0b;text-align:center">'+esito+'</div>':'')    +'</div>';
 }
 
 function buildMatchCard(home, away, scoreH, scoreA, color, large) {
