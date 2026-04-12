@@ -3178,7 +3178,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
           </select>
           <label style="padding:7px 14px;background:#10b981;color:#fff;border-radius:7px;font-size:11px;font-weight:700;cursor:pointer">
             📂 Scegli file Excel
-            <input type="file" accept=".xlsx,.xls" id="adm-import-file" style="display:none" onchange="admImportRoseExcel()">
+            <input type="file" accept=".xlsx,.xls,.csv" id="adm-import-file" style="display:none" onchange="admImportRoseExcel()">
           </label>
           <div id="adm-import-status" style="font-size:11px;color:var(--text2)"></div>
         </div>
@@ -5812,131 +5812,121 @@ function admImportRoseExcel() {
   status.textContent = '⏳ Lettura file...';
   status.style.color = 'var(--text2)';
 
-  var reader = new FileReader();
-  reader.onload = function(e) {
-    try {
-      var data = new Uint8Array(e.target.result);
-      var workbook = XLSX.read(data, {type: 'array'});
-      var sheet = workbook.Sheets[workbook.SheetNames[0]];
-      var rows = XLSX.utils.sheet_to_json(sheet, {header: 1, defval: ''});
+  var ext = file.name.split('.').pop().toLowerCase();
 
-      // Parse: struttura con 2 squadre per riga (col 0-3 sx, col 5-8 dx)
-      var rose = {};
-      var currentLeft = null, currentRight = null;
+  if (ext === 'csv') {
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      admParseRoseCSV(e.target.result, torneoKey, legaKey, status);
+    };
+    reader.readAsText(e, 'UTF-8');
+    return;
+  }
 
-      for (var i = 0; i < rows.length; i++) {
-        var r = rows[i];
-        var v0 = String(r[0]||'').trim();
-        var v1 = String(r[1]||'').trim();
-        var v2 = String(r[2]||'').trim();
-        var v3 = r[3];
-        var v5 = String(r[5]||'').trim();
-        var v6 = String(r[6]||'').trim();
-        var v7 = String(r[7]||'').trim();
-        var v8 = r[8];
-
-        // Riga intestazione squadra
-        if (v0 && v0 !== 'Ruolo' && !v0.startsWith('*') && !v0.startsWith('http') &&
-            !v0.startsWith('Crediti') && v0 !== 'Rose lega' && v1 === '' && v2 === '') {
-          currentLeft = v0;
-          if (!rose[currentLeft]) rose[currentLeft] = [];
-          if (v5 && v5 !== 'Ruolo' && !v5.startsWith('Crediti')) {
-            currentRight = v5;
-            if (!rose[currentRight]) rose[currentRight] = [];
-          }
-          continue;
-        }
-        if (v0 === 'Ruolo') continue;
-        if (v0.startsWith('Crediti')) continue;
-
-        // Giocatori sinistra
-        if (currentLeft && v0 && v0 !== 'nan' && v1 && v1 !== 'nan') {
-          rose[currentLeft].push({
-            ruolo: v0,
-            nome: v1,
-            squadra: v2,
-            costo: parseInt(v3)||0
-          });
-        }
-        // Giocatori destra
-        if (currentRight && v5 && v5 !== 'nan' && v6 && v6 !== 'nan') {
-          rose[currentRight].push({
-            ruolo: v5,
-            nome: v6,
-            squadra: v7,
-            costo: parseInt(v8)||0
-          });
-        }
+  // xlsx: usa XLSX se disponibile, altrimenti mostra istruzione CSV
+  if (typeof XLSX !== 'undefined') {
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      try {
+        var data = new Uint8Array(e.target.result);
+        var workbook = XLSX.read(data, {type: 'array'});
+        var sheet = workbook.Sheets[workbook.SheetNames[0]];
+        var rows = XLSX.utils.sheet_to_json(sheet, {header: 1, defval: ''});
+        admParseRoseRows(rows, torneoKey, legaKey, status);
+      } catch(err) {
+        status.textContent = '❌ Errore: ' + err.message;
+        status.style.color = '#ef4444';
       }
+    };
+    reader.readAsArrayBuffer(file);
+  } else {
+    // Fallback: chiedi CSV
+    status.innerHTML = '⚠️ Salva il file Excel come <b>CSV</b> da Excel (File → Salva con nome → CSV UTF-8) e ricarica il file .csv';
+    status.style.color = '#f59e0b';
+  }
+}
 
-      // Escludi INFERMERIA dalle squadre normali (salvala a parte)
-      var infermeria = rose['INFERMERIA'] || [];
-      delete rose['INFERMERIA'];
+function admParseRoseCSV(text, torneoKey, legaKey, status) {
+  // Parsa CSV con struttura Leghe FC (2 squadre per riga, separatore ;)
+  var lines = text.split('\n').map(function(l){ return l.split(';'); });
+  admParseRoseRows(lines, torneoKey, legaKey, status);
+}
 
-      // Salva in localStorage
-      var count = 0;
-      var savedKeys = {};
-      Object.keys(rose).forEach(function(squadra) {
-        if (torneoKey === 'slim') {
-          if (legaKey === 'it') {
-            // Cerca la chiave in SLIM_TEAMS_IT (case insensitive)
-            var matchKey = squadra;
-            if (typeof SLIM_TEAMS_IT !== 'undefined') {
-              SLIM_TEAMS_IT.forEach(function(t) {
-                if (t.toLowerCase() === squadra.toLowerCase()) matchKey = t;
-              });
-            }
-            savedKeys[matchKey] = rose[squadra];
-          } else {
-            savedKeys[squadra] = rose[squadra];
-          }
-        } else {
-          savedKeys[squadra] = rose[squadra];
-        }
-        count++;
-      });
+function admParseRoseRows(rows, torneoKey, legaKey, status) {
+  var rose = {};
+  var currentLeft = null, currentRight = null;
 
-      // Salva le rose
-      if (torneoKey === 'slim' && legaKey === 'it') {
-        // Aggiorna TEAMS_ROSE
-        Object.keys(savedKeys).forEach(function(sq) {
-          TEAMS_ROSE[sq] = savedKeys[sq];
-        });
-        localStorage.setItem('adm_rose_slim_it', JSON.stringify(savedKeys));
-      } else if (torneoKey === 'tsm' && legaKey === 'it') {
-        Object.keys(savedKeys).forEach(function(sq) {
-          if (typeof TSM_ROSE_IT !== 'undefined') TSM_ROSE_IT[sq] = savedKeys[sq];
-        });
-        localStorage.setItem('adm_rose_tsm_it', JSON.stringify(savedKeys));
-      } else {
-        localStorage.setItem('adm_rose_'+torneoKey+'_'+legaKey, JSON.stringify(savedKeys));
+  for (var i = 0; i < rows.length; i++) {
+    var r = rows[i];
+    var v0 = String(r[0]||'').trim();
+    var v1 = String(r[1]||'').trim();
+    var v2 = String(r[2]||'').trim();
+    var v3 = r[3];
+    var v5 = String(r[5]||'').trim();
+    var v6 = String(r[6]||'').trim();
+    var v7 = String(r[7]||'').trim();
+    var v8 = r[8];
+
+    if (v0 && v0 !== 'Ruolo' && !v0.startsWith('*') && !v0.startsWith('http') &&
+        !v0.startsWith('Crediti') && v0.indexOf('Rose lega') < 0 && v1 === '' && v2 === '') {
+      currentLeft = v0;
+      if (!rose[currentLeft]) rose[currentLeft] = [];
+      if (v5 && v5 !== 'Ruolo' && !v5.startsWith('Crediti')) {
+        currentRight = v5;
+        if (!rose[currentRight]) rose[currentRight] = [];
       }
-
-      // Salva infermeria se presente
-      if (infermeria.length > 0) {
-        if (typeof window._INFERMERIA_IT !== 'undefined') {
-          window._INFERMERIA_IT = infermeria;
-        }
-        localStorage.setItem('adm_infermeria_'+torneoKey+'_'+legaKey, JSON.stringify(infermeria));
-      }
-
-      status.textContent = '✅ Importate ' + count + ' squadre (' +
-        Object.values(savedKeys).reduce(function(a,b){return a+b.length;},0) + ' giocatori)';
-      status.style.color = '#10b981';
-
-      // Ricarica select squadre se stessa lega
-      var curT = document.getElementById('adm-rose-torneo');
-      var curL = document.getElementById('adm-rose-lega');
-      if (curT && curT.value === torneoKey && curL && curL.value === legaKey) {
-        admLoadRoseSquadre();
-      }
-
-    } catch(err) {
-      status.textContent = '❌ Errore: ' + err.message;
-      status.style.color = '#ef4444';
+      continue;
     }
-  };
-  reader.readAsArrayBuffer(file);
+    if (v0 === 'Ruolo' || v0.startsWith('Crediti') || !v0) continue;
+
+    if (currentLeft && v0 && v1) {
+      rose[currentLeft].push({ ruolo: v0, nome: v1, squadra: v2, costo: parseInt(v3)||0 });
+    }
+    if (currentRight && v5 && v6) {
+      rose[currentRight].push({ ruolo: v5, nome: v6, squadra: v7, costo: parseInt(v8)||0 });
+    }
+  }
+
+  var infermeria = rose['INFERMERIA'] || [];
+  delete rose['INFERMERIA'];
+
+  // Normalizza nomi squadre
+  var savedKeys = {};
+  Object.keys(rose).forEach(function(squadra) {
+    var matchKey = squadra;
+    if (torneoKey === 'slim' && legaKey === 'it' && typeof SLIM_TEAMS_IT !== 'undefined') {
+      SLIM_TEAMS_IT.forEach(function(t) {
+        if (t.toLowerCase() === squadra.toLowerCase()) matchKey = t;
+      });
+    } else if (torneoKey === 'tsm' && legaKey === 'it' && typeof TSM_TEAMS_IT !== 'undefined') {
+      TSM_TEAMS_IT.forEach(function(t) {
+        if (t.toLowerCase() === squadra.toLowerCase()) matchKey = t;
+      });
+    }
+    savedKeys[matchKey] = rose[squadra];
+  });
+
+  // Salva
+  if (torneoKey === 'slim' && legaKey === 'it') {
+    Object.keys(savedKeys).forEach(function(sq) { TEAMS_ROSE[sq] = savedKeys[sq]; });
+    localStorage.setItem('adm_rose_slim_it', JSON.stringify(savedKeys));
+  } else if (torneoKey === 'tsm' && legaKey === 'it') {
+    Object.keys(savedKeys).forEach(function(sq) { if (typeof TSM_ROSE_IT !== 'undefined') TSM_ROSE_IT[sq] = savedKeys[sq]; });
+    localStorage.setItem('adm_rose_tsm_it', JSON.stringify(savedKeys));
+  } else {
+    localStorage.setItem('adm_rose_'+torneoKey+'_'+legaKey, JSON.stringify(savedKeys));
+  }
+  if (infermeria.length > 0) {
+    localStorage.setItem('adm_infermeria_'+torneoKey+'_'+legaKey, JSON.stringify(infermeria));
+  }
+
+  var nGiocatori = Object.values(savedKeys).reduce(function(a,b){return a+b.length;},0);
+  status.textContent = '✅ Importate ' + Object.keys(savedKeys).length + ' squadre (' + nGiocatori + ' giocatori)';
+  status.style.color = '#10b981';
+
+  var curT = document.getElementById('adm-rose-torneo');
+  var curL = document.getElementById('adm-rose-lega');
+  if (curT && curT.value === torneoKey && curL && curL.value === legaKey) admLoadRoseSquadre();
 }
 
 function admLoadRoseLeghe() {
