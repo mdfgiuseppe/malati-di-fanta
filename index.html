@@ -3797,7 +3797,11 @@ function tsmUpdateHeader() {
 
 function tsmBuildFilters() {
   var fr=document.getElementById('tsm-filters-row'); if(!fr) return;
-  var players=tsmCurrentTeam==='INFERMERIA'?INFERMERIA:(TEAMS_ROSE[tsmCurrentTeam]||[]);
+  var _tsmKey=tsmCurrentTeam;
+  if(tsmCurrentTeam!=='INFERMERIA'&&!TEAMS_ROSE[tsmCurrentTeam]){
+    Object.keys(TEAMS_ROSE).forEach(function(k){if(k.toUpperCase()===tsmCurrentTeam.toUpperCase())_tsmKey=k;});
+  }
+  var players=tsmCurrentTeam==='INFERMERIA'?INFERMERIA:(TEAMS_ROSE[_tsmKey]||[]);
   var GROUPS=[
     {label:'TUTTI',roles:null},
     {label:'PORTIERE',roles:['P']},
@@ -7016,7 +7020,11 @@ function setFilter(el,f){currentFilter=f;buildFilters();renderTable();}
 function renderTable(){
   var tbody=document.getElementById('tbody');var empty=document.getElementById('empty');
   var q=document.getElementById('search')?document.getElementById('search').value.toLowerCase():'';
-  var pl=currentTeam==='INFERMERIA'?INFERMERIA.map(function(p){return{ruolo:p.ruolo,primary:p.ruolo,nome:p.nome,squadra:p.squadra||'--',costo:0};}): (TEAMS_ROSE[currentTeam]||[]);
+  var _teamKey=currentTeam;
+  if(currentTeam!=='INFERMERIA'&&!TEAMS_ROSE[currentTeam]){
+    Object.keys(TEAMS_ROSE).forEach(function(k){if(k.toUpperCase()===currentTeam.toUpperCase())_teamKey=k;});
+  }
+  var pl=currentTeam==='INFERMERIA'?INFERMERIA.map(function(p){return{ruolo:p.ruolo,primary:p.ruolo,nome:p.nome,squadra:p.squadra||'--',costo:0};}): (TEAMS_ROSE[_teamKey]||[]);
   var gMap={Difesa:['Por','Dc','B','Dd','Ds'],Centrocampo:['E','M','C','T','W'],Attacco:['Pc','A']};
   if(currentFilter!=='ALL'){var al=gMap[currentFilter]||[currentFilter];pl=pl.filter(function(p){return p.ruolo.split(';').some(function(r){return al.indexOf(r.trim())>-1;});});}
   if(q)pl=pl.filter(function(p){return p.nome.toLowerCase().indexOf(q)>-1||(REAL_NAMES[p.squadra]||p.squadra||'').toLowerCase().indexOf(q)>-1;});
