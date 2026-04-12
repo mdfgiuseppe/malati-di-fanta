@@ -4938,6 +4938,19 @@ function admLoadCoppaEditor() {
     h += '</div></div>';
   });
 
+  // Campo vincitore manuale
+  var vincitoreOpts = '<option value=""'+(!data.vincitore ? ' selected':'')+'>— Non assegnato —</option>';
+  if (teamsByLega.length) {
+    teamsByLega.forEach(function(g){
+      vincitoreOpts += '<optgroup label="'+g.label+'">'
+      g.teams.forEach(function(t){ vincitoreOpts += '<option value="'+t+'"'+( data.vincitore===t ? ' selected':'')+'>'+t+'</option>'; });
+      vincitoreOpts += '</optgroup>';
+    });
+  }
+  h += '<div style="padding:12px 14px;border-top:2px solid '+cfg.color+'33;background:rgba(245,158,11,.05)">';
+  h += '<div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:#f59e0b;margin-bottom:8px">🏆 Squadra Campione</div>';
+  h += '<select id="adm-coppa-vincitore-'+coppaKey+'" style="width:100%;padding:7px 10px;background:var(--bg2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:12px;font-weight:700;outline:none">'+vincitoreOpts+'</select>';
+  h += '</div>';
   h += '<div style="padding:10px 14px;border-top:1px solid var(--border);display:flex;gap:8px">'
     +'<button data-t="'+torneoKey+'" data-k="'+coppaKey+'" onclick="admSaveCoppaEl(this)" style="padding:6px 16px;background:#10b981;color:#fff;border:none;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer">💾 Salva Risultati</button>'
     +'</div></div>';
@@ -4971,6 +4984,9 @@ function admSaveCoppaEl(el) {
     });
   }
   var data = window._admCoppaTemp && window._admCoppaTemp[cacheKey] ? window._admCoppaTemp[cacheKey] : admGetCoppaData(t,k);
+  // Salva anche vincitore dal select
+  var vincSel = document.getElementById('adm-coppa-vincitore-'+k);
+  if (vincSel) data.vincitore = vincSel.value || '';
   admSaveCoppaData(t, k, data);
   if(window._admCoppaTemp) delete window._admCoppaTemp[cacheKey];
   var msg=document.createElement('div');msg.textContent='✅ Risultati salvati';msg.style.cssText='position:fixed;top:70px;right:20px;background:#10b981;color:#fff;padding:8px 16px;border-radius:8px;font-weight:700;font-size:12px;z-index:9999';document.body.appendChild(msg);setTimeout(function(){msg.remove();},2000);
@@ -6736,7 +6752,7 @@ function showSection(id,el){
   else if(id==='calendario')slimRenderCalendario();
   else if(id==='stadio')slimRenderStadio();
   else if(id==='multe')renderMulte();
-  else if(id==='coppe'){initCoppaLogos();renderCoppaPanel(currentCoppa);}
+  else if(id==='coppe'){initCoppaLogos();closeBracket();}
   else if(id==='modulistica')renderModulistica(window.currentLeagueKey||'slim');
 }
 var currentTeam='SALERNITANA',currentFilter='ALL';
@@ -7198,7 +7214,10 @@ function buildBracket(key) {
       html += '<div style="flex:1;display:flex;align-items:center;justify-content:center;padding:0 6px">';
       var finalMatch = data['finale'] && data['finale'][0];
       var champion = '';
-      if (finalMatch && finalMatch.rh !== '' && finalMatch.ra !== '') {
+      // Prima controlla vincitore manuale
+      if (data.vincitore) {
+        champion = data.vincitore;
+      } else if (finalMatch && finalMatch.rh !== '' && finalMatch.ra !== '') {
         champion = parseInt(finalMatch.rh) > parseInt(finalMatch.ra) ? (finalMatch.h||'') : (finalMatch.a||'');
       }
       var trophyImg = (typeof COPPA_TROPHIES!=='undefined' && COPPA_TROPHIES[key])
