@@ -6008,13 +6008,24 @@ function admLoadRosaGiocatori() {
 }
 function admGetPlayers(torneoKey, legaKey, squadra) {
   if (torneoKey==='slim') {
-    if (legaKey==='it') return (TEAMS_ROSE||{})[squadra]||[];
+    if (legaKey==='it') {
+      var _tr = TEAMS_ROSE||{};
+      if (_tr[squadra]) return _tr[squadra];
+      var _k = Object.keys(_tr).find(function(k){return k.toUpperCase()===squadra.toUpperCase();});
+      return _k ? _tr[_k] : [];
+    }
     if (typeof ALL_LEAGUES_DATA!=='undefined' && ALL_LEAGUES_DATA[legaKey]) return (ALL_LEAGUES_DATA[legaKey].teams||{})[squadra]||[];
   }
   if (torneoKey==='tsm' && legaKey==='it') return (typeof TSM_ROSE_IT!=='undefined' && TSM_ROSE_IT[squadra])||[];
   return [];
 }
 function admRenderRosaEditor(players, torneoKey, legaKey, squadra) {
+  var _ro=['Por','Dc','B','Dd','Ds','E','M','C','T','W','A','Pc'];
+  players=players.slice().sort(function(a,b){
+    var pa=a.ruolo.split(';')[0].trim(),pb=b.ruolo.split(';')[0].trim();
+    var ia=_ro.indexOf(pa),ib=_ro.indexOf(pb);
+    return (ia>=0?ia:99)-(ib>=0?ib:99);
+  });
   var h = '<div class="card" style="padding:0;overflow:hidden">'
     +'<div style="padding:12px 16px;background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">'
     +'<span style="font-size:11px;font-weight:800;text-transform:uppercase;color:var(--text2)">'+squadra+' - '+players.length+' giocatori</span>'
