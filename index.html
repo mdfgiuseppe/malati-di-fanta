@@ -919,7 +919,6 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 .chip-pos{font-family:'Bebas Neue';font-size:16px;color:var(--ac);min-width:24px;}
 .back-btn{background:rgba(139,92,246,.08);border:1px solid rgba(139,92,246,.25);}
 </style>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
 <body>
 <img id="tsm-coppa-src" src="data:image/webp;base64,UklGRsgcAABXRUJQVlA4WAoAAAAQAAAAjQAA2gAAQUxQSNEJAAABsIb/nyFJ0i+Qgx6trePatgdr27Zt2zjbd2vbtm0P+sboyoj4/150d1VFZkQdX0TEBOD/IGrTW+XLFM1b9KmL1m1ilO1bt9bywmuusuoqaxWoqu3TVEdrra21tkD/Q1scNnS7Ky66pMnLrnhjcvfE7sk3XXTZJc1ffMWRcw4dNrTlYQPRt+2ttdYqgrbWavQ/ZLNRo0ePHjP62I8/+Kjpjz9usFUhKWznFx99/FGrH37+1JjRY0aP3HxJNGmtbou2GgDUggsvvOh1f/7Tn3//NNvvWwzS27dRGHPsn//8pz/8ed15Fl50GACljGpFA0PXOfLIg64d+93YcezTeeec9z60zMpKaFICp3oJQYJz3nnHPqd+++24h/Y5cePBwwHbnMJiRzzVzX5dWZalZ0qFL13jhE2Gsixdyb67H37ulwOgm9F62XdIOueciAjTG8Lj77GpvkVEgnNC8sldYfozOKyH3gsTHYSRxftZfH42o/tRavn3XWDCg/vqsk8pbSMpDdkKth/oQU/Rpcrzro/JUTiXPkrgyKbs6IkSEiX8dOIHL+270G5xvL/YaNUfNNZwqaKQrzw67YPJlAiOX6JFjZvpEkVh9MDv1jK6OVUMuZU+UWTwEiSC+M/XhkWL2gx/hD5VsXt4Pgag5QK7ei85Crx9hEEbDQ4uJeTHy03DoNqhLA6c4SQ3gRPmhUV7B+J8NjIj4g40Bm3WZvH3WObFTT0UGm3XWOIdhpw0+FcMUO2DxeKvh5CPwHeX0hoxC2zBRjaCf+UHUIhrB17LIHkQ11gHBSIr2Bt7fB4CfzrUqFjQasDXdDnw4XqjFOJrtflUSvpK3gmrUEWLkV86SV1g96bKopoDcBx7Eid+4uYwqKiyiz5BlzRx3AsDUFmNeZ6gT5nj43NaVR0YdD1In64QHu6CQpUt1ghOUuX58mzQqLYdeiKDpEk8D4VFxZXCSc6nyfMkY1B9jVfpUuR4KjTqYFb+lC49jp/OYWoBg+U/ZUhN4GfLFwb1tFjhGy9pEf/NCjCoq8WNbEhKpMEbYVFbZbt+R58Sz991WVUfKD34t3TpcPztYK1QZ4PleySkIkjP8jCot8HOM0NIg/czd4ZB3Q12nekkCWzsBoP6F9iXPgHiJ+yIAglUZsjz9PWbxSswAEnUmPdZ5+tW8tlFjU4DDBb7NIR6eb66KDRSaXEmndTJhecXgkE6rTmfQeojDe6LgUio0jhnhq+NeJ6DAklVBW5lWRfvzoNFYrXeuJuhHo6fz6d1amCw9lgndRCOXw8G6bXYmK4GEr5aDQYJVrbrZrrqNXgCBiLJ2nTdTle1krcuYFWaoDHoNvpqNXj7ICik2mA+F0KVPG8fCIN0m+IgR6mOCzd3aYOUG+w7xUlVHB8brBTSPgC/ZVmREMrdUSDxWi/7OkMlRMIhMEh+gX1LVw1/IAzSr2zXC/RVIBdSKgOweKkSnr8cqpFDrU4UqUDJE2CyoDCfYyXOzMbS1ZAzsrEEK8Gzs7HI55RoQT5YGjoLsDiZjWieL46AyoPBmSwr8Orc+TijEq/M1Vm8NGc+TpMqvD1vPi5gFc61BnnU2L7bS6zgt4XNhMLQF+hj+bAbimzM82oVds7IXC9VgLtnZJ6344UZW8PmQnf9XGJ53qEscmmxtQ/RbkM+CuwuPtrtWdnRx7s5K3vTRXs4I1ot8TYljoT9YbIBi5voowh75oTKiLojWmPBrOCmaDPmzcsjkShcMCcaO3mJ4vm7ARr5VJijhxKjwb1QZGWBRpySR8JmZb5ZkeSQzMwfGLXkcZmZ+5+UCEHe+ZHSGYFVR7CM4PkgtMoKDo30uMnNYZEe07k5JNIj2Tky0jNWZUWr1b6RECGcpTRyqgweoGtfmLYKTF60fYI+wswNs6Mf6yhM8XiU6SvBqJxYiwdjeH/xYAOdDw219VsM7SND972zQ+fCYtM7GFnI+xc2Kg8G6/2TpTQn0gqlwVNh8qC7fs9ZjF6GMzKhsKQIW2x0j3Ot8bRsLF6yeeF3t/95YkuOZ+ZCD/4lXVPtDfxkBaWzAIvjQqMFCaElL8/PplQeFH74Ln1z7fQ83FhkQo14SGIFPreg1pmAVQcwluddKJBLgw3He4kT5BplsgGDm+ijCBtzQeXDqvui9SyQE41RXmLNlxOFOXsoccr587JApJKnaYuczBftAHQWR3QYB3cYR3UUIt3zQHUQdAvmZZ5os2bPicUvJTCKuA1VVu6lj0LPe2Azom6JJXz1R0rnwmCTbpE4dNwXNhNqkNqXjpGD2xoDjTYqebbQGPqI+FheTrUDAKhCp0wrBXStsu67DLGEM+685cBl1+oClFZpUkYDOOjC26ZOdKxmGDfztnOWBVCoBBkNLHXTJ8KqineBQk6+bPX5AZ0YpQ3sCr+dQYrzIpUgKUG8J/ny3nPD6pQYDaz+93FkEFZegidfXw3Q6dDAin+ZRpbCenrH7366OLRKhMGKvybphfX15KRdYdKgzSqfMgRhrcVx1q5QSTD4JWcKa+/57VxaJUCrk3oCU+jdMShSgI+YCL7/faVrZ7Dp2CBJCBy/NOo3AOfTMRHfLpmAAseLT8V3aTiZ//t2QkcxAGfTdRAWO88Q6Ryg8RpDR/FqJ6Ew5/udxACcScfOocBJ9B3Fqen4dmmVguPT8d0PYOqm7IAbU8Hg/jiHVjUzWL5bQiIYuIMy9VJ6kccYmAx5DqpeBtvSM52ucShsrTTW9ikpeTmKWimcyJCU8+ulYN9PzAU1U+btvqRTeLcvSkcxZQqlcxB+deYXQToGkh9OYCchTGM6KNJZJDIF78QR6SUUISlCBvES5/zavV+FFkOkC2sG+0IMzyef4sSx/Gbsd++Pnci335029vf37/swQwR/Wr2gsa349gknjOOrD/D2B+6+6MGXeMbZn937kw9eGUtpm/DTEUrVymA0I1Q/8FHoemm1+DsSIoj0EjJQGALFS5AI5cxNlEa9LU6hi1DxkvcP16i7HXp9cGlwvGVxo2oH4D26FDhO2QgW9ddq5Cve+9p5dm8CgzSOuJx0UifxJf+8IizSaKFPfZ8MoSbiA8lrAItUKoOFjvuSdE6q55yQXx81SiuDhBbAIid9TEopUiEJzpFTf3bKwoBCWrUBfnjc7dNJ0vkgIlFEJHgnJPnojRsAMDY1gCoAs94ur0wpSUoIvs8WfL9BAklOuXOHnYcBtlBIsrYaGFSM+tsvn3TOs09XNuvZv5Mvf/230wsNKGuQbqUNeg8ZOWbUNc8++cxTL7D5l596+umnn37m/h1HbrE0ehujkHxdFOg9fNjwYXMdfszR/R+z/9zDeg8fBABFYZFNZa01qjdaVH1qa61Bnm3zCv9JBwBWUDgg0BIAAHBKAJ0BKo4A2wA+eTaWSCSioiEoNYt4kA8JYwDUilnfP2J8wtRv33Tzmvrm3APO00qBmInol8QPvP43+ePjw91+2v9h/7HOo6z7eT8H+9+k/+w8Sfkp/leoF68+7n3sfnu112H/aegF7AfTP+L4bn9x6S/Zj/he4B+qH+/9ff8v4ZXnvsD/z3+xf7v7svkb/3v9J+X3uG/RP9N/1/9D8A38w/qH+//wHab/bn2Mv1OMsiITrYyklxM64VPT+AZZsDyFZFQDip/uX9byyWBLKzgxecu7km6/qLICDhYTKUp0Y3/903TuAM/dDwzLzG+delu53+KAjMBIfachQPt3EdnVGOWRGA+0g2VbiiZ66CHk6FdWh7k9j46xxVEJFssxgJHgemg0Jdi4l1mfs5SHvdTLz+mDNUY+570tgwjs8NZFa43/gMTAYdrBJhS3pQANPOHA/52DQULy3xCR4kDaYBKnYhptxn7wet787+OeGbM5eX6VKWMC8hANGhEJ/McvvyWREuivv9usiXf5HiRi4dRAg4PU6ST5DEhu+p/ekj/+XrLRWgl2eXVgxUx6VTaIXNg7am17uv1r/sUyLSnTd+B+efj8xFOKgcIOEYm6LZt0TK/z05q7N8XIdaziCh/l5TA3MXMqCR99DduWf9jZrZ18HTrbeP6fAu3imwc/hkAAxRTXEG0R+0/7I2oZ4immasVRsnQmWkQY4cYS8Z0pn5vGDTybBM2vYfZ9i2Rx+I2P2JJQijFfczOzX/HAupAzRj8HHqPp5Krpv13sale91fWAFJzF/3Tnp4ikg8AA/vcLjxunsrQs+DiwNuCBb9ZBvHpAjxvZMVG3vGEvpIMsMXXZpaZGsZ1PvqAR9WsCyCgP81BSBPhlq8ykgzmrPaQXEIn4kzU44CnUDlJDV0n/5h7KJnoZ1nkvBvOYFeNm5QLqWXhK3yfhMDPvTBgKUgmlvdiNaeFIk1ZUgdUIPLlmwntpFB49H6TlJcZt3brKbqTjId1IwMLm9HXHbR6+go3HSCpdC8Vdow/lV8GTc5GXhfqQ4nKkV/cbfQKABNJ64rj9613p64lgERTdmS6IxZyiuv/itX+G0c5z2QFlwhR7DN8/mdSvt9mNXT7Xxv8Cu3IsAXtDxR6zHkwd6ast7gwALV8/tBd5tmcd2DL+KqS7X2Bks8jnD3Ze9/p4qoocZpOg97EWnHF4dQDBwm01GW7GX+6vvU7bDFR1SCun432UaazitnEQN2mk1G/dYQ77VUQjmj85rsDnssDdRHUzEULoA+7hKU+iY2ZnIziqlTMlGSFBK+Yi6QsatozFnt6MXC49dmlyhQkyoZye/BUz99t1qiLuvXFeDx6EgsJ1Y1LntXymApwfiORKn+Uz+Tw1hEMZvJ5ezi2NJ3aFV6AB+DWSfwsxpGP07cRA4titf7JHF62anrk3hhlIUzhpmD8yVZe7O+fY77MsP9WMFMfRXNwsoEIQl+PpQhCRlUlnknBbQ+LSUTEbB1SLpa/iJitLTG/GOzOEUOWiqukweF9yMJDN/p8QW83x1yD7vDOSReAUFVpDh3J1fv020lqDfu/7j4bvfMpvFW+R/kGWH0zv83ushmzzGfxHh5+3sEaGchcJPp+MaEbJ0jdDLibBQZGIiWbgpGImUSuKCimBKp/VsYR5ADwt7Tl0iN7HBHGF+mX+H/FUIbNEMheHwQVTmlo/7vYW+aIQJYGTykeNvkH1RdyBZFm3FSInCQQY0ko92mAYqM3OvLnZgpWbE+fto9DmM8JBDI9xSobO4b7auWxuhj6D8YRky9tKOifZuBEL155be24HWZt8M/hlfMqzp9adderN6d+31y8/Y8pn19M6fhRoCrYSqnMkkHf+ii8VdM0EVjV5K7O4nSp9Mnr+/WPZ4v4+/+Kb9M7//xu///GWv//xoggjHReH2vlK0feXCDXMIYhwdMER2zEAYRA9IpElbJb/4ogmdg33iFxD6TtF1Ex+OLUNpuKA5KTcQ1loYPdK4oWHv/gYNh2jQsLYSuMVJaaZVUyGg1PJedry4KtWv2FjgRZXWRAF0A+QPA5NDpsG6BCL5EoF9H4VT3dqqdsyVme4W0LybJrsvRMqqZ5Oa5iTkEE9cfC7fkQu2/ePSwsrlAO7UAAbUhN4fmarwcyxc53kJic/E+oA9x6+3zJAEbpjMUj7mP/pUwYl5O/5qJ6dwj8T7QGU3Q7eJhLIF9u3ANlVtJmTfQu38twgC6cTFfBz9ZnpR3/xLME3RxV1CO07MIL6OXyUXjLwZOOM3O4RfuEK4iiSzEJ314UOgFzeSrE5oriM049AtcnhlWp59vFUrrAXPqaV1ODeNUiS9u4nc+WEPoFsOvtSZ4IcZ7IDMw5ApxWWjTCa/ZKyWtHU5w/to7V1gBCjsEr0cXHovo/aZjaP83oQgrAQQQT9nLdb305Tm/SKZDcysc55aP9uVe3lV4mTwhDStAcEKhjcIipWF3BiQDpfaV5yANK/akl4Im5LCj4A2PADKSrkS9q8CA8vUa1N7Z7/5qMNvqNH/6KWyvSKOP6Sq6D+U0f4vQGMIFE8jaq7HgIyR7ATO9dFAwmXQugmvo8xYi/v6Bp5kr22xcSOj179GMBPq5BYMWKB7ApGQXjBSlzYzG9RwFzIYsaHZLDT4z1OMv5MPoQCNdGRIaKcA/BvsRt8EpXAktaCAZinUK0XlC74r25v86yq/t0PahTV/qfwF/Y7gxlO+M1bdfhTnGDNk5z7S19Tf1S4PhGz2T2ZVCDlSbzSSapVB2HWnkPNTZCWqRSYttjJgvVSdgNETGXO1hsFTzXbqXqtaMlQdWe2YOhXwqx1B+Gu4MWNku/CSvqEwSHPcruJXZiLFqbkvy8D0x6yOmf/3Qa6WK2IbsMhcIrrG1wfGAMtuiW5q+rIM3xZ9dy8jtZbwI8Hf4YLXP0pIVq+LkMhYA3l9naAJqgZhWDvgPLxb8DdtWg/O3J/Vvrsbve9K7KOQiQCkv7Tm/F1UQnvlYrdHwFw9ubZGTw08wdnz9mdFr/Mf/XGB5bLc303+jQkRDPa6tklp25FTBGHJaIKk5U8vymqSvwwGAnndn5O24fLYkB2pdLKt4O7nD0+mFmXmBXQyLieDbYu4yp+WMN6hw0UM9CZr6GIFIpVsJRwg7JjsO7XQxUJoRg6e5b2J3Nh+CXxh71b4Q/+eMi9ZIX+DROrXy0J4s56kgvSpxrfkvSmEvF4BuKxCQkootlzPWTodVAV00mvbl4Kgog7PAljfgs09SSr4/jsSSrXHJNE6y+5JzCms+Vlivxbe1xa0rBD+3cMgIZi+DUvk1HBACCgxDrwXR+6n8eumNc6OdHlqai9QIocAiE5n4vzn/CJneQ9yeesnorY2Y+E/MeLRDw9Zvb03yea4l10h6FAIYC80EuHBzY6zq4AXWu1UGIJf4rcmJCWsu4X5ZBmBAh7dOkVra9a0GN+OVL3iEFmgn9bzVlHN0ssF/MOr1+OLbT6FNd/EwamukiLaxpeTyzE0xz/PvbNgYhxx9wnKKdieYEoJ6+C2/ywX0n7dXwYpcTiNdHqgvX6afOO2fG8z5gK2w1CBoHeuYKjA41dtsCGgdkSpatjin9Xn4ITNqrjkrWLDmIbigwvvkfTx94AlP2F4zZMtzQ73qFRx1ISWJ+gdbFRaZVpK6NZENTfXd6oKof1eV33DBc6xeWH1bnd/hdpFbi5NyfDgRXQ2ZvCfvdOJyogAQSh5CinA0aa6lTSCQHjrQmPdUfgYxHw3d2e1UuO2DYacM/xyDuOFFyJqVDd8fsBv3+t+0djDp/hEh8xWpbi6vl5RjZn87upWJ94vGeQvNtKHY95wYbNP7HDIBnhV38ll/uyvqsasMlwhEIkjsatCMj3f/lEdoQ4j9Yys+XV0KovURUeV5eNQIcRDYw+Rz+GnhuzpsBVN4rDA+Gr8N845XVvcldYT4YozoLPplgrym60JzKPwfaC8+rLygM/UlFxaDkpTpcqzJ/twvsLUmc8LpdxSLhshvL6lMoweycQkuvNXnjvLVx8ObmXwPT6h1sbpLWcc8sBBHLCTZ7xZnwEtjzcI1eyLGJLJZehvN6+71Odgf7md5HN47KY6U3b4s+JEYBTF6CoS7j7fnQ8UqIz8/wqN9i0m+3AvUtB9xu4JU0xlw8F6xmLvqgCa5ucfv8KAYwlWdZT+Ni3cERP+vBY4pRy/w14XSI8XqyKj4UqwnclvX6C072zf+Y/BLaBZ0ddGhDbXC+r/y3Xn5KLQiuh8IE4t/EsZ5IJkaY0Eb0eyBLj42lVWDaYFXlvjfRt2lzZRHiKlvypHTWESgky4AMbPSkD5ujbv2iS4MWJKe2qls201HzXXh5XDY97Z5G8o1ctrZUd+iv4baU8u4kCBdS4Ivph3UULCu9apYYBuzfhoA9qA1fe6hGLAUV+PgpndzDc4qHvdmRVKS5pilD+wgWrXqOVCiI1lnVkNHDetbQz2h2hRm7Q25vc798njGjqRMGpj8Yp5xWJr8K70tm78f67WHsvid+I6NTwZWYZp4VT3C92aIshqgy5kmbuF+89YroJZY6kpeXuaWGA/giPnreYLu4ImhweJ0vkJw2cyGCKDNAI2W1cXWdXFRF3h5s8avbbCfIDBThKt5hbKWHWVKvkWkTUk8DU5fj42pW5P8kwN9NKpiBhPQYvGT59mL2VRYDTC3oTXbX1xfBpM0fhkA+5vbyGP4NJQzxA+AG8nZEvrSQ0mUbl2iZr2t0cojhcHzqfUxuhitv+Ke95FOwQTAm7rhGIJl3CASrFJOvbQRKlTfVipbVmZI+rHsNwjnt7N49BOJY733k6FV3xxDAw2OY2JlQj02B5jBIHspxGqhhLubtx9Zv6XqGrJH22jyNT8LgtR7QWCFoDY6hicv5vZPsiPfBSxccd5JZg2DcjmdUnNAkYzb1/FQjtZyYZGFIGfUCcWaew7G86xAi84mxUl2AmoB1hMjCyOQjX+jMUl4YjCcUh/bUJb7pkYQabFz34KW+39EPsZK7F/TBN/a+zuxG7w2iz+5U78USeQi1BhNElthnxRlTbdqxPf/N0znISPeDceAQXsIwYfjEvlKt8+TjpMIXa3bxvzLRIkusaDCipkOzT2AMOHOjEhVcm2hQmgOXuVzlsoBQJBU5nAQtTCuHPiUn6cjbl4b5Tztsv+mNxIbVIgqTM4gwGMa2hVJCuHb0vm8pPl/4OynoFRYChsZv4ifUH7hhlc8zl9NLDdYBS526llyJmJ8dV/pQYGLpPSTJ5KQgO22oz2jkrYLYdK5JX28eWxJcYoUDbuqy9rG+MOYR8aamrCyDOCHrajprapsauSGtMWaET59TGohMtW9Ubg604ZLkGnue1B3XspSAzW0A86ooiJg4B+lip/BXjyLTHA0KwDMEC0akf8nr6T0JhUWhTnNFU0olrddM9RHedwSvGjr4UDGGreRo1ECPIy0fn7bQUCsPca7IlWe1G2MnevMyp7uuAejtjcnr0ZijSWLuTRbkUyijGxedcK18vwOROmmCuUuLhm0qlHViD+i7F7ysEezs2x52lkn1l3gZJmvahCQXXjNbnbpZZaASDXGNiHT3bVVFHW1/17yPXx8sS1SLIJZSL2ymELiUAxBiqg+9kl2T59Y5tok/PrUnAMtrKTpj3uiGJiKpjyXXeMs+qKEt50jMAbl1AJfoNqgWhe3eCbRMy5txVS/sZ/3stAll4YSTFEgTNUDbTwccHtxT7ETvG39FDEZ+2p6XoFocyl4+XBLVYf+YpmECcP6repxBfCCzPUrMVNtaDX/4JoSpdkqMpHW/2HpDEUrOdJ43vD0cRJ4K1xIAD0ueOm5ZitatYjzyhoGBOYKO7wn52v7ExIHa/EjnCThedvij0oM6p9ko04Rj4Qd84H3XI8uZxm8y+syagtFDn/iOKn3hQHlD8PHq/qBXxsNE7DtHMRv8oQywrZU3AAi6P0VrxbwjttONUarfRy5GJv6qVdkwb31GR57Ez70CpYKcDMgTNsBQqQstS8SKb/l3pTrBnO4bkmoQ3ey3AKlmX3zWgLipbKrX11D0G3Ck7lvITF+uU1K7P+BcLUODlLb0KuyR6WoRCgFdsUTjWp7pOKfznwAB0gFAKLfu4xJdz3RuMxH4JiMNkU0adQrRgEC52P1CzGg70hB6r8CBgVv6CuIe5Szuyz6hAbB0eUw+rTypB33bROE+VuPFXD1Jkr/7y8I/k0DjttYVTdmT7bG/JCAOmX36FYCMPCxKbwQ9AcslZc37Ne+miGFMd9ZOi7BsfICBbxB5QTjnrM7QXr0W1cJfhsxSmwPXLSsSiPtgvoHwa7CNeP+/bLgMgXW2vTfX7uMzH/Nz61DFRvl5x37C9OMfHtOhGrHytPCsVFkWKBfORVEQ9zTKyKI9MpD31oiIwzuHtdve918iMMkTivQawAAAAAAA=" style="display:none;width:0;height:0" alt="">
@@ -3165,21 +3164,14 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
       <div style="font-family:'Bebas Neue';font-size:28px;letter-spacing:2px;margin-bottom:6px">Gestione <span style="color:#ef4444">Rose</span></div>
       <div style="font-size:11px;color:var(--text2);margin-bottom:20px">Modifica le rose delle squadre per ogni lega</div>
 
-      <!-- Import Excel Leghe FC -->
+      <!-- Import CSV -->
       <div class="card" style="padding:16px;margin-bottom:20px;border:1px solid rgba(16,185,129,.3);background:rgba(16,185,129,.05)">
-        <div style="font-size:13px;font-weight:800;color:#10b981;margin-bottom:10px">📥 Import Rose da Excel (Leghe FC)</div>
-        <div style="font-size:11px;color:var(--text2);margin-bottom:12px">Esporta da Leghe FC in formato <b>CSV UTF-8</b> (File → Salva con nome → CSV UTF-8), poi carica qui. Verranno importate tutte le rose in un colpo solo.</div>
+        <div style="font-size:13px;font-weight:800;color:#10b981;margin-bottom:8px">📥 Import Rose da Leghe FC (.csv)</div>
+        <div style="font-size:11px;color:var(--text2);margin-bottom:12px">Esporta da Leghe FC come <b>CSV UTF-8</b> (File → Salva con nome → CSV UTF-8), poi carica qui.</div>
         <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
-          <select id="adm-import-torneo" style="padding:7px 10px;background:var(--bg2);border:1px solid var(--border);border-radius:7px;color:var(--text);font-size:12px;outline:none">
-            <option value="">-- Torneo --</option>
-          </select>
-          <select id="adm-import-lega" style="padding:7px 10px;background:var(--bg2);border:1px solid var(--border);border-radius:7px;color:var(--text);font-size:12px;outline:none">
-            <option value="">-- Lega --</option>
-          </select>
-          <label style="padding:7px 14px;background:#10b981;color:#fff;border-radius:7px;font-size:11px;font-weight:700;cursor:pointer">
-            📂 Scegli file .csv
-            <input type="file" accept=".csv,.xlsx,.xls" id="adm-import-file" style="display:none" onchange="admImportRoseExcel()">
-          </label>
+          <select id="adm-import-torneo" style="padding:7px 10px;background:var(--bg2);border:1px solid var(--border);border-radius:7px;color:var(--text);font-size:12px;outline:none"><option value="">-- Torneo --</option></select>
+          <select id="adm-import-lega" style="padding:7px 10px;background:var(--bg2);border:1px solid var(--border);border-radius:7px;color:var(--text);font-size:12px;outline:none"><option value="">-- Lega --</option></select>
+          <label style="padding:7px 14px;background:#10b981;color:#fff;border-radius:7px;font-size:11px;font-weight:700;cursor:pointer">📂 Scegli file .csv<input type="file" accept=".csv,.xlsx,.xls" id="adm-import-file" style="display:none" onchange="admImportRoseExcel()"></label>
           <div id="adm-import-status" style="font-size:11px;color:var(--text2)"></div>
           <button id="adm-import-confirm" onclick="admConfirmImport()" style="display:none;padding:7px 16px;background:#10b981;color:#fff;border:none;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer">✅ Conferma Import</button>
         </div>
@@ -3196,7 +3188,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
         <select id="adm-rose-squadra" onchange="admLoadRosaGiocatori()" style="padding:8px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;outline:none">
           <option value="">-- Seleziona Squadra --</option>
         </select>
-        
+        <button onclick="admImportExcel('rose')" style="padding:8px 14px;background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.3);color:#10b981;border-radius:8px;font-weight:700;font-size:12px;cursor:pointer">📥 Importa da Excel</button>
       </div>
 
       <div id="adm-rose-body"></div>
@@ -3797,11 +3789,7 @@ function tsmUpdateHeader() {
 
 function tsmBuildFilters() {
   var fr=document.getElementById('tsm-filters-row'); if(!fr) return;
-  var _tsmKey=tsmCurrentTeam;
-  if(tsmCurrentTeam!=='INFERMERIA'&&!TEAMS_ROSE[tsmCurrentTeam]){
-    Object.keys(TEAMS_ROSE).forEach(function(k){if(k.toUpperCase()===tsmCurrentTeam.toUpperCase())_tsmKey=k;});
-  }
-  var players=tsmCurrentTeam==='INFERMERIA'?INFERMERIA:(TEAMS_ROSE[_tsmKey]||[]);
+  var players=tsmCurrentTeam==='INFERMERIA'?INFERMERIA:(TEAMS_ROSE[tsmCurrentTeam]||[]);
   var GROUPS=[
     {label:'TUTTI',roles:null},
     {label:'PORTIERE',roles:['P']},
@@ -5782,195 +5770,82 @@ function admInitSelettori(prefix) {
 }
 
 function admInitImportSelectors() {
-  // Popola selettori import quando si apre la sezione rose
-  var tSel = document.getElementById('adm-import-torneo');
-  if (!tSel) return;
-  tSel.innerHTML = '<option value="">-- Torneo --</option>';
-  ADMIN_TORNEI.forEach(function(t) {
-    var o = document.createElement('option');
-    o.value = t.key; o.textContent = t.label;
-    tSel.appendChild(o);
-  });
-  tSel.onchange = function() {
-    var lSel = document.getElementById('adm-import-lega');
-    lSel.innerHTML = '<option value="">-- Lega --</option>';
-    var torneo = ADMIN_TORNEI.find(function(t){ return t.key === tSel.value; });
-    if (torneo) torneo.leghe.forEach(function(l) {
-      var o = document.createElement('option');
-      o.value = l.key; o.textContent = l.label;
-      lSel.appendChild(o);
-    });
+  var tSel=document.getElementById('adm-import-torneo'); if(!tSel) return;
+  tSel.innerHTML='<option value="">-- Torneo --</option>';
+  ADMIN_TORNEI.forEach(function(t){var o=document.createElement('option');o.value=t.key;o.textContent=t.label;tSel.appendChild(o);});
+  tSel.onchange=function(){
+    var lSel=document.getElementById('adm-import-lega');
+    lSel.innerHTML='<option value="">-- Lega --</option>';
+    var torneo=ADMIN_TORNEI.find(function(t){return t.key===tSel.value;});
+    if(torneo) torneo.leghe.forEach(function(l){var o=document.createElement('option');o.value=l.key;o.textContent=l.label;lSel.appendChild(o);});
   };
 }
-
 function admImportRoseExcel() {
-  var file = document.getElementById('adm-import-file').files[0];
-  var torneoKey = document.getElementById('adm-import-torneo').value;
-  var legaKey = document.getElementById('adm-import-lega').value;
-  var status = document.getElementById('adm-import-status');
-  if (!file) return;
-  if (!torneoKey || !legaKey) {
-    status.textContent = '⚠️ Seleziona torneo e lega prima di importare';
-    status.style.color = '#f59e0b';
-    return;
-  }
-  status.textContent = '⏳ Lettura file...';
-  status.style.color = 'var(--text2)';
-
-  var ext = file.name.split('.').pop().toLowerCase();
-
-  if (ext === 'csv') {
-    var reader = new FileReader();
-    reader.onload = function(e) {
-      admParseRoseCSV(e.target.result, torneoKey, legaKey, status);
-    };
-    reader.readAsText(file, 'UTF-8');
-    return;
-  }
-
-  // xlsx: usa XLSX se disponibile, altrimenti mostra istruzione CSV
-  if (typeof XLSX !== 'undefined') {
-    var reader = new FileReader();
-    reader.onload = function(e) {
-      try {
-        var data = new Uint8Array(e.target.result);
-        var workbook = XLSX.read(data, {type: 'array'});
-        var sheet = workbook.Sheets[workbook.SheetNames[0]];
-        var rows = XLSX.utils.sheet_to_json(sheet, {header: 1, defval: ''});
-        admParseRoseRows(rows, torneoKey, legaKey, status);
-      } catch(err) {
-        status.textContent = '❌ Errore: ' + err.message;
-        status.style.color = '#ef4444';
-      }
-    };
-    reader.readAsArrayBuffer(file);
-  } else {
-    // Fallback: chiedi CSV
-    status.innerHTML = '⚠️ Salva il file Excel come <b>CSV</b> da Excel (File → Salva con nome → CSV UTF-8) e ricarica il file .csv';
-    status.style.color = '#f59e0b';
-  }
-}
-
-function admParseRoseCSV(text, torneoKey, legaKey, status) {
-  function parseCSVLine(line) {
-    var result = [], inQ = false, cur = '';
-    var clean = line.replace(/[\r]+$/, '');
-    for (var i = 0; i < clean.length; i++) {
-      var c = clean[i];
-      if (c === '"') { inQ = !inQ; }
-      else if (c === ';' && !inQ) { result.push(cur.trim()); cur = ''; }
-      else { cur += c; }
+  var file=document.getElementById('adm-import-file').files[0];
+  var torneoKey=document.getElementById('adm-import-torneo').value;
+  var legaKey=document.getElementById('adm-import-lega').value;
+  var status=document.getElementById('adm-import-status');
+  if(!file) return;
+  if(!torneoKey||!legaKey){status.textContent='⚠️ Seleziona torneo e lega';status.style.color='#f59e0b';return;}
+  status.textContent='⏳ Lettura file...';status.style.color='var(--text2)';
+  var reader=new FileReader();
+  reader.onload=function(e){
+    var t=(e.target.result.charCodeAt(0)===0xFEFF)?e.target.result.slice(1):e.target.result;
+    function parseCSVLine(line){
+      var result=[],inQ=false,cur='';
+      var clean=line.replace(/[\r]+$/,'');
+      for(var i=0;i<clean.length;i++){var c=clean[i];if(c==='"'){inQ=!inQ;}else if(c===';'&&!inQ){result.push(cur.trim());cur='';}else{cur+=c;}}
+      result.push(cur.trim());return result;
     }
-    result.push(cur.trim());
-    return result;
-  }
-  var t = (text.charCodeAt(0) === 0xFEFF) ? text.slice(1) : text;
-  var lines = t.split('\n').map(function(l){ return parseCSVLine(l); });
-  admParseRoseRows(lines, torneoKey, legaKey, status);
+    var lines=t.split('\n').map(function(l){return parseCSVLine(l);});
+    admParseRoseRows(lines,torneoKey,legaKey,status);
+  };
+  reader.readAsText(file,'UTF-8');
 }
-
-function admParseRoseRows(rows, torneoKey, legaKey, status) {
-  var rose = {};
-  var currentLeft = null, currentRight = null;
-
-  for (var i = 0; i < rows.length; i++) {
-    var r = rows[i];
-    var v0 = String(r[0]||'').trim();
-    var v1 = String(r[1]||'').trim();
-    var v2 = String(r[2]||'').trim();
-    var v3 = r[3];
-    var v5 = String(r[5]||'').trim();
-    var v6 = String(r[6]||'').trim();
-    var v7 = String(r[7]||'').trim();
-    var v8 = r[8];
-
-    if (v0 && v0 !== 'Ruolo' && !v0.startsWith('*') && !v0.startsWith('http') &&
-        !v0.startsWith('Crediti') && v0.indexOf('Rose lega') < 0 && v1 === '' && v2 === '') {
-      currentLeft = v0;
-      if (!rose[currentLeft]) rose[currentLeft] = [];
-      if (v5 && v5 !== 'Ruolo' && !v5.startsWith('Crediti')) {
-        currentRight = v5;
-        if (!rose[currentRight]) rose[currentRight] = [];
-      }
+function admParseRoseRows(rows,torneoKey,legaKey,status){
+  var rose={},currentLeft=null,currentRight=null;
+  for(var i=0;i<rows.length;i++){
+    var r=rows[i];
+    var v0=String(r[0]||'').trim(),v1=String(r[1]||'').trim(),v2=String(r[2]||'').trim(),v3=r[3];
+    var v5=String(r[5]||'').trim(),v6=String(r[6]||'').trim(),v7=String(r[7]||'').trim(),v8=r[8];
+    if(v0&&v0!=='Ruolo'&&!v0.startsWith('*')&&!v0.startsWith('http')&&!v0.startsWith('Crediti')&&v0.indexOf('Rose lega')<0&&v1===''&&v2===''){
+      currentLeft=v0;rose[currentLeft]=rose[currentLeft]||[];
+      if(v5&&v5!=='Ruolo'&&!v5.startsWith('Crediti')){currentRight=v5;rose[currentRight]=rose[currentRight]||[];}
       continue;
     }
-    if (v0 === 'Ruolo' || v0.startsWith('Crediti') || !v0) continue;
-
-    if (currentLeft && v0 && v1) {
-      rose[currentLeft].push({ ruolo: v0, nome: v1, squadra: v2, costo: parseInt(v3)||0 });
-    }
-    if (currentRight && v5 && v6) {
-      rose[currentRight].push({ ruolo: v5, nome: v6, squadra: v7, costo: parseInt(v8)||0 });
-    }
+    if(v0==='Ruolo'||v0.startsWith('Crediti')||!v0) continue;
+    if(currentLeft&&v0&&v1) rose[currentLeft].push({ruolo:v0,nome:v1,squadra:v2,costo:parseInt(v3)||0});
+    if(currentRight&&v5&&v6) rose[currentRight].push({ruolo:v5,nome:v6,squadra:v7,costo:parseInt(v8)||0});
   }
-
-  var infermeria = rose['INFERMERIA'] || [];
-  delete rose['INFERMERIA'];
-
-  // Salva in memoria per conferma
-  window._admImportPending = {rose: rose, infermeria: infermeria, torneoKey: torneoKey, legaKey: legaKey};
-  // Normalizza nomi squadre
-  var savedKeys = {};
-  Object.keys(rose).forEach(function(squadra) {
-    var matchKey = squadra;
-    if (torneoKey === 'slim' && legaKey === 'it' && typeof SLIM_TEAMS_IT !== 'undefined') {
-      SLIM_TEAMS_IT.forEach(function(t) {
-        if (t.toLowerCase() === squadra.toLowerCase()) matchKey = t;
-      });
-    } else if (torneoKey === 'tsm' && legaKey === 'it' && typeof TSM_TEAMS_IT !== 'undefined') {
-      TSM_TEAMS_IT.forEach(function(t) {
-        if (t.toLowerCase() === squadra.toLowerCase()) matchKey = t;
-      });
-    }
-    savedKeys[matchKey] = rose[squadra];
+  var infermeria=rose['INFERMERIA']||[]; delete rose['INFERMERIA'];
+  var savedKeys={};
+  Object.keys(rose).forEach(function(sq){
+    var mk=sq;
+    if(torneoKey==='slim'&&legaKey==='it'&&typeof SLIM_TEAMS_IT!=='undefined') SLIM_TEAMS_IT.forEach(function(t){if(t.toLowerCase()===sq.toLowerCase())mk=t;});
+    else if(torneoKey==='tsm'&&legaKey==='it'&&typeof TSM_TEAMS_IT!=='undefined') TSM_TEAMS_IT.forEach(function(t){if(t.toLowerCase()===sq.toLowerCase())mk=t;});
+    savedKeys[mk]=rose[sq];
   });
-
-  window._admImportPending.savedKeys = savedKeys;
-
-  var nGiocatori = Object.values(savedKeys).reduce(function(a,b){return a+b.length;},0);
-  status.textContent = '📋 Pronte ' + Object.keys(savedKeys).length + ' squadre (' + nGiocatori + ' giocatori) — clicca Conferma per salvare';
-  status.style.color = '#f59e0b';
-
-  var confirmBtn = document.getElementById('adm-import-confirm');
-  if (confirmBtn) confirmBtn.style.display = 'inline-block';
+  window._admImportPending={savedKeys:savedKeys,infermeria:infermeria,torneoKey:torneoKey,legaKey:legaKey};
+  var n=Object.values(savedKeys).reduce(function(a,b){return a+b.length;},0);
+  status.textContent='📋 Pronte '+Object.keys(savedKeys).length+' squadre ('+n+' giocatori) — clicca Conferma';
+  status.style.color='#f59e0b';
+  var cb=document.getElementById('adm-import-confirm'); if(cb) cb.style.display='inline-block';
 }
-
-function admConfirmImport() {
-  var pending = window._admImportPending;
-  if (!pending || !pending.savedKeys) return;
-  var savedKeys = pending.savedKeys;
-  var infermeria = pending.infermeria;
-  var torneoKey = pending.torneoKey;
-  var legaKey = pending.legaKey;
-
-  if (torneoKey === 'slim' && legaKey === 'it') {
-    Object.keys(savedKeys).forEach(function(sq) { TEAMS_ROSE[sq] = savedKeys[sq]; });
-    localStorage.setItem('adm_rose_slim_it', JSON.stringify(savedKeys));
-  } else if (torneoKey === 'tsm' && legaKey === 'it') {
-    Object.keys(savedKeys).forEach(function(sq) { if (typeof TSM_ROSE_IT !== 'undefined') TSM_ROSE_IT[sq] = savedKeys[sq]; });
-    localStorage.setItem('adm_rose_tsm_it', JSON.stringify(savedKeys));
-  } else {
-    localStorage.setItem('adm_rose_'+torneoKey+'_'+legaKey, JSON.stringify(savedKeys));
-  }
-  if (infermeria && infermeria.length > 0) {
-    localStorage.setItem('adm_infermeria_'+torneoKey+'_'+legaKey, JSON.stringify(infermeria));
-  }
-
-  var nGiocatori = Object.values(savedKeys).reduce(function(a,b){return a+b.length;},0);
-  var status = document.getElementById('adm-import-status');
-  if (status) {
-    status.textContent = '✅ Salvate ' + Object.keys(savedKeys).length + ' squadre (' + nGiocatori + ' giocatori)';
-    status.style.color = '#10b981';
-  }
-  var confirmBtn = document.getElementById('adm-import-confirm');
-  if (confirmBtn) confirmBtn.style.display = 'none';
-  window._admImportPending = null;
-
-  var curT = document.getElementById('adm-rose-torneo');
-  var curL = document.getElementById('adm-rose-lega');
-  if (curT && curT.value === torneoKey && curL && curL.value === legaKey) admLoadRoseSquadre();
+function admConfirmImport(){
+  var p=window._admImportPending; if(!p||!p.savedKeys) return;
+  var sk=p.savedKeys,inf=p.infermeria,tk=p.torneoKey,lk=p.legaKey;
+  if(tk==='slim'&&lk==='it'){Object.keys(sk).forEach(function(s){TEAMS_ROSE[s]=sk[s];});localStorage.setItem('adm_rose_slim_it',JSON.stringify(sk));}
+  else if(tk==='tsm'&&lk==='it'){Object.keys(sk).forEach(function(s){if(typeof TSM_ROSE_IT!=='undefined')TSM_ROSE_IT[s]=sk[s];});localStorage.setItem('adm_rose_tsm_it',JSON.stringify(sk));}
+  else{localStorage.setItem('adm_rose_'+tk+'_'+lk,JSON.stringify(sk));}
+  if(inf&&inf.length>0) localStorage.setItem('adm_infermeria_'+tk+'_'+lk,JSON.stringify(inf));
+  var n=Object.values(sk).reduce(function(a,b){return a+b.length;},0);
+  var st=document.getElementById('adm-import-status');
+  if(st){st.textContent='✅ Salvate '+Object.keys(sk).length+' squadre ('+n+' giocatori)';st.style.color='#10b981';}
+  var cb=document.getElementById('adm-import-confirm'); if(cb) cb.style.display='none';
+  window._admImportPending=null;
+  var cT=document.getElementById('adm-rose-torneo'),cL=document.getElementById('adm-rose-lega');
+  if(cT&&cT.value===tk&&cL&&cL.value===lk) admLoadRoseSquadre();
 }
-
 function admLoadRoseLeghe() {
   var torneoKey = document.getElementById('adm-rose-torneo').value;
   var sel = document.getElementById('adm-rose-lega');
@@ -5987,8 +5862,7 @@ function admLoadRoseSquadre() {
   sel.innerHTML = '<option value="">-- Seleziona Squadra --</option>';
   var teams = admGetTeams(torneoKey, legaKey);
   teams.forEach(function(t){ var o=document.createElement('option');o.value=t;o.textContent=t;sel.appendChild(o); });
-  // Aggiungi INFERMERIA sempre
-  var oInf=document.createElement('option');oInf.value='INFERMERIA';oInf.textContent='🏥 Infermeria';sel.appendChild(oInf);
+  var oI=document.createElement('option');oI.value='INFERMERIA';oI.textContent='🏥 Infermeria';sel.appendChild(oI);
   document.getElementById('adm-rose-body').innerHTML='';
 }
 function admGetTeams(torneoKey, legaKey) {
@@ -6009,17 +5883,11 @@ function admLoadRosaGiocatori() {
   el.innerHTML = admRenderRosaEditor(players, torneoKey, legaKey, squadra);
 }
 function admGetPlayers(torneoKey, legaKey, squadra) {
-  if (squadra === 'INFERMERIA') {
-    var inf = localStorage.getItem('adm_infermeria_'+torneoKey+'_'+legaKey);
-    if (inf) try { return JSON.parse(inf); } catch(e){}
-    return (typeof INFERMERIA !== 'undefined') ? INFERMERIA : [];
-  }
   if (torneoKey==='slim') {
     if (legaKey==='it') {
-      var _tr = TEAMS_ROSE||{};
-      if (_tr[squadra]) return _tr[squadra];
-      var _k = Object.keys(_tr).find(function(k){return k.toUpperCase()===squadra.toUpperCase();});
-      return _k ? _tr[_k] : [];
+      if (squadra==='INFERMERIA') { var inf=localStorage.getItem('adm_infermeria_slim_it'); if(inf) try{return JSON.parse(inf);}catch(e){} return typeof INFERMERIA!=='undefined'?INFERMERIA:[]; }
+      var _tr=TEAMS_ROSE||{}; if(_tr[squadra]) return _tr[squadra];
+      var _k=Object.keys(_tr).find(function(k){return k.toUpperCase()===squadra.toUpperCase();}); return _k?_tr[_k]:[];
     }
     if (typeof ALL_LEAGUES_DATA!=='undefined' && ALL_LEAGUES_DATA[legaKey]) return (ALL_LEAGUES_DATA[legaKey].teams||{})[squadra]||[];
   }
@@ -6028,11 +5896,7 @@ function admGetPlayers(torneoKey, legaKey, squadra) {
 }
 function admRenderRosaEditor(players, torneoKey, legaKey, squadra) {
   var _ro=['Por','Dc','B','Dd','Ds','E','M','C','T','W','A','Pc'];
-  players=players.slice().sort(function(a,b){
-    var pa=a.ruolo.split(';')[0].trim(),pb=b.ruolo.split(';')[0].trim();
-    var ia=_ro.indexOf(pa),ib=_ro.indexOf(pb);
-    return (ia>=0?ia:99)-(ib>=0?ib:99);
-  });
+  players=players.slice().sort(function(a,b){var ia=_ro.indexOf(a.ruolo.split(';')[0].trim()),ib=_ro.indexOf(b.ruolo.split(';')[0].trim());return (ia>=0?ia:99)-(ib>=0?ib:99);});
   var h = '<div class="card" style="padding:0;overflow:hidden">'
     +'<div style="padding:12px 16px;background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">'
     +'<span style="font-size:11px;font-weight:800;text-transform:uppercase;color:var(--text2)">'+squadra+' - '+players.length+' giocatori</span>'
@@ -7038,18 +6902,16 @@ function setFilter(el,f){currentFilter=f;buildFilters();renderTable();}
 function renderTable(){
   var tbody=document.getElementById('tbody');var empty=document.getElementById('empty');
   var q=document.getElementById('search')?document.getElementById('search').value.toLowerCase():'';
-  var _teamKey=currentTeam;
-  if(currentTeam!=='INFERMERIA'&&!TEAMS_ROSE[currentTeam]){
-    Object.keys(TEAMS_ROSE).forEach(function(k){if(k.toUpperCase()===currentTeam.toUpperCase())_teamKey=k;});
-  }
-  var pl=currentTeam==='INFERMERIA'?INFERMERIA.map(function(p){return{ruolo:p.ruolo,primary:p.ruolo,nome:p.nome,squadra:p.squadra||'--',costo:0};}): (TEAMS_ROSE[_teamKey]||[]);
+  var _tk=currentTeam;
+  if(currentTeam!=='INFERMERIA'&&!TEAMS_ROSE[currentTeam]){Object.keys(TEAMS_ROSE).forEach(function(k){if(k.toUpperCase()===currentTeam.toUpperCase())_tk=k;});}
+  var pl=currentTeam==='INFERMERIA'?INFERMERIA.map(function(p){return{ruolo:p.ruolo,primary:p.ruolo,nome:p.nome,squadra:p.squadra||'--',costo:0};}): (TEAMS_ROSE[_tk]||[]);
   var gMap={Difesa:['Por','Dc','B','Dd','Ds'],Centrocampo:['E','M','C','T','W'],Attacco:['Pc','A']};
   if(currentFilter!=='ALL'){var al=gMap[currentFilter]||[currentFilter];pl=pl.filter(function(p){return p.ruolo.split(';').some(function(r){return al.indexOf(r.trim())>-1;});});}
   if(q)pl=pl.filter(function(p){return p.nome.toLowerCase().indexOf(q)>-1||(REAL_NAMES[p.squadra]||p.squadra||'').toLowerCase().indexOf(q)>-1;});
   if(!pl.length){if(tbody)tbody.innerHTML='';if(empty)empty.style.display='block';return;}
-  var ruoloOrder=['Por','Dc','B','Dd','Ds','E','M','C','T','W','A','Pc'];
-  function getRuoloPriority(r){var p=r.split(';')[0].trim();var i=ruoloOrder.indexOf(p);return i>=0?i:99;}
-  pl=pl.slice().sort(function(a,b){return getRuoloPriority(a.ruolo)-getRuoloPriority(b.ruolo);});  if(empty)empty.style.display='none';
+  var _ro=['Por','Dc','B','Dd','Ds','E','M','C','T','W','A','Pc'];
+  pl=pl.slice().sort(function(a,b){var ia=_ro.indexOf(a.ruolo.split(';')[0].trim()),ib=_ro.indexOf(b.ruolo.split(';')[0].trim());return (ia>=0?ia:99)-(ib>=0?ib:99);});
+  if(empty)empty.style.display='none';
   if(tbody)tbody.innerHTML=pl.map(function(p){var col=p.costo>=50?'#ef4444':p.costo>=20?'#f59e0b':'var(--text2)';return'<tr style="border-bottom:1px solid var(--border)"><td style="padding:8px 10px">'+roleBadge(p.ruolo)+'</td><td style="padding:8px 8px;font-weight:700;font-size:13px">'+p.nome+'</td><td style="padding:8px 8px;font-size:12px;color:var(--text2)">'+(REAL_NAMES[p.squadra]||p.squadra||'--')+'</td><td style="padding:8px 10px;text-align:right;font-family:\'Bebas Neue\';font-size:17px;color:'+col+'">'+p.costo+'<span style="font-size:10px;font-weight:700;color:var(--text3);margin-left:1px">cr</span></td></tr>';}).join('');
 }
 var showAllQual=false;
