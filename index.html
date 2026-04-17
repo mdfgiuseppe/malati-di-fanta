@@ -3029,6 +3029,10 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
       <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
       Stagioni
     </div>
+    <div class="nav-item" id="adm-nav-cambio-squadre" onclick="showAdminSection('cambio-squadre',this)" ontouchend="event.preventDefault();showAdminSection('cambio-squadre',this)">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 3a2.828 2.828 0 114 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
+      Cambio Squadre
+    </div>
     <div class="nav-item" id="adm-nav-coppe" onclick="showAdminSection('coppe',this)" ontouchend="event.preventDefault();showAdminSection('coppe',this)">
       <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 9H4.5a2.5 2.5 0 010-5H6"/><path d="M18 9h1.5a2.5 2.5 0 000-5H18"/><path d="M18 2H6v7a6 6 0 0012 0V2z"/><path d="M12 16v6M8 22h8"/></svg>
       Coppe
@@ -3323,7 +3327,24 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
       <div id="adm-stagioni-body"></div>
     </div>
 
-    <!-- ===== IMMAGINI ===== -->
+    <!-- ===== CAMBIO SQUADRE ===== -->
+    <div id="adm-s-cambio-squadre" class="adm-section" style="display:none">
+      <div style="font-family:'Bebas Neue';font-size:28px;letter-spacing:2px;margin-bottom:6px">Cambio <span style="color:#f59e0b">Squadre</span></div>
+      <div style="font-size:11px;color:var(--text2);margin-bottom:20px">Rinomina le squadre a inizio stagione. Aggiorna nome e logo per ogni lega.</div>
+
+      <div style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap">
+        <select id="adm-cs-torneo" onchange="admCsLoadLeghe()" style="padding:8px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;outline:none">
+          <option value="">-- Seleziona Torneo --</option>
+        </select>
+        <select id="adm-cs-lega" onchange="admCsLoadSquadre()" style="padding:8px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;outline:none">
+          <option value="">-- Seleziona Lega --</option>
+        </select>
+      </div>
+
+      <div id="adm-cs-body"></div>
+    </div>
+
+<!-- ===== IMMAGINI ===== -->
     <div id="adm-s-immagini" class="adm-section" style="display:none">
       <div style="font-family:'Bebas Neue';font-size:28px;letter-spacing:2px;margin-bottom:6px">Gestione <span style="color:#ef4444">Immagini</span></div>
       <div style="font-size:11px;color:var(--text2);margin-bottom:20px">Carica loghi squadre, coppe e altri asset. Le immagini vengono salvate nel browser e usate dall'app al posto dei placeholder.</div>
@@ -5492,6 +5513,7 @@ function showAdminSection(id, el) {
     }
   }
   if (id==='rose') { admInitSelettori('rose'); admInitImportSelectors(); }
+  if (id==='cambio-squadre') admCsInit();
   if (id==='calendario') admInitSelettori('cal');
   if (id==='sponsor') {
     admInitSelettori('sp');
@@ -5859,6 +5881,236 @@ function admConfirmImport(){
   var cT=document.getElementById('adm-rose-torneo'),cL=document.getElementById('adm-rose-lega');
   if(cT&&cT.value===tk&&cL&&cL.value===lk) admLoadRoseSquadre();
 }
+// ═══════════════════════════════════════════════════════
+// ADMIN — Cambio Squadre
+// ═══════════════════════════════════════════════════════
+
+function admCsInit() {
+  var sel = document.getElementById('adm-cs-torneo');
+  if (!sel) return;
+  sel.innerHTML = '<option value="">-- Seleziona Torneo --</option>';
+  ADMIN_TORNEI.forEach(function(t) {
+    var o = document.createElement('option');
+    o.value = t.key; o.textContent = t.label;
+    sel.appendChild(o);
+  });
+  document.getElementById('adm-cs-body').innerHTML = '';
+}
+
+function admCsLoadLeghe() {
+  var torneoKey = document.getElementById('adm-cs-torneo').value;
+  var sel = document.getElementById('adm-cs-lega');
+  sel.innerHTML = '<option value="">-- Seleziona Lega --</option>';
+  document.getElementById('adm-cs-body').innerHTML = '';
+  var torneo = ADMIN_TORNEI.find(function(t){ return t.key === torneoKey; });
+  if (!torneo) return;
+  torneo.leghe.forEach(function(l) {
+    var o = document.createElement('option');
+    o.value = l.key; o.textContent = l.label;
+    sel.appendChild(o);
+  });
+}
+
+function admCsLoadSquadre() {
+  var torneoKey = document.getElementById('adm-cs-torneo').value;
+  var legaKey = document.getElementById('adm-cs-lega').value;
+  var el = document.getElementById('adm-cs-body');
+  if (!torneoKey || !legaKey || !el) return;
+
+  var teams = admGetTeams(torneoKey, legaKey).slice().sort(function(a,b){return a.localeCompare(b);});
+  if (!teams.length) { el.innerHTML = '<div style="color:var(--text3);font-size:12px">Nessuna squadra trovata.</div>'; return; }
+
+  var baseUrl = 'https://raw.githubusercontent.com/mdfgiuseppe/malati-di-fanta/main/logos/';
+  var h = '<div class="card" style="padding:0;overflow:hidden;margin-bottom:16px">'
+    +'<div style="padding:12px 16px;background:var(--bg2);border-bottom:1px solid var(--border);font-size:11px;font-weight:800;text-transform:uppercase;color:var(--text2)">Rinomina Squadre — '+torneoKey.toUpperCase()+' / '+legaKey.toUpperCase()+'</div>'
+    +'<div style="padding:8px 0">';
+
+  teams.forEach(function(team) {
+    var logoUrl = baseUrl + team.toLowerCase().replace(/\s+/g,'-') + '.png';
+    h += '<div style="display:flex;align-items:center;gap:10px;padding:8px 14px;border-bottom:1px solid var(--border)">'
+      +'<img src="'+logoUrl+'" onerror="this.style.opacity=0.2" style="width:32px;height:32px;object-fit:contain;border-radius:4px;flex-shrink:0">'
+      +'<div style="flex:1;min-width:0">'
+      +'<div style="font-size:9px;color:var(--text3);font-weight:700;text-transform:uppercase;margin-bottom:3px">Nome attuale</div>'
+      +'<div style="font-size:12px;font-weight:800;color:var(--text)">'+team+'</div>'
+      +'</div>'
+      +'<div style="flex:1;min-width:0">'
+      +'<div style="font-size:9px;color:var(--text3);font-weight:700;text-transform:uppercase;margin-bottom:3px">Nuovo nome</div>'
+      +'<input type="text" id="adm-cs-new-'+team.replace(/\s+/g,'_')+'" placeholder="'+team+'" style="width:100%;padding:5px 8px;background:var(--bg2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:12px;font-weight:700;outline:none">'
+      +'</div>'
+      +'<div style="flex:1;min-width:0">'
+      +'<div style="font-size:9px;color:var(--text3);font-weight:700;text-transform:uppercase;margin-bottom:3px">URL Logo (GitHub)</div>'
+      +'<input type="text" id="adm-cs-logo-'+team.replace(/\s+/g,'_')+'" placeholder="'+logoUrl+'" style="width:100%;padding:5px 8px;background:var(--bg2);border:1px solid var(--border);border-radius:6px;color:var(--text2);font-size:10px;outline:none">'
+      +'</div>'
+      +'</div>';
+  });
+
+  h += '</div></div>'
+    +'<div style="display:flex;gap:10px">'
+    +'<button onclick="admCsPreview()" style="padding:8px 20px;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.3);color:#f59e0b;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer">👁 Anteprima Modifiche</button>'
+    +'</div>'
+    +'<div id="adm-cs-preview" style="margin-top:16px"></div>';
+
+  el.innerHTML = h;
+}
+
+function admCsPreview() {
+  var torneoKey = document.getElementById('adm-cs-torneo').value;
+  var legaKey = document.getElementById('adm-cs-lega').value;
+  var teams = admGetTeams(torneoKey, legaKey);
+  var changes = [];
+
+  teams.forEach(function(team) {
+    var key = team.replace(/\s+/g,'_');
+    var newName = (document.getElementById('adm-cs-new-'+key)||{}).value||'';
+    var newLogo = (document.getElementById('adm-cs-logo-'+key)||{}).value||'';
+    newName = newName.trim();
+    newLogo = newLogo.trim();
+    if ((newName && newName !== team) || newLogo) {
+      changes.push({ old: team, newName: newName||team, newLogo: newLogo });
+    }
+  });
+
+  var el = document.getElementById('adm-cs-preview');
+  if (!changes.length) {
+    el.innerHTML = '<div style="color:var(--text3);font-size:12px;padding:12px">Nessuna modifica rilevata. Compila i campi "Nuovo nome" per le squadre da rinominare.</div>';
+    return;
+  }
+
+  var h = '<div class="card" style="padding:16px;border:1px solid rgba(245,158,11,.3);background:rgba(245,158,11,.05)">'
+    +'<div style="font-size:13px;font-weight:800;color:#f59e0b;margin-bottom:12px">👁 Anteprima — '+changes.length+' modifica/e</div>'
+    +'<div style="margin-bottom:12px">';
+  changes.forEach(function(c) {
+    h += '<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border)">'
+      +(c.newLogo?'<img src="'+c.newLogo+'" style="width:28px;height:28px;object-fit:contain">':'<div style="width:28px"></div>')
+      +'<span style="font-size:12px;color:var(--text2)">'+c.old+'</span>'
+      +'<span style="color:#f59e0b;font-size:14px">→</span>'
+      +'<span style="font-size:12px;font-weight:800;color:var(--text)">'+c.newName+'</span>'
+      +(c.newLogo?'<span style="font-size:10px;color:var(--text3);margin-left:4px">+ nuovo logo</span>':'')
+      +'</div>';
+  });
+  h += '</div>'
+    +'<div style="font-size:11px;color:var(--text3);margin-bottom:12px">⚠️ Questa operazione aggiornerà: rose, calendario, stadio, crediti, coppe e loghi nel localStorage.</div>'
+    +'<button onclick="admCsConfirm()" style="padding:8px 20px;background:#f59e0b;color:#000;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer">✅ Conferma Cambio Squadre</button>'
+    +'</div>';
+  el.innerHTML = h;
+}
+
+function admCsRenameKey(obj, oldKey, newKey) {
+  if (!obj || oldKey === newKey) return obj;
+  var res = {};
+  Object.keys(obj).forEach(function(k) {
+    var nk = (k === oldKey || k.toUpperCase() === oldKey.toUpperCase()) ? newKey : k;
+    res[nk] = obj[k];
+  });
+  return res;
+}
+
+function admCsConfirm() {
+  var torneoKey = document.getElementById('adm-cs-torneo').value;
+  var legaKey = document.getElementById('adm-cs-lega').value;
+  var teams = admGetTeams(torneoKey, legaKey);
+  var changes = [];
+
+  teams.forEach(function(team) {
+    var key = team.replace(/\s+/g,'_');
+    var newName = ((document.getElementById('adm-cs-new-'+key)||{}).value||'').trim();
+    var newLogo = ((document.getElementById('adm-cs-logo-'+key)||{}).value||'').trim();
+    if ((newName && newName !== team) || newLogo) {
+      changes.push({ old: team, newName: newName||team, newLogo: newLogo });
+    }
+  });
+
+  if (!changes.length) return;
+
+  changes.forEach(function(c) {
+    var oldN = c.old, newN = c.newName;
+
+    // 1. Rose
+    var roseKey = 'adm_rose_'+torneoKey+'_'+legaKey;
+    var roseRaw = localStorage.getItem(roseKey);
+    if (roseRaw) {
+      try {
+        var rose = JSON.parse(roseRaw);
+        rose = admCsRenameKey(rose, oldN, newN);
+        localStorage.setItem(roseKey, JSON.stringify(rose));
+      } catch(e){}
+    }
+    // Aggiorna TEAMS_ROSE live
+    if (torneoKey==='slim' && legaKey==='it' && typeof TEAMS_ROSE!=='undefined') {
+      TEAMS_ROSE = admCsRenameKey(TEAMS_ROSE, oldN, newN);
+    }
+
+    // 2. Calendario
+    var calKey = (legaKey==='it') ? 'slim_calendar' : 'slim_calendar_'+legaKey;
+    if (torneoKey==='tsm') calKey = 'tsm_calendar_'+legaKey;
+    var calRaw = localStorage.getItem(calKey) || localStorage.getItem('adm_cal_'+torneoKey+'_'+legaKey);
+    if (calRaw) {
+      try {
+        var cal = JSON.parse(calRaw);
+        var newCal = {};
+        Object.keys(cal).forEach(function(g) {
+          newCal[g] = admCsRenameKey(cal[g], oldN.toUpperCase(), newN.toUpperCase());
+          newCal[g] = admCsRenameKey(newCal[g], oldN, newN);
+        });
+        localStorage.setItem(calKey, JSON.stringify(newCal));
+        localStorage.setItem('adm_cal_'+torneoKey+'_'+legaKey, JSON.stringify(newCal));
+      } catch(e){}
+    }
+
+    // 3. Stadio
+    var staKey = (legaKey==='it') ? 'slim_stadio' : 'slim_stadio_'+legaKey;
+    var staRaw = localStorage.getItem(staKey) || localStorage.getItem('adm_stadio_'+torneoKey+'_'+legaKey);
+    if (staRaw) {
+      try {
+        var sta = JSON.parse(staRaw);
+        sta = admCsRenameKey(sta, oldN.toUpperCase(), newN.toUpperCase());
+        sta = admCsRenameKey(sta, oldN, newN);
+        localStorage.setItem(staKey, JSON.stringify(sta));
+        localStorage.setItem('adm_stadio_'+torneoKey+'_'+legaKey, JSON.stringify(sta));
+      } catch(e){}
+    }
+
+    // 4. Crediti
+    var crKey = 'adm_crediti_'+torneoKey+'_'+legaKey;
+    var crRaw = localStorage.getItem(crKey);
+    if (crRaw) {
+      try {
+        var cr = JSON.parse(crRaw);
+        cr = admCsRenameKey(cr, oldN, newN);
+        localStorage.setItem(crKey, JSON.stringify(cr));
+      } catch(e){}
+    }
+
+    // 5. Logo nel localStorage
+    if (c.newLogo) {
+      localStorage.setItem('adm_logo_'+torneoKey+'_'+legaKey+'_'+newN, c.newLogo);
+      // Aggiorna FANTASY_LOGOS live
+      if (typeof FANTASY_LOGOS !== 'undefined') {
+        FANTASY_LOGOS[newN] = c.newLogo;
+        FANTASY_LOGOS[newN.toUpperCase()] = c.newLogo;
+        delete FANTASY_LOGOS[oldN];
+        delete FANTASY_LOGOS[oldN.toUpperCase()];
+      }
+    }
+
+    // 6. Aggiorna SLIM_TEAMS_IT se necessario
+    if (torneoKey==='slim' && legaKey==='it' && typeof SLIM_TEAMS_IT!=='undefined') {
+      var idx = SLIM_TEAMS_IT.indexOf(oldN);
+      if (idx>=0) SLIM_TEAMS_IT[idx] = newN;
+    }
+    if (typeof SLIM_TEAMS !== 'undefined') {
+      var idx2 = SLIM_TEAMS.indexOf(oldN);
+      if (idx2>=0) SLIM_TEAMS[idx2] = newN;
+    }
+  });
+
+  // Feedback
+  var el = document.getElementById('adm-cs-preview');
+  el.innerHTML = '<div style="background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.3);border-radius:8px;padding:14px;color:#10b981;font-size:13px;font-weight:700">✅ Cambio squadre completato! Ricarica la pagina per vedere tutte le modifiche.</div>';
+  // Ricarica lista squadre
+  setTimeout(admCsLoadSquadre, 500);
+}
+
 function admLoadRoseLeghe() {
   var torneoKey = document.getElementById('adm-rose-torneo').value;
   var sel = document.getElementById('adm-rose-lega');
