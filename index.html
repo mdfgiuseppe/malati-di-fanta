@@ -5390,13 +5390,13 @@ function admLoadMulteBody() {
       +'<td style="padding:6px 8px;text-align:center">'
       +'<div style="display:flex;align-items:center;justify-content:center;gap:4px">'
       +'<button data-t="'+torneoKey+'" data-l="'+legaKey+'" data-team="'+team+'" data-f="richiami" data-dir="-1" onclick="admMulteChange(this)" style="width:22px;height:22px;border-radius:4px;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.2);color:#f59e0b;font-size:14px;cursor:pointer;line-height:1">−</button>'
-      +'<span style="font-family:Bebas Neue,sans-serif;font-size:18px;color:#f59e0b;min-width:24px;text-align:center">'+d.richiami+'</span>'
+      +'<span data-team="'+team+'" data-f="richiami" style="font-family:Bebas Neue,sans-serif;font-size:18px;color:#f59e0b;min-width:24px;text-align:center">'+d.richiami+'</span>'
       +'<button data-t="'+torneoKey+'" data-l="'+legaKey+'" data-team="'+team+'" data-f="richiami" data-dir="1" onclick="admMulteChange(this)" style="width:22px;height:22px;border-radius:4px;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.2);color:#f59e0b;font-size:14px;cursor:pointer;line-height:1">+</button>'
       +'</div></td>'
       +'<td style="padding:6px 8px;text-align:center">'
       +'<div style="display:flex;align-items:center;justify-content:center;gap:4px">'
       +'<button data-t="'+torneoKey+'" data-l="'+legaKey+'" data-team="'+team+'" data-f="penalita" data-dir="-1" onclick="admMulteChange(this)" style="width:22px;height:22px;border-radius:4px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);color:#ef4444;font-size:14px;cursor:pointer;line-height:1">−</button>'
-      +'<span style="font-family:Bebas Neue,sans-serif;font-size:18px;color:#ef4444;min-width:24px;text-align:center">'+d.penalita+'</span>'
+      +'<span data-team="'+team+'" data-f="penalita" style="font-family:Bebas Neue,sans-serif;font-size:18px;color:#ef4444;min-width:24px;text-align:center">'+d.penalita+'</span>'
       +'<button data-t="'+torneoKey+'" data-l="'+legaKey+'" data-team="'+team+'" data-f="penalita" data-dir="1" onclick="admMulteChange(this)" style="width:22px;height:22px;border-radius:4px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);color:#ef4444;font-size:14px;cursor:pointer;line-height:1">+</button>'
       +'</div></td>'
       +'<td style="padding:6px 8px;text-align:center">'
@@ -5445,17 +5445,19 @@ function admMulteMuteChange(el) {
 }
 
 function admLoadMulteBodyFromTemp(torneoKey, legaKey) {
-  // Ricarica solo i valori numerici nel DOM senza rifare tutta la tabella
+  // Aggiorna i valori numerici direttamente nel DOM dal temp
   var key = torneoKey+'_'+legaKey;
   var data = (window._admMulteTemp && window._admMulteTemp[key]) ? window._admMulteTemp[key] : {};
   var teams = admGetTeams(torneoKey, legaKey);
   teams.forEach(function(team) {
-    var d = data[team] || data[team.toUpperCase()] || {richiami:0,penalita:0,multe:0};
-    // Aggiorna le celle con Bebas Neue (richiami e penalità)
-    var spans = document.querySelectorAll('#adm-mul-body span[data-team-display]');
-    // Ricarica tutto più semplice
+    var d = data[team] || data[team.toUpperCase()] || {richiami:0, penalita:0, multe:0};
+    // Aggiorna span richiami
+    var spR = document.querySelector('#adm-mul-body span[data-team="'+team+'"][data-f="richiami"]');
+    if (spR) spR.textContent = d.richiami || 0;
+    // Aggiorna span penalita
+    var spP = document.querySelector('#adm-mul-body span[data-team="'+team+'"][data-f="penalita"]');
+    if (spP) spP.textContent = d.penalita || 0;
   });
-  admLoadMulteBody();
 }
 
 function admSaveMulteEl(el) {
