@@ -1107,8 +1107,9 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
         </tr></thead>
         <tbody id="slim-classifica-body"></tbody>
       </table>
+      <div id="slim-classifica-note"></div>
     </div>
-  </div>
+  <div>
 
   <!-- ===== STADIO ===== -->
   <div id="s-stadio" class="section">
@@ -3502,11 +3503,15 @@ function slimGetStadio() {
 function slimCalcStandings() {
   var cal = slimGetCalendar();
   var stadio = slimGetStadio();
+  // Leggi penalità in punti dal localStorage
+  var multeKey = 'slim_multe_' + (typeof currentLeagueKey !== 'undefined' ? currentLeagueKey : 'it');
+  var multeRaw = localStorage.getItem(multeKey);
+  var multeData = multeRaw ? JSON.parse(multeRaw) : {};
   var s = {};
   // Mappa lookup case-insensitive: BARI -> Bari
   var teamKeyMap = {};
   SLIM_TEAMS.forEach(function(t) {
-    s[t]={v:0,vf:0,p:0,s:0,pt:0,cr:0,gf:0,gs:0};
+    s[t]={v:0,vf:0,p:0,s:0,pt:0,cr:0,gf:0,gs:0,penalita:0};
     teamKeyMap[t.toUpperCase()] = t;
   });
   var giocate = 0;
@@ -3534,6 +3539,12 @@ function slimCalcStandings() {
       }
     }
   }
+  // Applica penalità in punti
+  SLIM_TEAMS.forEach(function(t) {
+    var md = multeData[t] || multeData[t.toUpperCase()] || {};
+    var pen = parseInt(md.penalita) || 0;
+    if (pen > 0) { s[t].pt -= pen; s[t].penalita = pen; }
+  });
   var sorted = SLIM_TEAMS.slice().sort(function(a,b){
     if (s[b].pt !== s[a].pt) return s[b].pt - s[a].pt;
     return s[b].v - s[a].v;
@@ -7269,6 +7280,31 @@ function slimRenderClassifica(){
   }).join('');
   var gEl=document.getElementById('slim-giornata-label');
   if(gEl)gEl.textContent='Giornata '+giocate+' / '+SLIM_TOTAL_GIORNATE;
+  // Nota penalità in fondo
+  var penNote = sorted.filter(function(t){ return s[t].penalita > 0; });
+  var noteEl = document.getElementById('slim-classifica-note');
+  if (noteEl) {
+    if (penNote.length) {
+      noteEl.innerHTML = '<div style="padding:8px 10px;font-size:10px;color:#ef4444">'
+        + penNote.map(function(t){ return '* ' + t.toUpperCase() + ': -' + s[t].penalita + ' pt di penalità'; }).join('<br>')
+        + '</div>';
+    } else {
+      noteEl.innerHTML = '';
+    }
+  }
+  // Aggiungi asterisco ai team con penalità nella tabella
+  if (penNote.length && el) {
+    penNote.forEach(function(t) {
+      var rows = el.querySelectorAll('tr');
+      rows.forEach(function(row) {
+        var nameCell = row.querySelector('td:nth-child(3) span');
+        if (nameCell && nameCell.textContent === t.toUpperCase()) {
+          nameCell.textContent = t.toUpperCase() + ' *';
+          nameCell.style.color = '#ef4444';
+        }
+      });
+    });
+  }
 }
 function slimRenderCalendario(){var el=document.getElementById('slim-calendario-body');if(!el)return;var cal=slimGetCalendar();var RC={VC:'rgba(16,185,129,.15);color:#10b981',VF:'rgba(16,185,129,.1);color:#34d399',PC:'rgba(59,130,246,.12);color:#3b82f6',PF:'rgba(59,130,246,.08);color:#60a5fa',SC:'rgba(239,68,68,.12);color:#ef4444',SF:'rgba(239,68,68,.08);color:#f87171'};var h='';for(var g=1;g<=SLIM_TOTAL_GIORNATE;g++){var gio=cal[String(g)]||{};var hasData=Object.values(gio).some(function(v){return v;});h+='<div style="margin-bottom:10px"><div style="font-family:\'Bebas Neue\';font-size:13px;letter-spacing:1px;color:var(--text2);padding:6px 10px;background:var(--bg2);border-radius:8px 8px 0 0;border:1px solid var(--border);border-bottom:none;display:flex;justify-content:space-between"><span>Giornata '+g+'</span>'+(hasData?'<span style="color:var(--green);font-size:10px">Completata</span>':'<span style="color:var(--text3);font-size:10px">Da giocare</span>')+'</div><div style="background:var(--card);border:1px solid var(--border);border-radius:0 0 8px 8px;padding:8px 10px;display:grid;grid-template-columns:repeat(2,1fr);gap:4px">';SLIM_TEAMS.forEach(function(team){var res=gio[team]||gio[team.toUpperCase()]||gio[team.toLowerCase()]||'';var st=RC[res]?'background:'+RC[res]:'background:var(--bg2);color:var(--text3)';h+='<div style="display:flex;align-items:center;justify-content:space-between;padding:3px 6px;border-radius:4px"><span style="font-size:11px;font-weight:700">'+team+'</span><span style="font-size:10px;font-weight:800;padding:1px 6px;border-radius:3px;'+st+'">'+(res||'--')+'</span></div>';});h+='</div></div>';}el.innerHTML=h;}
 function slimRenderStadio(){var el=document.getElementById('slim-stadio-body');if(!el)return;var stadio=slimGetStadio();
