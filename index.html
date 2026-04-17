@@ -3552,7 +3552,7 @@ function slimCalcStandings() {
   return {standings: s, sorted: sorted, giocate: giocate};
 }
 
-function showPage(id){setTimeout(function(){document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});var pg=document.getElementById('page-'+id);if(!pg){return;}pg.classList.add('active');window.scrollTo(0,0);},10);}
+function showPage(id){setTimeout(function(){document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');p.style.display='';});var pg=document.getElementById('page-'+id);if(!pg){return;}pg.classList.add('active');pg.style.display='block';window.scrollTo(0,0);},10);}
 function toggleTheme(){
   var h=document.documentElement;
   var newTheme=h.getAttribute('data-theme')==='dark'?'light':'dark';
