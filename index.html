@@ -3436,7 +3436,10 @@ var SLIM_INITIAL_CALENDAR ={"1":{"BARI":"VC","COMO":"VC","JUVENTUS":"PF","MILAN"
 var SLIM_INITIAL_STADIO   = {"BARI": 3, "COMO": 2, "JUVENTUS": 1, "MILAN": 4, "NAPOLI": 5, "PALERMO": 2, "ROMA": 1, "SALERNITANA": 4, "SASSUOLO": 5, "TORINO": 6};
 
 function slimGetCalendar() {
-  var key = window._currentLeagueCalKey || 'slim_calendar';
+  // Sincronizza key con currentLeagueKey
+  var lkCur = (typeof currentLeagueKey !== 'undefined' ? currentLeagueKey : 'it');
+  window._currentLeagueCalKey = (lkCur === 'it') ? 'slim_calendar' : 'slim_calendar_' + lkCur;
+  var key = window._currentLeagueCalKey;
   var lk = key.replace('slim_calendar_','');
   var torneo = 'slim';
   // Prima cerca la chiave app aggiornata
@@ -3463,7 +3466,9 @@ function slimGetCalendar() {
   return SLIM_INITIAL_CALENDAR;
 }
 function slimGetStadio() {
-  var key = window._currentLeagueStaKey || 'slim_stadio';
+  var lkCur = (typeof currentLeagueKey !== 'undefined' ? currentLeagueKey : 'it');
+  window._currentLeagueStaKey = (lkCur === 'it') ? 'slim_stadio' : 'slim_stadio_' + lkCur;
+  var key = window._currentLeagueStaKey;
   var raw = localStorage.getItem(key);
   if (raw) return JSON.parse(raw);
   // Fallback: dati iniziali dal JSON
