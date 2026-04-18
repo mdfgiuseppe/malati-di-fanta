@@ -6123,9 +6123,12 @@ function admUpdatePlayerEl(el) {
 }
 function admDeletePlayerEl(el) {
   var row = el.closest('tr');
-  var nome = row ? (row.querySelector('input[data-f="nome"]')||{}).value||'questo giocatore' : 'questo giocatore';
+  var nomeInp = row ? row.querySelector('input[data-f="nome"]') : null;
+  var ruoloInp = row ? row.querySelector('input[data-f="ruolo"]') : null;
+  var nome = nomeInp ? nomeInp.value : 'questo giocatore';
+  var ruolo = ruoloInp ? ruoloInp.value : '';
   if (!confirm('Eliminare ' + nome + '?')) return;
-  admDeletePlayer(el.dataset.t,el.dataset.l,el.dataset.s,+el.dataset.i);
+  admDeletePlayerByName(el.dataset.t, el.dataset.l, el.dataset.s, nome, ruolo);
 }
 function admAddPlayerEl(el) {
   admAddPlayer(el.dataset.t,el.dataset.l,el.dataset.s);
@@ -6204,6 +6207,24 @@ function admUpdatePlayer(t,l,s,i,field,val) {
   var pl = admGetPlayers(t,l,s); if(!pl[i]) return;
   pl[i][field]=val;
   admSaveRosa(t,l,s,pl,true);
+}
+function admDeletePlayerByName(t,l,s,nome,ruolo) {
+  var pl = admGetPlayers(t,l,s);
+  var idx = -1;
+  for (var i=0; i<pl.length; i++) {
+    if (pl[i].nome === nome && pl[i].ruolo === ruolo) { idx = i; break; }
+  }
+  if (idx < 0) {
+    // fallback: cerca solo per nome
+    for (var j=0; j<pl.length; j++) {
+      if (pl[j].nome === nome) { idx = j; break; }
+    }
+  }
+  if (idx >= 0) {
+    pl.splice(idx, 1);
+    admSaveRosa(t, l, s, pl, false);
+    admLoadRosaGiocatori();
+  }
 }
 function admDeletePlayer(t,l,s,i) {
   var pl = admGetPlayers(t,l,s);
