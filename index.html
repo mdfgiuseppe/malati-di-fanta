@@ -6122,6 +6122,9 @@ function admUpdatePlayerEl(el) {
   admUpdatePlayer(t,l,s,i,f,f==='costo'?+el.value:el.value);
 }
 function admDeletePlayerEl(el) {
+  var row = el.closest('tr');
+  var nome = row ? (row.querySelector('input[data-f="nome"]')||{}).value||'questo giocatore' : 'questo giocatore';
+  if (!confirm('Eliminare ' + nome + '?')) return;
   admDeletePlayer(el.dataset.t,el.dataset.l,el.dataset.s,+el.dataset.i);
 }
 function admAddPlayerEl(el) {
