@@ -5444,6 +5444,8 @@ function admLoadMulteBodyFromTemp(torneoKey, legaKey) {
     if (spR) spR.textContent = d.richiami || 0;
     var spP = document.querySelector('#adm-mul-body span[data-team="'+team+'"][data-f="penalita"]');
     if (spP) spP.textContent = d.penalita || 0;
+    var spM = document.querySelector('#adm-mul-body span[data-team="'+team+'"][data-f="multe"]');
+    if (spM) spM.textContent = d.multe || 0;
   });
 }
 
