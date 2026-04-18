@@ -6293,7 +6293,11 @@ function admSaveRosa(t,l,s,players,silent) {
   // Aggiorna TEAMS_ROSE in memoria per riflettere subito lato utente
   if (t==='slim' && l==='it' && typeof TEAMS_ROSE!=='undefined') {
     var _k = Object.keys(TEAMS_ROSE).find(function(k){return k.toUpperCase()===s.toUpperCase();})||s;
-    TEAMS_ROSE[_k] = pl;
+    // Crea nuovo oggetto per forzare aggiornamento riferimento
+    var _newRose = {};
+    Object.keys(TEAMS_ROSE).forEach(function(k){ _newRose[k] = TEAMS_ROSE[k]; });
+    _newRose[_k] = pl.slice();
+    TEAMS_ROSE = _newRose;
     localStorage.setItem('adm_rose_slim_it', JSON.stringify(TEAMS_ROSE));
   }
   if(!silent) { var msg=document.createElement('div');msg.textContent='✅ Salvato';msg.style.cssText='position:fixed;top:70px;right:20px;background:#10b981;color:#fff;padding:8px 16px;border-radius:8px;font-weight:700;font-size:12px;z-index:9999';document.body.appendChild(msg);setTimeout(function(){msg.remove();},2000); }
