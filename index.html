@@ -6037,10 +6037,12 @@ function admLoadRosaGiocatori() {
   var el = document.getElementById('adm-rose-body'); if(!el||!squadra) return;
   var players = admGetPlayers(torneoKey, legaKey, squadra);
   el.innerHTML = admRenderRosaEditor(players, torneoKey, legaKey, squadra);
-  if (typeof REAL_NAMES !== 'undefined') {
-    el.querySelectorAll('input[data-f="squadra"]').forEach(function(inp) {
-      if (REAL_NAMES[inp.value]) inp.value = REAL_NAMES[inp.value];
-    });
+  if (typeof REAL_NAMES !== 'undefined' && el) {
+    try {
+      el.querySelectorAll('input[data-f="squadra"]').forEach(function(inp) {
+        if (inp.value && REAL_NAMES[inp.value]) inp.value = REAL_NAMES[inp.value];
+      });
+    } catch(e) {}
   }
 }
 function admGetPlayers(torneoKey, legaKey, squadra) {
@@ -6288,6 +6290,12 @@ function admSaveRosa(t,l,s,players,silent) {
   var pl = players || admGetPlayers(t,l,s);
   var key = 'adm_rosa_'+t+'_'+l+'_'+s;
   localStorage.setItem(key, JSON.stringify(pl));
+  // Aggiorna TEAMS_ROSE in memoria per riflettere subito lato utente
+  if (t==='slim' && l==='it' && typeof TEAMS_ROSE!=='undefined') {
+    var _k = Object.keys(TEAMS_ROSE).find(function(k){return k.toUpperCase()===s.toUpperCase();})||s;
+    TEAMS_ROSE[_k] = pl;
+    localStorage.setItem('adm_rose_slim_it', JSON.stringify(TEAMS_ROSE));
+  }
   if(!silent) { var msg=document.createElement('div');msg.textContent='✅ Salvato';msg.style.cssText='position:fixed;top:70px;right:20px;background:#10b981;color:#fff;padding:8px 16px;border-radius:8px;font-weight:700;font-size:12px;z-index:9999';document.body.appendChild(msg);setTimeout(function(){msg.remove();},2000); }
 }
 
