@@ -4147,6 +4147,29 @@ function gsPing() {
           if (u.ruolo === 'admin') checkPendingRequests();
         } catch(e) {}
       }
+      // Carica crediti da GSheets
+      gsCall({action:'getCrediti', torneo:'slim', lega:'it'}, function(err, data) {
+        if (!err && data && data.ok && data.data && Object.keys(data.data).length) {
+          var userKey = 'user_crediti_slim_it';
+          var userMap = JSON.parse(localStorage.getItem(userKey)||'{}');
+          Object.keys(data.data).forEach(function(sq) {
+            userMap[sq] = data.data[sq];
+            userMap[sq.toUpperCase()] = data.data[sq];
+            localStorage.setItem('adm_crediti_slim_it_'+sq, String(data.data[sq]));
+          });
+          localStorage.setItem(userKey, JSON.stringify(userMap));
+        }
+      });
+      // Carica sponsor da GSheets per ogni squadra
+      if (typeof SLIM_TEAMS_IT !== 'undefined') {
+        SLIM_TEAMS_IT.forEach(function(sq) {
+          gsCall({action:'getSponsor', torneo:'slim', lega:'it', squadra:sq}, function(err, data) {
+            if (!err && data && data.ok && data.data && Object.keys(data.data).length) {
+              localStorage.setItem('adm_sponsor_slim_it_'+sq, JSON.stringify(data.data));
+            }
+          });
+        });
+      }
       // Carica tabella stadio globale da GSheets
       gsCall({action:'getStadio', torneo:'slim', lega:'global'}, function(err, data) {
         if (!err && data && data.ok && data.data && Object.keys(data.data).length) {
