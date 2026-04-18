@@ -5848,7 +5848,17 @@ function admParseRoseRows(rows,torneoKey,legaKey,status){
       if(v5&&v5!=='Ruolo'&&!v5.startsWith('Crediti')){currentRight=v5;rose[currentRight]=rose[currentRight]||[];}
       continue;
     }
-    if(v0==='Ruolo'||v0.startsWith('Crediti')||!v0) continue;
+    if(v0==='Ruolo'||!v0) continue;
+    // Salva crediti residui
+    if(v0.startsWith('Crediti Residui')){
+      var crVal=parseInt(v0.replace('Crediti Residui:','').trim())||0;
+      if(currentLeft) { if(!rose._crediti) rose._crediti={}; rose._crediti[currentLeft]=crVal; }
+    }
+    if(v5&&v5.startsWith('Crediti Residui')){
+      var crVal2=parseInt(v5.replace('Crediti Residui:','').trim())||0;
+      if(currentRight) { if(!rose._crediti) rose._crediti={}; rose._crediti[currentRight]=crVal2; }
+    }
+    if(v0.startsWith('Crediti')||!v0) continue;
     if(currentLeft&&v0&&v1) rose[currentLeft].push({ruolo:v0,nome:v1,squadra:v2,costo:parseInt(v3)||0});
     if(currentRight&&v5&&v6) rose[currentRight].push({ruolo:v5,nome:v6,squadra:v7,costo:parseInt(v8)||0});
   }
@@ -5860,7 +5870,7 @@ function admParseRoseRows(rows,torneoKey,legaKey,status){
     else if(torneoKey==='tsm'&&legaKey==='it'&&typeof TSM_TEAMS_IT!=='undefined') TSM_TEAMS_IT.forEach(function(t){if(t.toLowerCase()===sq.toLowerCase())mk=t;});
     savedKeys[mk]=rose[sq];
   });
-  window._admImportPending={savedKeys:savedKeys,infermeria:infermeria,torneoKey:torneoKey,legaKey:legaKey};
+  window._admImportPending={savedKeys:savedKeys,infermeria:infermeria,torneoKey:torneoKey,legaKey:legaKey,crediti:rose._crediti||{}};
   var n=Object.values(savedKeys).reduce(function(a,b){return a+b.length;},0);
   status.textContent='📋 Pronte '+Object.keys(savedKeys).length+' squadre ('+n+' giocatori) — clicca Conferma';
   status.style.color='#f59e0b';
@@ -5869,7 +5879,11 @@ function admParseRoseRows(rows,torneoKey,legaKey,status){
 function admConfirmImport(){
   var p=window._admImportPending; if(!p||!p.savedKeys) return;
   var sk=p.savedKeys,inf=p.infermeria,tk=p.torneoKey,lk=p.legaKey;
-  if(tk==='slim'&&lk==='it'){Object.keys(sk).forEach(function(s){TEAMS_ROSE[s]=sk[s];});localStorage.setItem('adm_rose_slim_it',JSON.stringify(sk));}
+  // Salva crediti base da import
+  var _crBase = window._admImportPending && window._admImportPending.crediti ? window._admImportPending.crediti : {};
+  if(Object.keys(_crBase).length) localStorage.setItem('adm_crediti_base_'+tk+'_'+lk, JSON.stringify(_crBase));
+  if(tk==='slim'&&lk==='it'){Object.keys(sk).forEach(function(s){TEAMS_ROSE[s]=sk[s];});localStorage.setItem('adm_rose_slim_it',JSON.stringify(sk));
+  localStorage.setItem('adm_rose_import_slim_it',JSON.stringify(sk));}
   else if(tk==='tsm'&&lk==='it'){Object.keys(sk).forEach(function(s){if(typeof TSM_ROSE_IT!=='undefined')TSM_ROSE_IT[s]=sk[s];});localStorage.setItem('adm_rose_tsm_it',JSON.stringify(sk));}
   else{localStorage.setItem('adm_rose_'+tk+'_'+lk,JSON.stringify(sk));}
   if(inf&&inf.length>0) localStorage.setItem('adm_infermeria_'+tk+'_'+lk,JSON.stringify(inf));
@@ -6088,24 +6102,34 @@ function admRenderRosaEditor(players, torneoKey, legaKey, squadra) {
   var crStadio = admCalcCreditiStadio(torneoKey, legaKey, squadra);
   var crSponsor = admCalcCreditiSponsor(torneoKey, legaKey, squadra);
   var crGestione = admGetCreditiGestione(torneoKey, legaKey, squadra);
-  // Crediti Attuali = CREDITS - multe crediti
-  var _sqKey = squadra;
-  var _cr = typeof CREDITS!=='undefined' ? (CREDITS[squadra]||CREDITS[squadra.toUpperCase()]||0) : 0;
-  // Leggi from localStorage se disponibile (aggiornato dall'import)
-  var _crStored = localStorage.getItem('adm_crediti_base_'+torneoKey+'_'+legaKey);
-  if (_crStored) { try { var _crObj=JSON.parse(_crStored); _cr=_crObj[squadra]||_crObj[squadra.toUpperCase()]||_cr; } catch(e){} }
-  var _multeKey = admGetMulteKey ? admGetMulteKey(torneoKey, legaKey) : torneoKey+'_multe_'+legaKey;
+  // Crediti Attuali = CREDITS_base + (costi_rosa_originale - costi_rosa_attuale) - multe_cr
+  var _crBase = typeof CREDITS!=='undefined' ? (CREDITS[squadra]||CREDITS[squadra.toUpperCase()]||0) : 0;
+  // Snapshot import da localStorage se disponibile
+  var _crBaseStored = localStorage.getItem('adm_crediti_base_'+torneoKey+'_'+legaKey);
+  if (_crBaseStored) { try { var _crObj=JSON.parse(_crBaseStored); if(_crObj[squadra]!==undefined) _crBase=_crObj[squadra]; } catch(e){} }
+  // Rosa originale embedded (window._TEAMS_ROSE_IT) per calcolo differenza
+  var _rosaOrig = (window._TEAMS_ROSE_IT && (window._TEAMS_ROSE_IT[squadra]||window._TEAMS_ROSE_IT[squadra.toUpperCase()])) || null;
+  // Snapshot import se disponibile (più aggiornato)
+  var _rosaImportStored = localStorage.getItem('adm_rose_import_'+torneoKey+'_'+legaKey);
+  if (_rosaImportStored) { try { var _ri=JSON.parse(_rosaImportStored); var _riq=_ri[squadra]||_ri[squadra.toUpperCase()]||null; if(_riq) _rosaOrig=_riq; } catch(e){} }
+  var _costiOrig = _rosaOrig ? _rosaOrig.reduce(function(s,p){return s+(parseFloat(p.costo)||0);},0) : 0;
+  // Rosa attuale
+  var _rosaAttuale = admGetPlayers(torneoKey, legaKey, squadra);
+  var _costiAttuali = _rosaAttuale.reduce(function(s,p){return s+(parseFloat(p.costo)||0);},0);
+  var _movimenti = _costiOrig - _costiAttuali;
+  // Multe crediti
+  var _multeKey = typeof admGetMulteKey==='function' ? admGetMulteKey(torneoKey, legaKey) : 'slim_multe_'+legaKey;
   var _multeRaw = localStorage.getItem(_multeKey);
   var _crMulte = 0;
   if (_multeRaw) { try { var _md=JSON.parse(_multeRaw); var _mq=_md[squadra]||_md[squadra.toUpperCase()]||{}; _crMulte=parseFloat(_mq.multe)||0; } catch(e){} }
-  var crAttuali = Math.round((_cr - _crMulte) * 10) / 10;
+  var crAttuali = Math.round((_crBase + _movimenti - _crMulte) * 10) / 10;
 
   h += '<div class="card" style="padding:16px;margin-top:12px">'
     +'<div style="font-family:Bebas Neue,sans-serif;font-size:16px;letter-spacing:1px;margin-bottom:12px">💰 Crediti <span style="color:#10b981">Squadra</span></div>'
     +'<div style="background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);border-radius:10px;padding:14px;text-align:center;margin-bottom:12px">'
     +'<div style="font-size:9px;font-weight:700;color:#f59e0b;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">💰 Crediti Attuali</div>'
     +'<div style="font-family:Bebas Neue,sans-serif;font-size:32px;color:#f59e0b">'+crAttuali+'</div>'
-    +'<div style="font-size:9px;color:var(--text3)">da Leghe FC − multe cr'+((_crMulte>0)?' (−'+_crMulte+' cr multe)':'')+' = '+crAttuali+' cr</div>'
+    +'<div style="font-size:9px;color:var(--text3)">base '+_crBase+' cr'+(_movimenti!==0?' | mov. '+(_movimenti>=0?'+':'')+Math.round(_movimenti*10)/10+' cr':'')+(_crMulte>0?' | multe −'+_crMulte+' cr':'')+' = '+crAttuali+' cr</div>'
     +'</div>'
     +'<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">'
     // Crediti Stadio (solo visualizzazione)
