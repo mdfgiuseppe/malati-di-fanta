@@ -6131,7 +6131,7 @@ function admRenderRosaEditor(players, torneoKey, legaKey, squadra) {
     +'<div style="font-family:Bebas Neue,sans-serif;font-size:32px;color:#f59e0b">'+crAttuali+'</div>'
     +'<div style="font-size:9px;color:var(--text3)">base '+_crBase+' cr'+(_movimenti!==0?' | mov. '+(_movimenti>=0?'+':'')+Math.round(_movimenti*10)/10+' cr':'')+(_crMulte>0?' | multe −'+_crMulte+' cr':'')+' = '+crAttuali+' cr</div>'
     +'</div>'
-    +'<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">'
+    +'<div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px">'
     // Crediti Stadio (solo visualizzazione)
     +'<div style="background:var(--bg2);border-radius:10px;padding:12px;text-align:center">'
     +'<div style="font-size:9px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Crediti Stadio</div>'
@@ -6143,6 +6143,12 @@ function admRenderRosaEditor(players, torneoKey, legaKey, squadra) {
     +'<div style="font-size:9px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Crediti Sponsor</div>'
     +'<div style="font-family:Bebas Neue,sans-serif;font-size:26px;color:#8b5cf6">'+crSponsor+'</div>'
     +'<div style="font-size:9px;color:var(--text3)">calcolato automatico</div>'
+    +'</div>'
+    // Multe Crediti (solo visualizzazione)
+    +'<div style="background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);border-radius:10px;padding:12px;text-align:center">'
+    +'<div style="font-size:9px;font-weight:700;color:#ef4444;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Multe Crediti</div>'
+    +'<div style="font-family:Bebas Neue,sans-serif;font-size:26px;color:#ef4444">−'+_crMulte+'</div>'
+    +'<div style="font-size:9px;color:var(--text3)">da Multe & Sanzioni</div>'
     +'</div>'
     // Crediti Gestione (manuale - visibile utente)
     +'<div style="background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.2);border-radius:10px;padding:12px;text-align:center">'
