@@ -3826,6 +3826,8 @@ function tsmBuildFilters() {
   players=players.slice().sort(function(a,b){var ia=_tsmRo.indexOf(a.ruolo.split(';')[0].trim()),ib=_tsmRo.indexOf(b.ruolo.split(';')[0].trim());if(ia!==ib)return(ia>=0?ia:99)-(ib>=0?ib:99);return a.nome.localeCompare(b.nome);});
   var _tsmRo=['P','D','C','A'];
   players=players.slice().sort(function(a,b){var ia=_tsmRo.indexOf(a.ruolo.split(';')[0].trim()),ib=_tsmRo.indexOf(b.ruolo.split(';')[0].trim());if(ia!==ib)return(ia>=0?ia:99)-(ib>=0?ib:99);return a.nome.localeCompare(b.nome);});
+  var _tsmRo=['P','D','C','A'];
+  players=players.slice().sort(function(a,b){var ia=_tsmRo.indexOf(a.ruolo.split(';')[0].trim()),ib=_tsmRo.indexOf(b.ruolo.split(';')[0].trim());if(ia!==ib)return(ia>=0?ia:99)-(ib>=0?ib:99);return a.nome.localeCompare(b.nome);});
   var GROUPS=[
     {label:'TUTTI',roles:null},
     {label:'PORTIERE',roles:['P']},
