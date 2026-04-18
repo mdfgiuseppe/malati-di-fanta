@@ -6037,6 +6037,11 @@ function admLoadRosaGiocatori() {
   var el = document.getElementById('adm-rose-body'); if(!el||!squadra) return;
   var players = admGetPlayers(torneoKey, legaKey, squadra);
   el.innerHTML = admRenderRosaEditor(players, torneoKey, legaKey, squadra);
+  if (typeof REAL_NAMES !== 'undefined') {
+    el.querySelectorAll('input[data-f="squadra"]').forEach(function(inp) {
+      if (REAL_NAMES[inp.value]) inp.value = REAL_NAMES[inp.value];
+    });
+  }
 }
 function admGetPlayers(torneoKey, legaKey, squadra) {
   if (torneoKey==='slim') {
@@ -6066,7 +6071,7 @@ function admRenderRosaEditor(players, torneoKey, legaKey, squadra) {
     h += '<tr style="border-bottom:1px solid var(--border)">'
       +'<td style="padding:6px 10px"><input type="text" value="'+p.ruolo+'" data-t="'+t+'" data-l="'+l+'" data-s="'+s+'" data-i="'+i+'" data-f="ruolo" onchange="admUpdatePlayerEl(this)" style="width:100%;background:transparent;border:none;color:var(--text);font-size:12px;outline:none"></td>'
       +'<td style="padding:6px 10px"><input type="text" value="'+p.nome+'" data-t="'+t+'" data-l="'+l+'" data-s="'+s+'" data-i="'+i+'" data-f="nome" onchange="admUpdatePlayerEl(this)" style="width:100%;background:transparent;border:none;color:var(--text);font-weight:700;font-size:12px;outline:none"></td>'
-      +'<td style="padding:6px 10px"><input type="text" value=\"\'+(typeof REAL_NAMES!==\'undefined\'&&REAL_NAMES[p.squadra]?REAL_NAMES[p.squadra]:(p.squadra||\'\')+\'\" data-t="'+t+'" data-l="'+l+'" data-s="'+s+'" data-i="'+i+'" data-f="squadra" onchange="admUpdatePlayerEl(this)" style="width:100%;background:transparent;border:none;color:var(--text2);font-size:12px;outline:none"></td>'
+      +'<td style="padding:6px 10px"><input type="text" value=\"'+(p.squadra||'')+'\" data-t="'+t+'" data-l="'+l+'" data-s="'+s+'" data-i="'+i+'" data-f="squadra" onchange="admUpdatePlayerEl(this)" style="width:100%;background:transparent;border:none;color:var(--text2);font-size:12px;outline:none"></td>'
       +'<td style="padding:6px 10px;text-align:right"><input type="number" value="'+(p.costo||0)+'" data-t="'+t+'" data-l="'+l+'" data-s="'+s+'" data-i="'+i+'" data-f="costo" onchange="admUpdatePlayerEl(this)" style="width:60px;background:transparent;border:none;color:#10b981;font-size:13px;font-family:Bebas Neue,sans-serif;text-align:right;outline:none"></td>'
       +'<td style="padding:6px 4px;text-align:center"><button data-t="'+t+'" data-l="'+l+'" data-s="'+s+'" data-i="'+i+'" onclick="admDeletePlayerEl(this)" style="background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);color:#ef4444;cursor:pointer;font-size:13px;border-radius:5px;width:28px;height:26px;line-height:1">🗑</button></td>'
       +'</tr>';
