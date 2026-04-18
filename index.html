@@ -4147,6 +4147,13 @@ function gsPing() {
           if (u.ruolo === 'admin') checkPendingRequests();
         } catch(e) {}
       }
+      // Carica tabella stadio globale da GSheets
+      gsCall({action:'getStadio', torneo:'slim', lega:'global'}, function(err, data) {
+        if (!err && data && data.ok && data.data && Object.keys(data.data).length) {
+          localStorage.setItem('adm_stadio_table_global', JSON.stringify(data.data));
+          if(typeof SLIM_STADIO_TABLE!=='undefined') Object.assign(SLIM_STADIO_TABLE, data.data);
+        }
+      });
       // Carica multe da GSheets
       gsCall({action:'getMulte', torneo:'slim', lega:'it'}, function(err, data) {
         if (!err && data && data.ok && data.data && Object.keys(data.data).length) {
@@ -4592,6 +4599,10 @@ function admSaveGlobalST() {
   if(typeof SLIM_STADIO_TABLE!=='undefined') { Object.keys(ST).forEach(function(k){ SLIM_STADIO_TABLE[k]=ST[k]; }); }
   if(typeof TSM_STADIO_TABLE_IT!=='undefined') { Object.keys(ST).forEach(function(k){ TSM_STADIO_TABLE_IT[k]=ST[k]; }); }
   window._admGlobalST = null;
+  // Salva su GSheets
+  if (typeof gsCall === 'function' && GS_ONLINE) {
+    gsCall({action:'saveStadio', torneo:'slim', lega:'global', data:JSON.stringify(ST)}, null);
+  }
   var msg=document.createElement('div');msg.textContent='✅ Tabella salvata per tutti i tornei';msg.style.cssText='position:fixed;top:70px;right:20px;background:#10b981;color:#fff;padding:8px 16px;border-radius:8px;font-weight:700;font-size:12px;z-index:9999';document.body.appendChild(msg);setTimeout(function(){msg.remove();},2000);
   admRenderGlobalStadioTable();
 }
