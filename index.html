@@ -7655,8 +7655,8 @@ function buildMatchCard(home, away, scoreH, scoreA, color, large) {
   var pad = large ? '10px 12px' : '7px 10px';
   var empty = home === '' && away === '';
   // Nella finale (large) i nomi rimangono sempre bianchi
-  var hColor = empty ? 'var(--text3)' : (large ? (hWin?color:'var(--text)') : (hWin?color:'var(--text)'));
-  var aColor = empty ? 'var(--text3)' : (large ? (aWin?color:'var(--text)') : (aWin?color:'var(--text)'));
+  var hColor = empty ? 'var(--text3)' : 'var(--text)';
+  var aColor = empty ? 'var(--text3)' : 'var(--text)';
   return '<div style="background:var(--card);border:1px solid '+(played?color+'44':'var(--border)')+';border-radius:8px;overflow:hidden;margin-bottom:2px">'
     + '<div style="display:flex;align-items:center;padding:'+pad+';border-bottom:1px solid var(--border)">'
     + '<span style="flex:1;font-size:'+fs+';font-weight:'+(hWin?800:600)+';color:'+hColor+';overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+(home||'Da definire')+'</span>'
