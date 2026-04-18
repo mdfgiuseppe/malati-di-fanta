@@ -4826,6 +4826,8 @@ function admSaveCoppaData(torneoKey, coppaKey, data) {
   if (torneoKey==='slim' && typeof COPPA_DATA!=='undefined') {
     COPPA_DATA[coppaKey] = data;
   }
+  // Salva su GSheets
+  gsSaveCoppe(torneoKey, coppaKey, data);
 }
 
 function admInitCoppeSection() {
