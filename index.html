@@ -4147,6 +4147,20 @@ function gsPing() {
           if (u.ruolo === 'admin') checkPendingRequests();
         } catch(e) {}
       }
+      // Carica multe da GSheets
+      gsCall({action:'getMulte', torneo:'slim', lega:'it'}, function(err, data) {
+        if (!err && data && data.ok && data.data && Object.keys(data.data).length) {
+          localStorage.setItem('slim_multe_it', JSON.stringify(data.data));
+        }
+      });
+      // Carica coppe da GSheets
+      ['cl','el','conf','sc'].forEach(function(coppa) {
+        gsCall({action:'getCoppe', torneo:'slim', coppa:coppa}, function(err, data) {
+          if (!err && data && data.ok && data.data && Object.keys(data.data).length) {
+            localStorage.setItem('adm_coppa_data_slim_'+coppa, JSON.stringify(data.data));
+          }
+        });
+      });
     }
     var color = GS_ONLINE ? '#10b981' : '#6b7280';
     var shadow = GS_ONLINE ? '0 0 6px #10b981' : 'none';
