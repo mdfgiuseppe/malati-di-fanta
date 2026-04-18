@@ -5390,11 +5390,11 @@ function admLoadMulteBody() {
       +'<button data-t="'+torneoKey+'" data-l="'+legaKey+'" data-team="'+team+'" data-f="penalita" data-dir="1" onclick="admMulteChange(this)" style="width:22px;height:22px;border-radius:4px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);color:#ef4444;font-size:14px;cursor:pointer;line-height:1">+</button>'
       +'</div></td>'
       +'<td style="padding:6px 8px;text-align:center">'
-      +'<input type="number" value="'+d.multe+'" step="0.5" min="0" '
-      +'data-t="'+torneoKey+'" data-l="'+legaKey+'" data-team="'+team+'" '
-      +'onchange="admMulteMuteChange(this)" '
-      +'style="width:70px;padding:5px 8px;background:var(--bg2);border:1px solid var(--border);border-radius:6px;color:#ef4444;font-size:13px;font-family:Bebas Neue,sans-serif;text-align:center;outline:none">'
-      +'</td>'
+      +'<div style="display:flex;align-items:center;justify-content:center;gap:4px">'
+      +'<button data-t="'+torneoKey+'" data-l="'+legaKey+'" data-team="'+team+'" data-f="multe" data-dir="-1" onclick="admMulteChange(this)" style="width:22px;height:22px;border-radius:4px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);color:#ef4444;font-size:14px;cursor:pointer;line-height:1">−</button>'
+      +'<span data-team="'+team+'" data-f="multe" style="font-family:Bebas Neue,sans-serif;font-size:18px;color:#ef4444;min-width:24px;text-align:center">'+d.multe+'</span>'
+      +'<button data-t="'+torneoKey+'" data-l="'+legaKey+'" data-team="'+team+'" data-f="multe" data-dir="1" onclick="admMulteChange(this)" style="width:22px;height:22px;border-radius:4px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);color:#ef4444;font-size:14px;cursor:pointer;line-height:1">+</button>'
+      +'</div></td>'
       +'<td style="padding:8px 10px;font-size:10px;color:var(--text3)">'+d.ultima+'</td>'
       +'</tr>';
   });
@@ -5450,18 +5450,6 @@ function admLoadMulteBodyFromTemp(torneoKey, legaKey) {
 function admSaveMulteEl(el) {
   var t=el.dataset.t, l=el.dataset.l;
   var key = t+'_'+l;
-  // Leggi dal DOM prima di salvare
-  var el_body = document.getElementById('adm-mul-body');
-  if (el_body) {
-    el_body.querySelectorAll('input[data-team][data-f]').forEach(function(inp){
-      if(!window._admMulteTemp) window._admMulteTemp={};
-      if(!window._admMulteTemp[key]) window._admMulteTemp[key]={};
-      var team=inp.dataset.team;
-      var d = window._admMulteTemp[key][team] || {richiami:0,penalita:0,multe:0,ultima:'—'};
-      d.multe = parseFloat(inp.value)||0;
-      window._admMulteTemp[key][team]=d;
-    });
-  }
   var data = (window._admMulteTemp && window._admMulteTemp[key]) ? window._admMulteTemp[key] : {};
   var multeKey = admGetMulteKey(t, l);
   localStorage.setItem(multeKey, JSON.stringify(data));
