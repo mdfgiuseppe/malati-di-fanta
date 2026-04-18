@@ -2993,13 +2993,13 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   <!-- SIDENAV ADMIN -->
   <nav class="sidenav">
     <div style="padding:16px 14px 8px;font-size:9px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3)">Gestione</div>
-    <div class="nav-item active" id="adm-nav-tornei" onclick="showAdminSection('tornei',this)" ontouchend="event.preventDefault();showAdminSection('tornei',this)">
-      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-      Tornei & Leghe
-    </div>
     <div class="nav-item" id="adm-nav-utenti" onclick="showAdminSection('utenti',this)" ontouchend="event.preventDefault();showAdminSection('utenti',this)">
       <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
       Utenti
+    </div>
+    <div class="nav-item active" id="adm-nav-tornei" onclick="showAdminSection('tornei',this)" ontouchend="event.preventDefault();showAdminSection('tornei',this)">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+      Tornei & Leghe
     </div>
     <div class="nav-item" id="adm-nav-rose" onclick="showAdminSection('rose',this)" ontouchend="event.preventDefault();showAdminSection('rose',this)">
       <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
@@ -3009,13 +3009,17 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
       <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
       Calendario
     </div>
-    <div class="nav-item" id="adm-nav-sponsor" onclick="showAdminSection('sponsor',this)" ontouchend="event.preventDefault();showAdminSection('sponsor',this)">
-      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
-      Sponsor
+    <div class="nav-item" id="adm-nav-coppe" onclick="showAdminSection('coppe',this)" ontouchend="event.preventDefault();showAdminSection('coppe',this)">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 9H4.5a2.5 2.5 0 010-5H6"/><path d="M18 9h1.5a2.5 2.5 0 000-5H18"/><path d="M18 2H6v7a6 6 0 0012 0V2z"/><path d="M12 16v6M8 22h8"/></svg>
+      Coppe
     </div>
     <div class="nav-item" id="adm-nav-stadio" onclick="showAdminSection('stadio',this)" ontouchend="event.preventDefault();showAdminSection('stadio',this)">
       <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 21h18M3 10h18M5 6l7-3 7 3M4 10v11M20 10v11"/></svg>
       Stadio
+    </div>
+    <div class="nav-item" id="adm-nav-sponsor" onclick="showAdminSection('sponsor',this)" ontouchend="event.preventDefault();showAdminSection('sponsor',this)">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+      Sponsor
     </div>
     <div class="nav-item" id="adm-nav-multe" onclick="showAdminSection('multe',this)" ontouchend="event.preventDefault();showAdminSection('multe',this)">
       <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
@@ -3034,17 +3038,9 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
       <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 3a2.828 2.828 0 114 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
       Cambio Squadre
     </div>
-    <div class="nav-item" id="adm-nav-coppe" onclick="showAdminSection('coppe',this)" ontouchend="event.preventDefault();showAdminSection('coppe',this)">
-      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 9H4.5a2.5 2.5 0 010-5H6"/><path d="M18 9h1.5a2.5 2.5 0 000-5H18"/><path d="M18 2H6v7a6 6 0 0012 0V2z"/><path d="M12 16v6M8 22h8"/></svg>
-      Coppe
-    </div>
     <div class="nav-item" id="adm-nav-tablestadio" onclick="showAdminSection('tablestadio',this)" ontouchend="event.preventDefault();showAdminSection('tablestadio',this)">
       <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
       Tabella Stadio
-    </div>
-    <div class="nav-item" id="adm-nav-immagini" onclick="showAdminSection('immagini',this)" ontouchend="event.preventDefault();showAdminSection('immagini',this)">
-      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-      Immagini
     </div>
     <div class="nav-item" id="adm-nav-impostazioni" onclick="showAdminSection('impostazioni',this)" ontouchend="event.preventDefault();showAdminSection('impostazioni',this)">
       <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
