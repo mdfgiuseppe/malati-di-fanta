@@ -6954,7 +6954,18 @@ function enterLeague(tournament, leagueKey) {
   } else {
     currentLeagueKey = 'it';
     // Ripristina dati originali Italia
-    if (window._TEAMS_ROSE_IT) TEAMS_ROSE = JSON.parse(JSON.stringify(window._TEAMS_ROSE_IT));
+    // Carica rose dal localStorage se disponibili, altrimenti usa dati iniziali
+    var _roseStored = localStorage.getItem('adm_rose_slim_it');
+    if (_roseStored) {
+      try {
+        var _roseParsed = JSON.parse(_roseStored);
+        TEAMS_ROSE = _roseParsed;
+      } catch(e) {
+        if (window._TEAMS_ROSE_IT) TEAMS_ROSE = JSON.parse(JSON.stringify(window._TEAMS_ROSE_IT));
+      }
+    } else if (window._TEAMS_ROSE_IT) {
+      TEAMS_ROSE = JSON.parse(JSON.stringify(window._TEAMS_ROSE_IT));
+    }
     if (window._CREDITS_IT) CREDITS = JSON.parse(JSON.stringify(window._CREDITS_IT));
     if (window._INFERMERIA_IT) INFERMERIA = JSON.parse(JSON.stringify(window._INFERMERIA_IT));
     SLIM_TEAMS = (typeof SLIM_TEAMS_IT !== 'undefined') ? SLIM_TEAMS_IT : Object.keys(TEAMS_ROSE).sort();
