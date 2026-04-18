@@ -3409,6 +3409,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
     </div>
     <div style="position:relative;margin-bottom:10px"><input id="admin-psw-input" type="password" autocomplete="current-password" placeholder="Password Admin" onkeydown="if(event.key==='Enter')checkAdminLogin()" style="width:100%;padding:10px 44px 10px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:Barlow,sans-serif;font-size:14px;outline:none;box-sizing:border-box"><div onclick="var i=document.getElementById('admin-psw-input');i.type=i.type==='password'?'text':'password';this.textContent=i.type==='password'?'👁':' 🙈'" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);cursor:pointer;font-size:16px;user-select:none">👁</div></div>
     <div id="admin-login-err" style="display:none;font-size:11px;color:#ef4444;text-align:center;margin-bottom:10px">❌ Password errata</div>
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px"><input type="checkbox" id="admin-remember" style="width:16px;height:16px;cursor:pointer"><label for="admin-remember" style="font-size:12px;color:var(--text2);cursor:pointer">Ricordami</label></div>
     <button onclick="checkAdminLogin()" style="width:100%;padding:11px;background:#ef4444;color:#fff;border:none;border-radius:10px;font-weight:800;font-size:13px;cursor:pointer;letter-spacing:1px">ENTRA</button>
     <button onclick="closeAdminLogin()" style="width:100%;padding:11px;background:transparent;color:var(--text2);border:1px solid var(--border);border-radius:10px;font-weight:700;font-size:12px;cursor:pointer;margin-top:8px">Annulla</button>
   </div>
@@ -4295,7 +4296,16 @@ var ADMIN_USERS = JSON.parse(localStorage.getItem('admin_users') || '[]');
 // ═══════════════════════════════════════════════════════
 function openAdminLogin() {
   var m = document.getElementById('admin-login-modal');
-  if (m) { m.style.display='flex'; document.getElementById('admin-psw-input').value=''; document.getElementById('admin-login-err').style.display='none'; setTimeout(function(){ document.getElementById('admin-psw-input').focus(); },100); }
+  if (m) {
+    m.style.display='flex';
+    var saved = localStorage.getItem('_adminRemember');
+    var inp = document.getElementById('admin-psw-input');
+    var rem = document.getElementById('admin-remember');
+    if (saved) { inp.value = saved; if (rem) rem.checked = true; }
+    else { inp.value = ''; if (rem) rem.checked = false; }
+    document.getElementById('admin-login-err').style.display='none';
+    setTimeout(function(){ inp.focus(); },100);
+  }
 }
 function closeAdminLogin() {
   var m = document.getElementById('admin-login-modal');
@@ -4305,6 +4315,8 @@ function checkAdminLogin() {
   var psw = document.getElementById('admin-psw-input').value;
   var stored = localStorage.getItem('admin_password') || ADMIN_PASSWORD;
   if (psw === stored) {
+    var rem = document.getElementById('admin-remember');
+    if (rem && rem.checked) { localStorage.setItem('_adminRemember', psw); } else { localStorage.removeItem('_adminRemember'); }
     closeAdminLogin();
     showPage('admin');
     admInitPage();
