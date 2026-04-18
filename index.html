@@ -6088,9 +6088,25 @@ function admRenderRosaEditor(players, torneoKey, legaKey, squadra) {
   var crStadio = admCalcCreditiStadio(torneoKey, legaKey, squadra);
   var crSponsor = admCalcCreditiSponsor(torneoKey, legaKey, squadra);
   var crGestione = admGetCreditiGestione(torneoKey, legaKey, squadra);
+  // Crediti Attuali = CREDITS - multe crediti
+  var _sqKey = squadra;
+  var _cr = typeof CREDITS!=='undefined' ? (CREDITS[squadra]||CREDITS[squadra.toUpperCase()]||0) : 0;
+  // Leggi from localStorage se disponibile (aggiornato dall'import)
+  var _crStored = localStorage.getItem('adm_crediti_base_'+torneoKey+'_'+legaKey);
+  if (_crStored) { try { var _crObj=JSON.parse(_crStored); _cr=_crObj[squadra]||_crObj[squadra.toUpperCase()]||_cr; } catch(e){} }
+  var _multeKey = admGetMulteKey ? admGetMulteKey(torneoKey, legaKey) : torneoKey+'_multe_'+legaKey;
+  var _multeRaw = localStorage.getItem(_multeKey);
+  var _crMulte = 0;
+  if (_multeRaw) { try { var _md=JSON.parse(_multeRaw); var _mq=_md[squadra]||_md[squadra.toUpperCase()]||{}; _crMulte=parseFloat(_mq.multe)||0; } catch(e){} }
+  var crAttuali = Math.round((_cr - _crMulte) * 10) / 10;
 
   h += '<div class="card" style="padding:16px;margin-top:12px">'
     +'<div style="font-family:Bebas Neue,sans-serif;font-size:16px;letter-spacing:1px;margin-bottom:12px">💰 Crediti <span style="color:#10b981">Squadra</span></div>'
+    +'<div style="background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);border-radius:10px;padding:14px;text-align:center;margin-bottom:12px">'
+    +'<div style="font-size:9px;font-weight:700;color:#f59e0b;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">💰 Crediti Attuali</div>'
+    +'<div style="font-family:Bebas Neue,sans-serif;font-size:32px;color:#f59e0b">'+crAttuali+'</div>'
+    +'<div style="font-size:9px;color:var(--text3)">da Leghe FC − multe cr'+((_crMulte>0)?' (−'+_crMulte+' cr multe)':'')+' = '+crAttuali+' cr</div>'
+    +'</div>'
     +'<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">'
     // Crediti Stadio (solo visualizzazione)
     +'<div style="background:var(--bg2);border-radius:10px;padding:12px;text-align:center">'
@@ -6106,14 +6122,14 @@ function admRenderRosaEditor(players, torneoKey, legaKey, squadra) {
     +'</div>'
     // Crediti Gestione (manuale - visibile utente)
     +'<div style="background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.2);border-radius:10px;padding:12px;text-align:center">'
-    +'<div style="font-size:9px;font-weight:700;color:#10b981;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Crediti Gestione</div>'
+    +'<div style="font-size:9px;font-weight:700;color:#10b981;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Modifica Crediti Manuali</div>'
     +'<input type="number" id="adm-cr-gest-'+squadra+'" value="'+crGestione+'" step="0.5" '
     +'style="width:100%;background:transparent;border:none;border-bottom:2px solid #10b981;color:#10b981;font-family:Bebas Neue,sans-serif;font-size:26px;text-align:center;outline:none">'
     +'<div style="font-size:9px;color:#10b981;margin-top:4px">visibile lato utente</div>'
     +'</div>'
     +'</div>'
     +'<div style="margin-top:10px;display:flex;justify-content:flex-end">'
-    +'<button data-t="'+torneoKey+'" data-l="'+legaKey+'" data-s="'+squadra+'" onclick="admSaveCreditiGestioneEl(this)" style="padding:6px 16px;background:#10b981;color:#fff;border:none;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer">💾 Salva Crediti Gestione</button>'
+    +'<button data-t="'+torneoKey+'" data-l="'+legaKey+'" data-s="'+squadra+'" onclick="admSaveCreditiGestioneEl(this)" style="padding:6px 16px;background:#10b981;color:#fff;border:none;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer">💾 Salva Crediti Manuali</button>'
     +'</div>'
     +'</div>';
 
@@ -7078,7 +7094,12 @@ function updateHeader(){
   if(cv){
     var _legaKey = window.currentLeagueKey||'it';
     var _userCred = JSON.parse(localStorage.getItem('user_crediti_slim_'+_legaKey)||'{}');
-    var _credVal = (_userCred[currentTeam]!==undefined) ? _userCred[currentTeam] : (CREDITS[currentTeam]!==undefined ? CREDITS[currentTeam] : '--');
+    var _baseCr = (_userCred[currentTeam]!==undefined) ? _userCred[currentTeam] : (CREDITS[currentTeam]!==undefined ? CREDITS[currentTeam] : null);
+    var _multeKey2 = 'slim_multe_'+_legaKey;
+    var _multeRaw2 = localStorage.getItem(_multeKey2);
+    var _crMulUser = 0;
+    if (_multeRaw2) { try { var _mdu=JSON.parse(_multeRaw2); var _mqu=_mdu[currentTeam]||_mdu[currentTeam.toUpperCase()]||{}; _crMulUser=parseFloat(_mqu.multe)||0; } catch(e){} }
+    var _credVal = _baseCr !== null ? Math.round((_baseCr - _crMulUser)*10)/10 : '--';
     cv.textContent = _credVal;
   }
   var pl=TEAMS_ROSE[currentTeam]||[];
