@@ -3532,7 +3532,16 @@ function slimCalcStandings() {
     var pen = parseInt(md.penalita) || 0;
     if (pen > 0) { s[t].pt -= pen; s[t].penalita = pen; }
   });
-  var sorted = SLIM_TEAMS.slice().sort(function(a,b){
+  // Penalità da Multe & Sanzioni
+  var _tsmMulKey = 'tsm_multe_it';
+  var _tsmMulRaw = localStorage.getItem(_tsmMulKey);
+  var _tsmMulData = _tsmMulRaw ? JSON.parse(_tsmMulRaw) : {};
+  tsmTeams.forEach(function(t) {
+    var md = _tsmMulData[t] || _tsmMulData[t.toUpperCase()] || {};
+    var pen = parseInt(md.penalita) || 0;
+    if (pen > 0) { s[t].pt -= pen; s[t].penalita = pen; }
+  });
+  var sorted = tsmTeams.slice().sort(function(a,b){
     if (s[b].pt !== s[a].pt) return s[b].pt - s[a].pt;
     return s[b].v - s[a].v;
   });
@@ -3805,10 +3814,19 @@ function tsmUpdateHeader() {
     var _baseTSM = (_userCredTSM[tsmCurrentTeam]!==undefined) ? _userCredTSM[tsmCurrentTeam]
       : (_userCredTSM[tsmCurrentTeam.toUpperCase()]!==undefined) ? _userCredTSM[tsmCurrentTeam.toUpperCase()]
       : (CREDITS&&CREDITS[tsmCurrentTeam]!==undefined?CREDITS[tsmCurrentTeam]:null);
+    // Movimenti rose: costiOrig - costiAttuali
+    var _rosaOrigTSM = (typeof TSM_ROSE_IT!=='undefined' && TSM_ROSE_IT[tsmCurrentTeam]) ? TSM_ROSE_IT[tsmCurrentTeam] : null;
+    var _roseStoredTSM = localStorage.getItem('adm_rose_tsm_it');
+    if (_roseStoredTSM) { try { var _rs=JSON.parse(_roseStoredTSM); if(_rs[tsmCurrentTeam]) _rosaOrigTSM=_rs[tsmCurrentTeam]; } catch(e){} }
+    var _costiOrigTSM = _rosaOrigTSM ? _rosaOrigTSM.reduce(function(s,p){return s+(parseFloat(p.costo)||0);},0) : 0;
+    var _rosaAttuTSM = (typeof TEAMS_ROSE!=='undefined' && TEAMS_ROSE[tsmCurrentTeam]) ? TEAMS_ROSE[tsmCurrentTeam] : [];
+    var _costiAttuTSM = _rosaAttuTSM.reduce(function(s,p){return s+(parseFloat(p.costo)||0);},0);
+    var _movTSM = _costiOrigTSM - _costiAttuTSM;
+    // Multe
     var _multeRawTSM = localStorage.getItem('tsm_multe_it');
     var _crMulTSM = 0;
     if (_multeRawTSM) { try { var _mdTSM=JSON.parse(_multeRawTSM); var _mqTSM=_mdTSM[tsmCurrentTeam]||_mdTSM[tsmCurrentTeam.toUpperCase()]||{}; _crMulTSM=parseFloat(_mqTSM.multe)||0; } catch(e){} }
-    var _credValTSM = _baseTSM !== null ? Math.round((_baseTSM - _crMulTSM)*10)/10 : '—';
+    var _credValTSM = _baseTSM !== null ? Math.round((_baseTSM + _movTSM - _crMulTSM)*10)/10 : '—';
     cv.textContent = _credValTSM;
   }
   var pl=TEAMS_ROSE[tsmCurrentTeam]||[];
@@ -3974,6 +3992,22 @@ function tsmRenderClassifica() {
   }).join('');
   var gEl = document.getElementById('tsm-giornata-label');
   if (gEl) gEl.textContent = 'Giornata '+giocate+' / '+TSM_TOTAL_GIORNATE;
+  // Note penalità
+  var penNote = sorted.filter(function(t){return s[t].penalita>0;});
+  var noteEl = document.getElementById('tsm-classifica-note');
+  if (noteEl) {
+    noteEl.innerHTML = penNote.length
+      ? '<div style="padding:8px 10px;font-size:10px;color:#ef4444">'+penNote.map(function(t){return '* '+t.toUpperCase()+': -'+s[t].penalita+' pt di penalità';}).join('<br>')+'</div>'
+      : '';
+  }
+  if (penNote.length && el) {
+    penNote.forEach(function(t) {
+      el.querySelectorAll('tr').forEach(function(row) {
+        var nc = row.querySelector('td:nth-child(3) span');
+        if (nc && nc.textContent === t.toUpperCase()) { nc.textContent = t.toUpperCase()+' *'; nc.style.color='#ef4444'; }
+      });
+    });
+  }
 }
 
 function tsmRenderStadio() {
