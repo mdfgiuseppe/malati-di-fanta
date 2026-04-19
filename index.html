@@ -3532,7 +3532,7 @@ function slimCalcStandings() {
     var pen = parseInt(md.penalita) || 0;
     if (pen > 0) { s[t].pt -= pen; s[t].penalita = pen; }
   });
-  var sorted = SLIM_TEAMS.slice().sort(function(a,b){
+  var sorted = tsmTeams.slice().sort(function(a,b){
     if (s[b].pt !== s[a].pt) return s[b].pt - s[a].pt;
     return s[b].v - s[a].v;
   });
@@ -3886,14 +3886,22 @@ function tsmCalcStandings() {
   var stadio = tsmGetStadio();
   var ST = TSM_STADIO_TABLE_IT || {};
   var s = {};
-  SLIM_TEAMS.forEach(function(t) { s[t]={v:0,p:0,s:0,pt:0,cr:0}; });
+  // Usa TSM_TEAMS_IT se disponibile, altronde SLIM_TEAMS
+  var tsmTeams = (typeof TSM_TEAMS_IT !== 'undefined' && TSM_TEAMS_IT.length) ? TSM_TEAMS_IT : SLIM_TEAMS;
+  // Mappa lookup case-insensitive
+  var teamKeyMap = {};
+  tsmTeams.forEach(function(t) {
+    s[t] = {v:0,p:0,s:0,pt:0,cr:0};
+    teamKeyMap[t.toUpperCase()] = t;
+  });
   var giocate = 0;
   for (var g in cal) {
     var hasData = Object.values(cal[g]).some(function(v){return v;});
     if (!hasData) continue;
     giocate++;
-    for (var team in cal[g]) {
-      var res = cal[g][team];
+    for (var teamRaw in cal[g]) {
+      var team = teamKeyMap[teamRaw.toUpperCase()] || teamRaw;
+      var res = cal[g][teamRaw];
       if (!res || !s[team]) continue;
       var lv = stadio[team] || 1;
       var st = ST[String(lv)] || {};
