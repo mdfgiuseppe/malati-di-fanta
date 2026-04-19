@@ -3822,12 +3822,6 @@ function tsmUpdateHeader() {
 function tsmBuildFilters() {
   var fr=document.getElementById('tsm-filters-row'); if(!fr) return;
   var players=tsmCurrentTeam==='INFERMERIA'?INFERMERIA:(TEAMS_ROSE[tsmCurrentTeam]||[]);
-  var _tsmRo=['P','D','C','A'];
-  players=players.slice().sort(function(a,b){var ia=_tsmRo.indexOf(a.ruolo.split(';')[0].trim()),ib=_tsmRo.indexOf(b.ruolo.split(';')[0].trim());if(ia!==ib)return(ia>=0?ia:99)-(ib>=0?ib:99);return a.nome.localeCompare(b.nome);});
-  var _tsmRo=['P','D','C','A'];
-  players=players.slice().sort(function(a,b){var ia=_tsmRo.indexOf(a.ruolo.split(';')[0].trim()),ib=_tsmRo.indexOf(b.ruolo.split(';')[0].trim());if(ia!==ib)return(ia>=0?ia:99)-(ib>=0?ib:99);return a.nome.localeCompare(b.nome);});
-  var _tsmRo=['P','D','C','A'];
-  players=players.slice().sort(function(a,b){var ia=_tsmRo.indexOf(a.ruolo.split(';')[0].trim()),ib=_tsmRo.indexOf(b.ruolo.split(';')[0].trim());if(ia!==ib)return(ia>=0?ia:99)-(ib>=0?ib:99);return a.nome.localeCompare(b.nome);});
   var GROUPS=[
     {label:'TUTTI',roles:null},
     {label:'PORTIERE',roles:['P']},
@@ -3858,6 +3852,8 @@ function tsmRenderTable() {
   if(!tbody) return;
   var q=se?se.value.toLowerCase():'';
   var players=tsmCurrentTeam==='INFERMERIA'?INFERMERIA:(TEAMS_ROSE[tsmCurrentTeam]||[]);
+  var _tsmRo=['P','D','C','A'];
+  players=players.slice().sort(function(a,b){var ia=_tsmRo.indexOf(a.ruolo.split(';')[0].trim()),ib=_tsmRo.indexOf(b.ruolo.split(';')[0].trim());if(ia!==ib)return(ia>=0?ia:99)-(ib>=0?ib:99);return a.nome.localeCompare(b.nome);});
   var RC={'P':['rgba(245,158,11,.15)','#f59e0b'],'Dc':['rgba(16,185,129,.15)','#10b981'],'B':['rgba(16,185,129,.15)','#10b981'],'Dd':['rgba(16,185,129,.15)','#10b981'],'Ds':['rgba(16,185,129,.15)','#10b981'],'D':['rgba(16,185,129,.15)','#10b981'],'C':['rgba(59,130,246,.15)','#3b82f6'],'M':['rgba(59,130,246,.15)','#3b82f6'],'E':['rgba(59,130,246,.15)','#3b82f6'],'T':['rgba(59,130,246,.15)','#3b82f6'],'W':['rgba(59,130,246,.15)','#3b82f6'],'A':['rgba(239,68,68,.15)','#ef4444'],'Pc':['rgba(239,68,68,.15)','#ef4444'],'At':['rgba(239,68,68,.15)','#ef4444']};
   var filterRoles = tsmCurrentFilter==='ALL' ? null : tsmCurrentFilter.split(',');
   var filtered=players.filter(function(p){
