@@ -6213,8 +6213,8 @@ function admRenderRosaEditor(players, torneoKey, legaKey, squadra) {
   var crGestione = admGetCreditiGestione(torneoKey, legaKey, squadra);
   // Crediti Attuali = CREDITS_base + (costi_rosa_originale - costi_rosa_attuale) - multe_cr
   var _crBase = typeof CREDITS!=='undefined' ? (CREDITS[squadra]||CREDITS[squadra.toUpperCase()]||0) : 0;
-  // Snapshot import da localStorage se disponibile
-  var _crBaseStored = localStorage.getItem('adm_crediti_base_'+torneoKey+'_'+legaKey);
+  // Snapshot import da localStorage se disponibile (solo per Slim)
+  var _crBaseStored = torneoKey!=='tsm' ? localStorage.getItem('adm_crediti_base_'+torneoKey+'_'+legaKey) : null;
   if (_crBaseStored) { try { var _crObj=JSON.parse(_crBaseStored); if(_crObj[squadra]!==undefined) _crBase=_crObj[squadra]; } catch(e){} }
   // Rosa originale embedded (window._TEAMS_ROSE_IT) per calcolo differenza
   // Rosa originale: usa la variabile giusta per torneo
@@ -6232,7 +6232,8 @@ function admRenderRosaEditor(players, torneoKey, legaKey, squadra) {
   // Rosa attuale
   var _rosaAttuale = admGetPlayers(torneoKey, legaKey, squadra);
   var _costiAttuali = _rosaAttuale.reduce(function(s,p){return s+(parseFloat(p.costo)||0);},0);
-  var _movimenti = _costiOrig - _costiAttuali;
+  // Per TSM i movimenti non si calcolano (crediti base già finali)
+  var _movimenti = torneoKey==='tsm' ? 0 : (_costiOrig - _costiAttuali);
   // Multe crediti
   var _multeKey = typeof admGetMulteKey==='function' ? admGetMulteKey(torneoKey, legaKey) : 'slim_multe_'+legaKey;
   var _multeRaw = localStorage.getItem(_multeKey);
