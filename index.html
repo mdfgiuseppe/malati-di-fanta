@@ -4013,9 +4013,12 @@ function tsmRenderClassifica() {
 function tsmRenderStadio() {
   var el = document.getElementById('tsm-stadio-body'); if(!el) return;
   var stadio = tsmGetStadio();
-  var ST = TSM_STADIO_TABLE_IT || {};
+  // Usa tabella globale aggiornata se disponibile
+  var _stGlobal = localStorage.getItem('adm_stadio_table_global');
+  var ST = (_stGlobal ? JSON.parse(_stGlobal) : null) || TSM_STADIO_TABLE_IT || {};
   var res = tsmCalcStandings();
-  el.innerHTML = SLIM_TEAMS.slice().sort(function(a,b){return(stadio[b]||1)-(stadio[a]||1);}).map(function(team){
+  var tsmTeams3 = (typeof TSM_TEAMS_IT!=='undefined' && TSM_TEAMS_IT.length) ? TSM_TEAMS_IT : SLIM_TEAMS;
+  el.innerHTML = tsmTeams3.slice().sort(function(a,b){return(stadio[b]||1)-(stadio[a]||1);}).map(function(team){
     var lv = stadio[team] || 1;
     var st = ST[String(lv)] || {};
     var cr = (res.standings[team]||{}).cr || 0;
