@@ -4018,8 +4018,10 @@ function tsmRenderStadio() {
   var ST = (_stGlobal ? JSON.parse(_stGlobal) : null) || TSM_STADIO_TABLE_IT || {};
   var res = tsmCalcStandings();
   var tsmTeams3 = (typeof TSM_TEAMS_IT!=='undefined' && TSM_TEAMS_IT.length) ? TSM_TEAMS_IT : SLIM_TEAMS;
-  el.innerHTML = tsmTeams3.slice().sort(function(a,b){return(stadio[b]||1)-(stadio[a]||1);}).map(function(team){
-    var lv = stadio[team] || 1;
+  el.innerHTML = tsmTeams3.slice().sort(function(a,b){
+    return (stadio[b]||stadio[b.toUpperCase()]||1)-(stadio[a]||stadio[a.toUpperCase()]||1);
+  }).map(function(team){
+    var lv = stadio[team] || stadio[team.toUpperCase()] || 1;
     var st = ST[String(lv)] || {};
     var cr = (res.standings[team]||{}).cr || 0;
     var pct = Math.round(lv/8*100);
