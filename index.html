@@ -3532,16 +3532,7 @@ function slimCalcStandings() {
     var pen = parseInt(md.penalita) || 0;
     if (pen > 0) { s[t].pt -= pen; s[t].penalita = pen; }
   });
-  // Penalità da Multe & Sanzioni
-  var _tsmMulKey = 'tsm_multe_it';
-  var _tsmMulRaw = localStorage.getItem(_tsmMulKey);
-  var _tsmMulData = _tsmMulRaw ? JSON.parse(_tsmMulRaw) : {};
-  tsmTeams.forEach(function(t) {
-    var md = _tsmMulData[t] || _tsmMulData[t.toUpperCase()] || {};
-    var pen = parseInt(md.penalita) || 0;
-    if (pen > 0) { s[t].pt -= pen; s[t].penalita = pen; }
-  });
-  var sorted = tsmTeams.slice().sort(function(a,b){
+  var sorted = SLIM_TEAMS.slice().sort(function(a,b){
     if (s[b].pt !== s[a].pt) return s[b].pt - s[a].pt;
     return s[b].v - s[a].v;
   });
@@ -3939,7 +3930,15 @@ function tsmCalcStandings() {
       }
     }
   }
-  var sorted = SLIM_TEAMS.slice().sort(function(a,b){
+  // Penalità TSM
+  var _tsmMulRaw2 = localStorage.getItem('tsm_multe_it');
+  var _tsmMulData2 = _tsmMulRaw2 ? JSON.parse(_tsmMulRaw2) : {};
+  tsmTeams.forEach(function(t) {
+    var md = _tsmMulData2[t] || _tsmMulData2[t.toUpperCase()] || {};
+    var pen = parseInt(md.penalita) || 0;
+    if (pen > 0) { s[t].pt -= pen; s[t].penalita = pen; }
+  });
+  var sorted = tsmTeams.slice().sort(function(a,b){
     if (s[b].pt !== s[a].pt) return s[b].pt - s[a].pt;
     return s[b].v - s[a].v;
   });
@@ -6218,7 +6217,14 @@ function admRenderRosaEditor(players, torneoKey, legaKey, squadra) {
   var _crBaseStored = localStorage.getItem('adm_crediti_base_'+torneoKey+'_'+legaKey);
   if (_crBaseStored) { try { var _crObj=JSON.parse(_crBaseStored); if(_crObj[squadra]!==undefined) _crBase=_crObj[squadra]; } catch(e){} }
   // Rosa originale embedded (window._TEAMS_ROSE_IT) per calcolo differenza
-  var _rosaOrig = (window._TEAMS_ROSE_IT && (window._TEAMS_ROSE_IT[squadra]||window._TEAMS_ROSE_IT[squadra.toUpperCase()])) || null;
+  // Rosa originale: usa la variabile giusta per torneo
+  var _rosaOrigBase = null;
+  if (torneoKey==='tsm' && typeof TSM_ROSE_IT!=='undefined') {
+    _rosaOrigBase = TSM_ROSE_IT[squadra] || TSM_ROSE_IT[squadra.toUpperCase()] || null;
+  } else if (window._TEAMS_ROSE_IT) {
+    _rosaOrigBase = window._TEAMS_ROSE_IT[squadra] || window._TEAMS_ROSE_IT[squadra.toUpperCase()] || null;
+  }
+  var _rosaOrig = _rosaOrigBase;
   // Snapshot import se disponibile (più aggiornato)
   var _rosaImportStored = localStorage.getItem('adm_rose_import_'+torneoKey+'_'+legaKey);
   if (_rosaImportStored) { try { var _ri=JSON.parse(_rosaImportStored); var _riq=_ri[squadra]||_ri[squadra.toUpperCase()]||null; if(_riq) _rosaOrig=_riq; } catch(e){} }
