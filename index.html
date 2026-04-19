@@ -6135,7 +6135,7 @@ function admGetPlayers(torneoKey, legaKey, squadra) {
   return [];
 }
 function admRenderRosaEditor(players, torneoKey, legaKey, squadra) {
-  var _ro=['Por','Dc','B','Dd','Ds','E','M','C','T','W','A','Pc'];
+  var _ro=torneoKey==='tsm'?['P','D','C','A']:['Por','Dc','B','Dd','Ds','E','M','C','T','W','A','Pc'];
   players=players.slice().sort(function(a,b){var ia=_ro.indexOf(a.ruolo.split(';')[0].trim()),ib=_ro.indexOf(b.ruolo.split(';')[0].trim());if(ia!==ib)return(ia>=0?ia:99)-(ib>=0?ib:99);return a.nome.localeCompare(b.nome);});
   var h = '<div class="card" style="padding:0;overflow:hidden">'
     +'<div style="padding:12px 16px;background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">'
