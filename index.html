@@ -3532,7 +3532,7 @@ function slimCalcStandings() {
     var pen = parseInt(md.penalita) || 0;
     if (pen > 0) { s[t].pt -= pen; s[t].penalita = pen; }
   });
-  var sorted = tsmTeams.slice().sort(function(a,b){
+  var sorted = SLIM_TEAMS.slice().sort(function(a,b){
     if (s[b].pt !== s[a].pt) return s[b].pt - s[a].pt;
     return s[b].v - s[a].v;
   });
