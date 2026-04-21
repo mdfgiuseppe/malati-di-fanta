@@ -3660,6 +3660,21 @@ var LEAGUES_DATA = {
 
 var currentTournament = null;
 
+// Sincronizza LEAGUES_DATA con leghe aggiunte in admin_tornei
+try {
+  var _at = JSON.parse(localStorage.getItem('admin_tornei') || 'null');
+  if (_at) {
+    var _colors = ['#10b981','#3b82f6','#8b5cf6','#f59e0b','#ec4899','#06b6d4'];
+    _at.forEach(function(t, i) {
+      if (!LEAGUES_DATA[t.key]) LEAGUES_DATA[t.key] = {color:_colors[i%_colors.length], leghe:[]};
+      t.leghe.forEach(function(l) {
+        var exists = LEAGUES_DATA[t.key].leghe.some(function(x){return x.key===l.key;});
+        if (!exists) LEAGUES_DATA[t.key].leghe.push({key:l.key, label:l.label, flag:'🏆', clubs:0});
+      });
+    });
+  }
+} catch(e) {}
+
 function selectTournament(key, el) {
   var container = document.getElementById('leagues-container');
   if (!container) { enterLeague(key); return; }
@@ -5967,16 +5982,7 @@ function admWizardUpdateLeaguesData(key, label, leghe) {
   localStorage.setItem('adm_leagues_data_extra', JSON.stringify(saved));
 }
 
-// Carica tornei extra da localStorage all'avvio
-(function() {
-  var extra = localStorage.getItem('adm_leagues_data_extra');
-  if (extra && typeof LEAGUES_DATA !== 'undefined') {
-    try {
-      var parsed = JSON.parse(extra);
-      Object.keys(parsed).forEach(function(k) { LEAGUES_DATA[k] = parsed[k]; });
-    } catch(e) {}
-  }
-})();
+
 
 function admAddTorneo() {
   var nome = document.getElementById('adm-new-torneo-nome').value.trim();
