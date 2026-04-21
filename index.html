@@ -3120,6 +3120,10 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
               <div style="font-size:10px;font-weight:700;color:var(--text2);margin-bottom:4px;text-transform:uppercase">Crediti Iniziali</div>
               <input id="wz-crediti" type="number" min="0" value="250" style="width:100%;padding:8px 10px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;outline:none">
             </div>
+          <div style="grid-column:1/-1">
+            <div style="font-size:10px;font-weight:700;color:var(--text2);margin-bottom:4px;text-transform:uppercase">URL Trofeo (opzionale)</div>
+            <input id="wz-trofeo" type="text" placeholder="https://..." style="width:100%;padding:8px 10px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;outline:none">
+          </div>
           </div>
           <div style="display:flex;justify-content:flex-end">
             <button onclick="admWizardStep(2)" style="padding:8px 20px;background:#ef4444;color:#fff;border:none;border-radius:8px;font-weight:700;font-size:12px;cursor:pointer">Avanti →</button>
@@ -3659,6 +3663,34 @@ var LEAGUES_DATA = {
 };
 
 var currentTournament = null;
+
+// Aggiorna contatori leghe e club nella dashboard
+function updateDashboardCounters() {
+  try {
+    var at = JSON.parse(localStorage.getItem('admin_tornei')||'null') || [];
+    at.forEach(function(t) {
+      var legheEl = document.getElementById(t.key+'-n-leghe');
+      var clubEl = document.getElementById(t.key+'-n-club');
+      if (legheEl) legheEl.textContent = t.leghe.length;
+      if (clubEl) {
+        // Calcola club totali da tutte le leghe
+        var totalClub = 0;
+        t.leghe.forEach(function(l) {
+          var rose = {};
+          try { rose = JSON.parse(localStorage.getItem('adm_rose_'+t.key+'_'+l.key)||'{}'); } catch(e){}
+          // fallback per leghe embedded
+          if (!Object.keys(rose).length && typeof LEAGUES_DATA!=='undefined' && LEAGUES_DATA[t.key]) {
+            var ld = LEAGUES_DATA[t.key].leghe.find(function(x){return x.key===l.key;});
+            if (ld && ld.clubs) totalClub += ld.clubs;
+            return;
+          }
+          totalClub += Object.keys(rose).length;
+        });
+        if (totalClub > 0) clubEl.textContent = totalClub;
+      }
+    });
+  } catch(e) {}
+}
 
 // Sincronizza LEAGUES_DATA con leghe aggiunte in admin_tornei
 try {
@@ -4349,6 +4381,8 @@ function gsPing() {
     if (!GS_ONLINE) {
       console.log('GSheets offline o non raggiungibile - uso localStorage');
     }
+    // Aggiorna contatori dashboard
+    setTimeout(updateDashboardCounters, 500);
   });
 }
 
@@ -5802,6 +5836,7 @@ function admWizardStep(n) {
     _wzData.giornate = parseInt(document.getElementById('wz-giornate').value)||34;
     _wzData.nSquadre = parseInt(document.getElementById('wz-squadre').value)||10;
     _wzData.crediti = parseInt(document.getElementById('wz-crediti').value)||250;
+    _wzData.trofeoUrl = (document.getElementById('wz-trofeo')||{}).value||'';
     admWizardRenderLeghe();
   }
   if (n===3) {
@@ -6069,6 +6104,11 @@ function admAddLegaConfirm(ti, legaKey, legaLabel, giornate, nSquadre, crediti) 
   torneo.leghe.push({key: legaKey, label: legaLabel});
   admSaveTornei();
 
+  // Salva config del torneo se non esiste
+  var _existingConfig = localStorage.getItem('adm_config_'+torneo.key);
+  if (!_existingConfig) {
+    localStorage.setItem('adm_config_'+torneo.key, JSON.stringify({giornate:giornate,nSquadre:nSquadre,crediti:crediti,formato:torneo.formato||'classic',label:torneo.label,leghe:torneo.leghe}));
+  }
   // Salva struttura dati
   var rose = {};
   var cr = {};
