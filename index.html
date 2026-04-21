@@ -6148,10 +6148,35 @@ function admAddLegaConfirm(ti, legaKey, legaLabel, giornate, nSquadre, crediti) 
   setTimeout(function(){msg.remove();},3000);
 }
 
+function admConfirmRemoveLega(ti, li) {
+  var lega = ADMIN_TORNEI[ti] && ADMIN_TORNEI[ti].leghe[li] ? ADMIN_TORNEI[ti].leghe[li].label : 'questa lega';
+  if (!confirm('Eliminare la lega "' + lega + '"?\nTutti i dati (rose, calendario, ecc.) saranno cancellati.')) return;
+  admRemoveLega(ti, li);
+}
 function admRemoveLega(ti, li) {
+  var t = ADMIN_TORNEI[ti];
+  var l = t && t.leghe[li];
+  if (!l) return;
+  var tk = t.key, lk = l.key;
+  // Rimuovi dati dal localStorage
+  ['adm_rose_','adm_rose_import_','adm_crediti_base_','adm_cal_','adm_stadio_',
+   'adm_sponsor_','slim_calendar_','slim_stadio_'].forEach(function(prefix) {
+    localStorage.removeItem(prefix+tk+'_'+lk);
+    localStorage.removeItem(prefix+lk);
+  });
+  // Oscura lato utente: rimuovi dalla LEAGUES_DATA
+  if (typeof LEAGUES_DATA!=='undefined' && LEAGUES_DATA[tk]) {
+    LEAGUES_DATA[tk].leghe = LEAGUES_DATA[tk].leghe.filter(function(x){return x.key!==lk;});
+  }
   ADMIN_TORNEI[ti].leghe.splice(li, 1);
   admSaveTornei();
   admRenderTornei();
+  admAggiornaDashboard();
+  var msg = document.createElement('div');
+  msg.textContent = '✅ Lega "'+l.label+'" eliminata';
+  msg.style.cssText = 'position:fixed;top:70px;right:20px;background:#ef4444;color:#fff;padding:8px 16px;border-radius:8px;font-weight:700;font-size:12px;z-index:9999';
+  document.body.appendChild(msg);
+  setTimeout(function(){msg.remove();},2000);
 }
 
 function admAggiornaDashboard() {
