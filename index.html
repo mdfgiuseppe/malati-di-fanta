@@ -3731,12 +3731,27 @@ function _updateLegaDashboard(leagueKey) {
     'nl':'Olanda','tr':'Turchia'
   };
   // Aggiorna breadcrumb in alto a sinistra
+  // Per leghe dinamiche cerca il nome in ADMIN_TORNEI
+  var _dynLegaLabel = null;
+  if (!breadcrumbNames[leagueKey] && typeof ADMIN_TORNEI !== 'undefined') {
+    ADMIN_TORNEI.forEach(function(t) {
+      t.leghe.forEach(function(l) {
+        if (l.key === leagueKey) _dynLegaLabel = l.label;
+      });
+    });
+  }
   var bcEl = document.getElementById('breadcrumb-league');
-  if (bcEl) bcEl.textContent = breadcrumbNames[leagueKey] || leagueKey.toUpperCase();
+  if (bcEl) bcEl.textContent = breadcrumbNames[leagueKey] || _dynLegaLabel || leagueKey.toUpperCase();
   // Aggiorna header sidenav
   var nameEl = document.querySelector('.league-info-name');
   var subEl  = document.querySelector('.league-info-sub');
-  if (nameEl) nameEl.textContent = legaNames[leagueKey] || 'Slim '+leagueKey.toUpperCase();
+  var _torneoLabel = '';
+  if (typeof ADMIN_TORNEI !== 'undefined') {
+    ADMIN_TORNEI.forEach(function(t) {
+      t.leghe.forEach(function(l) { if(l.key===leagueKey) _torneoLabel=t.label; });
+    });
+  }
+  if (nameEl) nameEl.textContent = legaNames[leagueKey] || (_torneoLabel ? _torneoLabel+' - '+(_dynLegaLabel||leagueKey.toUpperCase()) : 'Slim '+leagueKey.toUpperCase());
   var nTeams = Object.keys(TEAMS_ROSE).length;
   if (subEl) subEl.textContent = nTeams + ' squadre · Mantra';
   // Aggiorna immagine trofeo nazionale nella dashboard della lega
@@ -3749,7 +3764,7 @@ function _updateLegaDashboard(leagueKey) {
   }
   // Aggiorna titolo campionato nella dashboard lega
   var titleEl = document.getElementById('lega-dash-title');
-  if (titleEl) titleEl.textContent = (legaNames[leagueKey] || 'Slim').toUpperCase();
+  if (titleEl) titleEl.textContent = (legaNames[leagueKey] || (_torneoLabel && _dynLegaLabel ? _torneoLabel+' '+_dynLegaLabel : 'Slim '+leagueKey)).toUpperCase();
   // Aggiorna logo lega nel breadcrumb topbar
   var bcLogoEl = document.getElementById('breadcrumb-logo');
   if (bcLogoEl && typeof LOGOS !== 'undefined') {
@@ -7723,6 +7738,32 @@ function enterLeague(tournament, leagueKey) {
   currentLeagueKey = leagueKey || 'it';
   
   // Carica i dati della lega selezionata
+  // Leghe dinamiche (create col wizard) — non in ALL_LEAGUES_DATA
+  var _isDynamic = leagueKey && leagueKey !== 'it' &&
+    (typeof ALL_LEAGUES_DATA === 'undefined' || !ALL_LEAGUES_DATA[leagueKey]);
+  if (_isDynamic) {
+    currentLeagueKey = leagueKey;
+    // Carica rose dal localStorage
+    var _dynRoseRaw = localStorage.getItem('adm_rose_slim_'+leagueKey) || localStorage.getItem('adm_rose_'+tournament+'_'+leagueKey);
+    TEAMS_ROSE = _dynRoseRaw ? JSON.parse(_dynRoseRaw) : {};
+    INFERMERIA = [];
+    // Carica crediti
+    var _dynCrRaw = localStorage.getItem('adm_crediti_base_slim_'+leagueKey) || localStorage.getItem('adm_crediti_base_'+(tournament||'slim')+'_'+leagueKey);
+    CREDITS = _dynCrRaw ? JSON.parse(_dynCrRaw) : {};
+    SLIM_TEAMS = Object.keys(TEAMS_ROSE).sort();
+    window._currentLeagueCalKey = 'adm_cal_slim_'+leagueKey;
+    window._currentLeagueStaKey = 'adm_stadio_slim_'+leagueKey;
+    var teamList = SLIM_TEAMS;
+    currentTeam = teamList.length > 0 ? teamList[0] : '';
+    FANTASY_LOGOS = {};
+    showPage('lega');
+    setTimeout(function(){
+      _updateLegaDashboard(leagueKey);
+      buildTeamsGrid();
+      showSection('dashboard', null);
+    }, 50);
+    return;
+  }
   if (leagueKey && leagueKey !== 'it' && typeof ALL_LEAGUES_DATA !== 'undefined' && ALL_LEAGUES_DATA[leagueKey]) {
     var ld = ALL_LEAGUES_DATA[leagueKey];
     TEAMS_ROSE = ld.teams || {};
