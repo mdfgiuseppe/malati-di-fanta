@@ -5988,9 +5988,100 @@ function admAddLega(ti) {
   var label = document.getElementById('adm-new-lega-label-'+ti).value.trim();
   var key = document.getElementById('adm-new-lega-key-'+ti).value.trim();
   if (!label || !key) { alert('Compila nome e key della lega'); return; }
-  ADMIN_TORNEI[ti].leghe.push({ key: key, label: label });
+  key = key.toLowerCase().replace(/\s+/g,'');
+  // Apri wizard squadre per la nuova lega
+  admAddLegaWizard(ti, key, label);
+}
+
+function admAddLegaWizard(ti, legaKey, legaLabel) {
+  var torneo = ADMIN_TORNEI[ti];
+  if (!torneo) return;
+  // Recupera config dal torneo (da altra lega esistente o da adm_config)
+  var config = {};
+  try { config = JSON.parse(localStorage.getItem('adm_config_'+torneo.key)||'{}'); } catch(e){}
+  var giornate = config.giornate || 34;
+  var nSquadre = config.nSquadre || 10;
+  var crediti = config.crediti || 250;
+
+  // Crea modal
+  var modal = document.getElementById('adm-addlega-modal');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'adm-addlega-modal';
+    modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:9999;display:flex;align-items:center;justify-content:center;overflow-y:auto';
+    document.body.appendChild(modal);
+  }
+
+  var sqInputs = '';
+  for (var i=0; i<nSquadre; i++) {
+    sqInputs += '<input type="text" placeholder="Squadra '+(i+1)+'" data-idx="'+i+'"'
+      +' style="padding:6px 10px;background:var(--bg2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:12px;outline:none">';
+  }
+
+  modal.innerHTML = '<div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:24px;width:420px;max-width:94vw;max-height:90vh;overflow-y:auto">'
+    +'<div style="font-family:Bebas Neue;font-size:20px;letter-spacing:2px;margin-bottom:4px">Nuova Lega — <span style="color:#ef4444">'+torneo.label+'</span></div>'
+    +'<div style="font-size:11px;color:var(--text2);margin-bottom:16px">'+legaLabel+' ('+legaKey+') · '+nSquadre+' squadre · '+giornate+' giornate</div>'
+    +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:16px" id="adm-al-squadre">'
+    +sqInputs
+    +'</div>'
+    +'<div style="display:flex;gap:8px">'
+        +'<button data-ti="'+ti+'" data-key="'+legaKey+'" data-label="'+legaLabel+'" data-g="'+giornate+'" data-n="'+nSquadre+'" data-c="'+crediti+'"'
+    +' onclick="admAddLegaConfirm(+this.dataset.ti,this.dataset.key,this.dataset.label,+this.dataset.g,+this.dataset.n,+this.dataset.c)"'
+    +' style="flex:1;padding:8px;background:#10b981;color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer">✅ Crea Lega</button>'
+    +'<button onclick="var m=document.getElementById(\'adm-addlega-modal\');if(m)m.style.display=\'none\'" style="padding:8px 14px;background:var(--bg2);border:1px solid var(--border);color:var(--text2);border-radius:8px;font-size:12px;font-weight:700;cursor:pointer">✕</button>'
+    +'</div></div>';
+  modal.style.display = 'flex';
+}
+
+function admAddLegaConfirm(ti, legaKey, legaLabel, giornate, nSquadre, crediti) {
+  var torneo = ADMIN_TORNEI[ti];
+  if (!torneo) return;
+  // Raccogli squadre
+  var inputs = document.querySelectorAll('#adm-al-squadre input');
+  var squadre = [];
+  inputs.forEach(function(inp){ if(inp.value.trim()) squadre.push(inp.value.trim()); });
+  if (!squadre.length) { alert('Inserisci almeno una squadra'); return; }
+
+  // Aggiungi lega al torneo
+  torneo.leghe.push({key: legaKey, label: legaLabel});
   admSaveTornei();
+
+  // Salva struttura dati
+  var rose = {};
+  var cr = {};
+  var cal = {};
+  squadre.forEach(function(s){ rose[s]=[]; cr[s]=crediti; });
+  for (var g=1; g<=giornate; g++) {
+    cal[String(g)] = {};
+    squadre.forEach(function(s){ cal[String(g)][s.toUpperCase()]=''; });
+  }
+  localStorage.setItem('adm_rose_'+torneo.key+'_'+legaKey, JSON.stringify(rose));
+  localStorage.setItem('adm_rose_import_'+torneo.key+'_'+legaKey, JSON.stringify(rose));
+  localStorage.setItem('adm_crediti_base_'+torneo.key+'_'+legaKey, JSON.stringify(cr));
+  localStorage.setItem('adm_cal_'+torneo.key+'_'+legaKey, JSON.stringify(cal));
+
+  // Aggiorna LEAGUES_DATA
+  if (typeof LEAGUES_DATA !== 'undefined' && LEAGUES_DATA[torneo.key]) {
+    LEAGUES_DATA[torneo.key].leghe.push({key:legaKey, label:legaLabel, flag:'🏆', clubs:squadre.length});
+  }
+
+  // Salva su GSheets
+  if (typeof gsCall==='function' && GS_ONLINE) {
+    gsCall({action:'saveRose', torneo:torneo.key, lega:legaKey, data:JSON.stringify(rose)}, null);
+    gsCall({action:'saveCalendario', torneo:torneo.key, lega:legaKey, data:JSON.stringify(cal)}, null);
+  }
+
+  document.getElementById('adm-addlega-modal').style.display = 'none';
+  document.getElementById('adm-new-lega-label-'+ti).value = '';
+  document.getElementById('adm-new-lega-key-'+ti).value = '';
   admRenderTornei();
+  admAggiornaDashboard();
+
+  var msg = document.createElement('div');
+  msg.textContent = '✅ Lega "'+legaLabel+'" creata con '+squadre.length+' squadre!';
+  msg.style.cssText = 'position:fixed;top:70px;right:20px;background:#10b981;color:#fff;padding:8px 16px;border-radius:8px;font-weight:700;font-size:12px;z-index:9999';
+  document.body.appendChild(msg);
+  setTimeout(function(){msg.remove();},3000);
 }
 
 function admRemoveLega(ti, li) {
