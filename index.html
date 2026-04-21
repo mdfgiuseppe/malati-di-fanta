@@ -3760,13 +3760,15 @@ function _updateLegaDashboard(leagueKey) {
   // Aggiorna header sidenav
   var nameEl = document.querySelector('.league-info-name');
   var subEl  = document.querySelector('.league-info-sub');
-  var _torneoLabel = '';
+  var _torneoLabel = ''; var _torneoKey = '';
   if (typeof ADMIN_TORNEI !== 'undefined') {
     ADMIN_TORNEI.forEach(function(t) {
-      t.leghe.forEach(function(l) { if(l.key===leagueKey) _torneoLabel=t.label; });
+      t.leghe.forEach(function(l) { if(l.key===leagueKey) { _torneoLabel=t.label; _torneoKey=t.key; } });
     });
   }
-  if (nameEl) nameEl.textContent = legaNames[leagueKey] || (_torneoLabel ? _torneoLabel+' - '+(_dynLegaLabel||leagueKey.toUpperCase()) : 'Slim '+leagueKey.toUpperCase());
+  // Usa chiave torneo capitalizzata per etichette brevi (es. 'Slim' invece di 'Scudetto Slim')
+  var _torneoShort = _torneoKey ? _torneoKey.charAt(0).toUpperCase()+_torneoKey.slice(1) : _torneoLabel;
+  if (nameEl) nameEl.textContent = legaNames[leagueKey] || (_torneoShort ? _torneoShort+' '+(_dynLegaLabel||leagueKey.toUpperCase()) : 'Slim '+leagueKey.toUpperCase());
   var nTeams = Object.keys(TEAMS_ROSE).length;
   if (subEl) subEl.textContent = nTeams + ' squadre · Mantra';
   // Aggiorna immagine trofeo nazionale nella dashboard della lega
@@ -3779,7 +3781,7 @@ function _updateLegaDashboard(leagueKey) {
   }
   // Aggiorna titolo campionato nella dashboard lega
   var titleEl = document.getElementById('lega-dash-title');
-  if (titleEl) titleEl.textContent = (legaNames[leagueKey] || (_torneoLabel && _dynLegaLabel ? _torneoLabel+' '+_dynLegaLabel : 'Slim '+leagueKey)).toUpperCase();
+  if (titleEl) titleEl.textContent = (legaNames[leagueKey] || (_torneoShort && _dynLegaLabel ? _torneoShort+' '+_dynLegaLabel : 'Slim '+leagueKey)).toUpperCase();
   // Aggiorna logo lega nel breadcrumb topbar
   var bcLogoEl = document.getElementById('breadcrumb-logo');
   if (bcLogoEl && typeof LOGOS !== 'undefined') {
