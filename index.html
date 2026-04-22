@@ -6070,12 +6070,21 @@ function admAddTorneo() {
 }
 
 
+function _normalizeImgUrl(url) {
+  if (!url) return '';
+  // Converte link Drive in URL diretto
+  var m = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
+  if (m) return 'https://drive.google.com/uc?export=view&id=' + m[1];
+  // Già URL diretto
+  return url;
+}
 function admEditTrofeoUrl(ti) {
   var t = ADMIN_TORNEI[ti]; if(!t) return;
   var current = localStorage.getItem('adm_trofeo_url_'+t.key) || '';
   var url = prompt('URL Trofeo per "'+t.label+'":', current);
   if (url === null) return;
   url = url.trim();
+  url = _normalizeImgUrl(url);
   if (url) localStorage.setItem('adm_trofeo_url_'+t.key, url);
   else localStorage.removeItem('adm_trofeo_url_'+t.key);
   var msg = document.createElement('div');
@@ -6090,6 +6099,7 @@ function admEditLogoTorneo(ti) {
   var url = prompt('URL Logo Torneo per "'+t.label+'":', current);
   if (url === null) return;
   url = url.trim();
+  url = _normalizeImgUrl(url);
   if (url) localStorage.setItem('adm_logo_torneo_'+t.key, url);
   else localStorage.removeItem('adm_logo_torneo_'+t.key);
   var msg = document.createElement('div');
@@ -6105,6 +6115,7 @@ function admEditLogoLega(ti, li) {
   var url = prompt('URL Logo per "'+l.label+'":', current);
   if (url === null) return;
   url = url.trim();
+  url = _normalizeImgUrl(url);
   if (url) localStorage.setItem('adm_logo_lega_'+t.key+'_'+l.key, url);
   else localStorage.removeItem('adm_logo_lega_'+t.key+'_'+l.key);
   var msg = document.createElement('div');
