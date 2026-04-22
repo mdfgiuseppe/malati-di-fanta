@@ -5800,6 +5800,7 @@ function admRenderTornei() {
       return '<div style="display:flex;align-items:center;gap:8px;padding:6px 10px;background:var(--bg2);border-radius:6px;margin-bottom:4px">'
         +'<span style="font-size:11px;font-weight:700;flex:1">'+l.label+'</span>'
         +'<span style="font-size:9px;color:var(--text3)">'+l.key+'</span>'
+        +'<button onclick="admEditLogoLega('+ti+','+li+')" style="background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.2);color:#3b82f6;cursor:pointer;font-size:12px;border-radius:5px;padding:2px 6px;margin-right:3px">🖼 Logo</button>'
         +'<button onclick="admConfirmRemoveLega('+ti+','+li+')" style="background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);color:#ef4444;cursor:pointer;font-size:12px;border-radius:5px;padding:2px 6px">🗑</button>'
         +'</div>';
     }).join('');
@@ -6036,6 +6037,55 @@ function admAddTorneo() {
   admAggiornaDashboard();
 }
 
+
+function admEditTrofeoUrl(ti) {
+  var t = ADMIN_TORNEI[ti]; if(!t) return;
+  var current = localStorage.getItem('adm_trofeo_url_'+t.key) || '';
+  var url = prompt('URL Trofeo per "'+t.label+'":', current);
+  if (url === null) return;
+  url = url.trim();
+  if (url) localStorage.setItem('adm_trofeo_url_'+t.key, url);
+  else localStorage.removeItem('adm_trofeo_url_'+t.key);
+  var msg = document.createElement('div');
+  msg.textContent = url ? '✅ URL trofeo salvato' : '✅ URL rimosso';
+  msg.style.cssText = 'position:fixed;top:70px;right:20px;background:#3b82f6;color:#fff;padding:8px 16px;border-radius:8px;font-weight:700;font-size:12px;z-index:9999';
+  document.body.appendChild(msg);
+  setTimeout(function(){msg.remove();},2000);
+}
+function admEditLogoTorneo(ti) {
+  var t = ADMIN_TORNEI[ti]; if(!t) return;
+  var current = localStorage.getItem('adm_logo_torneo_'+t.key) || '';
+  var url = prompt('URL Logo Torneo per "'+t.label+'":', current);
+  if (url === null) return;
+  url = url.trim();
+  if (url) localStorage.setItem('adm_logo_torneo_'+t.key, url);
+  else localStorage.removeItem('adm_logo_torneo_'+t.key);
+  var msg = document.createElement('div');
+  msg.textContent = url ? '✅ URL logo torneo salvato' : '✅ URL rimosso';
+  msg.style.cssText = 'position:fixed;top:70px;right:20px;background:#3b82f6;color:#fff;padding:8px 16px;border-radius:8px;font-weight:700;font-size:12px;z-index:9999';
+  document.body.appendChild(msg);
+  setTimeout(function(){msg.remove();},2000);
+}
+function admEditLogoLega(ti, li) {
+  var t = ADMIN_TORNEI[ti]; if(!t) return;
+  var l = t.leghe[li]; if(!l) return;
+  var current = localStorage.getItem('adm_logo_lega_'+t.key+'_'+l.key) || '';
+  var url = prompt('URL Logo per "'+l.label+'":', current);
+  if (url === null) return;
+  url = url.trim();
+  if (url) localStorage.setItem('adm_logo_lega_'+t.key+'_'+l.key, url);
+  else localStorage.removeItem('adm_logo_lega_'+t.key+'_'+l.key);
+  var msg = document.createElement('div');
+  msg.textContent = url ? '✅ URL logo lega salvato' : '✅ URL rimosso';
+  msg.style.cssText = 'position:fixed;top:70px;right:20px;background:#3b82f6;color:#fff;padding:8px 16px;border-radius:8px;font-weight:700;font-size:12px;z-index:9999';
+  document.body.appendChild(msg);
+  setTimeout(function(){msg.remove();},2000);
+}
+function admConfirmRemoveTorneo(ti) {
+  var t = ADMIN_TORNEI[ti];
+  if (!confirm('Eliminare il torneo "' + (t?t.label:'') + '"?\nTutti i dati saranno cancellati.')) return;
+  admRemoveTorneo(ti);
+}
 function admRemoveTorneo(ti) {
   if (!confirm('Eliminare il torneo "'+ADMIN_TORNEI[ti].label+'"?')) return;
   ADMIN_TORNEI.splice(ti, 1);
