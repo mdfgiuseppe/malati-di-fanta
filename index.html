@@ -3665,6 +3665,22 @@ var LEAGUES_DATA = {
 var currentTournament = null;
 
 // Aggiorna contatori leghe e club nella dashboard
+function updateLogosTornei() {
+  try {
+    var at = JSON.parse(localStorage.getItem('admin_tornei')||'null') || [];
+    at.forEach(function(t) {
+      var url = localStorage.getItem('adm_logo_torneo_'+t.key);
+      if (!url) return;
+      // Aggiorna img nella t-card
+      document.querySelectorAll('.t-card').forEach(function(card) {
+        if (card.getAttribute('onclick') && card.getAttribute('onclick').indexOf("'"+t.key+"'") >= 0) {
+          var img = card.querySelector('.t-logo-area img');
+          if (img) img.src = url;
+        }
+      });
+    });
+  } catch(e) {}
+}
 function updateDashboardCounters() {
   try {
     var at = JSON.parse(localStorage.getItem('admin_tornei')||'null') || [];
@@ -3738,7 +3754,12 @@ function selectTournament(key, el) {
       var _el = document.getElementById('tsm-it-logo');
       logo = (_el && _el.src) ? _el.src : (LOGOS && LOGOS['tsm']) || '';
     } else {
-      logo = (LOGOS && LOGOS[_lk.replace('tdm_','').replace('ilm_','').replace('ilc_','')]) || '';
+      // Prima cerca URL da localStorage, poi embedded
+      var _torneoK = currentTournament || '';
+      var _legaK = _lk;
+      var _urlLogo = localStorage.getItem('adm_logo_lega_'+_torneoK+'_'+_legaK)
+        || localStorage.getItem('adm_logo_lega_'+_torneoK+'_'+_legaK.replace(_torneoK+'_',''));
+      logo = _urlLogo || (LOGOS && LOGOS[_lk.replace('tdm_','').replace('ilm_','').replace('ilc_','')]) || '';
     }
     html += '<div onclick="enterLeague(\''+key+'\',\''+lega.key+'\')" style="background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:14px 10px;cursor:pointer;text-align:center;transition:all .2s;display:flex;flex-direction:column;align-items:center;gap:8px;" '
           + 'onmouseover="this.style.borderColor=\''+dati.color+'\';this.style.background=\''+dati.color+'1a\'" '
@@ -3805,10 +3826,20 @@ function _updateLegaDashboard(leagueKey) {
   if (subEl) subEl.textContent = nTeams + ' squadre · Mantra';
   // Aggiorna immagine trofeo nazionale nella dashboard della lega
   var trophyEl = document.getElementById('lega-dash-trophy');
-  if (trophyEl && typeof TROPHY_MAP !== 'undefined') {
-    var trophyName = trophyMap[leagueKey];
-    if (trophyName && TROPHY_MAP[trophyName]) {
-      trophyEl.src = TROPHY_MAP[trophyName];
+  if (trophyEl) {
+    // Cerca torneo di questa lega
+    var _trofeoTorneoKey = '';
+    if (typeof ADMIN_TORNEI !== 'undefined') {
+      ADMIN_TORNEI.forEach(function(t) {
+        t.leghe.forEach(function(l){ if(l.key===leagueKey) _trofeoTorneoKey=t.key; });
+      });
+    }
+    var _trofeoUrl = _trofeoTorneoKey ? localStorage.getItem('adm_trofeo_url_'+_trofeoTorneoKey) : null;
+    if (_trofeoUrl) {
+      trophyEl.src = _trofeoUrl;
+    } else if (typeof TROPHY_MAP !== 'undefined') {
+      var trophyName = trophyMap[leagueKey];
+      if (trophyName && TROPHY_MAP[trophyName]) trophyEl.src = TROPHY_MAP[trophyName];
     }
   }
   // Aggiorna titolo campionato nella dashboard lega
@@ -4382,7 +4413,7 @@ function gsPing() {
       console.log('GSheets offline o non raggiungibile - uso localStorage');
     }
     // Aggiorna contatori dashboard
-    setTimeout(updateDashboardCounters, 500);
+    setTimeout(function(){ updateDashboardCounters(); updateLogosTornei(); }, 500);
   });
 }
 
@@ -5809,6 +5840,7 @@ function admRenderTornei() {
       +'<div style="font-family:\'Bebas Neue\';font-size:18px;flex:1">'+t.label+'</div>'
       +badge
       +'<button onclick="admEditTrofeoUrl('+ti+')" style="background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.2);color:#3b82f6;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer">🖼 Trofeo</button>'
+      +'<button onclick="admEditLogoTorneo('+ti+')" style="background:rgba(139,92,246,.1);border:1px solid rgba(139,92,246,.2);color:#8b5cf6;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer">🖼 Logo</button>'
       +'<button onclick="admConfirmRemoveTorneo('+ti+')" style="background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);color:#ef4444;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer">🗑 Elimina</button>'
       +'</div>'
       +'<div style="margin-bottom:10px">'+leghe+'</div>'
@@ -6713,6 +6745,12 @@ function admGetTeams(torneoKey, legaKey) {
     if (typeof ALL_SEASON_DATA!=='undefined' && ALL_SEASON_DATA[legaKey]) return ALL_SEASON_DATA[legaKey].teams || [];
   }
   if (torneoKey==='tsm' && legaKey==='it') return (typeof TSM_TEAMS_IT!=='undefined') ? TSM_TEAMS_IT : [];
+  // Fallback: leghe dinamiche da localStorage
+  try {
+    var _rose = JSON.parse(localStorage.getItem('adm_rose_'+torneoKey+'_'+legaKey)||'{}');
+    var _teams = Object.keys(_rose).sort();
+    if (_teams.length) return _teams;
+  } catch(e) {}
   return [];
 }
 function admLoadRosaGiocatori() {
