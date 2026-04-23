@@ -1084,7 +1084,67 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
     </div>
   </div>
 
-  <!-- ===== CALENDARIO ===== -->
+  <!-- ===== SCAMBIO GIOCATORI ===== -->
+    <div id="adm-s-scambi" class="adm-section" style="display:none">
+      <div style="font-family:'Bebas Neue';font-size:28px;letter-spacing:2px;margin-bottom:6px">Scambio <span style="color:#8b5cf6">Giocatori</span></div>
+      <div style="font-size:11px;color:var(--text2);margin-bottom:20px">Trasferisci giocatori tra squadre della stessa lega</div>
+
+      <!-- Selezione torneo/lega -->
+      <div class="card" style="padding:16px;margin-bottom:16px">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div>
+            <div style="font-size:10px;font-weight:700;color:var(--text2);margin-bottom:4px;text-transform:uppercase">Torneo</div>
+            <select id="adm-sc-torneo" onchange="admScLoadLeghe()" style="width:100%;padding:8px 10px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;outline:none">
+              <option value="">-- Seleziona --</option>
+            </select>
+          </div>
+          <div>
+            <div style="font-size:10px;font-weight:700;color:var(--text2);margin-bottom:4px;text-transform:uppercase">Lega</div>
+            <select id="adm-sc-lega" onchange="admScLoadSquadre()" style="width:100%;padding:8px 10px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;outline:none">
+              <option value="">-- Seleziona --</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Squadre e giocatori -->
+      <div id="adm-sc-body" style="display:none">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
+          <!-- Squadra A -->
+          <div class="card" style="padding:14px">
+            <div style="font-size:11px;font-weight:800;color:#8b5cf6;text-transform:uppercase;margin-bottom:8px">Squadra A</div>
+            <select id="adm-sc-sqA" onchange="admScLoadPlayers('A')" style="width:100%;padding:7px 10px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:12px;outline:none;margin-bottom:8px">
+              <option value="">-- Seleziona --</option>
+            </select>
+            <div style="font-size:10px;font-weight:700;color:var(--text2);margin-bottom:4px">Giocatori da cedere</div>
+            <div id="adm-sc-playersA" style="max-height:200px;overflow-y:auto"></div>
+            <div style="margin-top:8px">
+              <div style="font-size:10px;font-weight:700;color:var(--text2);margin-bottom:4px">Crediti da aggiungere</div>
+              <input id="adm-sc-crA" type="number" min="0" value="0" placeholder="0" style="width:100%;padding:6px 10px;background:var(--bg2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:12px;outline:none">
+            </div>
+          </div>
+          <!-- Squadra B -->
+          <div class="card" style="padding:14px">
+            <div style="font-size:11px;font-weight:800;color:#10b981;text-transform:uppercase;margin-bottom:8px">Squadra B</div>
+            <select id="adm-sc-sqB" onchange="admScLoadPlayers('B')" style="width:100%;padding:7px 10px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:12px;outline:none;margin-bottom:8px">
+              <option value="">-- Seleziona --</option>
+            </select>
+            <div style="font-size:10px;font-weight:700;color:var(--text2);margin-bottom:4px">Giocatori da cedere</div>
+            <div id="adm-sc-playersB" style="max-height:200px;overflow-y:auto"></div>
+            <div style="margin-top:8px">
+              <div style="font-size:10px;font-weight:700;color:var(--text2);margin-bottom:4px">Crediti da aggiungere</div>
+              <input id="adm-sc-crB" type="number" min="0" value="0" placeholder="0" style="width:100%;padding:6px 10px;background:var(--bg2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:12px;outline:none">
+            </div>
+          </div>
+        </div>
+        <!-- Riepilogo -->
+        <div id="adm-sc-riepilogo" style="display:none;background:var(--bg2);border-radius:10px;padding:14px;margin-bottom:12px;font-size:12px"></div>
+        <button onclick="admScPreview()" style="width:100%;padding:10px;background:#8b5cf6;color:#fff;border:none;border-radius:8px;font-weight:700;font-size:13px;cursor:pointer;margin-bottom:8px">👁 Anteprima Scambio</button>
+        <button id="adm-sc-confirm-btn" onclick="admScConfirm()" style="width:100%;padding:10px;background:#10b981;color:#fff;border:none;border-radius:8px;font-weight:700;font-size:13px;cursor:pointer;display:none">✅ Conferma Scambio</button>
+      </div>
+    </div>
+
+<!-- ===== CALENDARIO ===== -->
   <div id="s-calendario" class="section">
     <div style="font-family:'Bebas Neue';font-size:28px;letter-spacing:2px;margin-bottom:14px">Calendario <span style="color:var(--green)">& Risultati</span></div>
     <div id="slim-calendario-body"></div>
@@ -3005,6 +3065,10 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
     <div class="nav-item" id="adm-nav-rose" onclick="showAdminSection('rose',this)" ontouchend="event.preventDefault();showAdminSection('rose',this)">
       <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
       Rose Squadre
+    </div>
+    <div class="nav-item" id="adm-nav-scambi" onclick="showAdminSection('scambi',this)" ontouchend="event.preventDefault();showAdminSection('scambi',this)">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M7 16V4m0 0L3 8m4-4l4 4M17 8v12m0 0l4-4m-4 4l-4-4"/></svg>
+      Scambio Giocatori
     </div>
     <div class="nav-item" id="adm-nav-calendario" onclick="showAdminSection('calendario',this)" ontouchend="event.preventDefault();showAdminSection('calendario',this)">
       <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
