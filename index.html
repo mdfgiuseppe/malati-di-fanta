@@ -6136,9 +6136,9 @@ function admAddTorneo() {
 
 function _normalizeImgUrl(url) {
   if (!url) return '';
-  // Converte link Drive in URL diretto
-  var m = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
-  if (m) return 'https://drive.google.com/uc?export=view&id=' + m[1];
+  // Estrae ID da qualsiasi formato link Drive
+  var m = url.match(/\/d\/([a-zA-Z0-9_-]+)/) || url.match(/id=([a-zA-Z0-9_-]+)/);
+  if (m) return 'https://lh3.googleusercontent.com/d/' + m[1];
   // Già URL diretto
   return url;
 }
