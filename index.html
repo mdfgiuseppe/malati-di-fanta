@@ -5874,7 +5874,7 @@ function showAdminSection(id, el) {
   if (id==='modulistica') admRenderModulistica();
   if (id==='multe') admInitSelettori('mul');
   if (id==='impostazioni') admInitImpostazioni();
-  if (id==='scambi') setTimeout(admScInit, 100);
+  if (id==='scambi') { admScInit(); }
   // Chiudi sidenav su mobile
   closeAdminSidenav();
 }
