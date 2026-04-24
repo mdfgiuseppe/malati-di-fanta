@@ -8934,58 +8934,7 @@ function doLogin(){
     }
   }
 }
-</script>
 
-<!-- MODAL LOGOUT -->
-<div id="logout-modal" onclick="if(event.target===this)closeLogoutModal()" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.7);backdrop-filter:blur(4px);align-items:center;justify-content:center">
-  <div style="background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:28px 24px;width:min(320px,90vw);text-align:center">
-    <div style="font-size:32px;margin-bottom:12px">👋</div>
-    <div style="font-size:16px;font-weight:800;color:var(--text);margin-bottom:8px">Vuoi uscire?</div>
-    <div style="font-size:13px;color:var(--text2);margin-bottom:24px">Verrai reindirizzato alla dashboard principale.</div>
-    <div style="display:flex;gap:10px">
-      <button onclick="closeLogoutModal()" style="flex:1;padding:11px;background:var(--bg3);border:1px solid var(--border);border-radius:10px;color:var(--text);font-weight:700;font-size:13px;cursor:pointer">No, resta</button>
-      <button onclick="doLogout()" style="flex:1;padding:11px;background:linear-gradient(135deg,#ef4444,#dc2626);border:none;border-radius:10px;color:#fff;font-weight:700;font-size:13px;cursor:pointer">Sì, esci</button>
-    </div>
-  </div>
-</div>
-
-<div id="page-dynamic-lega" class="page">
-  <!-- Topbar -->
-  <div class="topbar">
-    <button onclick="showPage('dashboard')" style="background:none;border:none;cursor:pointer;padding:6px;color:var(--text)">
-      <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
-    </button>
-    <div style="flex:1;text-align:center">
-      <div id="dyn-torneo-title" style="font-family:'Bebas Neue';font-size:18px;letter-spacing:2px"></div>
-      <div id="dyn-lega-title" style="font-size:10px;color:var(--text2)"></div>
-    </div>
-    <button onclick="toggleTheme()" style="background:none;border:none;cursor:pointer;padding:6px;color:var(--text)">
-      <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
-    </button>
-  </div>
-
-  <div class="main" style="padding:16px">
-    <!-- Squadre grid -->
-    <div id="dyn-teams-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px;margin-bottom:16px"></div>
-
-    <!-- Nav sezioni -->
-    <div style="display:flex;gap:6px;margin-bottom:16px;overflow-x:auto">
-      <button id="dyn-nav-dashboard" onclick="dynRenderSection('dashboard')" class="nav-item active" style="flex-shrink:0;padding:6px 14px;border-radius:8px;font-size:11px;font-weight:700;border:1px solid var(--border);background:var(--bg2);color:var(--text);cursor:pointer">Dashboard</button>
-      <button id="dyn-nav-rose" onclick="dynRenderSection('rose')" class="nav-item" style="flex-shrink:0;padding:6px 14px;border-radius:8px;font-size:11px;font-weight:700;border:1px solid var(--border);background:var(--bg2);color:var(--text);cursor:pointer">Rose</button>
-      <button id="dyn-nav-calendario" onclick="dynRenderSection('calendario')" class="nav-item" style="flex-shrink:0;padding:6px 14px;border-radius:8px;font-size:11px;font-weight:700;border:1px solid var(--border);background:var(--bg2);color:var(--text);cursor:pointer">Calendario</button>
-      <button id="dyn-nav-classifica" onclick="dynRenderSection('classifica')" class="nav-item" style="flex-shrink:0;padding:6px 14px;border-radius:8px;font-size:11px;font-weight:700;border:1px solid var(--border);background:var(--bg2);color:var(--text);cursor:pointer">Classifica</button>
-    </div>
-
-    <!-- Sezioni -->
-    <div id="dyn-s-dashboard"><div id="dyn-dash-body"></div></div>
-    <div id="dyn-s-rose" style="display:none"><div id="dyn-rose-body"></div></div>
-    <div id="dyn-s-calendario" style="display:none"><div id="dyn-cal-body"></div></div>
-    <div id="dyn-s-classifica" style="display:none"><div id="dyn-class-body"></div></div>
-  </div>
-</div>
-
-</body>
-</html
 function slimGetCalendar() {
   // Sincronizza key con currentLeagueKey
   var lkCur = (typeof currentLeagueKey !== 'undefined' ? currentLeagueKey : 'it');
@@ -14343,7 +14292,9 @@ function doLogin(){
     }
   }
 }
+
 </script>
+
 
 <!-- MODAL LOGOUT -->
 <div id="logout-modal" onclick="if(event.target===this)closeLogoutModal()" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.7);backdrop-filter:blur(4px);align-items:center;justify-content:center">
