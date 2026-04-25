@@ -6241,36 +6241,30 @@ function admScConfirm() {
   var selA=admScGetSelected('A'), selB=admScGetSelected('B');
   var crA=parseFloat(document.getElementById('adm-sc-crA').value)||0;
   var crB=parseFloat(document.getElementById('adm-sc-crB').value)||0;
-  // Leggi rose tramite admGetPlayers (che usa TEAMS_ROSE per slim_it)
-  var pA=admGetPlayers(tk,lk,sqA).slice();
-  var pB=admGetPlayers(tk,lk,sqB).slice();
+  // Carica TUTTE le rose di tutte le squadre
   var roseKey='adm_rose_'+tk+'_'+lk;
-  // Carica tutte le rose dal localStorage per preservare le altre squadre
+  var savedRose={};
+  try{savedRose=JSON.parse(localStorage.getItem(roseKey)||'{}');}catch(e){}
   var rose={};
-  try{rose=JSON.parse(localStorage.getItem(roseKey)||'{}');}catch(e){}
-  // Se le rose di sqA o sqB nel localStorage sono vuote, usa quelle di admGetPlayers
-  // (non sovrascrivere mai con dati vuoti)
-  // Popola rose con TUTTE le squadre prima di modificare
   var allTeams=admGetTeams(tk,lk);
   allTeams.forEach(function(sq){
-    if(!rose[sq]||rose[sq].length===0){
-      var pl=admGetPlayers(tk,lk,sq);
-      if(pl.length>0) rose[sq]=pl;
-    }
+    if(savedRose[sq]&&savedRose[sq].length>0) rose[sq]=savedRose[sq];
+    else rose[sq]=admGetPlayers(tk,lk,sq);
   });
-  if(!rose[sqA]||rose[sqA].length===0) rose[sqA]=pA;
-  else pA=rose[sqA].slice();
-  if(!rose[sqB]||rose[sqB].length===0) rose[sqB]=pB;
-  else pB=rose[sqB].slice();
-  selA.forEach(function(n){var i=pA.findIndex(function(p){return p.nome===n;});if(i>=0)pB.push(pA.splice(i,1)[0]);});
-  selB.forEach(function(n){var i=pB.findIndex(function(p){return p.nome===n;});if(i>=0)pA.push(pB.splice(i,1)[0]);});
+  // Esegui lo scambio sulle copie
+  var pA=rose[sqA].slice();
+  var pB=rose[sqB].slice();
+  selA.forEach(function(n){
+    var i=pA.findIndex(function(p){return p.nome===n;});
+    if(i>=0) pB.push(pA.splice(i,1)[0]);
+  });
+  selB.forEach(function(n){
+    var i=pB.findIndex(function(p){return p.nome===n;});
+    if(i>=0) pA.push(pB.splice(i,1)[0]);
+  });
   rose[sqA]=pA; rose[sqB]=pB;
-  // Aggiorna anche TEAMS_ROSE per slim_it
-  if(tk==='slim'&&lk==='it'&&typeof TEAMS_ROSE!=='undefined'){
-    TEAMS_ROSE[sqA]=pA; TEAMS_ROSE[sqB]=pB;
-  }
   localStorage.setItem(roseKey,JSON.stringify(rose));
-  if(typeof TEAMS_ROSE!=='undefined'){if(TEAMS_ROSE[sqA])TEAMS_ROSE[sqA]=pA;if(TEAMS_ROSE[sqB])TEAMS_ROSE[sqB]=pB;}
+  // Aggiorna crediti se necessario
   if(crA>0||crB>0){
     var crKey='adm_crediti_base_'+tk+'_'+lk;
     var cr={};try{cr=JSON.parse(localStorage.getItem(crKey)||'{}');}catch(e){}
@@ -6278,7 +6272,7 @@ function admScConfirm() {
     if(crB>0){cr[sqB]=(parseFloat(cr[sqB])||0)-crB;cr[sqA]=(parseFloat(cr[sqA])||0)+crB;}
     localStorage.setItem(crKey,JSON.stringify(cr));
   }
-  if(typeof gsCall==='function'&&GS_ONLINE)gsCall({action:'saveRose',torneo:tk,lega:lk,data:JSON.stringify(rose)},null);
+  if(typeof gsCall==='function'&&GS_ONLINE) gsCall({action:'saveRose',torneo:tk,lega:lk,data:JSON.stringify(rose)},null);
   document.getElementById('adm-sc-riepilogo').style.display='none';
   document.getElementById('adm-sc-confirm-btn').style.display='none';
   admScLoadPlayers('A'); admScLoadPlayers('B');
