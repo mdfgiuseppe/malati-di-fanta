@@ -6241,13 +6241,23 @@ function admScConfirm() {
   var selA=admScGetSelected('A'), selB=admScGetSelected('B');
   var crA=parseFloat(document.getElementById('adm-sc-crA').value)||0;
   var crB=parseFloat(document.getElementById('adm-sc-crB').value)||0;
+  // Leggi rose tramite admGetPlayers (che usa TEAMS_ROSE per slim_it)
+  var pA=admGetPlayers(tk,lk,sqA).slice();
+  var pB=admGetPlayers(tk,lk,sqB).slice();
+  // Carica anche rose già in localStorage per avere dati aggiornati
   var roseKey='adm_rose_'+tk+'_'+lk;
-  var rose={};
-  try{rose=JSON.parse(localStorage.getItem(roseKey)||'{}');}catch(e){}
-  var pA=(rose[sqA]||[]).slice(), pB=(rose[sqB]||[]).slice();
+  var roseSaved={};
+  try{roseSaved=JSON.parse(localStorage.getItem(roseKey)||'{}');}catch(e){}
+  if(roseSaved[sqA]&&roseSaved[sqA].length) pA=roseSaved[sqA].slice();
+  if(roseSaved[sqB]&&roseSaved[sqB].length) pB=roseSaved[sqB].slice();
+  var rose=Object.assign({},roseSaved);
   selA.forEach(function(n){var i=pA.findIndex(function(p){return p.nome===n;});if(i>=0)pB.push(pA.splice(i,1)[0]);});
   selB.forEach(function(n){var i=pB.findIndex(function(p){return p.nome===n;});if(i>=0)pA.push(pB.splice(i,1)[0]);});
   rose[sqA]=pA; rose[sqB]=pB;
+  // Aggiorna anche TEAMS_ROSE per slim_it
+  if(tk==='slim'&&lk==='it'&&typeof TEAMS_ROSE!=='undefined'){
+    TEAMS_ROSE[sqA]=pA; TEAMS_ROSE[sqB]=pB;
+  }
   localStorage.setItem(roseKey,JSON.stringify(rose));
   if(typeof TEAMS_ROSE!=='undefined'){if(TEAMS_ROSE[sqA])TEAMS_ROSE[sqA]=pA;if(TEAMS_ROSE[sqB])TEAMS_ROSE[sqB]=pB;}
   if(crA>0||crB>0){
