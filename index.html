@@ -3320,7 +3320,37 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
         <!-- Riepilogo -->
         <div id="adm-sc-riepilogo" style="display:none;background:var(--bg2);border-radius:10px;padding:14px;margin-bottom:12px;font-size:12px"></div>
         <button onclick="admScPreview()" style="width:100%;padding:10px;background:#8b5cf6;color:#fff;border:none;border-radius:8px;font-weight:700;font-size:13px;cursor:pointer;margin-bottom:8px">👁 Anteprima Scambio</button>
-        <button id="adm-sc-confirm-btn" onclick="admScConfirm()" style="width:100%;padding:10px;background:#10b981;color:#fff;border:none;border-radius:8px;font-weight:700;font-size:13px;cursor:pointer;display:none">✅ Conferma Scambio</button>
+        <button id="adm-sc-confirm-btn" onclick="(function(){
+  var tk=document.getElementById('adm-sc-torneo').value;
+  var lk=document.getElementById('adm-sc-lega').value;
+  var sqA=document.getElementById('adm-sc-sqA').value;
+  var sqB=document.getElementById('adm-sc-sqB').value;
+  var selA=admScGetSelected('A'),selB=admScGetSelected('B');
+  var crA=parseFloat(document.getElementById('adm-sc-crA').value)||0;
+  var crB=parseFloat(document.getElementById('adm-sc-crB').value)||0;
+  var roseKey='adm_rose_'+tk+'_'+lk;
+  var savedRose={};
+  try{savedRose=JSON.parse(localStorage.getItem(roseKey)||'{}');}catch(e){}
+  var rose={};
+  admGetTeams(tk,lk).forEach(function(sq){
+    rose[sq]=savedRose[sq]&&savedRose[sq].length>0?savedRose[sq]:admGetPlayers(tk,lk,sq);
+  });
+  var pA=rose[sqA].slice(),pB=rose[sqB].slice();
+  selA.forEach(function(n){var i=pA.findIndex(function(p){return p.nome===n;});if(i>=0)pB.push(pA.splice(i,1)[0]);});
+  selB.forEach(function(n){var i=pB.findIndex(function(p){return p.nome===n;});if(i>=0)pA.push(pB.splice(i,1)[0]);});
+  rose[sqA]=pA;rose[sqB]=pB;
+  localStorage.setItem(roseKey,JSON.stringify(rose));
+  if(crA>0||crB>0){var crKey='adm_crediti_base_'+tk+'_'+lk;var cr={};try{cr=JSON.parse(localStorage.getItem(crKey)||'{}');}catch(e){}if(crA>0){cr[sqA]=(parseFloat(cr[sqA])||0)-crA;cr[sqB]=(parseFloat(cr[sqB])||0)+crA;}if(crB>0){cr[sqB]=(parseFloat(cr[sqB])||0)-crB;cr[sqA]=(parseFloat(cr[sqA])||0)+crB;}localStorage.setItem(crKey,JSON.stringify(cr));}
+  if(typeof gsCall==='function'&&GS_ONLINE)gsCall({action:'saveRose',torneo:tk,lega:lk,data:JSON.stringify(rose)},null);
+  document.getElementById('adm-sc-riepilogo').style.display='none';
+  document.getElementById('adm-sc-confirm-btn').style.display='none';
+  document.getElementById('adm-sc-sqA').value='';document.getElementById('adm-sc-sqB').value='';
+  document.getElementById('adm-sc-crA').value='0';document.getElementById('adm-sc-crB').value='0';
+  document.getElementById('adm-sc-playersA').innerHTML='';document.getElementById('adm-sc-playersB').innerHTML='';
+  var msg=document.createElement('div');msg.textContent='Scambio completato!';
+  msg.style.cssText='position:fixed;top:70px;right:20px;background:#10b981;color:#fff;padding:8px 16px;border-radius:8px;font-weight:700;font-size:12px;z-index:9999';
+  document.body.appendChild(msg);setTimeout(function(){msg.remove();},2500);
+})()" style="width:100%;padding:10px;background:#10b981;color:#fff;border:none;border-radius:8px;font-weight:700;font-size:13px;cursor:pointer;display:none">Conferma Scambio</button>
       </div>
     </div>
 
