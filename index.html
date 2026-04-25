@@ -5860,7 +5860,7 @@ function showAdminSection(id, el) {
   ['adm-rose-body','adm-cal-body','adm-sp-body','adm-stad-body','adm-global-stadio-table-body','adm-sponsor-catalog-body','adm-cop-editor-body','adm-cop-config-body','adm-stagioni-body','adm-immagini-list','adm-mul-body'].forEach(function(bid){
     var b = document.getElementById(bid); if(b) b.innerHTML='';
   });
-  ['adm-rose-lega','adm-rose-squadra','adm-cal-lega','adm-sp-lega','adm-sp-squadra','adm-stad-lega'].forEach(function(sid){
+  ['adm-rose-torneo','adm-rose-lega','adm-rose-squadra','adm-cal-lega','adm-sp-lega','adm-sp-squadra','adm-stad-lega'].forEach(function(sid){
     var s = document.getElementById(sid);
     if(s) s.innerHTML='<option value="">-- Seleziona --</option>';
   });
@@ -5908,6 +5908,7 @@ function showAdminSection(id, el) {
   if (id==='modulistica') admRenderModulistica();
   if (id==='multe') admInitSelettori('mul');
   if (id==='impostazioni') admInitImpostazioni();
+  if (id==='scambi') admScInit();
 
   // Chiudi sidenav su mobile
   closeAdminSidenav();
@@ -6162,6 +6163,8 @@ function admWizardUpdateLeaguesData(key, label, leghe) {
 // ADMIN - Scambio Giocatori
 function admScInit() {
   var sel = document.getElementById('adm-sc-torneo'); if(!sel) return;
+  // Reset torneo
+  sel.value='';
   sel.innerHTML = '';
   var opt0 = document.createElement('option');
   opt0.value=''; opt0.textContent='-- Seleziona --';
@@ -6173,9 +6176,14 @@ function admScInit() {
     o.style.cssText='color:#fff;background:#1e293b';
     sel.appendChild(o);
   });
+  // Reset lega
   var selL = document.getElementById('adm-sc-lega');
+  selL.value='';
   selL.innerHTML='<option value="" style="color:#fff;background:#1e293b">-- Seleziona --</option>';
+  // Reset tutto il resto
   document.getElementById('adm-sc-body').style.display='none';
+  document.getElementById('adm-sc-riepilogo').style.display='none';
+  document.getElementById('adm-sc-confirm-btn').style.display='none';
 }
 function admScLoadLeghe() {
   var tk = document.getElementById('adm-sc-torneo').value;
