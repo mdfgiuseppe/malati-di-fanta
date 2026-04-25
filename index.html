@@ -3349,12 +3349,8 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   }
   if(crA>0||crB>0){var crKey='adm_crediti_base_'+tk+'_'+lk;var cr={};try{cr=JSON.parse(localStorage.getItem(crKey)||'{}');}catch(e){}if(crA>0){cr[sqA]=(parseFloat(cr[sqA])||0)-crA;cr[sqB]=(parseFloat(cr[sqB])||0)+crA;}if(crB>0){cr[sqB]=(parseFloat(cr[sqB])||0)-crB;cr[sqA]=(parseFloat(cr[sqA])||0)+crB;}localStorage.setItem(crKey,JSON.stringify(cr));}
   if(typeof gsCall==='function'&&GS_ONLINE)gsCall({action:'saveRose',torneo:tk,lega:lk,data:JSON.stringify(rose)},null);
-  document.getElementById('adm-sc-riepilogo').style.display='none';
-  document.getElementById('adm-sc-confirm-btn').style.display='none';
-  document.getElementById('adm-sc-sqA').value='';document.getElementById('adm-sc-sqB').value='';
-  document.getElementById('adm-sc-crA').value='0';document.getElementById('adm-sc-crB').value='0';
-  document.getElementById('adm-sc-playersA').innerHTML='';document.getElementById('adm-sc-playersB').innerHTML='';
-  admScLoadSquadre();
+  // Reset completo come primo accesso
+  admScInit();
   var msg=document.createElement('div');msg.textContent='Scambio completato!';
   msg.style.cssText='position:fixed;top:70px;right:20px;background:#10b981;color:#fff;padding:8px 16px;border-radius:8px;font-weight:700;font-size:12px;z-index:9999';
   document.body.appendChild(msg);setTimeout(function(){msg.remove();},2500);
@@ -7356,9 +7352,13 @@ function admSaveRosa(t,l,s,players,silent) {
     localStorage.setItem('adm_rose_slim_it', JSON.stringify(TEAMS_ROSE));
   }
   if(!silent) { var msg=document.createElement('div');msg.textContent='✅ Salvato';msg.style.cssText='position:fixed;top:70px;right:20px;background:#10b981;color:#fff;padding:8px 16px;border-radius:8px;font-weight:700;font-size:12px;z-index:9999';document.body.appendChild(msg);setTimeout(function(){msg.remove();},2000);
-  // Reset selettore squadra
+  // Reset come primo accesso
   var sqSel=document.getElementById('adm-rose-squadra');
   if(sqSel){sqSel.value='';}
+  var tornSel=document.getElementById('adm-rose-torneo');
+  if(tornSel){tornSel.value='';}
+  var legSel=document.getElementById('adm-rose-lega');
+  if(legSel){legSel.innerHTML='<option value="">-- Seleziona Lega --</option>';}
   var body=document.getElementById('adm-rose-body');
   if(body){body.innerHTML='';}
  }
