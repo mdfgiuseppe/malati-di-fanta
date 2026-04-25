@@ -6250,6 +6250,14 @@ function admScConfirm() {
   try{rose=JSON.parse(localStorage.getItem(roseKey)||'{}');}catch(e){}
   // Se le rose di sqA o sqB nel localStorage sono vuote, usa quelle di admGetPlayers
   // (non sovrascrivere mai con dati vuoti)
+  // Popola rose con TUTTE le squadre prima di modificare
+  var allTeams=admGetTeams(tk,lk);
+  allTeams.forEach(function(sq){
+    if(!rose[sq]||rose[sq].length===0){
+      var pl=admGetPlayers(tk,lk,sq);
+      if(pl.length>0) rose[sq]=pl;
+    }
+  });
   if(!rose[sqA]||rose[sqA].length===0) rose[sqA]=pA;
   else pA=rose[sqA].slice();
   if(!rose[sqB]||rose[sqB].length===0) rose[sqB]=pB;
