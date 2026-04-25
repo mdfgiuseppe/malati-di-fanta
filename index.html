@@ -3340,6 +3340,13 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   selB.forEach(function(n){var i=pB.findIndex(function(p){return p.nome===n;});if(i>=0)pA.push(pB.splice(i,1)[0]);});
   rose[sqA]=pA;rose[sqB]=pB;
   localStorage.setItem(roseKey,JSON.stringify(rose));
+  // Aggiorna TEAMS_ROSE subito senza passare lato utente
+  if(typeof window._TEAMS_ROSE_IT!=='undefined') {
+    Object.keys(rose).forEach(function(sq){ window._TEAMS_ROSE_IT[sq]=rose[sq]; });
+  }
+  if(typeof TEAMS_ROSE!=='undefined') {
+    Object.keys(rose).forEach(function(sq){ TEAMS_ROSE[sq]=rose[sq]; });
+  }
   if(crA>0||crB>0){var crKey='adm_crediti_base_'+tk+'_'+lk;var cr={};try{cr=JSON.parse(localStorage.getItem(crKey)||'{}');}catch(e){}if(crA>0){cr[sqA]=(parseFloat(cr[sqA])||0)-crA;cr[sqB]=(parseFloat(cr[sqB])||0)+crA;}if(crB>0){cr[sqB]=(parseFloat(cr[sqB])||0)-crB;cr[sqA]=(parseFloat(cr[sqA])||0)+crB;}localStorage.setItem(crKey,JSON.stringify(cr));}
   if(typeof gsCall==='function'&&GS_ONLINE)gsCall({action:'saveRose',torneo:tk,lega:lk,data:JSON.stringify(rose)},null);
   document.getElementById('adm-sc-riepilogo').style.display='none';
@@ -6195,13 +6202,13 @@ function admScLoadSquadre() {
   var tk = document.getElementById('adm-sc-torneo').value;
   var lk = document.getElementById('adm-sc-lega').value;
   if (!tk||!lk) return;
-  var teams = admGetTeams(tk, lk);
+  var teams = admGetTeams(tk, lk).concat(['INFERMERIA']);
   ['A','B'].forEach(function(side) {
     var sel = document.getElementById('adm-sc-sq'+side);
     sel.innerHTML = '<option value="">-- Seleziona --</option>';
     teams.forEach(function(sq) {
       var o = document.createElement('option');
-      o.value=sq; o.textContent=sq; o.style.color='#000';
+      o.value=sq; o.textContent=sq==='INFERMERIA'?'Infermeria':sq; o.style.color='#000';
       sel.appendChild(o);
     });
     document.getElementById('adm-sc-players'+side).innerHTML = '';
@@ -6306,12 +6313,14 @@ function admScConfirm() {
   document.getElementById('adm-sc-riepilogo').style.display='none';
   document.getElementById('adm-sc-confirm-btn').style.display='none';
   // Reset selezioni
+  // Reset completo
   document.getElementById('adm-sc-sqA').value='';
   document.getElementById('adm-sc-sqB').value='';
   document.getElementById('adm-sc-crA').value='0';
   document.getElementById('adm-sc-crB').value='0';
   document.getElementById('adm-sc-playersA').innerHTML='';
   document.getElementById('adm-sc-playersB').innerHTML='';
+  document.getElementById('adm-sc-body').style.display='none';
   var msg=document.createElement('div');
   msg.textContent='Scambio completato!';
   msg.style.cssText='position:fixed;top:70px;right:20px;background:#10b981;color:#fff;padding:8px 16px;border-radius:8px;font-weight:700;font-size:12px;z-index:9999';
