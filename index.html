@@ -6245,21 +6245,15 @@ function admScConfirm() {
   var pA=admGetPlayers(tk,lk,sqA).slice();
   var pB=admGetPlayers(tk,lk,sqB).slice();
   var roseKey='adm_rose_'+tk+'_'+lk;
-  var roseSaved={};
-  try{roseSaved=JSON.parse(localStorage.getItem(roseKey)||'{}');}catch(e){}
-  // Usa localStorage solo se ha dati reali (non array vuoti)
-  if(roseSaved[sqA]&&roseSaved[sqA].length>0) pA=roseSaved[sqA].slice();
-  if(roseSaved[sqB]&&roseSaved[sqB].length>0) pB=roseSaved[sqB].slice();
-  // Se pA o pB ancora vuoti, prova con chiave alternativa (tsm usa adm_rose_tsm_it)
-  if(!pA.length){
-    var alt={}; try{alt=JSON.parse(localStorage.getItem('adm_rose_'+tk+'_it')||'{}');}catch(e){}
-    if(alt[sqA]&&alt[sqA].length>0) pA=alt[sqA].slice();
-  }
-  if(!pB.length){
-    var altB={}; try{altB=JSON.parse(localStorage.getItem('adm_rose_'+tk+'_it')||'{}');}catch(e){}
-    if(altB[sqB]&&altB[sqB].length>0) pB=altB[sqB].slice();
-  }
-  var rose=Object.assign({},roseSaved);
+  // Carica tutte le rose dal localStorage per preservare le altre squadre
+  var rose={};
+  try{rose=JSON.parse(localStorage.getItem(roseKey)||'{}');}catch(e){}
+  // Se le rose di sqA o sqB nel localStorage sono vuote, usa quelle di admGetPlayers
+  // (non sovrascrivere mai con dati vuoti)
+  if(!rose[sqA]||rose[sqA].length===0) rose[sqA]=pA;
+  else pA=rose[sqA].slice();
+  if(!rose[sqB]||rose[sqB].length===0) rose[sqB]=pB;
+  else pB=rose[sqB].slice();
   selA.forEach(function(n){var i=pA.findIndex(function(p){return p.nome===n;});if(i>=0)pB.push(pA.splice(i,1)[0]);});
   selB.forEach(function(n){var i=pB.findIndex(function(p){return p.nome===n;});if(i>=0)pA.push(pB.splice(i,1)[0]);});
   rose[sqA]=pA; rose[sqB]=pB;
