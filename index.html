@@ -7046,16 +7046,16 @@ function admGetPlayers(torneoKey, legaKey, squadra) {
   if (torneoKey==='slim') {
     if (legaKey==='it') {
       if (squadra==='INFERMERIA') { var inf=localStorage.getItem('adm_infermeria_slim_it'); if(inf) try{return JSON.parse(inf);}catch(e){} return typeof INFERMERIA!=='undefined'?INFERMERIA:[]; }
-      // Prova prima localStorage (rose aggiornate)
+      // 1. localStorage (rose aggiornate con scambi)
       var _roseLS={}; try{var _raw=localStorage.getItem('adm_rose_slim_it'); if(_raw) _roseLS=JSON.parse(_raw);}catch(e){}
       if(_roseLS[squadra]&&_roseLS[squadra].length>0) return _roseLS[squadra];
-      // Poi TEAMS_ROSE (lato utente)
-      var _tr=TEAMS_ROSE||{}; if(_tr[squadra]&&_tr[squadra].length>0) return _tr[squadra];
-      var _k=Object.keys(_tr).find(function(k){return k.toUpperCase()===squadra.toUpperCase();}); if(_k&&_tr[_k].length>0) return _tr[_k];
-      // Fallback: rose embedded originali
+      // 2. Rose embedded originali (window._TEAMS_ROSE_IT - sempre disponibile)
       var _orig=window._TEAMS_ROSE_IT||{};
       if(_orig[squadra]) return _orig[squadra];
-      var _ko=Object.keys(_orig).find(function(k){return k.toUpperCase()===squadra.toUpperCase();}); return _ko?_orig[_ko]:[];
+      var _ko=Object.keys(_orig).find(function(k){return k.toUpperCase()===squadra.toUpperCase();}); if(_ko) return _orig[_ko];
+      // 3. TEAMS_ROSE come ultimo fallback
+      var _tr=TEAMS_ROSE||{}; if(_tr[squadra]) return _tr[squadra];
+      var _k=Object.keys(_tr).find(function(k){return k.toUpperCase()===squadra.toUpperCase();}); return _k?_tr[_k]:[];
     }
     if (typeof ALL_LEAGUES_DATA!=='undefined' && ALL_LEAGUES_DATA[legaKey]) return (ALL_LEAGUES_DATA[legaKey].teams||{})[squadra]||[];
   }
