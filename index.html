@@ -6244,12 +6244,21 @@ function admScConfirm() {
   // Leggi rose tramite admGetPlayers (che usa TEAMS_ROSE per slim_it)
   var pA=admGetPlayers(tk,lk,sqA).slice();
   var pB=admGetPlayers(tk,lk,sqB).slice();
-  // Carica anche rose già in localStorage per avere dati aggiornati
   var roseKey='adm_rose_'+tk+'_'+lk;
   var roseSaved={};
   try{roseSaved=JSON.parse(localStorage.getItem(roseKey)||'{}');}catch(e){}
-  if(roseSaved[sqA]&&roseSaved[sqA].length) pA=roseSaved[sqA].slice();
-  if(roseSaved[sqB]&&roseSaved[sqB].length) pB=roseSaved[sqB].slice();
+  // Usa localStorage solo se ha dati reali (non array vuoti)
+  if(roseSaved[sqA]&&roseSaved[sqA].length>0) pA=roseSaved[sqA].slice();
+  if(roseSaved[sqB]&&roseSaved[sqB].length>0) pB=roseSaved[sqB].slice();
+  // Se pA o pB ancora vuoti, prova con chiave alternativa (tsm usa adm_rose_tsm_it)
+  if(!pA.length){
+    var alt={}; try{alt=JSON.parse(localStorage.getItem('adm_rose_'+tk+'_it')||'{}');}catch(e){}
+    if(alt[sqA]&&alt[sqA].length>0) pA=alt[sqA].slice();
+  }
+  if(!pB.length){
+    var altB={}; try{altB=JSON.parse(localStorage.getItem('adm_rose_'+tk+'_it')||'{}');}catch(e){}
+    if(altB[sqB]&&altB[sqB].length>0) pB=altB[sqB].slice();
+  }
   var rose=Object.assign({},roseSaved);
   selA.forEach(function(n){var i=pA.findIndex(function(p){return p.nome===n;});if(i>=0)pB.push(pA.splice(i,1)[0]);});
   selB.forEach(function(n){var i=pB.findIndex(function(p){return p.nome===n;});if(i>=0)pA.push(pB.splice(i,1)[0]);});
@@ -7005,8 +7014,16 @@ function admGetPlayers(torneoKey, legaKey, squadra) {
   if (torneoKey==='slim') {
     if (legaKey==='it') {
       if (squadra==='INFERMERIA') { var inf=localStorage.getItem('adm_infermeria_slim_it'); if(inf) try{return JSON.parse(inf);}catch(e){} return typeof INFERMERIA!=='undefined'?INFERMERIA:[]; }
-      var _tr=TEAMS_ROSE||{}; if(_tr[squadra]) return _tr[squadra];
-      var _k=Object.keys(_tr).find(function(k){return k.toUpperCase()===squadra.toUpperCase();}); return _k?_tr[_k]:[];
+      // Prova prima localStorage (rose aggiornate)
+      var _roseLS={}; try{var _raw=localStorage.getItem('adm_rose_slim_it'); if(_raw) _roseLS=JSON.parse(_raw);}catch(e){}
+      if(_roseLS[squadra]&&_roseLS[squadra].length>0) return _roseLS[squadra];
+      // Poi TEAMS_ROSE (lato utente)
+      var _tr=TEAMS_ROSE||{}; if(_tr[squadra]&&_tr[squadra].length>0) return _tr[squadra];
+      var _k=Object.keys(_tr).find(function(k){return k.toUpperCase()===squadra.toUpperCase();}); if(_k&&_tr[_k].length>0) return _tr[_k];
+      // Fallback: rose embedded originali
+      var _orig=window._TEAMS_ROSE_IT||{};
+      if(_orig[squadra]) return _orig[squadra];
+      var _ko=Object.keys(_orig).find(function(k){return k.toUpperCase()===squadra.toUpperCase();}); return _ko?_orig[_ko]:[];
     }
     if (typeof ALL_LEAGUES_DATA!=='undefined' && ALL_LEAGUES_DATA[legaKey]) return (ALL_LEAGUES_DATA[legaKey].teams||{})[squadra]||[];
   }
