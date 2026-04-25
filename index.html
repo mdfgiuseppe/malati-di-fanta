@@ -6275,7 +6275,13 @@ function admScConfirm() {
   if(typeof gsCall==='function'&&GS_ONLINE) gsCall({action:'saveRose',torneo:tk,lega:lk,data:JSON.stringify(rose)},null);
   document.getElementById('adm-sc-riepilogo').style.display='none';
   document.getElementById('adm-sc-confirm-btn').style.display='none';
-  admScLoadPlayers('A'); admScLoadPlayers('B');
+  // Reset selezioni
+  document.getElementById('adm-sc-sqA').value='';
+  document.getElementById('adm-sc-sqB').value='';
+  document.getElementById('adm-sc-crA').value='0';
+  document.getElementById('adm-sc-crB').value='0';
+  document.getElementById('adm-sc-playersA').innerHTML='';
+  document.getElementById('adm-sc-playersB').innerHTML='';
   var msg=document.createElement('div');
   msg.textContent='Scambio completato!';
   msg.style.cssText='position:fixed;top:70px;right:20px;background:#10b981;color:#fff;padding:8px 16px;border-radius:8px;font-weight:700;font-size:12px;z-index:9999';
