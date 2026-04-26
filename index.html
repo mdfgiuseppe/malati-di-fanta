@@ -6768,40 +6768,48 @@ function admDeleteUser(i) {
 // ═══════════════════════════════════════════════════════
 function admInitSelettori(prefix, resetAll) {
   var sel = document.getElementById('adm-'+prefix+'-torneo'); if(!sel) return;
-  var prevVal = resetAll ? '' : sel.value; // reset completo se richiesto
-  sel.innerHTML = '<option value="">-- Seleziona Torneo --</option>';
-  if (resetAll) sel.selectedIndex = 0; // forza reset visivo
+  var prevVal = resetAll ? '' : sel.value;
+  // Ricrea il select da zero per forzare reset visivo del browser
+  var newSel = document.createElement('select');
+  newSel.id = sel.id;
+  newSel.className = sel.className;
+  newSel.style.cssText = sel.style.cssText;
+  newSel.onchange = sel.onchange;
+  var opt0 = document.createElement('option');
+  opt0.value=''; opt0.textContent='-- Seleziona Torneo --';
+  newSel.appendChild(opt0);
   ADMIN_TORNEI.forEach(function(t) {
     var opt = document.createElement('option');
     opt.value = t.key; opt.textContent = t.label;
-    sel.appendChild(opt);
+    if (!resetAll && t.key===prevVal) opt.selected=true;
+    newSel.appendChild(opt);
   });
-  // Se reset completo, azzera anche lega e squadra
+  sel.parentNode.replaceChild(newSel, sel);
+  sel = newSel;
+  // Reset lega e squadra
   if (resetAll) {
     var legaR = document.getElementById('adm-'+prefix+'-lega');
     if (legaR) legaR.innerHTML='<option value="">-- Seleziona Lega --</option>';
     var sqR = document.getElementById('adm-'+prefix+'-squadra');
     if (sqR) sqR.innerHTML='<option value="">-- Seleziona Squadra --</option>';
   }
-  // Ripristina selezione precedente se valida
+  // Ripristina selezione precedente
   if (prevVal) {
     sel.value = prevVal;
     if (sel.value === prevVal) {
-      // Ripristina anche la lega
       var legaSel = document.getElementById('adm-'+prefix+'-lega');
       if (legaSel && legaSel.value) {
-        // La lega è già impostata, ricarica il body
         if (prefix === 'cal') admLoadCalBody();
         else if (prefix === 'rose') admLoadRoseSquadre && admLoadRoseSquadre();
         else if (prefix === 'sp') admLoadSponsorBody && admLoadSponsorBody();
         else if (prefix === 'stad') admLoadStadioBody && admLoadStadioBody();
       } else {
-        // Ripopola le leghe
         if (prefix === 'cal') admLoadCalLeghe();
       }
     }
   }
 }
+
 
 function admInitImportSelectors() {
   var tSel=document.getElementById('adm-import-torneo'); if(!tSel) return;
