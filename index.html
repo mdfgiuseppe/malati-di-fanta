@@ -6770,6 +6770,7 @@ function admInitSelettori(prefix, resetAll) {
   var sel = document.getElementById('adm-'+prefix+'-torneo'); if(!sel) return;
   var prevVal = resetAll ? '' : sel.value; // reset completo se richiesto
   sel.innerHTML = '<option value="">-- Seleziona Torneo --</option>';
+  if (resetAll) sel.selectedIndex = 0; // forza reset visivo
   ADMIN_TORNEI.forEach(function(t) {
     var opt = document.createElement('option');
     opt.value = t.key; opt.textContent = t.label;
