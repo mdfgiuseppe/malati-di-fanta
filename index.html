@@ -12158,34 +12158,6 @@ function admDeleteUser(i) {
 // ═══════════════════════════════════════════════════════
 // ADMIN — Selettori tornei/leghe/squadre
 // ═══════════════════════════════════════════════════════
-function admInitSelettori(prefix) {
-  var sel = document.getElementById('adm-'+prefix+'-torneo'); if(!sel) return;
-  var prevVal = sel.value; // salva selezione corrente
-  sel.innerHTML = '<option value="">-- Seleziona Torneo --</option>';
-  ADMIN_TORNEI.forEach(function(t) {
-    var opt = document.createElement('option');
-    opt.value = t.key; opt.textContent = t.label;
-    sel.appendChild(opt);
-  });
-  // Ripristina selezione precedente se valida
-  if (prevVal) {
-    sel.value = prevVal;
-    if (sel.value === prevVal) {
-      // Ripristina anche la lega
-      var legaSel = document.getElementById('adm-'+prefix+'-lega');
-      if (legaSel && legaSel.value) {
-        // La lega è già impostata, ricarica il body
-        if (prefix === 'cal') admLoadCalBody();
-        else if (prefix === 'rose') admLoadRoseSquadre && admLoadRoseSquadre();
-        else if (prefix === 'sp') admLoadSponsorBody && admLoadSponsorBody();
-        else if (prefix === 'stad') admLoadStadioBody && admLoadStadioBody();
-      } else {
-        // Ripopola le leghe
-        if (prefix === 'cal') admLoadCalLeghe();
-      }
-    }
-  }
-}
 
 function admInitImportSelectors() {
   var tSel=document.getElementById('adm-import-torneo'); if(!tSel) return;
