@@ -7065,6 +7065,36 @@ function admLoadRosaGiocatori() {
   var el = document.getElementById('adm-rose-body'); if(!el||!squadra) return;
   var players = admGetPlayers(torneoKey, legaKey, squadra);
   el.innerHTML = admRenderRosaEditor(players, torneoKey, legaKey, squadra);
+  // Aggiungi campo scadenza contratto
+  (function() {
+    var thead = el.querySelector('thead tr');
+    if (thead && !thead.querySelector('.th-scadenza')) {
+      var th = document.createElement('th');
+      th.className='th-scadenza';
+      th.style.cssText='padding:7px 10px;width:15%';
+      th.textContent='Scadenza';
+      thead.insertBefore(th, thead.lastElementChild);
+    }
+    var rows = el.querySelectorAll('tbody tr');
+    rows.forEach(function(tr, i) {
+      if (tr.querySelector('.td-scadenza')) return;
+      var p = players[i]; if(!p) return;
+      var td = document.createElement('td');
+      td.className='td-scadenza';
+      td.style.cssText='padding:6px 8px';
+      var inp = document.createElement('input');
+      inp.type='text';
+      inp.value=p.scadenza||'';
+      inp.placeholder='gg/mm/aa';
+      inp.dataset.t=torneoKey; inp.dataset.l=legaKey;
+      inp.dataset.s=squadra; inp.dataset.i=i;
+      inp.dataset.f='scadenza';
+      inp.style.cssText='width:90px;background:var(--bg2);border:1px solid var(--border);border-radius:4px;color:var(--text);font-size:11px;padding:2px 4px;outline:none';
+      inp.onchange=function(){admUpdatePlayerEl(this);};
+      td.appendChild(inp);
+      tr.insertBefore(td, tr.lastElementChild);
+    });
+  })();
   if (typeof REAL_NAMES !== 'undefined' && el) {
     try {
       el.querySelectorAll('input[data-f="squadra"]').forEach(function(inp) {
