@@ -4891,6 +4891,7 @@ function admRenderGlobalStadioTable() {
       +'<td style="padding:6px 8px"><input type="text" value="'+(s.nome||'')+'" data-lv="'+lv+'" data-f="nome" onchange="admUpdateGlobalST(this)" placeholder="es. Oratorio" style="width:130px;padding:5px 8px;background:var(--bg2);border:1px solid var(--border);border-radius:5px;color:var(--text);font-size:12px;outline:none;font-style:italic"></td>'
       +'<td style="padding:6px 8px"><input type="text" value="'+(s.posti||'')+'" data-lv="'+lv+'" data-f="posti" onchange="admUpdateGlobalST(this)" style="width:90px;padding:5px 8px;background:var(--bg2);border:1px solid var(--border);border-radius:5px;color:var(--text);font-size:12px;outline:none"></td>'
       +'<td style="padding:6px 8px"><input type="number" value="'+(s.costo||0)+'" data-lv="'+lv+'" data-f="costo" onchange="admUpdateGlobalST(this)" style="width:70px;padding:5px 8px;background:var(--bg2);border:1px solid var(--border);border-radius:5px;color:var(--text);font-size:12px;outline:none;text-align:right"></td>'
+      +'<td style="padding:6px 4px"><input type="text" value="'+(p.scadenza||'')+'" data-t="'+t+'" data-l="'+l+'" data-s="'+s+'" data-i="'+i+'" data-f="scadenza" onchange="admUpdatePlayerEl(this)" placeholder="gg/mm/aa" style="width:80px;background:transparent;border:none;color:var(--text2);font-size:10px;outline:none"></td>'
       +'<td style="padding:6px 8px"><input type="number" step="0.5" value="'+(s.cr_vittoria||0)+'" data-lv="'+lv+'" data-f="cr_vittoria" onchange="admUpdateGlobalST(this)" style="width:70px;padding:5px 8px;background:var(--bg2);border:1px solid var(--border);border-radius:5px;color:#10b981;font-size:12px;outline:none;text-align:right"></td>'
       +'<td style="padding:6px 8px"><input type="number" step="0.5" value="'+(s.cr_pareggio||0)+'" data-lv="'+lv+'" data-f="cr_pareggio" onchange="admUpdateGlobalST(this)" style="width:70px;padding:5px 8px;background:var(--bg2);border:1px solid var(--border);border-radius:5px;color:#3b82f6;font-size:12px;outline:none;text-align:right"></td>'
       +'<td style="padding:6px 8px"><input type="number" step="0.5" value="'+(s.cr_sconfitta||0)+'" data-lv="'+lv+'" data-f="cr_sconfitta" onchange="admUpdateGlobalST(this)" style="width:70px;padding:5px 8px;background:var(--bg2);border:1px solid var(--border);border-radius:5px;color:#ef4444;font-size:12px;outline:none;text-align:right"></td>'
@@ -12442,7 +12443,7 @@ function admRenderRosaEditor(players, torneoKey, legaKey, squadra) {
     +'</div>'
     +'<table style="width:100%;border-collapse:collapse;table-layout:fixed">'
     +'<thead><tr style="background:var(--bg2);font-size:9px;font-weight:800;text-transform:uppercase;color:var(--text3)">'
-    +'<th style="padding:7px 10px;width:15%">Ruolo</th><th style="padding:7px 10px;width:35%">Nome</th><th style="padding:7px 10px;width:30%">Club Reale</th><th style="padding:7px 10px;width:15%;text-align:right">Costo</th><th style="width:5%"></th>'
+    +'<th style="padding:7px 10px;width:15%">Ruolo</th><th style="padding:7px 10px;width:35%">Nome</th><th style="padding:7px 10px;width:30%">Club Reale</th><th style="padding:7px 10px;width:15%;text-align:right">Costo</th><th style="padding:7px 10px;width:15%">Scadenza</th><th style="width:5%"></th>'
     +'</tr></thead><tbody>';
   players.forEach(function(p, i) {
     var t=torneoKey,l=legaKey,s=squadra;
