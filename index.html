@@ -5886,9 +5886,9 @@ function showAdminSection(id, el) {
       admRenderUtenti();
     }
   }
-  if (id==='rose') { admInitSelettori('rose'); admInitImportSelectors(); }
+  if (id==='rose') { admInitSelettori('rose', true); admInitImportSelectors(); }
   if (id==='cambio-squadre') admCsInit();
-  if (id==='calendario') admInitSelettori('cal');
+  if (id==='calendario') admInitSelettori('cal', true);
   if (id==='sponsor') {
     admInitSelettori('sp');
     // Popola anche il selettore torneo nel catalogo
@@ -5900,13 +5900,13 @@ function showAdminSection(id, el) {
       });
     }
   }
-  if (id==='stadio') admInitSelettori('stad');
+  if (id==='stadio') admInitSelettori('stad', true);
   if (id==='tablestadio') admRenderGlobalStadioTable();
   if (id==='stagioni') admRenderStagioni();
   if (id==='immagini') admRenderImmagini();
   if (id==='coppe') admInitCoppeSection();
   if (id==='modulistica') admRenderModulistica();
-  if (id==='multe') admInitSelettori('mul');
+  if (id==='multe') admInitSelettori('mul', true);
   if (id==='impostazioni') admInitImpostazioni();
   if (id==='scambi') admScInit();
 
@@ -6766,15 +6766,22 @@ function admDeleteUser(i) {
 // ═══════════════════════════════════════════════════════
 // ADMIN — Selettori tornei/leghe/squadre
 // ═══════════════════════════════════════════════════════
-function admInitSelettori(prefix) {
+function admInitSelettori(prefix, resetAll) {
   var sel = document.getElementById('adm-'+prefix+'-torneo'); if(!sel) return;
-  var prevVal = sel.value; // salva selezione corrente
+  var prevVal = resetAll ? '' : sel.value; // reset completo se richiesto
   sel.innerHTML = '<option value="">-- Seleziona Torneo --</option>';
   ADMIN_TORNEI.forEach(function(t) {
     var opt = document.createElement('option');
     opt.value = t.key; opt.textContent = t.label;
     sel.appendChild(opt);
   });
+  // Se reset completo, azzera anche lega e squadra
+  if (resetAll) {
+    var legaR = document.getElementById('adm-'+prefix+'-lega');
+    if (legaR) legaR.innerHTML='<option value="">-- Seleziona Lega --</option>';
+    var sqR = document.getElementById('adm-'+prefix+'-squadra');
+    if (sqR) sqR.innerHTML='<option value="">-- Seleziona Squadra --</option>';
+  }
   // Ripristina selezione precedente se valida
   if (prevVal) {
     sel.value = prevVal;
