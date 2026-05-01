@@ -1,4 +1,4 @@
-<!-- build:20260411_195424 -->
+<!-- build:20260501_185000 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -6888,25 +6888,6 @@ function admParseRoseRows(rows,torneoKey,legaKey,status){
   status.style.color='#f59e0b';
   var cb=document.getElementById('adm-import-confirm'); if(cb) cb.style.display='inline-block';
 }
-function admConfirmImport(){
-  var p=window._admImportPending; if(!p||!p.savedKeys) return;
-  var sk=p.savedKeys,inf=p.infermeria,tk=p.torneoKey,lk=p.legaKey;
-  // Salva crediti base da import
-  var _crBase = window._admImportPending && window._admImportPending.crediti ? window._admImportPending.crediti : {};
-  if(Object.keys(_crBase).length) localStorage.setItem('adm_crediti_base_'+tk+'_'+lk, JSON.stringify(_crBase));
-  if(tk==='slim'&&lk==='it'){Object.keys(sk).forEach(function(s){TEAMS_ROSE[s]=sk[s];});localStorage.setItem('adm_rose_slim_it',JSON.stringify(sk));
-  localStorage.setItem('adm_rose_import_slim_it',JSON.stringify(sk));}
-  else if(tk==='tsm'&&lk==='it'){Object.keys(sk).forEach(function(s){if(typeof TSM_ROSE_IT!=='undefined')TSM_ROSE_IT[s]=sk[s];});localStorage.setItem('adm_rose_tsm_it',JSON.stringify(sk));}
-  else{localStorage.setItem('adm_rose_'+tk+'_'+lk,JSON.stringify(sk));}
-  if(inf&&inf.length>0) localStorage.setItem('adm_infermeria_'+tk+'_'+lk,JSON.stringify(inf));
-  var n=Object.values(sk).reduce(function(a,b){return a+b.length;},0);
-  var st=document.getElementById('adm-import-status');
-  if(st){st.textContent='✅ Salvate '+Object.keys(sk).length+' squadre ('+n+' giocatori)';st.style.color='#10b981';}
-  var cb=document.getElementById('adm-import-confirm'); if(cb) cb.style.display='none';
-  window._admImportPending=null;
-  var cT=document.getElementById('adm-rose-torneo'),cL=document.getElementById('adm-rose-lega');
-  if(cT&&cT.value===tk&&cL&&cL.value===lk) admLoadRoseSquadre();
-}
 // ADMIN — Cambio Squadre
 function admCsInit() {
   var sel=document.getElementById('adm-cs-torneo'); if(!sel) return;
@@ -12273,6 +12254,14 @@ function admParseRoseRows(rows,torneoKey,legaKey,status){
 function admConfirmImport(){
   var p=window._admImportPending; if(!p||!p.savedKeys) return;
   var sk=p.savedKeys,inf=p.infermeria,tk=p.torneoKey,lk=p.legaKey;
+  // Smart import: recupera scadenze esistenti per nome (anche da altre squadre)
+  var _scadenzeMap={};
+  var _existingRaw=null;
+  if(tk==='slim'&&lk==='it') _existingRaw=localStorage.getItem('adm_rose_slim_it');
+  else if(tk==='tsm'&&lk==='it') _existingRaw=localStorage.getItem('adm_rose_tsm_it');
+  else _existingRaw=localStorage.getItem('adm_rose_'+tk+'_'+lk);
+  if(_existingRaw){try{var _exRose=JSON.parse(_existingRaw);Object.values(_exRose).forEach(function(pl){if(!Array.isArray(pl))return;pl.forEach(function(g){if(g.nome&&g.scadenza)_scadenzeMap[g.nome]=g.scadenza;});});}catch(e){}}
+  if(Object.keys(_scadenzeMap).length){Object.values(sk).forEach(function(pl){pl.forEach(function(g){if(g.nome&&!g.scadenza&&_scadenzeMap[g.nome])g.scadenza=_scadenzeMap[g.nome];});});}
   // Salva crediti base da import
   var _crBase = window._admImportPending && window._admImportPending.crediti ? window._admImportPending.crediti : {};
   if(Object.keys(_crBase).length) localStorage.setItem('adm_crediti_base_'+tk+'_'+lk, JSON.stringify(_crBase));
