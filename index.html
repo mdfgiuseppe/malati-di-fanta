@@ -1073,10 +1073,11 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
       </div>
       <table style="width:100%;border-collapse:collapse;table-layout:fixed">
         <thead><tr style="background:var(--bg2);font-size:10px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:var(--text3)">
-          <th style="padding:7px 10px;text-align:left;width:15%">Ruolo</th>
-          <th style="padding:7px 8px;text-align:left;width:40%">Giocatore</th>
-          <th style="padding:7px 8px;text-align:left;width:30%">Club Reale</th>
-          <th style="padding:7px 10px;text-align:right;width:15%">Costo</th>
+          <th style="padding:7px 10px;text-align:left;width:13%">Ruolo</th>
+          <th style="padding:7px 8px;text-align:left;width:35%">Giocatore</th>
+          <th style="padding:7px 8px;text-align:left;width:25%">Club Reale</th>
+          <th style="padding:7px 10px;text-align:right;width:13%">Costo</th>
+          <th style="padding:7px 8px;text-align:center;width:14%">Scadenza</th>
         </tr></thead>
         <tbody id="tbody"></tbody>
       </table>
@@ -1464,10 +1465,11 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
       </div>
       <table style="width:100%;border-collapse:collapse;table-layout:fixed">
         <thead><tr style="background:var(--bg2);font-size:10px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:var(--text3)">
-          <th style="padding:7px 10px;text-align:left;width:15%">Ruolo</th>
-          <th style="padding:7px 8px;text-align:left;width:40%">Giocatore</th>
-          <th style="padding:7px 8px;text-align:left;width:30%">Club Reale</th>
-          <th style="padding:7px 10px;text-align:right;width:15%">Costo</th>
+          <th style="padding:7px 10px;text-align:left;width:13%">Ruolo</th>
+          <th style="padding:7px 8px;text-align:left;width:35%">Giocatore</th>
+          <th style="padding:7px 8px;text-align:left;width:25%">Club Reale</th>
+          <th style="padding:7px 10px;text-align:right;width:13%">Costo</th>
+          <th style="padding:7px 8px;text-align:center;width:14%">Scadenza</th>
         </tr></thead>
         <tbody id="tbody"></tbody>
       </table>
@@ -1499,6 +1501,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
           <th style="padding:7px 8px;text-align:left">Giocatore</th>
           <th style="padding:7px 8px;text-align:left">Club Reale</th>
           <th style="padding:7px 10px;text-align:right">Costo</th>
+          <th style="padding:7px 8px;text-align:center">Scadenza</th>
         </tr></thead>
         <tbody id="tsm-tbody"></tbody>
       </table>
@@ -4136,7 +4139,7 @@ function tsmRenderTable() {
     var r=(p.ruolo||'').split(';')[0].trim();
     var c=RC[r]||['rgba(107,114,128,.15)','#6b7280'];
     var colCosto=p.costo>=50?'#ef4444':p.costo>=20?'#f59e0b':'var(--text2)';
-    return '<tr style="border-bottom:1px solid var(--border)"><td style="padding:8px 10px;width:15%"><span style="font-size:8px;font-weight:800;padding:2px 5px;border-radius:3px;background:'+c[0]+';color:'+c[1]+'">'+r+'</span></td><td style="padding:8px 8px;font-weight:700;font-size:13px;width:40%">'+(p.nome||'')+'</td><td style="padding:8px 8px;font-size:12px;color:var(--text2);width:30%">'+((typeof REAL_NAMES!=='undefined'&&REAL_NAMES[p.squadra])||p.squadra||'')+'</td><td style="padding:8px 10px;text-align:right;font-family:\'Bebas Neue\';font-size:17px;color:'+colCosto+';width:15%">'+(p.costo||0)+'<span style="font-size:10px;font-weight:700;color:var(--text3);margin-left:1px">cr</span></td></tr>';
+    return '<tr style="border-bottom:1px solid var(--border)"><td style="padding:8px 10px;width:13%"><span style="font-size:8px;font-weight:800;padding:2px 5px;border-radius:3px;background:'+c[0]+';color:'+c[1]+'">'+r+'</span></td><td style="padding:8px 8px;font-weight:700;font-size:13px;width:35%">'+(p.nome||'')+'</td><td style="padding:8px 8px;font-size:12px;color:var(--text2);width:25%">'+((typeof REAL_NAMES!=='undefined'&&REAL_NAMES[p.squadra])||p.squadra||'')+'</td><td style="padding:8px 10px;text-align:right;font-family:\'Bebas Neue\';font-size:17px;color:'+colCosto+';width:13%">'+(p.costo||0)+'<span style="font-size:10px;font-weight:700;color:var(--text3);margin-left:1px">cr</span></td><td style="padding:8px 8px;font-size:11px;width:14%;text-align:center">'+(p.scadenza?'<span style="background:rgba(239,68,68,.1);color:#ef4444;border-radius:4px;padding:2px 5px;font-weight:700;font-size:10px">⏳ '+p.scadenza+'</span>':'')+'</td></tr>';
   }).join('');
 }
 
@@ -7126,7 +7129,9 @@ function admGetPlayers(torneoKey, legaKey, squadra) {
 }
 function admRenderRosaEditor(players, torneoKey, legaKey, squadra) {
   var _ro=torneoKey==='tsm'?['P','D','C','A']:['Por','Dc','B','Dd','Ds','E','M','C','T','W','A','Pc'];
+  var _origPlayers=admGetPlayers(torneoKey, legaKey, squadra);
   players=players.slice().sort(function(a,b){var ia=_ro.indexOf(a.ruolo.split(';')[0].trim()),ib=_ro.indexOf(b.ruolo.split(';')[0].trim());if(ia!==ib)return(ia>=0?ia:99)-(ib>=0?ib:99);return a.nome.localeCompare(b.nome);});
+  players.forEach(function(p){var oi=_origPlayers.findIndex(function(o){return o.nome===p.nome&&o.ruolo===p.ruolo;});p._origIdx=oi>=0?oi:_origPlayers.findIndex(function(o){return o.nome===p.nome;});});
   var h = '<div class="card" style="padding:0;overflow:hidden">'
     +'<div style="padding:12px 16px;background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">'
     +'<span style="font-size:11px;font-weight:800;text-transform:uppercase;color:var(--text2)">'+squadra+' - '+players.length+' giocatori</span>'
@@ -7136,15 +7141,15 @@ function admRenderRosaEditor(players, torneoKey, legaKey, squadra) {
     +'<th style="padding:7px 10px;width:12%">Ruolo</th><th style="padding:7px 10px;width:28%">Nome</th><th style="padding:7px 10px;width:25%">Club Reale</th><th style="padding:7px 10px;width:12%;text-align:right">Costo</th><th style="padding:7px 10px;width:18%">Scadenza</th><th style="width:5%"></th>'
     +'</tr></thead><tbody>';
   players.forEach(function(p, i) {
-    var t=torneoKey,l=legaKey,s=squadra;
+    var t=torneoKey,l=legaKey,s=squadra,oi=p._origIdx>=0?p._origIdx:i;
     h += '<tr style="border-bottom:1px solid var(--border)">'
-      +'<td style="padding:6px 10px"><input type="text" value="'+p.ruolo+'" data-t="'+t+'" data-l="'+l+'" data-s="'+s+'" data-i="'+i+'" data-f="ruolo" onchange="admUpdatePlayerEl(this)" style="width:100%;background:transparent;border:none;color:var(--text);font-size:12px;outline:none"></td>'
-      +'<td style="padding:6px 10px"><input type="text" value="'+p.nome+'" data-t="'+t+'" data-l="'+l+'" data-s="'+s+'" data-i="'+i+'" data-f="nome" onchange="admUpdatePlayerEl(this)" style="width:100%;background:transparent;border:none;color:var(--text);font-weight:700;font-size:12px;outline:none"></td>'
-      +'<td style="padding:6px 10px"><input type="text" value=\"'+(p.squadra||'')+'\" data-t="'+t+'" data-l="'+l+'" data-s="'+s+'" data-i="'+i+'" data-f="squadra" onchange="admUpdatePlayerEl(this)" style="width:100%;background:transparent;border:none;color:var(--text2);font-size:12px;outline:none"></td>'
-      +'<td style="padding:6px 10px;text-align:right"><input type="number" value="'+(p.costo||0)+'" data-t="'+t+'" data-l="'+l+'" data-s="'+s+'" data-i="'+i+'" data-f="costo" onchange="admUpdatePlayerEl(this)" style="width:60px;background:transparent;border:none;color:#10b981;font-size:13px;font-family:Bebas Neue,sans-serif;text-align:right;outline:none"></td>'
+      +'<td style="padding:6px 10px"><input type="text" value="'+p.ruolo+'" data-t="'+t+'" data-l="'+l+'" data-s="'+s+'" data-i="'+oi+'" data-f="ruolo" onchange="admUpdatePlayerEl(this)" style="width:100%;background:transparent;border:none;color:var(--text);font-size:12px;outline:none"></td>'
+      +'<td style="padding:6px 10px"><input type="text" value="'+p.nome+'" data-t="'+t+'" data-l="'+l+'" data-s="'+s+'" data-i="'+oi+'" data-f="nome" onchange="admUpdatePlayerEl(this)" style="width:100%;background:transparent;border:none;color:var(--text);font-weight:700;font-size:12px;outline:none"></td>'
+      +'<td style="padding:6px 10px"><input type="text" value=\"'+(p.squadra||'')+'\" data-t="'+t+'" data-l="'+l+'" data-s="'+s+'" data-i="'+oi+'" data-f="squadra" onchange="admUpdatePlayerEl(this)" style="width:100%;background:transparent;border:none;color:var(--text2);font-size:12px;outline:none"></td>'
+      +'<td style="padding:6px 10px;text-align:right"><input type="number" value="'+(p.costo||0)+'" data-t="'+t+'" data-l="'+l+'" data-s="'+s+'" data-i="'+oi+'" data-f="costo" onchange="admUpdatePlayerEl(this)" style="width:60px;background:transparent;border:none;color:#10b981;font-size:13px;font-family:Bebas Neue,sans-serif;text-align:right;outline:none"></td>'
       
-      +'<td style="padding:6px 8px"><input type="text" value="'+(p.scadenza||'')+'" data-t="'+t+'" data-l="'+l+'" data-s="'+s+'" data-i="'+i+'" data-f="scadenza" onchange="admUpdatePlayerEl(this)" placeholder="gg/mm/aa" style="width:90px;background:var(--bg2);border:1px solid var(--border);border-radius:4px;color:var(--text);font-size:11px;padding:2px 4px;outline:none"></td>'
-      +'<td style="padding:6px 4px;text-align:center"><button data-t="'+t+'" data-l="'+l+'" data-s="'+s+'" data-i="'+i+'" onclick="admDeletePlayerEl(this)" style="background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);color:#ef4444;cursor:pointer;font-size:13px;border-radius:5px;width:28px;height:26px;line-height:1">🗑</button></td>'
+      +'<td style="padding:6px 8px"><input type="text" value="'+(p.scadenza||'')+'" data-t="'+t+'" data-l="'+l+'" data-s="'+s+'" data-i="'+oi+'" data-f="scadenza" onchange="admUpdatePlayerEl(this)" placeholder="gg/mm/aa" style="width:90px;background:var(--bg2);border:1px solid var(--border);border-radius:4px;color:var(--text);font-size:11px;padding:2px 4px;outline:none"></td>'
+      +'<td style="padding:6px 4px;text-align:center"><button data-t="'+t+'" data-l="'+l+'" data-s="'+s+'" data-i="'+oi+'" onclick="admDeletePlayerEl(this)" style="background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);color:#ef4444;cursor:pointer;font-size:13px;border-radius:5px;width:28px;height:26px;line-height:1">🗑</button></td>'
       +'</tr>';
   });
   h += '</tbody></table>'
@@ -8489,7 +8494,7 @@ function renderTable(){
   var _ro=['Por','Dc','B','Dd','Ds','E','M','C','T','W','A','Pc'];
   pl=pl.slice().sort(function(a,b){var ia=_ro.indexOf(a.ruolo.split(';')[0].trim()),ib=_ro.indexOf(b.ruolo.split(';')[0].trim());if(ia!==ib)return(ia>=0?ia:99)-(ib>=0?ib:99);return a.nome.localeCompare(b.nome);});
   if(empty)empty.style.display='none';
-  if(tbody)tbody.innerHTML=pl.map(function(p){var col=p.costo>=50?'#ef4444':p.costo>=20?'#f59e0b':'var(--text2)';return'<tr style="border-bottom:1px solid var(--border)"><td style="padding:8px 10px">'+roleBadge(p.ruolo)+'</td><td style="padding:8px 8px;font-weight:700;font-size:13px">'+p.nome+'</td><td style="padding:8px 8px;font-size:12px;color:var(--text2)">'+(REAL_NAMES[p.squadra]||p.squadra||'--')+'</td><td style="padding:8px 10px;text-align:right;font-family:\'Bebas Neue\';font-size:17px;color:'+col+'">'+p.costo+'<span style="font-size:10px;font-weight:700;color:var(--text3);margin-left:1px">cr</span></td></tr>';}).join('');
+  if(tbody)tbody.innerHTML=pl.map(function(p){var col=p.costo>=50?'#ef4444':p.costo>=20?'#f59e0b':'var(--text2)';return'<tr style="border-bottom:1px solid var(--border)"><td style="padding:8px 10px">'+roleBadge(p.ruolo)+'</td><td style="padding:8px 8px;font-weight:700;font-size:13px">'+p.nome+'</td><td style="padding:8px 8px;font-size:12px;color:var(--text2)">'+(REAL_NAMES[p.squadra]||p.squadra||'--')+'</td><td style="padding:8px 10px;text-align:right;font-family:\'Bebas Neue\';font-size:17px;color:'+col+'">'+p.costo+'<span style="font-size:10px;font-weight:700;color:var(--text3);margin-left:1px">cr</span></td><td style="padding:8px 8px;font-size:11px;text-align:center">'+(p.scadenza?'<span style="background:rgba(239,68,68,.1);color:#ef4444;border-radius:4px;padding:2px 5px;font-weight:700;font-size:10px">⏳ '+p.scadenza+'</span>':'')+'</td></tr>';}).join('');
 }
 var showAllQual=false;
 function toggleAll(){showAllQual=!showAllQual;renderQualTable();}
@@ -9608,7 +9613,7 @@ function tsmRenderTable() {
     var r=(p.ruolo||'').split(';')[0].trim();
     var c=RC[r]||['rgba(107,114,128,.15)','#6b7280'];
     var colCosto=p.costo>=50?'#ef4444':p.costo>=20?'#f59e0b':'var(--text2)';
-    return '<tr style="border-bottom:1px solid var(--border)"><td style="padding:8px 10px;width:15%"><span style="font-size:8px;font-weight:800;padding:2px 5px;border-radius:3px;background:'+c[0]+';color:'+c[1]+'">'+r+'</span></td><td style="padding:8px 8px;font-weight:700;font-size:13px;width:40%">'+(p.nome||'')+'</td><td style="padding:8px 8px;font-size:12px;color:var(--text2);width:30%">'+((typeof REAL_NAMES!=='undefined'&&REAL_NAMES[p.squadra])||p.squadra||'')+'</td><td style="padding:8px 10px;text-align:right;font-family:\'Bebas Neue\';font-size:17px;color:'+colCosto+';width:15%">'+(p.costo||0)+'<span style="font-size:10px;font-weight:700;color:var(--text3);margin-left:1px">cr</span></td></tr>';
+    return '<tr style="border-bottom:1px solid var(--border)"><td style="padding:8px 10px;width:13%"><span style="font-size:8px;font-weight:800;padding:2px 5px;border-radius:3px;background:'+c[0]+';color:'+c[1]+'">'+r+'</span></td><td style="padding:8px 8px;font-weight:700;font-size:13px;width:35%">'+(p.nome||'')+'</td><td style="padding:8px 8px;font-size:12px;color:var(--text2);width:25%">'+((typeof REAL_NAMES!=='undefined'&&REAL_NAMES[p.squadra])||p.squadra||'')+'</td><td style="padding:8px 10px;text-align:right;font-family:\'Bebas Neue\';font-size:17px;color:'+colCosto+';width:13%">'+(p.costo||0)+'<span style="font-size:10px;font-weight:700;color:var(--text3);margin-left:1px">cr</span></td><td style="padding:8px 8px;font-size:11px;width:14%;text-align:center">'+(p.scadenza?'<span style="background:rgba(239,68,68,.1);color:#ef4444;border-radius:4px;padding:2px 5px;font-weight:700;font-size:10px">⏳ '+p.scadenza+'</span>':'')+'</td></tr>';
   }).join('');
 }
 
@@ -13718,7 +13723,7 @@ function renderTable(){
   var _ro=['Por','Dc','B','Dd','Ds','E','M','C','T','W','A','Pc'];
   pl=pl.slice().sort(function(a,b){var ia=_ro.indexOf(a.ruolo.split(';')[0].trim()),ib=_ro.indexOf(b.ruolo.split(';')[0].trim());if(ia!==ib)return(ia>=0?ia:99)-(ib>=0?ib:99);return a.nome.localeCompare(b.nome);});
   if(empty)empty.style.display='none';
-  if(tbody)tbody.innerHTML=pl.map(function(p){var col=p.costo>=50?'#ef4444':p.costo>=20?'#f59e0b':'var(--text2)';return'<tr style="border-bottom:1px solid var(--border)"><td style="padding:8px 10px">'+roleBadge(p.ruolo)+'</td><td style="padding:8px 8px;font-weight:700;font-size:13px">'+p.nome+'</td><td style="padding:8px 8px;font-size:12px;color:var(--text2)">'+(REAL_NAMES[p.squadra]||p.squadra||'--')+'</td><td style="padding:8px 10px;text-align:right;font-family:\'Bebas Neue\';font-size:17px;color:'+col+'">'+p.costo+'<span style="font-size:10px;font-weight:700;color:var(--text3);margin-left:1px">cr</span></td></tr>';}).join('');
+  if(tbody)tbody.innerHTML=pl.map(function(p){var col=p.costo>=50?'#ef4444':p.costo>=20?'#f59e0b':'var(--text2)';return'<tr style="border-bottom:1px solid var(--border)"><td style="padding:8px 10px">'+roleBadge(p.ruolo)+'</td><td style="padding:8px 8px;font-weight:700;font-size:13px">'+p.nome+'</td><td style="padding:8px 8px;font-size:12px;color:var(--text2)">'+(REAL_NAMES[p.squadra]||p.squadra||'--')+'</td><td style="padding:8px 10px;text-align:right;font-family:\'Bebas Neue\';font-size:17px;color:'+col+'">'+p.costo+'<span style="font-size:10px;font-weight:700;color:var(--text3);margin-left:1px">cr</span></td><td style="padding:8px 8px;font-size:11px;text-align:center">'+(p.scadenza?'<span style="background:rgba(239,68,68,.1);color:#ef4444;border-radius:4px;padding:2px 5px;font-weight:700;font-size:10px">⏳ '+p.scadenza+'</span>':'')+'</td></tr>';}).join('');
 }
 var showAllQual=false;
 function toggleAll(){showAllQual=!showAllQual;renderQualTable();}
