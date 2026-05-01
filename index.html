@@ -1,4 +1,4 @@
-<!-- build:20260501_232000 -->
+<!-- build:20260501_233000 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -4066,8 +4066,11 @@ function tsmUpdateHeader() {
   if(nm) nm.textContent=tsmCurrentTeam;
   if(cb) cb.style.display='block';
   if(cv){
+    var _admCrTSM = JSON.parse(localStorage.getItem('adm_crediti_base_tsm_it')||'{}');
     var _userCredTSM = JSON.parse(localStorage.getItem('user_crediti_tsm_it')||'{}');
-    var _baseTSM = (_userCredTSM[tsmCurrentTeam]!==undefined) ? _userCredTSM[tsmCurrentTeam]
+    var _baseTSM = (_admCrTSM[tsmCurrentTeam]!==undefined) ? _admCrTSM[tsmCurrentTeam]
+      : (_admCrTSM[tsmCurrentTeam.toUpperCase()]!==undefined) ? _admCrTSM[tsmCurrentTeam.toUpperCase()]
+      : (_userCredTSM[tsmCurrentTeam]!==undefined) ? _userCredTSM[tsmCurrentTeam]
       : (_userCredTSM[tsmCurrentTeam.toUpperCase()]!==undefined) ? _userCredTSM[tsmCurrentTeam.toUpperCase()]
       : (CREDITS&&CREDITS[tsmCurrentTeam]!==undefined?CREDITS[tsmCurrentTeam]:null);
     // Movimenti rose: costiOrig - costiAttuali
@@ -8507,13 +8510,24 @@ function updateHeader(){
   var cv=document.getElementById('th-credits-v');
   if(cv){
     var _legaKey = window.currentLeagueKey||'it';
+    // Crediti: base (adm_crediti_base) + movimenti (diff costi rosa) - multe
+    var _admCrObj = JSON.parse(localStorage.getItem('adm_crediti_base_slim_'+_legaKey)||'{}');
     var _userCred = JSON.parse(localStorage.getItem('user_crediti_slim_'+_legaKey)||'{}');
-    var _baseCr = (_userCred[currentTeam]!==undefined) ? _userCred[currentTeam] : (CREDITS[currentTeam]!==undefined ? CREDITS[currentTeam] : null);
+    var _baseCr = (_admCrObj[currentTeam]!==undefined) ? _admCrObj[currentTeam]
+                : (_userCred[currentTeam]!==undefined) ? _userCred[currentTeam]
+                : (CREDITS[currentTeam]!==undefined ? CREDITS[currentTeam] : null);
+    // Movimenti: costi rosa originale - costi rosa attuale
+    var _rosaImport = JSON.parse(localStorage.getItem('adm_rose_import_slim_'+_legaKey)||localStorage.getItem('adm_rose_slim_'+_legaKey)||'{}');
+    var _rosaOrig2 = _rosaImport[currentTeam]||_rosaImport[currentTeam.toUpperCase()]||(window._TEAMS_ROSE_IT&&(window._TEAMS_ROSE_IT[currentTeam]||window._TEAMS_ROSE_IT[currentTeam.toUpperCase()]))||[];
+    var _costiOrig2 = _rosaOrig2.reduce(function(s,p){return s+(parseFloat(p.costo)||0);},0);
+    var _rosaAtt2 = TEAMS_ROSE[currentTeam]||[];
+    var _costiAtt2 = _rosaAtt2.reduce(function(s,p){return s+(parseFloat(p.costo)||0);},0);
+    var _movUser = _costiOrig2 - _costiAtt2;
     var _multeKey2 = 'slim_multe_'+_legaKey;
     var _multeRaw2 = localStorage.getItem(_multeKey2);
     var _crMulUser = 0;
     if (_multeRaw2) { try { var _mdu=JSON.parse(_multeRaw2); var _mqu=_mdu[currentTeam]||_mdu[currentTeam.toUpperCase()]||{}; _crMulUser=parseFloat(_mqu.multe)||0; } catch(e){} }
-    var _credVal = _baseCr !== null ? Math.round((_baseCr - _crMulUser)*10)/10 : '--';
+    var _credVal = _baseCr !== null ? Math.round((_baseCr + _movUser - _crMulUser)*10)/10 : '--';
     cv.textContent = _credVal;
   }
   var pl=TEAMS_ROSE[currentTeam]||[];
@@ -9601,8 +9615,11 @@ function tsmUpdateHeader() {
   if(nm) nm.textContent=tsmCurrentTeam;
   if(cb) cb.style.display='block';
   if(cv){
+    var _admCrTSM = JSON.parse(localStorage.getItem('adm_crediti_base_tsm_it')||'{}');
     var _userCredTSM = JSON.parse(localStorage.getItem('user_crediti_tsm_it')||'{}');
-    var _baseTSM = (_userCredTSM[tsmCurrentTeam]!==undefined) ? _userCredTSM[tsmCurrentTeam]
+    var _baseTSM = (_admCrTSM[tsmCurrentTeam]!==undefined) ? _admCrTSM[tsmCurrentTeam]
+      : (_admCrTSM[tsmCurrentTeam.toUpperCase()]!==undefined) ? _admCrTSM[tsmCurrentTeam.toUpperCase()]
+      : (_userCredTSM[tsmCurrentTeam]!==undefined) ? _userCredTSM[tsmCurrentTeam]
       : (_userCredTSM[tsmCurrentTeam.toUpperCase()]!==undefined) ? _userCredTSM[tsmCurrentTeam.toUpperCase()]
       : (CREDITS&&CREDITS[tsmCurrentTeam]!==undefined?CREDITS[tsmCurrentTeam]:null);
     // Movimenti rose: costiOrig - costiAttuali
@@ -13431,13 +13448,24 @@ function updateHeader(){
   var cv=document.getElementById('th-credits-v');
   if(cv){
     var _legaKey = window.currentLeagueKey||'it';
+    // Crediti: base (adm_crediti_base) + movimenti (diff costi rosa) - multe
+    var _admCrObj = JSON.parse(localStorage.getItem('adm_crediti_base_slim_'+_legaKey)||'{}');
     var _userCred = JSON.parse(localStorage.getItem('user_crediti_slim_'+_legaKey)||'{}');
-    var _baseCr = (_userCred[currentTeam]!==undefined) ? _userCred[currentTeam] : (CREDITS[currentTeam]!==undefined ? CREDITS[currentTeam] : null);
+    var _baseCr = (_admCrObj[currentTeam]!==undefined) ? _admCrObj[currentTeam]
+                : (_userCred[currentTeam]!==undefined) ? _userCred[currentTeam]
+                : (CREDITS[currentTeam]!==undefined ? CREDITS[currentTeam] : null);
+    // Movimenti: costi rosa originale - costi rosa attuale
+    var _rosaImport = JSON.parse(localStorage.getItem('adm_rose_import_slim_'+_legaKey)||localStorage.getItem('adm_rose_slim_'+_legaKey)||'{}');
+    var _rosaOrig2 = _rosaImport[currentTeam]||_rosaImport[currentTeam.toUpperCase()]||(window._TEAMS_ROSE_IT&&(window._TEAMS_ROSE_IT[currentTeam]||window._TEAMS_ROSE_IT[currentTeam.toUpperCase()]))||[];
+    var _costiOrig2 = _rosaOrig2.reduce(function(s,p){return s+(parseFloat(p.costo)||0);},0);
+    var _rosaAtt2 = TEAMS_ROSE[currentTeam]||[];
+    var _costiAtt2 = _rosaAtt2.reduce(function(s,p){return s+(parseFloat(p.costo)||0);},0);
+    var _movUser = _costiOrig2 - _costiAtt2;
     var _multeKey2 = 'slim_multe_'+_legaKey;
     var _multeRaw2 = localStorage.getItem(_multeKey2);
     var _crMulUser = 0;
     if (_multeRaw2) { try { var _mdu=JSON.parse(_multeRaw2); var _mqu=_mdu[currentTeam]||_mdu[currentTeam.toUpperCase()]||{}; _crMulUser=parseFloat(_mqu.multe)||0; } catch(e){} }
-    var _credVal = _baseCr !== null ? Math.round((_baseCr - _crMulUser)*10)/10 : '--';
+    var _credVal = _baseCr !== null ? Math.round((_baseCr + _movUser - _crMulUser)*10)/10 : '--';
     cv.textContent = _credVal;
   }
   var pl=TEAMS_ROSE[currentTeam]||[];
