@@ -1,4 +1,4 @@
-<!-- build:20260501_190000 -->
+<!-- build:20260501_201000 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -3999,13 +3999,17 @@ function enterTSM() {
   var _tsmVer = '2';
   if (localStorage.getItem('tsm_ver') !== _tsmVer) {
     localStorage.setItem('tsm_calendar_it', JSON.stringify(TSM_INITIAL_CALENDAR_IT));
+    gsSaveKey('tsm_calendar_it', localStorage.getItem('tsm_calendar_it'));
     localStorage.setItem('tsm_stadio_it', JSON.stringify(TSM_INITIAL_STADIO_IT));
+    gsSaveKey('tsm_stadio_it', localStorage.getItem('tsm_stadio_it'));
     localStorage.setItem('tsm_ver', _tsmVer);
   } else {
     if (!localStorage.getItem('tsm_calendar_it'))
       localStorage.setItem('tsm_calendar_it', JSON.stringify(TSM_INITIAL_CALENDAR_IT));
+      gsSaveKey('tsm_calendar_it', localStorage.getItem('tsm_calendar_it'));
     if (!localStorage.getItem('tsm_stadio_it'))
       localStorage.setItem('tsm_stadio_it', JSON.stringify(TSM_INITIAL_STADIO_IT));
+      gsSaveKey('tsm_stadio_it', localStorage.getItem('tsm_stadio_it'));
   }
   showPage('tsm-lega');
   setTimeout(function(){
@@ -4410,7 +4414,7 @@ function renderModulistica(torneoKey) {
 // ═══════════════════════════════════════════════════════
 // GOOGLE SHEETS — Layer di sincronizzazione
 // ═══════════════════════════════════════════════════════
-var GS_URL = 'https://script.google.com/macros/s/AKfycbwGBnQxZI66uPN6aKl7jXIGPKOyXGD4dSraSf1xmZYI8i4onKdBPtP8LmKjNBvJaPtM/exec';
+var GS_URL = 'https://script.google.com/macros/s/AKfycbwOdHejvlFrooyBkrQY080mtSjc3fzHuc3u3KjIJrmUtArU2X5mUyyauI91D4hXf6tK/exec';
 var GS_ONLINE = false; // diventa true dopo il primo ping riuscito
 
 // Chiamata tramite JSONP (necessario per Google Apps Script CORS)
@@ -4486,6 +4490,7 @@ function gsPing() {
       gsCall({action:'getStadio', torneo:'slim', lega:'global'}, function(err, data) {
         if (!err && data && data.ok && data.data && Object.keys(data.data).length) {
           localStorage.setItem('adm_stadio_table_global', JSON.stringify(data.data));
+          gsSaveKey('adm_stadio_table_global', localStorage.getItem('adm_stadio_table_global'));
           if(typeof SLIM_STADIO_TABLE!=='undefined') Object.assign(SLIM_STADIO_TABLE, data.data);
         }
       });
@@ -4493,6 +4498,7 @@ function gsPing() {
       gsCall({action:'getMulte', torneo:'slim', lega:'it'}, function(err, data) {
         if (!err && data && data.ok && data.data && Object.keys(data.data).length) {
           localStorage.setItem('slim_multe_it', JSON.stringify(data.data));
+          gsSaveKey('slim_multe_it', localStorage.getItem('slim_multe_it'));
         }
       });
       // Carica coppe da GSheets
@@ -4519,6 +4525,40 @@ function gsPing() {
     }
     // Aggiorna contatori dashboard
     setTimeout(function(){ updateDashboardCounters(); updateLogosTornei(); }, 500);
+    // ── Carica tutti i dati generici da GSheets (chiavi KV) ──────────
+    if (GS_ONLINE) {
+      var _syncKeys = [
+        'adm_stadio_table_global',
+        'admin_modulistica',
+        'admin_sponsor_catalog',
+        'adm_stadio_saved_slim_it',
+        'adm_stadio_saved_tsm_it',
+        'adm_crediti_base_slim_it',
+        'adm_crediti_base_tsm_it',
+        'adm_infermeria_slim_it',
+        'storico_stagioni_slim',
+        'storico_stagioni_tsm',
+        'adm_config_slim',
+        'adm_config_tsm',
+        'adm_coppe_config_slim',
+        'adm_coppe_config_tsm'
+      ];
+      _syncKeys.forEach(function(k) {
+        gsLoadKey(k, function(val) {
+          if (val !== null && val !== undefined) {
+            localStorage.setItem(k, typeof val === 'string' ? val : JSON.stringify(val));
+          }
+        });
+      });
+      // Carica tutte le chiavi sponsor catalog per ogni torneo
+      var _at = JSON.parse(localStorage.getItem('admin_tornei')||'[]');
+      _at.forEach(function(t) {
+        gsLoadKey('admin_sponsor_catalog_'+t.key, function(val) {
+          if (val !== null) localStorage.setItem('admin_sponsor_catalog_'+t.key, typeof val === 'string' ? val : JSON.stringify(val));
+        });
+      });
+    }
+    // ──────────────────────────────────────────────────────────────────
   });
 }
 
@@ -4563,6 +4603,20 @@ function gsLogin(username, password, callback) {
     }
   });
 }
+
+// ── FUNZIONI GENERICHE key/value (sincronizza QUALSIASI dato) ──────
+function gsSaveKey(key, data) {
+  if (!GS_ONLINE) return;
+  gsCall({action:'saveKey', key:key, data: typeof data === 'string' ? data : JSON.stringify(data)}, null);
+}
+function gsLoadKey(key, callback) {
+  if (!GS_ONLINE) { if(callback) callback(null); return; }
+  gsCall({action:'getKey', key:key}, function(err, res) {
+    if (err || !res || !res.ok || res.data === null) { if(callback) callback(null); return; }
+    if(callback) callback(res.data);
+  });
+}
+// ──────────────────────────────────────────────────────────────────
 
 // Salva calendario su GSheets
 function gsSaveCalendario(torneo, lega, cal) {
@@ -4863,6 +4917,7 @@ function admSaveStadioEl(el) {
   // Salva nel localStorage admin e sincronizza con app
   // Salva sia la copia admin (fonte di verità per admin) che la copia app (lato utente)
   localStorage.setItem('adm_stadio_saved_'+t+'_'+l, JSON.stringify(stadio));
+  gsSaveKey('adm_stadio_saved_'+t+'_'+l, JSON.stringify(stadio));
   var appKey = (t==='tsm'&&l==='it') ? 'tsm_stadio_it' : (l==='it'?'slim_stadio':'slim_stadio_'+l);
   localStorage.setItem(appKey, JSON.stringify(stadio));
   // Pulisci memoria temporanea
@@ -4934,6 +4989,8 @@ function admSaveGlobalST() {
   }
   var ST = window._admGlobalST || JSON.parse(localStorage.getItem('adm_stadio_table_global')||'null') || JSON.parse(JSON.stringify(SLIM_STADIO_TABLE||{}));
   localStorage.setItem('adm_stadio_table_global', JSON.stringify(ST));
+  gsSaveKey('adm_stadio_table_global', JSON.stringify(ST));
+  gsSaveKey('adm_stadio_table_global', localStorage.getItem('adm_stadio_table_global'));
   // Applica a tutte le variabili globali nell'app
   if(typeof SLIM_STADIO_TABLE!=='undefined') { Object.keys(ST).forEach(function(k){ SLIM_STADIO_TABLE[k]=ST[k]; }); }
   if(typeof TSM_STADIO_TABLE_IT!=='undefined') { Object.keys(ST).forEach(function(k){ TSM_STADIO_TABLE_IT[k]=ST[k]; }); }
@@ -4955,6 +5012,8 @@ function admRemoveGlobalSTLevel() {
   delete ST[lastLv];
   window._admGlobalST = ST;
   localStorage.setItem('adm_stadio_table_global', JSON.stringify(ST));
+  gsSaveKey('adm_stadio_table_global', JSON.stringify(ST));
+  gsSaveKey('adm_stadio_table_global', localStorage.getItem('adm_stadio_table_global'));
   admRenderGlobalStadioTable();
 }
 function admAddGlobalSTLevel() {
@@ -5022,6 +5081,7 @@ function admSaveStadioTable(el) {
   var t = el.dataset.t;
   var ST = (window._admStadioTableTemp && window._admStadioTableTemp[t]) ? window._admStadioTableTemp[t] : admGetStadioTable(t);
   localStorage.setItem('adm_stadio_table_'+t, JSON.stringify(ST));
+  gsSaveKey('adm_stadio_table_'+t, JSON.stringify(ST));
   // Aggiorna variabile globale nell'app
   if (t==='slim' && typeof SLIM_STADIO_TABLE!=='undefined') Object.assign(SLIM_STADIO_TABLE, ST);
   if (t==='tsm' && typeof TSM_STADIO_TABLE_IT!=='undefined') Object.assign(TSM_STADIO_TABLE_IT, ST);
@@ -5143,8 +5203,11 @@ function admSaveCatalogEl(el) {
     var tipo = el.dataset.tipo;
     // Raccoglie valori aggiornati dal DOM (già aggiornati da admUpdateCatalogEl)
     localStorage.setItem('admin_sponsor_catalog_'+torneoKey, JSON.stringify(cat));
+  gsSaveKey('admin_sponsor_catalog_'+torneoKey, JSON.stringify(cat));
   }
   localStorage.setItem('admin_sponsor_catalog', JSON.stringify(SPONSOR_CATALOG));
+  gsSaveKey('admin_sponsor_catalog', JSON.stringify(SPONSOR_CATALOG));
+  gsSaveKey('admin_sponsor_catalog', localStorage.getItem('admin_sponsor_catalog'));
   var msg=document.createElement('div');msg.textContent='✅ Catalogo sponsor salvato';msg.style.cssText='position:fixed;top:70px;right:20px;background:#10b981;color:#fff;padding:8px 16px;border-radius:8px;font-weight:700;font-size:12px;z-index:9999';document.body.appendChild(msg);setTimeout(function(){msg.remove();},2000);
 }
 
@@ -5545,6 +5608,7 @@ function admNuovaStagioneEl(el) {
   // Salva snapshot nello storico
   var storico = admGetStoricoStagioni(torneoKey);
   storico.push(snapshot);
+  // gsync:storico
   localStorage.setItem('storico_stagioni_'+torneoKey, JSON.stringify(storico));
 
   // ─── AZZERA dati correnti ─────────────────────────────────────────────────
@@ -5600,6 +5664,7 @@ function admDeleteStagioneEl(el) {
   if (!confirm('Eliminare dallo storico la stagione "'+stagLabel+'"? I dati archiviati andranno persi.')) return;
   var storico = admGetStoricoStagioni(torneoKey);
   storico = storico.filter(function(s){return s.label!==stagLabel;});
+  // gsync:storico
   localStorage.setItem('storico_stagioni_'+torneoKey, JSON.stringify(storico));
   admRenderStagioni();
 }
@@ -7002,6 +7067,7 @@ function admCsConfirm() {
     var sk=(legaKey==='it')?'slim_stadio':'slim_stadio_'+legaKey;
     var sr=localStorage.getItem(sk)||localStorage.getItem('adm_stadio_'+torneoKey+'_'+legaKey);
     if(sr){try{var sta=admCsRenameKey(admCsRenameKey(JSON.parse(sr),o.toUpperCase(),n.toUpperCase()),o,n);localStorage.setItem(sk,JSON.stringify(sta));localStorage.setItem('adm_stadio_'+torneoKey+'_'+legaKey,JSON.stringify(sta));}catch(e){}}
+    gsSaveKey('adm_stadio_', localStorage.getItem('adm_stadio_'));
     if(c.newLogo){localStorage.setItem('adm_logo_'+torneoKey+'_'+legaKey+'_'+n,c.newLogo);if(typeof FANTASY_LOGOS!=='undefined'){FANTASY_LOGOS[n]=c.newLogo;FANTASY_LOGOS[n.toUpperCase()]=c.newLogo;delete FANTASY_LOGOS[o];delete FANTASY_LOGOS[o.toUpperCase()];}}
     if(torneoKey==='slim'&&legaKey==='it'&&typeof SLIM_TEAMS_IT!=='undefined'){var i=SLIM_TEAMS_IT.indexOf(o);if(i>=0)SLIM_TEAMS_IT[i]=n;}
     if(typeof SLIM_TEAMS!=='undefined'){var i2=SLIM_TEAMS.indexOf(o);if(i2>=0)SLIM_TEAMS[i2]=n;}
@@ -7594,6 +7660,8 @@ function admAddModulo(key) {
 }
 function admSaveModulistica() {
   localStorage.setItem('admin_modulistica', JSON.stringify(MODULISTICA_DATA));
+  gsSaveKey('admin_modulistica', JSON.stringify(MODULISTICA_DATA));
+  gsSaveKey('admin_modulistica', localStorage.getItem('admin_modulistica'));
   var msg=document.createElement('div');msg.textContent='✅ Modulistica salvata';msg.style.cssText='position:fixed;top:70px;right:20px;background:#10b981;color:#fff;padding:8px 16px;border-radius:8px;font-weight:700;font-size:12px;z-index:9999';document.body.appendChild(msg);setTimeout(function(){msg.remove();},2000);
 }
 
@@ -7869,6 +7937,7 @@ function admSpSelectMaglia(el) {
   data.maglia.premio = sp.premio;
   data.maglia.bonus = sp.bonus;
   localStorage.setItem('adm_sponsor_'+d.t+'_'+d.l+'_'+d.s, JSON.stringify(data));
+  gsSaveKey('adm_sponsor_'+d.t+'_'+d.l+'_'+d.s, JSON.stringify(data));
   admLoadSpBody();
 }
 function admSpSelectSocial(el) {
@@ -7881,6 +7950,7 @@ function admSpSelectSocial(el) {
   data.social.bonus = sp.bonus;
   data.social.obiettivi = sp.obiettivi.map(function(o){ return {desc:o.desc, premio:o.premio, raggiunto:false}; });
   localStorage.setItem('adm_sponsor_'+d.t+'_'+d.l+'_'+d.s, JSON.stringify(data));
+  gsSaveKey('adm_sponsor_'+d.t+'_'+d.l+'_'+d.s, JSON.stringify(data));
   admLoadSpBody();
 }
 function admSpSelectStadio(el) {
@@ -7892,6 +7962,7 @@ function admSpSelectStadio(el) {
   data.stadio.bonus = sp.bonus;
   data.stadio.clausole = sp.clausole.map(function(c){ return {desc:c.desc, premio:c.premio, raggiunto:false}; });
   localStorage.setItem('adm_sponsor_'+d.t+'_'+d.l+'_'+d.s, JSON.stringify(data));
+  gsSaveKey('adm_sponsor_'+d.t+'_'+d.l+'_'+d.s, JSON.stringify(data));
   admLoadSpBody();
 }
 
@@ -7909,11 +7980,13 @@ function admGetSponsorData(t,l,s) {
 function admSpUpdate(t,l,s,tipo,field,val) {
   var d=admGetSponsorData(t,l,s); d[tipo][field]=val;
   localStorage.setItem('adm_sponsor_'+t+'_'+l+'_'+s, JSON.stringify(d));
+  gsSaveKey('adm_sponsor_'+t+'_'+l+'_'+s, JSON.stringify(d));
   admLoadSpBody();
 }
 function admSpToggle(t,l,s,tipo,field,val) {
   var d=admGetSponsorData(t,l,s); d[tipo][field]=val;
   localStorage.setItem('adm_sponsor_'+t+'_'+l+'_'+s, JSON.stringify(d));
+  gsSaveKey('adm_sponsor_'+t+'_'+l+'_'+s, JSON.stringify(d));
   admLoadSpBody();
 }
 function admSpUpdateObiettivo(t,l,s,tipo,i,field,val) {
@@ -7921,6 +7994,7 @@ function admSpUpdateObiettivo(t,l,s,tipo,i,field,val) {
   var arr = tipo==='social' ? d.social.obiettivi : d.stadio.clausole;
   if(arr[i]) arr[i][field]=val;
   localStorage.setItem('adm_sponsor_'+t+'_'+l+'_'+s, JSON.stringify(d));
+  gsSaveKey('adm_sponsor_'+t+'_'+l+'_'+s, JSON.stringify(d));
   admLoadSpBody();
 }
 
@@ -7942,12 +8016,14 @@ function admResetSponsorEl(el) {
     stadio:{nome:'',clausole:[{desc:'',premio:0,raggiunto:false},{desc:'',premio:0,raggiunto:false},{desc:'',premio:0,raggiunto:false}],bonus:0}
   };
   localStorage.setItem('adm_sponsor_'+d.t+'_'+d.l+'_'+d.s, JSON.stringify(empty));
+  gsSaveKey('adm_sponsor_'+d.t+'_'+d.l+'_'+d.s, JSON.stringify(empty));
   admLoadSpBody();
 }
 function admSaveSponsor(t,l,s) {
   var key2 = t+'_'+l+'_'+s;
   var sp = (window._admSpTemp && window._admSpTemp[key2]) ? window._admSpTemp[key2] : admGetSponsorData(t,l,s);
   localStorage.setItem('adm_sponsor_'+t+'_'+l+'_'+s, JSON.stringify(sp));
+  gsSaveKey('adm_sponsor_'+t+'_'+l+'_'+s, JSON.stringify(sp));
   if (window._admSpTemp) delete window._admSpTemp[key2];
   gsSaveSponsor(t, l, s, sp);
   var msg=document.createElement('div');msg.textContent='✅ Sponsor salvati'+(GS_ONLINE?' · Sincronizzato':'');msg.style.cssText='position:fixed;top:70px;right:20px;background:#10b981;color:#fff;padding:8px 16px;border-radius:8px;font-weight:700;font-size:12px;z-index:9999';document.body.appendChild(msg);setTimeout(function(){msg.remove();},2000);
@@ -9455,13 +9531,17 @@ function enterTSM() {
   var _tsmVer = '2';
   if (localStorage.getItem('tsm_ver') !== _tsmVer) {
     localStorage.setItem('tsm_calendar_it', JSON.stringify(TSM_INITIAL_CALENDAR_IT));
+    gsSaveKey('tsm_calendar_it', localStorage.getItem('tsm_calendar_it'));
     localStorage.setItem('tsm_stadio_it', JSON.stringify(TSM_INITIAL_STADIO_IT));
+    gsSaveKey('tsm_stadio_it', localStorage.getItem('tsm_stadio_it'));
     localStorage.setItem('tsm_ver', _tsmVer);
   } else {
     if (!localStorage.getItem('tsm_calendar_it'))
       localStorage.setItem('tsm_calendar_it', JSON.stringify(TSM_INITIAL_CALENDAR_IT));
+      gsSaveKey('tsm_calendar_it', localStorage.getItem('tsm_calendar_it'));
     if (!localStorage.getItem('tsm_stadio_it'))
       localStorage.setItem('tsm_stadio_it', JSON.stringify(TSM_INITIAL_STADIO_IT));
+      gsSaveKey('tsm_stadio_it', localStorage.getItem('tsm_stadio_it'));
   }
   showPage('tsm-lega');
   setTimeout(function(){
@@ -9866,119 +9946,6 @@ function renderModulistica(torneoKey) {
 // ═══════════════════════════════════════════════════════
 // GOOGLE SHEETS — Layer di sincronizzazione
 // ═══════════════════════════════════════════════════════
-var GS_URL = 'https://script.google.com/macros/s/AKfycbwGBnQxZI66uPN6aKl7jXIGPKOyXGD4dSraSf1xmZYI8i4onKdBPtP8LmKjNBvJaPtM/exec';
-var GS_ONLINE = false; // diventa true dopo il primo ping riuscito
-
-// Chiamata tramite JSONP (necessario per Google Apps Script CORS)
-var _gsCallbacks = {};
-var _gsCallId = 0;
-
-function gsCall(params, callback) {
-  var id = 'gs_cb_' + (++_gsCallId);
-  params.callback = id;
-  var url = GS_URL + '?' + Object.keys(params).map(function(k){
-    return encodeURIComponent(k) + '=' + encodeURIComponent(params[k]);
-  }).join('&');
-
-  var timeout = setTimeout(function() {
-    delete window[id];
-    if (callback) callback(new Error('timeout'), null);
-  }, 10000);
-
-  window[id] = function(data) {
-    clearTimeout(timeout);
-    delete window[id];
-    if (callback) callback(null, data);
-  };
-
-  var script = document.createElement('script');
-  script.src = url;
-  script.onerror = function() {
-    clearTimeout(timeout);
-    delete window[id];
-    if (callback) callback(new Error('network error'), null);
-  };
-  document.head.appendChild(script);
-  setTimeout(function(){ if(script.parentNode) script.parentNode.removeChild(script); }, 11000);
-}
-
-// Ping al caricamento per verificare connessione
-function gsPing() {
-  gsCall({action:'ping'}, function(err, data) {
-    GS_ONLINE = !err && data && data.ok;
-    if (GS_ONLINE) {
-      // Controlla richieste pendenti (solo se admin)
-      var cu = localStorage.getItem('current_user');
-      if (cu) {
-        try {
-          var u = JSON.parse(cu);
-          if (u.ruolo === 'admin') checkPendingRequests();
-        } catch(e) {}
-      }
-      // Carica crediti da GSheets
-      gsCall({action:'getCrediti', torneo:'slim', lega:'it'}, function(err, data) {
-        if (!err && data && data.ok && data.data && Object.keys(data.data).length) {
-          var userKey = 'user_crediti_slim_it';
-          var userMap = JSON.parse(localStorage.getItem(userKey)||'{}');
-          Object.keys(data.data).forEach(function(sq) {
-            userMap[sq] = data.data[sq];
-            userMap[sq.toUpperCase()] = data.data[sq];
-            localStorage.setItem('adm_crediti_slim_it_'+sq, String(data.data[sq]));
-          });
-          localStorage.setItem(userKey, JSON.stringify(userMap));
-        }
-      });
-      // Carica sponsor da GSheets per ogni squadra
-      if (typeof SLIM_TEAMS_IT !== 'undefined') {
-        SLIM_TEAMS_IT.forEach(function(sq) {
-          gsCall({action:'getSponsor', torneo:'slim', lega:'it', squadra:sq}, function(err, data) {
-            if (!err && data && data.ok && data.data && Object.keys(data.data).length) {
-              localStorage.setItem('adm_sponsor_slim_it_'+sq, JSON.stringify(data.data));
-            }
-          });
-        });
-      }
-      // Carica tabella stadio globale da GSheets
-      gsCall({action:'getStadio', torneo:'slim', lega:'global'}, function(err, data) {
-        if (!err && data && data.ok && data.data && Object.keys(data.data).length) {
-          localStorage.setItem('adm_stadio_table_global', JSON.stringify(data.data));
-          if(typeof SLIM_STADIO_TABLE!=='undefined') Object.assign(SLIM_STADIO_TABLE, data.data);
-        }
-      });
-      // Carica multe da GSheets
-      gsCall({action:'getMulte', torneo:'slim', lega:'it'}, function(err, data) {
-        if (!err && data && data.ok && data.data && Object.keys(data.data).length) {
-          localStorage.setItem('slim_multe_it', JSON.stringify(data.data));
-        }
-      });
-      // Carica coppe da GSheets
-      ['cl','el','conf','sc'].forEach(function(coppa) {
-        gsCall({action:'getCoppe', torneo:'slim', coppa:coppa}, function(err, data) {
-          if (!err && data && data.ok && data.data && Object.keys(data.data).length) {
-            localStorage.setItem('adm_coppa_data_slim_'+coppa, JSON.stringify(data.data));
-          }
-        });
-      });
-    }
-    var color = GS_ONLINE ? '#10b981' : '#6b7280';
-    var shadow = GS_ONLINE ? '0 0 6px #10b981' : 'none';
-    var label = GS_ONLINE ? 'online' : 'offline';
-    var title = GS_ONLINE ? 'Google Sheets connesso' : 'Offline — dati salvati in locale';
-    ['gs-status','gs-status-admin'].forEach(function(id) {
-      var el = document.getElementById(id);
-      if (el) { el.style.background=color; el.style.boxShadow=shadow; el.title=title; }
-    });
-    var lbl = document.getElementById('gs-status-admin-label');
-    if (lbl) { lbl.textContent=label; lbl.style.color=GS_ONLINE?'#10b981':'var(--text3)'; }
-    if (!GS_ONLINE) {
-      console.log('GSheets offline o non raggiungibile - uso localStorage');
-    }
-    // Aggiorna contatori dashboard
-    setTimeout(function(){ updateDashboardCounters(); updateLogosTornei(); }, 500);
-  });
-}
-
-// Controlla richieste di registrazione pendenti
 var _lastPendingCount = parseInt(localStorage.getItem('_lastPendingCount')||'0');
 function checkPendingRequests() {
   gsCall({action:'getPendingRequests'}, function(err, data) {
@@ -10319,6 +10286,7 @@ function admSaveStadioEl(el) {
   // Salva nel localStorage admin e sincronizza con app
   // Salva sia la copia admin (fonte di verità per admin) che la copia app (lato utente)
   localStorage.setItem('adm_stadio_saved_'+t+'_'+l, JSON.stringify(stadio));
+  gsSaveKey('adm_stadio_saved_'+t+'_'+l, JSON.stringify(stadio));
   var appKey = (t==='tsm'&&l==='it') ? 'tsm_stadio_it' : (l==='it'?'slim_stadio':'slim_stadio_'+l);
   localStorage.setItem(appKey, JSON.stringify(stadio));
   // Pulisci memoria temporanea
@@ -10389,6 +10357,8 @@ function admSaveGlobalST() {
   }
   var ST = window._admGlobalST || JSON.parse(localStorage.getItem('adm_stadio_table_global')||'null') || JSON.parse(JSON.stringify(SLIM_STADIO_TABLE||{}));
   localStorage.setItem('adm_stadio_table_global', JSON.stringify(ST));
+  gsSaveKey('adm_stadio_table_global', JSON.stringify(ST));
+  gsSaveKey('adm_stadio_table_global', localStorage.getItem('adm_stadio_table_global'));
   // Applica a tutte le variabili globali nell'app
   if(typeof SLIM_STADIO_TABLE!=='undefined') { Object.keys(ST).forEach(function(k){ SLIM_STADIO_TABLE[k]=ST[k]; }); }
   if(typeof TSM_STADIO_TABLE_IT!=='undefined') { Object.keys(ST).forEach(function(k){ TSM_STADIO_TABLE_IT[k]=ST[k]; }); }
@@ -10410,6 +10380,8 @@ function admRemoveGlobalSTLevel() {
   delete ST[lastLv];
   window._admGlobalST = ST;
   localStorage.setItem('adm_stadio_table_global', JSON.stringify(ST));
+  gsSaveKey('adm_stadio_table_global', JSON.stringify(ST));
+  gsSaveKey('adm_stadio_table_global', localStorage.getItem('adm_stadio_table_global'));
   admRenderGlobalStadioTable();
 }
 function admAddGlobalSTLevel() {
@@ -10477,6 +10449,7 @@ function admSaveStadioTable(el) {
   var t = el.dataset.t;
   var ST = (window._admStadioTableTemp && window._admStadioTableTemp[t]) ? window._admStadioTableTemp[t] : admGetStadioTable(t);
   localStorage.setItem('adm_stadio_table_'+t, JSON.stringify(ST));
+  gsSaveKey('adm_stadio_table_'+t, JSON.stringify(ST));
   // Aggiorna variabile globale nell'app
   if (t==='slim' && typeof SLIM_STADIO_TABLE!=='undefined') Object.assign(SLIM_STADIO_TABLE, ST);
   if (t==='tsm' && typeof TSM_STADIO_TABLE_IT!=='undefined') Object.assign(TSM_STADIO_TABLE_IT, ST);
@@ -10598,8 +10571,11 @@ function admSaveCatalogEl(el) {
     var tipo = el.dataset.tipo;
     // Raccoglie valori aggiornati dal DOM (già aggiornati da admUpdateCatalogEl)
     localStorage.setItem('admin_sponsor_catalog_'+torneoKey, JSON.stringify(cat));
+  gsSaveKey('admin_sponsor_catalog_'+torneoKey, JSON.stringify(cat));
   }
   localStorage.setItem('admin_sponsor_catalog', JSON.stringify(SPONSOR_CATALOG));
+  gsSaveKey('admin_sponsor_catalog', JSON.stringify(SPONSOR_CATALOG));
+  gsSaveKey('admin_sponsor_catalog', localStorage.getItem('admin_sponsor_catalog'));
   var msg=document.createElement('div');msg.textContent='✅ Catalogo sponsor salvato';msg.style.cssText='position:fixed;top:70px;right:20px;background:#10b981;color:#fff;padding:8px 16px;border-radius:8px;font-weight:700;font-size:12px;z-index:9999';document.body.appendChild(msg);setTimeout(function(){msg.remove();},2000);
 }
 
@@ -11000,6 +10976,7 @@ function admNuovaStagioneEl(el) {
   // Salva snapshot nello storico
   var storico = admGetStoricoStagioni(torneoKey);
   storico.push(snapshot);
+  // gsync:storico
   localStorage.setItem('storico_stagioni_'+torneoKey, JSON.stringify(storico));
 
   // ─── AZZERA dati correnti ─────────────────────────────────────────────────
@@ -11055,6 +11032,7 @@ function admDeleteStagioneEl(el) {
   if (!confirm('Eliminare dallo storico la stagione "'+stagLabel+'"? I dati archiviati andranno persi.')) return;
   var storico = admGetStoricoStagioni(torneoKey);
   storico = storico.filter(function(s){return s.label!==stagLabel;});
+  // gsync:storico
   localStorage.setItem('storico_stagioni_'+torneoKey, JSON.stringify(storico));
   admRenderStagioni();
 }
@@ -12197,11 +12175,13 @@ function admConfirmImport(){
   // Salva crediti base da import
   var _crBase = window._admImportPending && window._admImportPending.crediti ? window._admImportPending.crediti : {};
   if(Object.keys(_crBase).length) localStorage.setItem('adm_crediti_base_'+tk+'_'+lk, JSON.stringify(_crBase));
+  gsSaveKey('adm_crediti_base_'+tk+'_'+lk, JSON.stringify(_crBase));
   if(tk==='slim'&&lk==='it'){Object.keys(sk).forEach(function(s){TEAMS_ROSE[s]=sk[s];});localStorage.setItem('adm_rose_slim_it',JSON.stringify(sk));
   localStorage.setItem('adm_rose_import_slim_it',JSON.stringify(sk));}
   else if(tk==='tsm'&&lk==='it'){Object.keys(sk).forEach(function(s){if(typeof TSM_ROSE_IT!=='undefined')TSM_ROSE_IT[s]=sk[s];});localStorage.setItem('adm_rose_tsm_it',JSON.stringify(sk));}
   else{localStorage.setItem('adm_rose_'+tk+'_'+lk,JSON.stringify(sk));}
   if(inf&&inf.length>0) localStorage.setItem('adm_infermeria_'+tk+'_'+lk,JSON.stringify(inf));
+  gsSaveKey('adm_infermeria_'+tk+'_'+lk, JSON.stringify(inf));
   var n=Object.values(sk).reduce(function(a,b){return a+b.length;},0);
   var st=document.getElementById('adm-import-status');
   if(st){st.textContent='✅ Salvate '+Object.keys(sk).length+' squadre ('+n+' giocatori)';st.style.color='#10b981';}
@@ -12323,6 +12303,7 @@ function admCsConfirm() {
     var sk=(legaKey==='it')?'slim_stadio':'slim_stadio_'+legaKey;
     var sr=localStorage.getItem(sk)||localStorage.getItem('adm_stadio_'+torneoKey+'_'+legaKey);
     if(sr){try{var sta=admCsRenameKey(admCsRenameKey(JSON.parse(sr),o.toUpperCase(),n.toUpperCase()),o,n);localStorage.setItem(sk,JSON.stringify(sta));localStorage.setItem('adm_stadio_'+torneoKey+'_'+legaKey,JSON.stringify(sta));}catch(e){}}
+    gsSaveKey('adm_stadio_', localStorage.getItem('adm_stadio_'));
     if(c.newLogo){localStorage.setItem('adm_logo_'+torneoKey+'_'+legaKey+'_'+n,c.newLogo);if(typeof FANTASY_LOGOS!=='undefined'){FANTASY_LOGOS[n]=c.newLogo;FANTASY_LOGOS[n.toUpperCase()]=c.newLogo;delete FANTASY_LOGOS[o];delete FANTASY_LOGOS[o.toUpperCase()];}}
     if(torneoKey==='slim'&&legaKey==='it'&&typeof SLIM_TEAMS_IT!=='undefined'){var i=SLIM_TEAMS_IT.indexOf(o);if(i>=0)SLIM_TEAMS_IT[i]=n;}
     if(typeof SLIM_TEAMS!=='undefined'){var i2=SLIM_TEAMS.indexOf(o);if(i2>=0)SLIM_TEAMS[i2]=n;}
@@ -12728,6 +12709,8 @@ function admAddModulo(key) {
 }
 function admSaveModulistica() {
   localStorage.setItem('admin_modulistica', JSON.stringify(MODULISTICA_DATA));
+  gsSaveKey('admin_modulistica', JSON.stringify(MODULISTICA_DATA));
+  gsSaveKey('admin_modulistica', localStorage.getItem('admin_modulistica'));
   var msg=document.createElement('div');msg.textContent='✅ Modulistica salvata';msg.style.cssText='position:fixed;top:70px;right:20px;background:#10b981;color:#fff;padding:8px 16px;border-radius:8px;font-weight:700;font-size:12px;z-index:9999';document.body.appendChild(msg);setTimeout(function(){msg.remove();},2000);
 }
 
@@ -13003,6 +12986,7 @@ function admSpSelectMaglia(el) {
   data.maglia.premio = sp.premio;
   data.maglia.bonus = sp.bonus;
   localStorage.setItem('adm_sponsor_'+d.t+'_'+d.l+'_'+d.s, JSON.stringify(data));
+  gsSaveKey('adm_sponsor_'+d.t+'_'+d.l+'_'+d.s, JSON.stringify(data));
   admLoadSpBody();
 }
 function admSpSelectSocial(el) {
@@ -13015,6 +12999,7 @@ function admSpSelectSocial(el) {
   data.social.bonus = sp.bonus;
   data.social.obiettivi = sp.obiettivi.map(function(o){ return {desc:o.desc, premio:o.premio, raggiunto:false}; });
   localStorage.setItem('adm_sponsor_'+d.t+'_'+d.l+'_'+d.s, JSON.stringify(data));
+  gsSaveKey('adm_sponsor_'+d.t+'_'+d.l+'_'+d.s, JSON.stringify(data));
   admLoadSpBody();
 }
 function admSpSelectStadio(el) {
@@ -13026,6 +13011,7 @@ function admSpSelectStadio(el) {
   data.stadio.bonus = sp.bonus;
   data.stadio.clausole = sp.clausole.map(function(c){ return {desc:c.desc, premio:c.premio, raggiunto:false}; });
   localStorage.setItem('adm_sponsor_'+d.t+'_'+d.l+'_'+d.s, JSON.stringify(data));
+  gsSaveKey('adm_sponsor_'+d.t+'_'+d.l+'_'+d.s, JSON.stringify(data));
   admLoadSpBody();
 }
 
@@ -13043,11 +13029,13 @@ function admGetSponsorData(t,l,s) {
 function admSpUpdate(t,l,s,tipo,field,val) {
   var d=admGetSponsorData(t,l,s); d[tipo][field]=val;
   localStorage.setItem('adm_sponsor_'+t+'_'+l+'_'+s, JSON.stringify(d));
+  gsSaveKey('adm_sponsor_'+t+'_'+l+'_'+s, JSON.stringify(d));
   admLoadSpBody();
 }
 function admSpToggle(t,l,s,tipo,field,val) {
   var d=admGetSponsorData(t,l,s); d[tipo][field]=val;
   localStorage.setItem('adm_sponsor_'+t+'_'+l+'_'+s, JSON.stringify(d));
+  gsSaveKey('adm_sponsor_'+t+'_'+l+'_'+s, JSON.stringify(d));
   admLoadSpBody();
 }
 function admSpUpdateObiettivo(t,l,s,tipo,i,field,val) {
@@ -13055,6 +13043,7 @@ function admSpUpdateObiettivo(t,l,s,tipo,i,field,val) {
   var arr = tipo==='social' ? d.social.obiettivi : d.stadio.clausole;
   if(arr[i]) arr[i][field]=val;
   localStorage.setItem('adm_sponsor_'+t+'_'+l+'_'+s, JSON.stringify(d));
+  gsSaveKey('adm_sponsor_'+t+'_'+l+'_'+s, JSON.stringify(d));
   admLoadSpBody();
 }
 
@@ -13076,12 +13065,14 @@ function admResetSponsorEl(el) {
     stadio:{nome:'',clausole:[{desc:'',premio:0,raggiunto:false},{desc:'',premio:0,raggiunto:false},{desc:'',premio:0,raggiunto:false}],bonus:0}
   };
   localStorage.setItem('adm_sponsor_'+d.t+'_'+d.l+'_'+d.s, JSON.stringify(empty));
+  gsSaveKey('adm_sponsor_'+d.t+'_'+d.l+'_'+d.s, JSON.stringify(empty));
   admLoadSpBody();
 }
 function admSaveSponsor(t,l,s) {
   var key2 = t+'_'+l+'_'+s;
   var sp = (window._admSpTemp && window._admSpTemp[key2]) ? window._admSpTemp[key2] : admGetSponsorData(t,l,s);
   localStorage.setItem('adm_sponsor_'+t+'_'+l+'_'+s, JSON.stringify(sp));
+  gsSaveKey('adm_sponsor_'+t+'_'+l+'_'+s, JSON.stringify(sp));
   if (window._admSpTemp) delete window._admSpTemp[key2];
   gsSaveSponsor(t, l, s, sp);
   var msg=document.createElement('div');msg.textContent='✅ Sponsor salvati'+(GS_ONLINE?' · Sincronizzato':'');msg.style.cssText='position:fixed;top:70px;right:20px;background:#10b981;color:#fff;padding:8px 16px;border-radius:8px;font-weight:700;font-size:12px;z-index:9999';document.body.appendChild(msg);setTimeout(function(){msg.remove();},2000);
