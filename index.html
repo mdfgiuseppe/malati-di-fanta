@@ -1,4 +1,4 @@
-<!-- build:20260501_185000 -->
+<!-- build:20260501_190000 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -6791,6 +6791,7 @@ function admInitSelettori(prefix, resetAll) {
   });
   sel.parentNode.replaceChild(newSel, sel);
   sel = newSel;
+  if (resetAll) sel.selectedIndex = 0;
   // Reset lega e squadra
   if (resetAll) {
     var legaR = document.getElementById('adm-'+prefix+'-lega');
@@ -7070,7 +7071,7 @@ function admLoadRosaGiocatori() {
       var inp = document.createElement('input');
       inp.type='text';
       inp.value=p.scadenza||'';
-      inp.placeholder='gg/mm/aa';
+      inp.placeholder='mm/aa';
       inp.dataset.t=torneoKey; inp.dataset.l=legaKey;
       inp.dataset.s=squadra; inp.dataset.i=i;
       inp.dataset.f='scadenza';
@@ -11304,76 +11305,7 @@ function admSaveMulteEl(el) {
   admLoadMulteBody();
 }
 
-function showAdminSection(id, el) {
-  if (!id) return;
-  document.querySelectorAll('.adm-section').forEach(function(s){ s.style.display='none'; });
-  var sec = document.getElementById('adm-s-'+id);
-  if (sec) sec.style.display='block';
-  document.querySelectorAll('#page-admin .nav-item').forEach(function(n){ n.classList.remove('active'); });
-  if (el) el.classList.add('active');
-  // Reset contenuti dinamici e memoria temporanea prima di ricaricare
-  window._admStadioTemp = {};
-  window._admSpTemp = {};
-  window._admCoppaTemp = {};
-  window._admMulteTemp = {};
-  ['adm-rose-body','adm-cal-body','adm-sp-body','adm-stad-body','adm-global-stadio-table-body','adm-sponsor-catalog-body','adm-cop-editor-body','adm-cop-config-body','adm-stagioni-body','adm-immagini-list','adm-mul-body'].forEach(function(bid){
-    var b = document.getElementById(bid); if(b) b.innerHTML='';
-  });
-  ['adm-rose-lega','adm-rose-squadra','adm-cal-lega','adm-sp-lega','adm-sp-squadra','adm-stad-lega'].forEach(function(sid){
-    var s = document.getElementById(sid);
-    if(s) s.innerHTML='<option value="">-- Seleziona --</option>';
-  });
-  if (id==='tornei') admRenderTornei();
-  if (id==='utenti') {
-    // Carica utenti da GSheets prima di renderizzare
-    if (GS_ONLINE) {
-      gsCall({action:'getUtenti'}, function(err, data) {
-        if (!err && data && data.ok && data.data) {
-          ADMIN_USERS = data.data;
-          localStorage.setItem('admin_users', JSON.stringify(ADMIN_USERS));
-        }
-        admRenderUtenti();
-        // Carica anche richieste pendenti
-        gsCall({action:'getPendingRequests'}, function(e2, d2) {
-          if (!e2 && d2 && d2.ok) {
-            localStorage.setItem('_pendingRequests', JSON.stringify(d2.data || []));
-          }
-          admRenderUtenti();
-        });
-      });
-    } else {
-      admRenderUtenti();
-    }
-  }
-  if (id==='rose') { admInitSelettori('rose'); admInitImportSelectors(); }
-  if (id==='cambio-squadre') admCsInit();
-  if (id==='calendario') admInitSelettori('cal');
-  if (id==='sponsor') {
-    admInitSelettori('sp');
-    // Popola anche il selettore torneo nel catalogo
-    var catSel = document.getElementById('adm-cat-torneo');
-    if (catSel) {
-      catSel.innerHTML = '<option value="">-- Seleziona Torneo --</option>';
-      ADMIN_TORNEI.forEach(function(t){
-        var o=document.createElement('option');o.value=t.key;o.textContent=t.label;catSel.appendChild(o);
-      });
-    }
-  }
-  if (id==='stadio') admInitSelettori('stad');
-  if (id==='tablestadio') admRenderGlobalStadioTable();
-  if (id==='stagioni') admRenderStagioni();
-  if (id==='immagini') admRenderImmagini();
-  if (id==='coppe') admInitCoppeSection();
-  if (id==='modulistica') admRenderModulistica();
-  if (id==='multe') admInitSelettori('mul');
-  if (id==='impostazioni') admInitImpostazioni();
-  // Chiudi sidenav su mobile
-  closeAdminSidenav();
-}
 
-function admInitPage() {
-  showAdminSection('utenti', document.getElementById('adm-nav-utenti'));
-}
 
 // ═══════════════════════════════════════════════════════
 // ADMIN — Tornei & Leghe
@@ -12399,25 +12331,6 @@ function admCsConfirm() {
   el.innerHTML='<div style="background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.3);border-radius:8px;padding:14px;color:#10b981;font-size:13px;font-weight:700">✅ Cambio squadre completato!</div>';
   setTimeout(admCsLoadSquadre,500);
 }
-function admLoadRoseLeghe() {
-  var torneoKey = document.getElementById('adm-rose-torneo').value;
-  var sel = document.getElementById('adm-rose-lega');
-  sel.innerHTML = '<option value="">-- Seleziona Lega --</option>';
-  var t = ADMIN_TORNEI.find(function(x){ return x.key===torneoKey; });
-  if (t) t.leghe.forEach(function(l){ var o=document.createElement('option');o.value=l.key;o.textContent=l.label;sel.appendChild(o); });
-  document.getElementById('adm-rose-squadra').innerHTML='<option value="">-- Seleziona Squadra --</option>';
-  document.getElementById('adm-rose-body').innerHTML='';
-}
-function admLoadRoseSquadre() {
-  var torneoKey = document.getElementById('adm-rose-torneo').value;
-  var legaKey = document.getElementById('adm-rose-lega').value;
-  var sel = document.getElementById('adm-rose-squadra');
-  sel.innerHTML = '<option value="">-- Seleziona Squadra --</option>';
-  var teams = admGetTeams(torneoKey, legaKey);
-  teams.forEach(function(t){ var o=document.createElement('option');o.value=t;o.textContent=t;sel.appendChild(o); });
-  var oI=document.createElement('option');oI.value='INFERMERIA';oI.textContent='🏥 Infermeria';sel.appendChild(oI);
-  document.getElementById('adm-rose-body').innerHTML='';
-}
 function admGetTeams(torneoKey, legaKey) {
   if (torneoKey==='slim') {
     if (legaKey==='it') return (typeof SLIM_TEAMS_IT!=='undefined') ? SLIM_TEAMS_IT : Object.keys(TEAMS_ROSE||{}).sort();
@@ -12432,21 +12345,6 @@ function admGetTeams(torneoKey, legaKey) {
     if (_teams.length) return _teams;
   } catch(e) {}
   return [];
-}
-function admLoadRosaGiocatori() {
-  var torneoKey = document.getElementById('adm-rose-torneo').value;
-  var legaKey = document.getElementById('adm-rose-lega').value;
-  var squadra = document.getElementById('adm-rose-squadra').value;
-  var el = document.getElementById('adm-rose-body'); if(!el||!squadra) return;
-  var players = admGetPlayers(torneoKey, legaKey, squadra);
-  el.innerHTML = admRenderRosaEditor(players, torneoKey, legaKey, squadra);
-  if (typeof REAL_NAMES !== 'undefined' && el) {
-    try {
-      el.querySelectorAll('input[data-f="squadra"]').forEach(function(inp) {
-        if (inp.value && REAL_NAMES[inp.value]) inp.value = REAL_NAMES[inp.value];
-      });
-    } catch(e) {}
-  }
 }
 function admGetPlayers(torneoKey, legaKey, squadra) {
   if (torneoKey==='slim') {
