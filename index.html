@@ -1,4 +1,4 @@
-<!-- build:20260501_201000 -->
+<!-- build:20260501_210000 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -5927,12 +5927,27 @@ function showAdminSection(id, el) {
   window._admSpTemp = {};
   window._admCoppaTemp = {};
   window._admMulteTemp = {};
-  ['adm-rose-body','adm-cal-body','adm-sp-body','adm-stad-body','adm-global-stadio-table-body','adm-sponsor-catalog-body','adm-cop-editor-body','adm-cop-config-body','adm-stagioni-body','adm-immagini-list','adm-mul-body'].forEach(function(bid){
+  // Svuota tutti i body dinamici
+  ['adm-rose-body','adm-cal-body','adm-sp-body','adm-stad-body',
+   'adm-global-stadio-table-body','adm-sponsor-catalog-body',
+   'adm-cop-editor-body','adm-cop-config-body','adm-stagioni-body',
+   'adm-immagini-list','adm-mul-body','adm-sc-body','adm-sc-playersA',
+   'adm-sc-playersB','adm-sc-riepilogo','adm-cs-body',
+   'adm-utenti-body','adm-tornei-body'].forEach(function(bid){
     var b = document.getElementById(bid); if(b) b.innerHTML='';
   });
-  ['adm-rose-torneo','adm-rose-lega','adm-rose-squadra','adm-cal-lega','adm-sp-lega','adm-sp-squadra','adm-stad-lega'].forEach(function(sid){
+  // Reset tutti i select a "Seleziona"
+  ['adm-rose-torneo','adm-rose-lega','adm-rose-squadra',
+   'adm-cal-torneo','adm-cal-lega',
+   'adm-sp-torneo','adm-sp-lega','adm-sp-squadra',
+   'adm-stad-torneo','adm-stad-lega',
+   'adm-mul-torneo','adm-mul-lega',
+   'adm-sc-torneo','adm-sc-lega','adm-sc-sqA','adm-sc-sqB',
+   'adm-cs-torneo','adm-cs-lega',
+   'adm-cop-torneo','adm-import-torneo','adm-import-lega',
+   'adm-cat-torneo'].forEach(function(sid){
     var s = document.getElementById(sid);
-    if(s) s.innerHTML='<option value="">-- Seleziona --</option>';
+    if(s) { s.innerHTML='<option value="">-- Seleziona --</option>'; s.selectedIndex=0; }
   });
   if (id==='tornei') admRenderTornei();
   if (id==='utenti') {
@@ -7117,36 +7132,6 @@ function admLoadRosaGiocatori() {
   var el = document.getElementById('adm-rose-body'); if(!el||!squadra) return;
   var players = admGetPlayers(torneoKey, legaKey, squadra);
   el.innerHTML = admRenderRosaEditor(players, torneoKey, legaKey, squadra);
-  // Aggiungi campo scadenza contratto
-  setTimeout(function() {
-    var thead = el.querySelector('thead tr');
-    if (thead && !thead.querySelector('.th-scadenza')) {
-      var th = document.createElement('th');
-      th.className='th-scadenza';
-      th.style.cssText='padding:7px 10px;width:15%';
-      th.textContent='Scadenza';
-      thead.insertBefore(th, thead.lastElementChild);
-    }
-    var rows = el.querySelectorAll('tbody tr');
-    rows.forEach(function(tr, i) {
-      if (tr.querySelector('.td-scadenza')) return;
-      var p = players[i]; if(!p) return;
-      var td = document.createElement('td');
-      td.className='td-scadenza';
-      td.style.cssText='padding:6px 8px';
-      var inp = document.createElement('input');
-      inp.type='text';
-      inp.value=p.scadenza||'';
-      inp.placeholder='mm/aa';
-      inp.dataset.t=torneoKey; inp.dataset.l=legaKey;
-      inp.dataset.s=squadra; inp.dataset.i=i;
-      inp.dataset.f='scadenza';
-      inp.style.cssText='width:90px;background:var(--bg2);border:1px solid var(--border);border-radius:4px;color:var(--text);font-size:11px;padding:2px 4px;outline:none';
-      inp.onchange=function(){admUpdatePlayerEl(this);};
-      td.appendChild(inp);
-      tr.insertBefore(td, tr.lastElementChild);
-    });
-  }, 500);
   if (typeof REAL_NAMES !== 'undefined' && el) {
     try {
       el.querySelectorAll('input[data-f="squadra"]').forEach(function(inp) {
@@ -7196,7 +7181,7 @@ function admRenderRosaEditor(players, torneoKey, legaKey, squadra) {
       +'<td style="padding:6px 10px"><input type="text" value=\"'+(p.squadra||'')+'\" data-t="'+t+'" data-l="'+l+'" data-s="'+s+'" data-i="'+oi+'" data-f="squadra" onchange="admUpdatePlayerEl(this)" style="width:100%;background:transparent;border:none;color:var(--text2);font-size:12px;outline:none"></td>'
       +'<td style="padding:6px 10px;text-align:right"><input type="number" value="'+(p.costo||0)+'" data-t="'+t+'" data-l="'+l+'" data-s="'+s+'" data-i="'+oi+'" data-f="costo" onchange="admUpdatePlayerEl(this)" style="width:60px;background:transparent;border:none;color:#10b981;font-size:13px;font-family:Bebas Neue,sans-serif;text-align:right;outline:none"></td>'
       
-      +'<td style="padding:6px 8px"><input type="text" value="'+(p.scadenza||'')+'" data-t="'+t+'" data-l="'+l+'" data-s="'+s+'" data-i="'+oi+'" data-f="scadenza" onchange="admUpdatePlayerEl(this)" placeholder="gg/mm/aa" style="width:90px;background:var(--bg2);border:1px solid var(--border);border-radius:4px;color:var(--text);font-size:11px;padding:2px 4px;outline:none"></td>'
+      +'<td style="padding:6px 8px"><input type="text" value="'+(p.scadenza||'')+'" data-t="'+t+'" data-l="'+l+'" data-s="'+s+'" data-i="'+oi+'" data-f="scadenza" onchange="admUpdatePlayerEl(this)" placeholder="mm/aa" style="width:90px;background:var(--bg2);border:1px solid var(--border);border-radius:4px;color:var(--text);font-size:11px;padding:2px 4px;outline:none"></td>'
       +'<td style="padding:6px 4px;text-align:center"><button data-t="'+t+'" data-l="'+l+'" data-s="'+s+'" data-i="'+oi+'" onclick="admDeletePlayerEl(this)" style="background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);color:#ef4444;cursor:pointer;font-size:13px;border-radius:5px;width:28px;height:26px;line-height:1">🗑</button></td>'
       +'</tr>';
   });
