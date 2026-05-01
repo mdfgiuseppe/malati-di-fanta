@@ -1,4 +1,4 @@
-<!-- build:20260501_220000 -->
+<!-- build:20260501_230000 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -4143,7 +4143,7 @@ function tsmRenderTable() {
     var r=(p.ruolo||'').split(';')[0].trim();
     var c=RC[r]||['rgba(107,114,128,.15)','#6b7280'];
     var colCosto=p.costo>=50?'#ef4444':p.costo>=20?'#f59e0b':'var(--text2)';
-    return '<tr style="border-bottom:1px solid var(--border)"><td style="padding:8px 10px;width:13%"><span style="font-size:8px;font-weight:800;padding:2px 5px;border-radius:3px;background:'+c[0]+';color:'+c[1]+'">'+r+'</span></td><td style="padding:8px 8px;font-weight:700;font-size:13px;width:35%">'+(p.nome||'')+'</td><td style="padding:8px 8px;font-size:12px;color:var(--text2);width:25%">'+((typeof REAL_NAMES!=='undefined'&&REAL_NAMES[p.squadra])||p.squadra||'')+'</td><td style="padding:8px 10px;text-align:right;font-family:\'Bebas Neue\';font-size:17px;color:'+colCosto+';width:13%">'+(p.costo||0)+'<span style="font-size:10px;font-weight:700;color:var(--text3);margin-left:1px">cr</span></td><td style="padding:8px 8px;font-size:11px;width:14%;text-align:center">'+(p.scadenza?'<span style="background:rgba(239,68,68,.1);color:#ef4444;border-radius:4px;padding:2px 5px;font-weight:700;font-size:10px">⏳ '+p.scadenza+'</span>':'')+'</td></tr>';
+    return '<tr style="border-bottom:1px solid var(--border)"><td style="padding:8px 10px;width:13%"><span style="font-size:8px;font-weight:800;padding:2px 5px;border-radius:3px;background:'+c[0]+';color:'+c[1]+'">'+r+'</span></td><td style="padding:8px 8px;font-weight:700;font-size:13px;width:35%">'+(p.nome||'')+'</td><td style="padding:8px 8px;font-size:12px;color:var(--text2);width:25%">'+((typeof REAL_NAMES!=='undefined'&&REAL_NAMES[p.squadra])||p.squadra||'')+'</td><td style="padding:8px 10px;text-align:right;font-family:\'Bebas Neue\';font-size:17px;color:'+colCosto+';width:13%">'+(p.costo||0)+'<span style="font-size:10px;font-weight:700;color:var(--text3);margin-left:1px">cr</span></td><td style="padding:8px 8px;font-size:11px;width:14%;text-align:center">'+(p.scadenza?(function(){var _sc=scadenzaColor(p.scadenza)||{bg:'rgba(239,68,68,.15)',color:'#ef4444'};return '<span style="background:'+_sc.bg+';color:'+_sc.color+';border-radius:4px;padding:2px 5px;font-weight:700;font-size:10px">⏳ '+p.scadenza+'</span>';})():'')+'</td></tr>';
   }).join('');
 }
 
@@ -4605,6 +4605,24 @@ function gsLogin(username, password, callback) {
 }
 
 // ── FUNZIONI GENERICHE key/value (sincronizza QUALSIASI dato) ──────
+// Calcola colore badge scadenza da "mm/aa"
+function scadenzaColor(s) {
+  if (!s) return null;
+  var parts = s.split('/');
+  if (parts.length < 2) return null;
+  var mm = parseInt(parts[0], 10);
+  var yy = parseInt(parts[1], 10);
+  if (isNaN(mm) || isNaN(yy)) return null;
+  var yyyy = yy < 100 ? 2000 + yy : yy;
+  var exp = new Date(yyyy, mm - 1, 1); // primo del mese
+  var now = new Date();
+  var diffMs = exp - now;
+  var diffMonths = diffMs / (1000 * 60 * 60 * 24 * 30.44);
+  if (diffMonths <= 12)  return {bg:'rgba(239,68,68,.15)',  color:'#ef4444'}; // rosso
+  if (diffMonths <= 24)  return {bg:'rgba(245,158,11,.15)', color:'#f59e0b'}; // giallo
+  return                        {bg:'rgba(16,185,129,.15)', color:'#10b981'}; // verde
+}
+
 function gsSaveKey(key, data) {
   if (!GS_ONLINE) return;
   gsCall({action:'saveKey', key:key, data: typeof data === 'string' ? data : JSON.stringify(data)}, null);
@@ -7181,7 +7199,7 @@ function admRenderRosaEditor(players, torneoKey, legaKey, squadra) {
       +'<td style="padding:6px 10px"><input type="text" value=\"'+(p.squadra||'')+'\" data-t="'+t+'" data-l="'+l+'" data-s="'+s+'" data-i="'+oi+'" data-f="squadra" onchange="admUpdatePlayerEl(this)" style="width:100%;background:transparent;border:none;color:var(--text2);font-size:12px;outline:none"></td>'
       +'<td style="padding:6px 10px;text-align:right"><input type="number" value="'+(p.costo||0)+'" data-t="'+t+'" data-l="'+l+'" data-s="'+s+'" data-i="'+oi+'" data-f="costo" onchange="admUpdatePlayerEl(this)" style="width:60px;background:transparent;border:none;color:#10b981;font-size:13px;font-family:Bebas Neue,sans-serif;text-align:right;outline:none"></td>'
       
-      +'<td style="padding:6px 8px"><input type="text" value="'+(p.scadenza||'')+'" data-t="'+t+'" data-l="'+l+'" data-s="'+s+'" data-i="'+oi+'" data-f="scadenza" onchange="admUpdatePlayerEl(this)" placeholder="mm/aa" style="width:90px;background:var(--bg2);border:1px solid var(--border);border-radius:4px;color:var(--text);font-size:11px;padding:2px 4px;outline:none"></td>'
+      +'<td style="padding:6px 8px"><input type="text" value="'+(p.scadenza||'')+'" data-t="'+t+'" data-l="'+l+'" data-s="'+s+'" data-i="'+oi+'" data-f="scadenza" onchange="admUpdatePlayerEl(this);this.style.borderColor=scadenzaColor(this.value)?scadenzaColor(this.value).color:'var(--border)'" placeholder="mm/aa" style="width:90px;background:var(--bg2);border:1px solid '+(scadenzaColor&&scadenzaColor(p.scadenza)?scadenzaColor(p.scadenza).color:'var(--border)')+';border-radius:4px;color:var(--text);font-size:11px;padding:2px 4px;outline:none"></td>'
       +'<td style="padding:6px 4px;text-align:center"><button data-t="'+t+'" data-l="'+l+'" data-s="'+s+'" data-i="'+oi+'" onclick="admDeletePlayerEl(this)" style="background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);color:#ef4444;cursor:pointer;font-size:13px;border-radius:5px;width:28px;height:26px;line-height:1">🗑</button></td>'
       +'</tr>';
   });
@@ -8537,7 +8555,7 @@ function renderTable(){
   var _ro=['Por','Dc','B','Dd','Ds','E','M','C','T','W','A','Pc'];
   pl=pl.slice().sort(function(a,b){var ia=_ro.indexOf(a.ruolo.split(';')[0].trim()),ib=_ro.indexOf(b.ruolo.split(';')[0].trim());if(ia!==ib)return(ia>=0?ia:99)-(ib>=0?ib:99);return a.nome.localeCompare(b.nome);});
   if(empty)empty.style.display='none';
-  if(tbody)tbody.innerHTML=pl.map(function(p){var col=p.costo>=50?'#ef4444':p.costo>=20?'#f59e0b':'var(--text2)';return'<tr style="border-bottom:1px solid var(--border)"><td style="padding:8px 10px">'+roleBadge(p.ruolo)+'</td><td style="padding:8px 8px;font-weight:700;font-size:13px">'+p.nome+'</td><td style="padding:8px 8px;font-size:12px;color:var(--text2)">'+(REAL_NAMES[p.squadra]||p.squadra||'--')+'</td><td style="padding:8px 10px;text-align:right;font-family:\'Bebas Neue\';font-size:17px;color:'+col+'">'+p.costo+'<span style="font-size:10px;font-weight:700;color:var(--text3);margin-left:1px">cr</span></td><td style="padding:8px 8px;font-size:11px;text-align:center">'+(p.scadenza?'<span style="background:rgba(239,68,68,.1);color:#ef4444;border-radius:4px;padding:2px 5px;font-weight:700;font-size:10px">⏳ '+p.scadenza+'</span>':'')+'</td></tr>';}).join('');
+  if(tbody)tbody.innerHTML=pl.map(function(p){var col=p.costo>=50?'#ef4444':p.costo>=20?'#f59e0b':'var(--text2)';return'<tr style="border-bottom:1px solid var(--border)"><td style="padding:8px 10px">'+roleBadge(p.ruolo)+'</td><td style="padding:8px 8px;font-weight:700;font-size:13px">'+p.nome+'</td><td style="padding:8px 8px;font-size:12px;color:var(--text2)">'+(REAL_NAMES[p.squadra]||p.squadra||'--')+'</td><td style="padding:8px 10px;text-align:right;font-family:\'Bebas Neue\';font-size:17px;color:'+col+'">'+p.costo+'<span style="font-size:10px;font-weight:700;color:var(--text3);margin-left:1px">cr</span></td><td style="padding:8px 8px;font-size:11px;text-align:center">'+(p.scadenza?(function(){var _sc=scadenzaColor(p.scadenza)||{bg:'rgba(239,68,68,.15)',color:'#ef4444'};return '<span style="background:'+_sc.bg+';color:'+_sc.color+';border-radius:4px;padding:2px 5px;font-weight:700;font-size:10px">⏳ '+p.scadenza+'</span>';})():'')+'</td></tr>';}).join('');
 }
 var showAllQual=false;
 function toggleAll(){showAllQual=!showAllQual;renderQualTable();}
@@ -9660,7 +9678,7 @@ function tsmRenderTable() {
     var r=(p.ruolo||'').split(';')[0].trim();
     var c=RC[r]||['rgba(107,114,128,.15)','#6b7280'];
     var colCosto=p.costo>=50?'#ef4444':p.costo>=20?'#f59e0b':'var(--text2)';
-    return '<tr style="border-bottom:1px solid var(--border)"><td style="padding:8px 10px;width:13%"><span style="font-size:8px;font-weight:800;padding:2px 5px;border-radius:3px;background:'+c[0]+';color:'+c[1]+'">'+r+'</span></td><td style="padding:8px 8px;font-weight:700;font-size:13px;width:35%">'+(p.nome||'')+'</td><td style="padding:8px 8px;font-size:12px;color:var(--text2);width:25%">'+((typeof REAL_NAMES!=='undefined'&&REAL_NAMES[p.squadra])||p.squadra||'')+'</td><td style="padding:8px 10px;text-align:right;font-family:\'Bebas Neue\';font-size:17px;color:'+colCosto+';width:13%">'+(p.costo||0)+'<span style="font-size:10px;font-weight:700;color:var(--text3);margin-left:1px">cr</span></td><td style="padding:8px 8px;font-size:11px;width:14%;text-align:center">'+(p.scadenza?'<span style="background:rgba(239,68,68,.1);color:#ef4444;border-radius:4px;padding:2px 5px;font-weight:700;font-size:10px">⏳ '+p.scadenza+'</span>':'')+'</td></tr>';
+    return '<tr style="border-bottom:1px solid var(--border)"><td style="padding:8px 10px;width:13%"><span style="font-size:8px;font-weight:800;padding:2px 5px;border-radius:3px;background:'+c[0]+';color:'+c[1]+'">'+r+'</span></td><td style="padding:8px 8px;font-weight:700;font-size:13px;width:35%">'+(p.nome||'')+'</td><td style="padding:8px 8px;font-size:12px;color:var(--text2);width:25%">'+((typeof REAL_NAMES!=='undefined'&&REAL_NAMES[p.squadra])||p.squadra||'')+'</td><td style="padding:8px 10px;text-align:right;font-family:\'Bebas Neue\';font-size:17px;color:'+colCosto+';width:13%">'+(p.costo||0)+'<span style="font-size:10px;font-weight:700;color:var(--text3);margin-left:1px">cr</span></td><td style="padding:8px 8px;font-size:11px;width:14%;text-align:center">'+(p.scadenza?(function(){var _sc=scadenzaColor(p.scadenza)||{bg:'rgba(239,68,68,.15)',color:'#ef4444'};return '<span style="background:'+_sc.bg+';color:'+_sc.color+';border-radius:4px;padding:2px 5px;font-weight:700;font-size:10px">⏳ '+p.scadenza+'</span>';})():'')+'</td></tr>';
   }).join('');
 }
 
@@ -13461,7 +13479,7 @@ function renderTable(){
   var _ro=['Por','Dc','B','Dd','Ds','E','M','C','T','W','A','Pc'];
   pl=pl.slice().sort(function(a,b){var ia=_ro.indexOf(a.ruolo.split(';')[0].trim()),ib=_ro.indexOf(b.ruolo.split(';')[0].trim());if(ia!==ib)return(ia>=0?ia:99)-(ib>=0?ib:99);return a.nome.localeCompare(b.nome);});
   if(empty)empty.style.display='none';
-  if(tbody)tbody.innerHTML=pl.map(function(p){var col=p.costo>=50?'#ef4444':p.costo>=20?'#f59e0b':'var(--text2)';return'<tr style="border-bottom:1px solid var(--border)"><td style="padding:8px 10px">'+roleBadge(p.ruolo)+'</td><td style="padding:8px 8px;font-weight:700;font-size:13px">'+p.nome+'</td><td style="padding:8px 8px;font-size:12px;color:var(--text2)">'+(REAL_NAMES[p.squadra]||p.squadra||'--')+'</td><td style="padding:8px 10px;text-align:right;font-family:\'Bebas Neue\';font-size:17px;color:'+col+'">'+p.costo+'<span style="font-size:10px;font-weight:700;color:var(--text3);margin-left:1px">cr</span></td><td style="padding:8px 8px;font-size:11px;text-align:center">'+(p.scadenza?'<span style="background:rgba(239,68,68,.1);color:#ef4444;border-radius:4px;padding:2px 5px;font-weight:700;font-size:10px">⏳ '+p.scadenza+'</span>':'')+'</td></tr>';}).join('');
+  if(tbody)tbody.innerHTML=pl.map(function(p){var col=p.costo>=50?'#ef4444':p.costo>=20?'#f59e0b':'var(--text2)';return'<tr style="border-bottom:1px solid var(--border)"><td style="padding:8px 10px">'+roleBadge(p.ruolo)+'</td><td style="padding:8px 8px;font-weight:700;font-size:13px">'+p.nome+'</td><td style="padding:8px 8px;font-size:12px;color:var(--text2)">'+(REAL_NAMES[p.squadra]||p.squadra||'--')+'</td><td style="padding:8px 10px;text-align:right;font-family:\'Bebas Neue\';font-size:17px;color:'+col+'">'+p.costo+'<span style="font-size:10px;font-weight:700;color:var(--text3);margin-left:1px">cr</span></td><td style="padding:8px 8px;font-size:11px;text-align:center">'+(p.scadenza?(function(){var _sc=scadenzaColor(p.scadenza)||{bg:'rgba(239,68,68,.15)',color:'#ef4444'};return '<span style="background:'+_sc.bg+';color:'+_sc.color+';border-radius:4px;padding:2px 5px;font-weight:700;font-size:10px">⏳ '+p.scadenza+'</span>';})():'')+'</td></tr>';}).join('');
 }
 var showAllQual=false;
 function toggleAll(){showAllQual=!showAllQual;renderQualTable();}
