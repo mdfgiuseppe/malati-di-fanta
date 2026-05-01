@@ -7066,7 +7066,7 @@ function admLoadRosaGiocatori() {
   var players = admGetPlayers(torneoKey, legaKey, squadra);
   el.innerHTML = admRenderRosaEditor(players, torneoKey, legaKey, squadra);
   // Aggiungi campo scadenza contratto
-  (function() {
+  setTimeout(function() {
     var thead = el.querySelector('thead tr');
     if (thead && !thead.querySelector('.th-scadenza')) {
       var th = document.createElement('th');
@@ -7094,7 +7094,7 @@ function admLoadRosaGiocatori() {
       td.appendChild(inp);
       tr.insertBefore(td, tr.lastElementChild);
     });
-  })();
+  }, 50);
   if (typeof REAL_NAMES !== 'undefined' && el) {
     try {
       el.querySelectorAll('input[data-f="squadra"]').forEach(function(inp) {
