@@ -1,4 +1,4 @@
-<!-- build:20260501_235000 -->
+<!-- build:20260502_000000 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -4526,6 +4526,17 @@ function gsPing() {
           if (val !== null) localStorage.setItem('admin_sponsor_catalog_'+t.key, typeof val === 'string' ? val : JSON.stringify(val));
         });
       });
+      // Dopo sync, ricarica pannello rose admin se aperto (per mostrare scadenze)
+      gsLoadKey('adm_rose_slim_it', function(val) {
+        if (val !== null) {
+          localStorage.setItem('adm_rose_slim_it', typeof val === 'string' ? val : JSON.stringify(val));
+          // Ricarica se sezione rose admin è visibile
+          var roseBody = document.getElementById('adm-rose-body');
+          if (roseBody && roseBody.innerHTML && typeof admLoadRosaGiocatori === 'function') {
+            admLoadRosaGiocatori();
+          }
+        }
+      });
     }
     // ──────────────────────────────────────────────────────────────────
   });
@@ -5971,18 +5982,7 @@ function showAdminSection(id, el) {
       admRenderUtenti();
     }
   }
-  if (id==='rose') {
-    admInitSelettori('rose', true); admInitImportSelectors();
-    // Forza ricarico rose da GSheets se online (per avere scadenze aggiornate)
-    if (GS_ONLINE && typeof gsLoadKey === 'function') {
-      gsLoadKey('adm_rose_slim_it', function(val) {
-        if (val) { try { localStorage.setItem('adm_rose_slim_it', typeof val==='string'?val:JSON.stringify(val)); } catch(e){} }
-      });
-      gsLoadKey('adm_rose_tsm_it', function(val) {
-        if (val) { try { localStorage.setItem('adm_rose_tsm_it', typeof val==='string'?val:JSON.stringify(val)); } catch(e){} }
-      });
-    }
-  }
+  if (id==='rose') { admInitSelettori('rose', true); admInitImportSelectors(); }
   if (id==='cambio-squadre') admCsInit();
   if (id==='calendario') admInitSelettori('cal', true);
   if (id==='sponsor') {
@@ -6389,6 +6389,10 @@ function admScConfirm() {
     if(savedRose[sq]&&savedRose[sq].length>0) rose[sq]=savedRose[sq];
     else rose[sq]=admGetPlayers(tk,lk,sq);
   });
+  // Assicura che sqA/sqB esistano in rose
+  if (!rose[sqA]) rose[sqA] = admGetPlayers(tk,lk,sqA);
+  if (!rose[sqB]) rose[sqB] = admGetPlayers(tk,lk,sqB);
+  if (!rose[sqA] || !rose[sqB]) { alert('Errore: squadre non trovate'); return; }
   // Esegui lo scambio sulle copie
   var pA=rose[sqA].slice();
   var pB=rose[sqB].slice();
@@ -7322,42 +7326,39 @@ function admCalcCreditiSponsor(torneoKey, legaKey, squadra) {
 }
 
 function admGetCreditiGestione(torneoKey, legaKey, squadra) {
-  var key = 'adm_crediti_'+torneoKey+'_'+legaKey+'_'+squadra;
-  return parseFloat(localStorage.getItem(key) || '0');
+  // Legge da adm_crediti_base (fonte di verità unica)
+  var baseKey = 'adm_crediti_base_'+torneoKey+'_'+legaKey;
+  try {
+    var cr = JSON.parse(localStorage.getItem(baseKey)||'{}');
+    var v = cr[squadra] !== undefined ? cr[squadra] : (cr[squadra.toUpperCase()] !== undefined ? cr[squadra.toUpperCase()] : 0);
+    return parseFloat(v) || 0;
+  } catch(e) { return 0; }
 }
 
 function admSaveCreditiGestione(torneoKey, legaKey, squadra, val) {
-  var key = 'adm_crediti_'+torneoKey+'_'+legaKey+'_'+squadra;
-  localStorage.setItem(key, String(val));
-  // Rendi disponibile lato utente
-  var userKey = 'user_crediti_'+torneoKey+'_'+legaKey;
-  var userMap = JSON.parse(localStorage.getItem(userKey)||'{}');
-  userMap[squadra] = val;
-  userMap[squadra.toUpperCase()] = val;
-  localStorage.setItem(userKey, JSON.stringify(userMap));
-  // Aggiorna GSheets
-  gsSaveCrediti(torneoKey, legaKey, squadra, val);
-  // Aggiorna direttamente il chip crediti se la sezione rose è visibile
-  if (typeof updateHeader === 'function') {
-    var roseSection = document.getElementById('s-rose');
-    if (roseSection && roseSection.classList.contains('active')) updateHeader();
-  }
-  if (typeof tsmUpdateHeader === 'function') {
-    var tsmRoseSection = document.getElementById('tsm-s-rose');
-    if (tsmRoseSection && tsmRoseSection.classList.contains('active')) tsmUpdateHeader();
-  }
+  // Aggiorna direttamente adm_crediti_base (fonte di verità unica)
+  var baseKey = 'adm_crediti_base_'+torneoKey+'_'+legaKey;
+  var cr = {};
+  try { cr = JSON.parse(localStorage.getItem(baseKey)||'{}'); } catch(e) {}
+  cr[squadra] = val;
+  cr[squadra.toUpperCase()] = val;
+  localStorage.setItem(baseKey, JSON.stringify(cr));
+  gsSaveKey(baseKey, JSON.stringify(cr));
+  // Sincronizza anche user_crediti
+  syncCreditiToUser(torneoKey, legaKey, cr);
 }
 
 function admSaveCreditiGestioneEl(el) {
   var t=el.dataset.t, l=el.dataset.l, s=el.dataset.s;
   var val = parseFloat(document.getElementById('adm-cr-gest-'+s).value||0);
   admSaveCreditiGestione(t, l, s, val);
-  var msg=document.createElement('div');
-  msg.textContent='✅ Crediti Gestione salvati per '+s;
-  msg.style.cssText='position:fixed;top:70px;right:20px;background:#10b981;color:#fff;padding:8px 16px;border-radius:8px;font-weight:700;font-size:12px;z-index:9999';
-  // Reset input a 0
+  // Reset input a 0 e ricarica pannello crediti
   var inp = document.getElementById('adm-cr-gest-'+s);
   if (inp) inp.value = '0';
+  admLoadRosaGiocatori();
+  var msg=document.createElement('div');
+  msg.textContent='✅ Crediti salvati: '+s+' → '+val+' cr';
+  msg.style.cssText='position:fixed;top:70px;right:20px;background:#10b981;color:#fff;padding:8px 16px;border-radius:8px;font-weight:700;font-size:12px;z-index:9999';
   document.body.appendChild(msg);
   setTimeout(function(){msg.remove();},2000);
 }
@@ -12286,45 +12287,16 @@ function admCalcCreditiSponsor(torneoKey, legaKey, squadra) {
 }
 
 function admGetCreditiGestione(torneoKey, legaKey, squadra) {
-  var key = 'adm_crediti_'+torneoKey+'_'+legaKey+'_'+squadra;
-  return parseFloat(localStorage.getItem(key) || '0');
+  // Legge da adm_crediti_base (fonte di verità unica)
+  var baseKey = 'adm_crediti_base_'+torneoKey+'_'+legaKey;
+  try {
+    var cr = JSON.parse(localStorage.getItem(baseKey)||'{}');
+    var v = cr[squadra] !== undefined ? cr[squadra] : (cr[squadra.toUpperCase()] !== undefined ? cr[squadra.toUpperCase()] : 0);
+    return parseFloat(v) || 0;
+  } catch(e) { return 0; }
 }
 
-function admSaveCreditiGestione(torneoKey, legaKey, squadra, val) {
-  var key = 'adm_crediti_'+torneoKey+'_'+legaKey+'_'+squadra;
-  localStorage.setItem(key, String(val));
-  // Rendi disponibile lato utente
-  var userKey = 'user_crediti_'+torneoKey+'_'+legaKey;
-  var userMap = JSON.parse(localStorage.getItem(userKey)||'{}');
-  userMap[squadra] = val;
-  userMap[squadra.toUpperCase()] = val;
-  localStorage.setItem(userKey, JSON.stringify(userMap));
-  // Aggiorna GSheets
-  gsSaveCrediti(torneoKey, legaKey, squadra, val);
-  // Aggiorna direttamente il chip crediti se la sezione rose è visibile
-  if (typeof updateHeader === 'function') {
-    var roseSection = document.getElementById('s-rose');
-    if (roseSection && roseSection.classList.contains('active')) updateHeader();
-  }
-  if (typeof tsmUpdateHeader === 'function') {
-    var tsmRoseSection = document.getElementById('tsm-s-rose');
-    if (tsmRoseSection && tsmRoseSection.classList.contains('active')) tsmUpdateHeader();
-  }
-}
 
-function admSaveCreditiGestioneEl(el) {
-  var t=el.dataset.t, l=el.dataset.l, s=el.dataset.s;
-  var val = parseFloat(document.getElementById('adm-cr-gest-'+s).value||0);
-  admSaveCreditiGestione(t, l, s, val);
-  var msg=document.createElement('div');
-  msg.textContent='✅ Crediti Gestione salvati per '+s;
-  msg.style.cssText='position:fixed;top:70px;right:20px;background:#10b981;color:#fff;padding:8px 16px;border-radius:8px;font-weight:700;font-size:12px;z-index:9999';
-  // Reset input a 0
-  var inp = document.getElementById('adm-cr-gest-'+s);
-  if (inp) inp.value = '0';
-  document.body.appendChild(msg);
-  setTimeout(function(){msg.remove();},2000);
-}
 
 function admSaveRosaEl(el) {
   admSaveRosa(el.dataset.t,el.dataset.l,el.dataset.s,null,false);
