@@ -1,4 +1,4 @@
-<!-- build:20260502_140000 -->
+<!-- build:20260502_141000 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -4594,9 +4594,18 @@ function gsPing() {
             try { syncCreditiToUser(t.key, l.key, typeof val==='string'?JSON.parse(val):val); } catch(e) {}
           });
           // Infermeria
-          gsLoadKey('adm_infermeria_'+t.key+'_'+l.key, function(val) {
-            if (val !== null) localStorage.setItem('adm_infermeria_'+t.key+'_'+l.key, typeof val === 'string' ? val : JSON.stringify(val));
-          });
+          (function(_tk, _lk) {
+            gsLoadKey('adm_infermeria_'+_tk+'_'+_lk, function(val) {
+              if (val === null) return;
+              var str = typeof val === 'string' ? val : JSON.stringify(val);
+              localStorage.setItem('adm_infermeria_'+_tk+'_'+_lk, str);
+              // Aggiorna INFERMERIA in memoria se è il torneo attivo
+              var activePage = document.querySelector('.page.active');
+              if (activePage && (activePage.id === 'page-slim' || activePage.id === 'page-'+_tk)) {
+                try { INFERMERIA = typeof val === 'string' ? JSON.parse(val) : val; } catch(e) {}
+              }
+            });
+          })(t.key, l.key);
           // Stadio saved
           gsLoadKey('adm_stadio_saved_'+t.key+'_'+l.key, function(val) {
             if (val !== null) localStorage.setItem('adm_stadio_saved_'+t.key+'_'+l.key, typeof val === 'string' ? val : JSON.stringify(val));
@@ -8530,18 +8539,27 @@ function enterLeague(tournament, leagueKey) {
     }
     if (window._CREDITS_IT) CREDITS = JSON.parse(JSON.stringify(window._CREDITS_IT));
     if (window._INFERMERIA_IT) INFERMERIA = JSON.parse(JSON.stringify(window._INFERMERIA_IT));
-    // Sovrascrive con dati salvati (localStorage o GSheets) se presenti
-    var _infLS = localStorage.getItem('adm_infermeria_slim_it');
-    if (_infLS) { try { INFERMERIA = JSON.parse(_infLS); } catch(e) {} }
-    else if (GS_ONLINE && typeof gsLoadKey === 'function') {
-      gsLoadKey('adm_infermeria_slim_it', function(val) {
-        if (val !== null) {
-          var arr = typeof val === 'string' ? JSON.parse(val) : val;
-          INFERMERIA = arr;
-          localStorage.setItem('adm_infermeria_slim_it', JSON.stringify(arr));
-        }
-      });
-    }
+    // Sovrascrive infermeria con dati salvati per qualsiasi torneo/lega
+    (function() {
+      // Determina torneo/lega corrente dalla pagina attiva
+      var _activePage = document.querySelector('.page.active');
+      var _tk = (_activePage && _activePage.id === 'page-tsm') ? 'tsm' : 'slim';
+      var _lk = (typeof currentLeagueKey !== 'undefined' && currentLeagueKey) ? currentLeagueKey.replace(_tk+'_','') : 'it';
+      if (_lk === _tk) _lk = 'it'; // fallback
+      var _infKey = 'adm_infermeria_' + _tk + '_' + _lk;
+      var _infLS = localStorage.getItem(_infKey);
+      if (_infLS) {
+        try { INFERMERIA = JSON.parse(_infLS); } catch(e) {}
+      } else if (GS_ONLINE && typeof gsLoadKey === 'function') {
+        gsLoadKey(_infKey, function(val) {
+          if (val !== null) {
+            var arr = typeof val === 'string' ? JSON.parse(val) : val;
+            INFERMERIA = arr;
+            localStorage.setItem(_infKey, JSON.stringify(arr));
+          }
+        });
+      }
+    })();
     SLIM_TEAMS = (typeof SLIM_TEAMS_IT !== 'undefined') ? SLIM_TEAMS_IT : Object.keys(TEAMS_ROSE).sort();
     window._currentLeagueCalKey = 'slim_calendar';
     window._currentLeagueStaKey = 'slim_stadio';
@@ -13485,18 +13503,27 @@ function enterLeague(tournament, leagueKey) {
     }
     if (window._CREDITS_IT) CREDITS = JSON.parse(JSON.stringify(window._CREDITS_IT));
     if (window._INFERMERIA_IT) INFERMERIA = JSON.parse(JSON.stringify(window._INFERMERIA_IT));
-    // Sovrascrive con dati salvati (localStorage o GSheets) se presenti
-    var _infLS = localStorage.getItem('adm_infermeria_slim_it');
-    if (_infLS) { try { INFERMERIA = JSON.parse(_infLS); } catch(e) {} }
-    else if (GS_ONLINE && typeof gsLoadKey === 'function') {
-      gsLoadKey('adm_infermeria_slim_it', function(val) {
-        if (val !== null) {
-          var arr = typeof val === 'string' ? JSON.parse(val) : val;
-          INFERMERIA = arr;
-          localStorage.setItem('adm_infermeria_slim_it', JSON.stringify(arr));
-        }
-      });
-    }
+    // Sovrascrive infermeria con dati salvati per qualsiasi torneo/lega
+    (function() {
+      // Determina torneo/lega corrente dalla pagina attiva
+      var _activePage = document.querySelector('.page.active');
+      var _tk = (_activePage && _activePage.id === 'page-tsm') ? 'tsm' : 'slim';
+      var _lk = (typeof currentLeagueKey !== 'undefined' && currentLeagueKey) ? currentLeagueKey.replace(_tk+'_','') : 'it';
+      if (_lk === _tk) _lk = 'it'; // fallback
+      var _infKey = 'adm_infermeria_' + _tk + '_' + _lk;
+      var _infLS = localStorage.getItem(_infKey);
+      if (_infLS) {
+        try { INFERMERIA = JSON.parse(_infLS); } catch(e) {}
+      } else if (GS_ONLINE && typeof gsLoadKey === 'function') {
+        gsLoadKey(_infKey, function(val) {
+          if (val !== null) {
+            var arr = typeof val === 'string' ? JSON.parse(val) : val;
+            INFERMERIA = arr;
+            localStorage.setItem(_infKey, JSON.stringify(arr));
+          }
+        });
+      }
+    })();
     SLIM_TEAMS = (typeof SLIM_TEAMS_IT !== 'undefined') ? SLIM_TEAMS_IT : Object.keys(TEAMS_ROSE).sort();
     window._currentLeagueCalKey = 'slim_calendar';
     window._currentLeagueStaKey = 'slim_stadio';
