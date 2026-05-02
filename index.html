@@ -1,4 +1,4 @@
-<!-- build:20260502_131000 -->
+<!-- build:20260502_140000 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -8530,6 +8530,18 @@ function enterLeague(tournament, leagueKey) {
     }
     if (window._CREDITS_IT) CREDITS = JSON.parse(JSON.stringify(window._CREDITS_IT));
     if (window._INFERMERIA_IT) INFERMERIA = JSON.parse(JSON.stringify(window._INFERMERIA_IT));
+    // Sovrascrive con dati salvati (localStorage o GSheets) se presenti
+    var _infLS = localStorage.getItem('adm_infermeria_slim_it');
+    if (_infLS) { try { INFERMERIA = JSON.parse(_infLS); } catch(e) {} }
+    else if (GS_ONLINE && typeof gsLoadKey === 'function') {
+      gsLoadKey('adm_infermeria_slim_it', function(val) {
+        if (val !== null) {
+          var arr = typeof val === 'string' ? JSON.parse(val) : val;
+          INFERMERIA = arr;
+          localStorage.setItem('adm_infermeria_slim_it', JSON.stringify(arr));
+        }
+      });
+    }
     SLIM_TEAMS = (typeof SLIM_TEAMS_IT !== 'undefined') ? SLIM_TEAMS_IT : Object.keys(TEAMS_ROSE).sort();
     window._currentLeagueCalKey = 'slim_calendar';
     window._currentLeagueStaKey = 'slim_stadio';
@@ -13473,6 +13485,18 @@ function enterLeague(tournament, leagueKey) {
     }
     if (window._CREDITS_IT) CREDITS = JSON.parse(JSON.stringify(window._CREDITS_IT));
     if (window._INFERMERIA_IT) INFERMERIA = JSON.parse(JSON.stringify(window._INFERMERIA_IT));
+    // Sovrascrive con dati salvati (localStorage o GSheets) se presenti
+    var _infLS = localStorage.getItem('adm_infermeria_slim_it');
+    if (_infLS) { try { INFERMERIA = JSON.parse(_infLS); } catch(e) {} }
+    else if (GS_ONLINE && typeof gsLoadKey === 'function') {
+      gsLoadKey('adm_infermeria_slim_it', function(val) {
+        if (val !== null) {
+          var arr = typeof val === 'string' ? JSON.parse(val) : val;
+          INFERMERIA = arr;
+          localStorage.setItem('adm_infermeria_slim_it', JSON.stringify(arr));
+        }
+      });
+    }
     SLIM_TEAMS = (typeof SLIM_TEAMS_IT !== 'undefined') ? SLIM_TEAMS_IT : Object.keys(TEAMS_ROSE).sort();
     window._currentLeagueCalKey = 'slim_calendar';
     window._currentLeagueStaKey = 'slim_stadio';
