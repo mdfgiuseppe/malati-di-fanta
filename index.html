@@ -5416,6 +5416,7 @@ function admGetCoppeConfig(torneoKey) {
 
 function admSaveCoppeConfig(torneoKey, config) {
   localStorage.setItem('adm_coppe_config_'+torneoKey, JSON.stringify(config));
+  gsSaveKey('adm_coppe_config_'+torneoKey, JSON.stringify(config));
 }
 
 function admGetCoppaData(torneoKey, coppaKey) {
@@ -5803,6 +5804,7 @@ function admNuovaStagioneEl(el) {
   storico.push(snapshot);
   // gsync:storico
   localStorage.setItem('storico_stagioni_'+torneoKey, JSON.stringify(storico));
+  gsSaveKey('storico_stagioni_'+torneoKey, JSON.stringify(storico));
 
   // ─── AZZERA dati correnti ─────────────────────────────────────────────────
   if (torneo) {
@@ -5859,6 +5861,7 @@ function admDeleteStagioneEl(el) {
   storico = storico.filter(function(s){return s.label!==stagLabel;});
   // gsync:storico
   localStorage.setItem('storico_stagioni_'+torneoKey, JSON.stringify(storico));
+  gsSaveKey('storico_stagioni_'+torneoKey, JSON.stringify(storico));
   admRenderStagioni();
 }
 
@@ -6201,6 +6204,7 @@ function admInitPage() {
 // ═══════════════════════════════════════════════════════
 function admSaveTornei() {
   localStorage.setItem('admin_tornei', JSON.stringify(ADMIN_TORNEI));
+  gsSaveKey('admin_tornei', JSON.stringify(ADMIN_TORNEI));
 }
 
 function admRenderTornei() {
@@ -11001,6 +11005,7 @@ function admGetCoppeConfig(torneoKey) {
 
 function admSaveCoppeConfig(torneoKey, config) {
   localStorage.setItem('adm_coppe_config_'+torneoKey, JSON.stringify(config));
+  gsSaveKey('adm_coppe_config_'+torneoKey, JSON.stringify(config));
 }
 
 function admGetCoppaData(torneoKey, coppaKey) {
@@ -11388,6 +11393,7 @@ function admNuovaStagioneEl(el) {
   storico.push(snapshot);
   // gsync:storico
   localStorage.setItem('storico_stagioni_'+torneoKey, JSON.stringify(storico));
+  gsSaveKey('storico_stagioni_'+torneoKey, JSON.stringify(storico));
 
   // ─── AZZERA dati correnti ─────────────────────────────────────────────────
   if (torneo) {
@@ -11444,6 +11450,7 @@ function admDeleteStagioneEl(el) {
   storico = storico.filter(function(s){return s.label!==stagLabel;});
   // gsync:storico
   localStorage.setItem('storico_stagioni_'+torneoKey, JSON.stringify(storico));
+  gsSaveKey('storico_stagioni_'+torneoKey, JSON.stringify(storico));
   admRenderStagioni();
 }
 
@@ -11700,6 +11707,7 @@ function admSaveMulteEl(el) {
 // ═══════════════════════════════════════════════════════
 function admSaveTornei() {
   localStorage.setItem('admin_tornei', JSON.stringify(ADMIN_TORNEI));
+  gsSaveKey('admin_tornei', JSON.stringify(ADMIN_TORNEI));
 }
 
 function admRenderTornei() {
