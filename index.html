@@ -1,4 +1,4 @@
-<!-- build:20260502_110000 -->
+<!-- build:20260502_120000 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -6452,7 +6452,22 @@ function admScConfirm() {
     if(i>=0) pA.push(pB.splice(i,1)[0]);
   });
   rose[sqA]=pA; rose[sqB]=pB;
+  // Salva infermeria separatamente se coinvolta
+  if (sqA==='INFERMERIA' || sqB==='INFERMERIA') {
+    var infSq = sqA==='INFERMERIA' ? sqA : sqB;
+    var infPl = sqA==='INFERMERIA' ? pA : pB;
+    localStorage.setItem('adm_infermeria_'+tk+'_'+lk, JSON.stringify(infPl));
+    gsSaveKey('adm_infermeria_'+tk+'_'+lk, JSON.stringify(infPl));
+    if (tk==='slim'&&lk==='it') { INFERMERIA = infPl; if(window._INFERMERIA_IT) window._INFERMERIA_IT = infPl.slice(); }
+    delete rose[infSq]; // non salvare INFERMERIA dentro adm_rose_*
+  }
+  // Aggiorna TEAMS_ROSE in memoria
+  if (tk==='slim'&&lk==='it'&&typeof TEAMS_ROSE!=='undefined') {
+    Object.keys(rose).forEach(function(sq){ var _k=Object.keys(TEAMS_ROSE).find(function(k){return k.toLowerCase()===sq.toLowerCase();})||sq; TEAMS_ROSE[_k]=rose[sq]; });
+    if (typeof window._TEAMS_ROSE_IT !== 'undefined') Object.keys(rose).forEach(function(sq){ var _k=Object.keys(window._TEAMS_ROSE_IT).find(function(k){return k.toLowerCase()===sq.toLowerCase();})||sq; window._TEAMS_ROSE_IT[_k]=rose[sq]; });
+  }
   localStorage.setItem(roseKey,JSON.stringify(rose));
+  gsSaveKey(roseKey, JSON.stringify(rose));
   // Aggiorna crediti se necessario
   if(crA>0||crB>0){
     var crKey='adm_crediti_base_'+tk+'_'+lk;
@@ -7538,17 +7553,26 @@ function admSaveRosa(t,l,s,players,silent) {
     admLoadRosaGiocatori();
     return;
   }
-  var key = 'adm_rosa_'+t+'_'+l+'_'+s;
-  localStorage.setItem(key, JSON.stringify(pl));
-  // Aggiorna TEAMS_ROSE in memoria per riflettere subito lato utente
+  // Aggiorna la rosa completa (adm_rose_t_l) — fonte di verità unica
+  var roseAllKey = 'adm_rose_'+t+'_'+l;
+  var roseAll = {};
+  try { roseAll = JSON.parse(localStorage.getItem(roseAllKey)||'{}'); } catch(e) {}
+  // Trova la chiave esatta della squadra (case-insensitive)
+  var _k = Object.keys(roseAll).find(function(k){return k.toLowerCase()===s.toLowerCase();}) || s;
+  roseAll[_k] = pl.slice();
+  localStorage.setItem(roseAllKey, JSON.stringify(roseAll));
+  gsSaveKey(roseAllKey, JSON.stringify(roseAll));
+  // Aggiorna TEAMS_ROSE in memoria
   if (t==='slim' && l==='it' && typeof TEAMS_ROSE!=='undefined') {
-    var _k = Object.keys(TEAMS_ROSE).find(function(k){return k.toUpperCase()===s.toUpperCase();})||s;
-    // Crea nuovo oggetto per forzare aggiornamento riferimento
-    var _newRose = {};
-    Object.keys(TEAMS_ROSE).forEach(function(k){ _newRose[k] = TEAMS_ROSE[k]; });
-    _newRose[_k] = pl.slice();
-    TEAMS_ROSE = _newRose;
-    localStorage.setItem('adm_rose_slim_it', JSON.stringify(TEAMS_ROSE));
+    var _mk = Object.keys(TEAMS_ROSE).find(function(k){return k.toLowerCase()===s.toLowerCase();})||s;
+    TEAMS_ROSE[_mk] = pl.slice();
+    localStorage.setItem('adm_rose_slim_it', JSON.stringify(roseAll));
+    if (typeof window._TEAMS_ROSE_IT !== 'undefined') window._TEAMS_ROSE_IT[_mk] = pl.slice();
+  }
+  if (t==='tsm' && l==='it' && typeof TSM_ROSE_IT!=='undefined') {
+    var _mk2 = Object.keys(TSM_ROSE_IT).find(function(k){return k.toLowerCase()===s.toLowerCase();})||s;
+    TSM_ROSE_IT[_mk2] = pl.slice();
+    localStorage.setItem('adm_rose_tsm_it', JSON.stringify(roseAll));
   }
   if(!silent) { var msg=document.createElement('div');msg.textContent='✅ Salvato';msg.style.cssText='position:fixed;top:70px;right:20px;background:#10b981;color:#fff;padding:8px 16px;border-radius:8px;font-weight:700;font-size:12px;z-index:9999';document.body.appendChild(msg);setTimeout(function(){msg.remove();},2000);
   // Reset come primo accesso
@@ -12482,17 +12506,26 @@ function admSaveRosa(t,l,s,players,silent) {
     admLoadRosaGiocatori();
     return;
   }
-  var key = 'adm_rosa_'+t+'_'+l+'_'+s;
-  localStorage.setItem(key, JSON.stringify(pl));
-  // Aggiorna TEAMS_ROSE in memoria per riflettere subito lato utente
+  // Aggiorna la rosa completa (adm_rose_t_l) — fonte di verità unica
+  var roseAllKey = 'adm_rose_'+t+'_'+l;
+  var roseAll = {};
+  try { roseAll = JSON.parse(localStorage.getItem(roseAllKey)||'{}'); } catch(e) {}
+  // Trova la chiave esatta della squadra (case-insensitive)
+  var _k = Object.keys(roseAll).find(function(k){return k.toLowerCase()===s.toLowerCase();}) || s;
+  roseAll[_k] = pl.slice();
+  localStorage.setItem(roseAllKey, JSON.stringify(roseAll));
+  gsSaveKey(roseAllKey, JSON.stringify(roseAll));
+  // Aggiorna TEAMS_ROSE in memoria
   if (t==='slim' && l==='it' && typeof TEAMS_ROSE!=='undefined') {
-    var _k = Object.keys(TEAMS_ROSE).find(function(k){return k.toUpperCase()===s.toUpperCase();})||s;
-    // Crea nuovo oggetto per forzare aggiornamento riferimento
-    var _newRose = {};
-    Object.keys(TEAMS_ROSE).forEach(function(k){ _newRose[k] = TEAMS_ROSE[k]; });
-    _newRose[_k] = pl.slice();
-    TEAMS_ROSE = _newRose;
-    localStorage.setItem('adm_rose_slim_it', JSON.stringify(TEAMS_ROSE));
+    var _mk = Object.keys(TEAMS_ROSE).find(function(k){return k.toLowerCase()===s.toLowerCase();})||s;
+    TEAMS_ROSE[_mk] = pl.slice();
+    localStorage.setItem('adm_rose_slim_it', JSON.stringify(roseAll));
+    if (typeof window._TEAMS_ROSE_IT !== 'undefined') window._TEAMS_ROSE_IT[_mk] = pl.slice();
+  }
+  if (t==='tsm' && l==='it' && typeof TSM_ROSE_IT!=='undefined') {
+    var _mk2 = Object.keys(TSM_ROSE_IT).find(function(k){return k.toLowerCase()===s.toLowerCase();})||s;
+    TSM_ROSE_IT[_mk2] = pl.slice();
+    localStorage.setItem('adm_rose_tsm_it', JSON.stringify(roseAll));
   }
   if(!silent) { var msg=document.createElement('div');msg.textContent='✅ Salvato';msg.style.cssText='position:fixed;top:70px;right:20px;background:#10b981;color:#fff;padding:8px 16px;border-radius:8px;font-weight:700;font-size:12px;z-index:9999';document.body.appendChild(msg);setTimeout(function(){msg.remove();},2000); }
 }
