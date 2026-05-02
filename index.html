@@ -1,4 +1,4 @@
-<!-- build:20260502_120000 -->
+<!-- build:20260502_131000 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -4383,7 +4383,7 @@ function renderModulistica(torneoKey) {
 // ═══════════════════════════════════════════════════════
 // GOOGLE SHEETS — Layer di sincronizzazione
 // ═══════════════════════════════════════════════════════
-var GS_URL = 'https://script.google.com/macros/s/AKfycbwOdHejvlFrooyBkrQY080mtSjc3fzHuc3u3KjIJrmUtArU2X5mUyyauI91D4hXf6tK/exec';
+var GS_URL = 'https://script.google.com/macros/s/AKfycbx0E-fnzINJJRNnPlC3xc9vSArFIxwPNfsT_US6D6vZBQ_UkQG_-I9xA9m5X0nD1o51/exec';
 var GS_ONLINE = false; // diventa true dopo il primo ping riuscito
 
 // Chiamata tramite JSONP (necessario per Google Apps Script CORS)
@@ -4391,6 +4391,25 @@ var _gsCallbacks = {};
 var _gsCallId = 0;
 
 function gsCall(params, callback) {
+  // Usa POST se il payload supera 6000 caratteri, altrimenti JSONP GET
+  var urlParams = Object.keys(params).map(function(k){
+    return encodeURIComponent(k) + '=' + encodeURIComponent(params[k]);
+  }).join('&');
+
+  if (urlParams.length > 6000) {
+    // POST via fetch (no CORS issues con Apps Script redirect)
+    fetch(GS_URL, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+      body: urlParams
+    })
+    .then(function(r){ return r.json(); })
+    .then(function(data){ if(callback) callback(null, data); })
+    .catch(function(e){ if(callback) callback(e, null); });
+    return;
+  }
+
+  // JSONP GET per payload piccoli
   var id = 'gs_cb_' + (++_gsCallId);
   params.callback = id;
   var url = GS_URL + '?' + Object.keys(params).map(function(k){
