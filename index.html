@@ -1,4 +1,4 @@
-<!-- build:20260502_150000 -->
+<!-- build:20260502_151000 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -5461,8 +5461,18 @@ function admLoadCoppaEditor() {
       });
     }
   } else {
-    var sq2 = admGetTeams(torneoKey, 'it');
-    if (sq2.length) teamsByLega.push({label:'Squadre', teams: sq2});
+    // Legge tutte le leghe del torneo da ADMIN_TORNEI (funziona per TSM e tornei futuri)
+    var _torneoObj = ADMIN_TORNEI.find(function(t){return t.key===torneoKey;});
+    if (_torneoObj && _torneoObj.leghe && _torneoObj.leghe.length) {
+      _torneoObj.leghe.forEach(function(l) {
+        var sq2 = admGetTeams(torneoKey, l.key);
+        if (sq2.length) teamsByLega.push({label: l.label||l.key, teams: sq2});
+      });
+    } else {
+      // fallback: prova solo con 'it'
+      var sq2 = admGetTeams(torneoKey, 'it');
+      if (sq2.length) teamsByLega.push({label:'Squadre', teams: sq2});
+    }
   }
   var teams = ['BYE']; // flat list per compatibilità
   teamsByLega.forEach(function(g){ teams = teams.concat(g.teams); });
@@ -10977,8 +10987,18 @@ function admLoadCoppaEditor() {
       });
     }
   } else {
-    var sq2 = admGetTeams(torneoKey, 'it');
-    if (sq2.length) teamsByLega.push({label:'Squadre', teams: sq2});
+    // Legge tutte le leghe del torneo da ADMIN_TORNEI (funziona per TSM e tornei futuri)
+    var _torneoObj = ADMIN_TORNEI.find(function(t){return t.key===torneoKey;});
+    if (_torneoObj && _torneoObj.leghe && _torneoObj.leghe.length) {
+      _torneoObj.leghe.forEach(function(l) {
+        var sq2 = admGetTeams(torneoKey, l.key);
+        if (sq2.length) teamsByLega.push({label: l.label||l.key, teams: sq2});
+      });
+    } else {
+      // fallback: prova solo con 'it'
+      var sq2 = admGetTeams(torneoKey, 'it');
+      if (sq2.length) teamsByLega.push({label:'Squadre', teams: sq2});
+    }
   }
   var teams = ['BYE']; // flat list per compatibilità
   teamsByLega.forEach(function(g){ teams = teams.concat(g.teams); });
