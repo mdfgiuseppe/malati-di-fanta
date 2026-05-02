@@ -4773,9 +4773,24 @@ function syncCreditiToUser(torneoKey, legaKey, crObj) {
   localStorage.setItem(userKey, JSON.stringify(existing));
 }
 
+function gsPost(params, callback) {
+  // Salvataggio sempre via POST — evita il problema JSONP callback not defined
+  var body = Object.keys(params).map(function(k){
+    return encodeURIComponent(k) + '=' + encodeURIComponent(typeof params[k]==='string' ? params[k] : JSON.stringify(params[k]));
+  }).join('&');
+  fetch(GS_URL, {
+    method: 'POST',
+    headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+    body: body
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(data){ if(callback) callback(null, data); })
+  .catch(function(e){ if(callback) callback(e, null); });
+}
+
 function gsSaveKey(key, data) {
   if (!GS_ONLINE) return;
-  gsCall({action:'saveKey', key:key, data: typeof data === 'string' ? data : JSON.stringify(data)}, null);
+  gsPost({action:'saveKey', key:key, data: typeof data === 'string' ? data : JSON.stringify(data)}, null);
 }
 function gsLoadKey(key, callback) {
   if (!GS_ONLINE) { if(callback) callback(null); return; }
@@ -4789,43 +4804,43 @@ function gsLoadKey(key, callback) {
 // Salva calendario su GSheets
 function gsSaveCalendario(torneo, lega, cal) {
   if (!GS_ONLINE) return;
-  gsCall({action:'saveCalendario', torneo:torneo, lega:lega, data:JSON.stringify(cal)}, null);
+  gsPost({action:'saveCalendario', torneo:torneo, lega:lega, data:JSON.stringify(cal)}, null);
 }
 
 // Salva stadio su GSheets
 function gsSaveStadio(torneo, lega, stadio) {
   if (!GS_ONLINE) return;
-  gsCall({action:'saveStadio', torneo:torneo, lega:lega, data:JSON.stringify(stadio)}, null);
+  gsPost({action:'saveStadio', torneo:torneo, lega:lega, data:JSON.stringify(stadio)}, null);
 }
 
 // Salva coppe su GSheets
 function gsSaveCoppe(torneo, coppa, data) {
   if (!GS_ONLINE) return;
-  gsCall({action:'saveCoppe', torneo:torneo, coppa:coppa, data:JSON.stringify(data)}, null);
+  gsPost({action:'saveCoppe', torneo:torneo, coppa:coppa, data:JSON.stringify(data)}, null);
 }
 
 // Salva multe su GSheets
 function gsSaveMulte(torneo, lega, data) {
   if (!GS_ONLINE) return;
-  gsCall({action:'saveMulte', torneo:torneo, lega:lega, data:JSON.stringify(data)}, null);
+  gsPost({action:'saveMulte', torneo:torneo, lega:lega, data:JSON.stringify(data)}, null);
 }
 
 // Salva sponsor su GSheets
 function gsSaveSponsor(torneo, lega, squadra, data) {
   if (!GS_ONLINE) return;
-  gsCall({action:'saveSponsor', torneo:torneo, lega:lega, squadra:squadra, data:JSON.stringify(data)}, null);
+  gsPost({action:'saveSponsor', torneo:torneo, lega:lega, squadra:squadra, data:JSON.stringify(data)}, null);
 }
 
 // Salva crediti gestione su GSheets
 function gsSaveCrediti(torneo, lega, squadra, valore) {
   if (!GS_ONLINE) return;
-  gsCall({action:'saveCrediti', torneo:torneo, lega:lega, squadra:squadra, valore:valore}, null);
+  gsPost({action:'saveCrediti', torneo:torneo, lega:lega, squadra:squadra, valore:valore}, null);
 }
 
 // Salva utente su GSheets
 function gsSaveUtente(user) {
   if (!GS_ONLINE) return;
-  gsCall({action:'saveUtente', data:JSON.stringify(user)}, null);
+  gsPost({action:'saveUtente', data:JSON.stringify(user)}, null);
 }
 
 // Carica dati da GSheets (con fallback localStorage)
@@ -10375,43 +10390,43 @@ function gsLogin(username, password, callback) {
 // Salva calendario su GSheets
 function gsSaveCalendario(torneo, lega, cal) {
   if (!GS_ONLINE) return;
-  gsCall({action:'saveCalendario', torneo:torneo, lega:lega, data:JSON.stringify(cal)}, null);
+  gsPost({action:'saveCalendario', torneo:torneo, lega:lega, data:JSON.stringify(cal)}, null);
 }
 
 // Salva stadio su GSheets
 function gsSaveStadio(torneo, lega, stadio) {
   if (!GS_ONLINE) return;
-  gsCall({action:'saveStadio', torneo:torneo, lega:lega, data:JSON.stringify(stadio)}, null);
+  gsPost({action:'saveStadio', torneo:torneo, lega:lega, data:JSON.stringify(stadio)}, null);
 }
 
 // Salva coppe su GSheets
 function gsSaveCoppe(torneo, coppa, data) {
   if (!GS_ONLINE) return;
-  gsCall({action:'saveCoppe', torneo:torneo, coppa:coppa, data:JSON.stringify(data)}, null);
+  gsPost({action:'saveCoppe', torneo:torneo, coppa:coppa, data:JSON.stringify(data)}, null);
 }
 
 // Salva multe su GSheets
 function gsSaveMulte(torneo, lega, data) {
   if (!GS_ONLINE) return;
-  gsCall({action:'saveMulte', torneo:torneo, lega:lega, data:JSON.stringify(data)}, null);
+  gsPost({action:'saveMulte', torneo:torneo, lega:lega, data:JSON.stringify(data)}, null);
 }
 
 // Salva sponsor su GSheets
 function gsSaveSponsor(torneo, lega, squadra, data) {
   if (!GS_ONLINE) return;
-  gsCall({action:'saveSponsor', torneo:torneo, lega:lega, squadra:squadra, data:JSON.stringify(data)}, null);
+  gsPost({action:'saveSponsor', torneo:torneo, lega:lega, squadra:squadra, data:JSON.stringify(data)}, null);
 }
 
 // Salva crediti gestione su GSheets
 function gsSaveCrediti(torneo, lega, squadra, valore) {
   if (!GS_ONLINE) return;
-  gsCall({action:'saveCrediti', torneo:torneo, lega:lega, squadra:squadra, valore:valore}, null);
+  gsPost({action:'saveCrediti', torneo:torneo, lega:lega, squadra:squadra, valore:valore}, null);
 }
 
 // Salva utente su GSheets
 function gsSaveUtente(user) {
   if (!GS_ONLINE) return;
-  gsCall({action:'saveUtente', data:JSON.stringify(user)}, null);
+  gsPost({action:'saveUtente', data:JSON.stringify(user)}, null);
 }
 
 // Carica dati da GSheets (con fallback localStorage)
