@@ -1,4 +1,4 @@
-<!-- build:20260502_151000 -->
+<!-- build:20260502_160000 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -1323,7 +1323,15 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   <!-- ===== MODULISTICA ===== -->
   <div id="s-modulistica" class="section">
     <div style="font-family:'Bebas Neue';font-size:28px;letter-spacing:2px;margin-bottom:6px">📋 <span style="color:#10b981">Modulistica</span></div>
-    <div style="font-size:11px;color:var(--text2);margin-bottom:24px" id="slim-mod-subtitle">Moduli ufficiali — clicca per compilare</div>
+    <div style="font-size:11px;color:var(--text2);margin-bottom:16px" id="slim-mod-subtitle">Moduli ufficiali — clicca per compilare</div>
+    <div style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap">
+      <select id="mod-sel-torneo" onchange="modSelTorneoChange()" style="padding:8px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;outline:none">
+        <option value="">-- Seleziona Torneo --</option>
+      </select>
+      <select id="mod-sel-lega" onchange="modSelLegaChange()" style="padding:8px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;outline:none">
+        <option value="">-- Seleziona Lega --</option>
+      </select>
+    </div>
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px" id="slim-modulistica-body"></div>
   </div>
 
@@ -4368,11 +4376,70 @@ var MODULISTICA_DATA = {
   }
 };
 
-function renderModulistica(torneoKey) {
-  var containerId = (torneoKey === 'tsm_it') ? 'tsm-modulistica-body' : 'slim-modulistica-body';
+function initModulistica() {
+  // Popola il selettore torneo con tutti i tornei da ADMIN_TORNEI
+  var sel = document.getElementById('mod-sel-torneo');
+  if (!sel) return;
+  sel.innerHTML = '<option value="">-- Seleziona Torneo --</option>';
+  var at = JSON.parse(localStorage.getItem('admin_tornei')||'[]');
+  at.forEach(function(t) {
+    var o = document.createElement('option');
+    o.value = t.key;
+    o.textContent = t.label || t.key;
+    sel.appendChild(o);
+  });
+  // Se c'è un solo torneo, selezionalo automaticamente
+  if (at.length === 1) {
+    sel.value = at[0].key;
+    modSelTorneoChange();
+  }
+}
+
+function modSelTorneoChange() {
+  var torneoKey = document.getElementById('mod-sel-torneo').value;
+  var legaSel = document.getElementById('mod-sel-lega');
+  legaSel.innerHTML = '<option value="">-- Seleziona Lega --</option>';
+  document.getElementById('slim-modulistica-body').innerHTML = '';
+  if (!torneoKey) return;
+  var at = JSON.parse(localStorage.getItem('admin_tornei')||'[]');
+  var torneo = at.find(function(t){return t.key===torneoKey;});
+  if (!torneo) return;
+  torneo.leghe.forEach(function(l) {
+    var o = document.createElement('option');
+    o.value = l.key;
+    o.textContent = l.label || l.key;
+    legaSel.appendChild(o);
+  });
+  // Se c'è una sola lega, selezionala automaticamente
+  if (torneo.leghe.length === 1) {
+    legaSel.value = torneo.leghe[0].key;
+    modSelLegaChange();
+  }
+}
+
+function modSelLegaChange() {
+  var torneoKey = document.getElementById('mod-sel-torneo').value;
+  var legaKey = document.getElementById('mod-sel-lega').value;
+  if (!torneoKey || !legaKey) return;
+  // Chiave modulistica: torneo_lega o solo torneo (per slim_it → 'slim')
+  var modKey = torneoKey === 'slim' && legaKey === 'it' ? 'slim'
+    : torneoKey === 'tsm' && legaKey === 'it' ? 'tsm_it'
+    : torneoKey + '_' + legaKey;
+  // Carica da localStorage se salvati dall'admin
+  var saved = localStorage.getItem('admin_modulistica');
+  if (saved) { try { var sd=JSON.parse(saved); if(sd) { Object.keys(sd).forEach(function(k){MODULISTICA_DATA[k]=sd[k];}); } } catch(e){} }
+  renderModulistica(modKey, 'slim-modulistica-body');
+}
+
+function renderModulistica(torneoKey, containerId) {
+  containerId = containerId || ((torneoKey === 'tsm_it') ? 'tsm-modulistica-body' : 'slim-modulistica-body');
   var el = document.getElementById(containerId);
   if (!el) return;
   var data = MODULISTICA_DATA[torneoKey] || MODULISTICA_DATA['slim'];
+  if (!data || !data.moduli || !data.moduli.length) {
+    el.innerHTML = '<div style="color:var(--text3);font-size:13px;padding:20px">Nessun modulo configurato per questa lega.</div>';
+    return;
+  }
   el.innerHTML = data.moduli.map(function(m) {
     var hex = m.colore;
     var rgb = hex === '#3b82f6' ? '59,130,246' : hex === '#f59e0b' ? '245,158,11' : hex === '#10b981' ? '16,185,129' : hex === '#8b5cf6' ? '139,92,246' : '239,68,68';
@@ -8237,7 +8304,7 @@ function showTSMSection(id, el) {
   else if (id === 'classifica') tsmRenderClassifica();
   else if (id === 'stadio') tsmRenderStadio();
   else if (id === 'multe') tsmRenderMulte();
-  else if (id === 'modulistica') renderModulistica('tsm_it');
+  else if (id === 'modulistica') renderModulistica('tsm_it', 'tsm-modulistica-body');
 }
 
 
@@ -8700,7 +8767,7 @@ function showSection(id,el){
   else if(id==='stadio')slimRenderStadio();
   else if(id==='multe')renderMulte();
   else if(id==='coppe'){initCoppaLogos();closeBracket();}
-  else if(id==='modulistica')renderModulistica(window.currentLeagueKey||'slim');
+  else if(id==='modulistica'){ initModulistica(); }
 }
 var currentTeam='SALERNITANA',currentFilter='ALL';
 function roleBadge(r){var roles=r.split(';').map(function(x){return x.trim();}).filter(function(x){return x;});return roles.map(function(x){var c=ROLE_COLORS[x]||['rgba(107,114,128,.15)','#6b7280'];return'<span style="display:inline-block;font-size:8px;font-weight:800;padding:2px 5px;border-radius:3px;background:'+c[0]+';color:'+c[1]+';margin:1px">'+x+'</span>';}).join('');}
@@ -10175,11 +10242,70 @@ var MODULISTICA_DATA = {
   }
 };
 
-function renderModulistica(torneoKey) {
-  var containerId = (torneoKey === 'tsm_it') ? 'tsm-modulistica-body' : 'slim-modulistica-body';
+function initModulistica() {
+  // Popola il selettore torneo con tutti i tornei da ADMIN_TORNEI
+  var sel = document.getElementById('mod-sel-torneo');
+  if (!sel) return;
+  sel.innerHTML = '<option value="">-- Seleziona Torneo --</option>';
+  var at = JSON.parse(localStorage.getItem('admin_tornei')||'[]');
+  at.forEach(function(t) {
+    var o = document.createElement('option');
+    o.value = t.key;
+    o.textContent = t.label || t.key;
+    sel.appendChild(o);
+  });
+  // Se c'è un solo torneo, selezionalo automaticamente
+  if (at.length === 1) {
+    sel.value = at[0].key;
+    modSelTorneoChange();
+  }
+}
+
+function modSelTorneoChange() {
+  var torneoKey = document.getElementById('mod-sel-torneo').value;
+  var legaSel = document.getElementById('mod-sel-lega');
+  legaSel.innerHTML = '<option value="">-- Seleziona Lega --</option>';
+  document.getElementById('slim-modulistica-body').innerHTML = '';
+  if (!torneoKey) return;
+  var at = JSON.parse(localStorage.getItem('admin_tornei')||'[]');
+  var torneo = at.find(function(t){return t.key===torneoKey;});
+  if (!torneo) return;
+  torneo.leghe.forEach(function(l) {
+    var o = document.createElement('option');
+    o.value = l.key;
+    o.textContent = l.label || l.key;
+    legaSel.appendChild(o);
+  });
+  // Se c'è una sola lega, selezionala automaticamente
+  if (torneo.leghe.length === 1) {
+    legaSel.value = torneo.leghe[0].key;
+    modSelLegaChange();
+  }
+}
+
+function modSelLegaChange() {
+  var torneoKey = document.getElementById('mod-sel-torneo').value;
+  var legaKey = document.getElementById('mod-sel-lega').value;
+  if (!torneoKey || !legaKey) return;
+  // Chiave modulistica: torneo_lega o solo torneo (per slim_it → 'slim')
+  var modKey = torneoKey === 'slim' && legaKey === 'it' ? 'slim'
+    : torneoKey === 'tsm' && legaKey === 'it' ? 'tsm_it'
+    : torneoKey + '_' + legaKey;
+  // Carica da localStorage se salvati dall'admin
+  var saved = localStorage.getItem('admin_modulistica');
+  if (saved) { try { var sd=JSON.parse(saved); if(sd) { Object.keys(sd).forEach(function(k){MODULISTICA_DATA[k]=sd[k];}); } } catch(e){} }
+  renderModulistica(modKey, 'slim-modulistica-body');
+}
+
+function renderModulistica(torneoKey, containerId) {
+  containerId = containerId || ((torneoKey === 'tsm_it') ? 'tsm-modulistica-body' : 'slim-modulistica-body');
   var el = document.getElementById(containerId);
   if (!el) return;
   var data = MODULISTICA_DATA[torneoKey] || MODULISTICA_DATA['slim'];
+  if (!data || !data.moduli || !data.moduli.length) {
+    el.innerHTML = '<div style="color:var(--text3);font-size:13px;padding:20px">Nessun modulo configurato per questa lega.</div>';
+    return;
+  }
   el.innerHTML = data.moduli.map(function(m) {
     var hex = m.colore;
     var rgb = hex === '#3b82f6' ? '59,130,246' : hex === '#f59e0b' ? '245,158,11' : hex === '#10b981' ? '16,185,129' : hex === '#8b5cf6' ? '139,92,246' : '239,68,68';
@@ -13257,7 +13383,7 @@ function showTSMSection(id, el) {
   else if (id === 'classifica') tsmRenderClassifica();
   else if (id === 'stadio') tsmRenderStadio();
   else if (id === 'multe') tsmRenderMulte();
-  else if (id === 'modulistica') renderModulistica('tsm_it');
+  else if (id === 'modulistica') renderModulistica('tsm_it', 'tsm-modulistica-body');
 }
 
 
@@ -13720,7 +13846,7 @@ function showSection(id,el){
   else if(id==='stadio')slimRenderStadio();
   else if(id==='multe')renderMulte();
   else if(id==='coppe'){initCoppaLogos();closeBracket();}
-  else if(id==='modulistica')renderModulistica(window.currentLeagueKey||'slim');
+  else if(id==='modulistica'){ initModulistica(); }
 }
 var currentTeam='SALERNITANA',currentFilter='ALL';
 function roleBadge(r){var roles=r.split(';').map(function(x){return x.trim();}).filter(function(x){return x;});return roles.map(function(x){var c=ROLE_COLORS[x]||['rgba(107,114,128,.15)','#6b7280'];return'<span style="display:inline-block;font-size:8px;font-weight:800;padding:2px 5px;border-radius:3px;background:'+c[0]+';color:'+c[1]+';margin:1px">'+x+'</span>';}).join('');}
