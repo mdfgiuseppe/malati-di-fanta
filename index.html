@@ -4376,32 +4376,98 @@ var MODULISTICA_DATA = {
   }
 };
 
-function initModulistica() {
-  // Popola il selettore torneo con tutti i tornei da ADMIN_TORNEI
+// ─── helpers modulistica ───────────────────────────────
+function _modGetTornei() {
+  // Prima localStorage, poi ADMIN_TORNEI già in memoria, infine default
+  var at = [];
+  try { at = JSON.parse(localStorage.getItem('admin_tornei')||'null') || []; } catch(e) {}
+  if (!at.length && typeof ADMIN_TORNEI !== 'undefined' && ADMIN_TORNEI.length) at = ADMIN_TORNEI;
+  return at;
+}
+function _modKey(torneoKey, legaKey) {
+  // Calcola la chiave usata in MODULISTICA_DATA
+  if (torneoKey === 'slim' && legaKey === 'it') return 'slim';
+  if (torneoKey === 'tsm'  && legaKey === 'it') return 'tsm_it';
+  return torneoKey + '_' + legaKey;
+}
+function _modMergeFromStorage() {
+  var saved = localStorage.getItem('admin_modulistica');
+  if (saved) { try { var sd=JSON.parse(saved); if(sd){Object.keys(sd).forEach(function(k){MODULISTICA_DATA[k]=sd[k];});} } catch(e){} }
+}
+
+// ─── renderModulistica ────────────────────────────────
+// Può essere chiamata con qualsiasi containerId (slim, tsm, dyn, ecc.)
+function renderModulistica(torneoKey, containerId) {
+  _modMergeFromStorage();
+  // Auto-detect container se non passato
+  if (!containerId) {
+    containerId = torneoKey === 'tsm_it' ? 'tsm-modulistica-body'
+      : torneoKey && torneoKey.indexOf('_') !== -1 ? 'dyn-modulistica-body'
+      : 'slim-modulistica-body';
+  }
+  var el = document.getElementById(containerId);
+  if (!el) return;
+  // Recupera dati: chiave esatta, poi torneoKey senza lega, poi slim come fallback
+  var data = MODULISTICA_DATA[torneoKey]
+    || MODULISTICA_DATA[torneoKey.split('_')[0]]
+    || null;
+  if (!data || !data.moduli || !data.moduli.length) {
+    el.innerHTML = '<div style="color:var(--text3);font-size:13px;padding:20px 0">Nessun modulo configurato per questa lega.</div>';
+    return;
+  }
+  el.innerHTML = data.moduli.map(function(m) {
+    var href = m.link && m.link !== '#' ? m.link : null;
+    var hex = m.colore || '#6b7280';
+    var hexMap = {'#3b82f6':'59,130,246','#f59e0b':'245,158,11','#10b981':'16,185,129','#8b5cf6':'139,92,246','#ef4444':'239,68,68','#6b7280':'107,114,128'};
+    var rgb = hexMap[hex] || '107,114,128';
+    var inner = '<div style="background:var(--card);border:2px solid var(--border);border-radius:16px;padding:20px;cursor:pointer;transition:all .25s;display:flex;align-items:flex-start;gap:14px"'
+      + ' onmouseover="this.style.borderColor=\''+hex+'\';this.style.transform=\'translateY(-3px)\';this.style.boxShadow=\'0 8px 30px rgba('+rgb+',.15)\'"'
+      + ' onmouseout="this.style.borderColor=\'var(--border)\';this.style.transform=\'\';this.style.boxShadow=\'\'">'
+      + '<div style="width:44px;height:44px;border-radius:12px;background:rgba('+rgb+',.12);border:1px solid rgba('+rgb+',.25);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:22px">'+m.icona+'</div>'
+      + '<div style="flex:1">'
+      + '<div style="font-size:13px;font-weight:800;color:var(--text);margin-bottom:4px">'+m.titolo+'</div>'
+      + '<div style="font-size:11px;color:var(--text2);line-height:1.5">'+m.descrizione+'</div>'
+      + (href
+          ? '<div style="display:inline-flex;align-items:center;gap:4px;margin-top:8px;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:'+hex+'">Apri modulo <svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>'
+          : '<div style="display:inline-flex;align-items:center;gap:4px;margin-top:8px;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--text3)">Link non configurato</div>')
+      + '</div></div>';
+    return href
+      ? '<a href="'+href+'" target="_blank" rel="noopener" style="text-decoration:none">'+inner+'</a>'
+      : '<div style="opacity:.55">'+inner+'</div>';
+  }).join('');
+}
+
+// ─── initModulistica (con pre-selezione torneo) ────────
+function initModulistica(presetTorneoKey) {
   var sel = document.getElementById('mod-sel-torneo');
   if (!sel) return;
   sel.innerHTML = '<option value="">-- Seleziona Torneo --</option>';
-  var at = JSON.parse(localStorage.getItem('admin_tornei')||'[]');
+  var at = _modGetTornei();
   at.forEach(function(t) {
     var o = document.createElement('option');
     o.value = t.key;
     o.textContent = t.label || t.key;
     sel.appendChild(o);
   });
-  // Se c'è un solo torneo, selezionalo automaticamente
-  if (at.length === 1) {
+  if (presetTorneoKey) {
+    sel.value = presetTorneoKey;
+    modSelTorneoChange(presetTorneoKey);
+  } else if (at.length === 1) {
     sel.value = at[0].key;
     modSelTorneoChange();
   }
 }
 
-function modSelTorneoChange() {
-  var torneoKey = document.getElementById('mod-sel-torneo').value;
+function modSelTorneoChange(forceTorneoKey) {
+  var sel = document.getElementById('mod-sel-torneo');
+  var torneoKey = forceTorneoKey || (sel ? sel.value : '');
   var legaSel = document.getElementById('mod-sel-lega');
+  if (!legaSel) return;
   legaSel.innerHTML = '<option value="">-- Seleziona Lega --</option>';
-  document.getElementById('slim-modulistica-body').innerHTML = '';
+  var body = document.getElementById('slim-modulistica-body');
+  if (body) body.innerHTML = '';
   if (!torneoKey) return;
-  var at = JSON.parse(localStorage.getItem('admin_tornei')||'[]');
+  var at = _modGetTornei();
   var torneo = at.find(function(t){return t.key===torneoKey;});
   if (!torneo) return;
   torneo.leghe.forEach(function(l) {
@@ -4410,7 +4476,6 @@ function modSelTorneoChange() {
     o.textContent = l.label || l.key;
     legaSel.appendChild(o);
   });
-  // Se c'è una sola lega, selezionala automaticamente
   if (torneo.leghe.length === 1) {
     legaSel.value = torneo.leghe[0].key;
     modSelLegaChange();
@@ -4418,43 +4483,11 @@ function modSelTorneoChange() {
 }
 
 function modSelLegaChange() {
-  var torneoKey = document.getElementById('mod-sel-torneo').value;
-  var legaKey = document.getElementById('mod-sel-lega').value;
+  var torneoKey = (document.getElementById('mod-sel-torneo')||{}).value || '';
+  var legaKey = (document.getElementById('mod-sel-lega')||{}).value || '';
   if (!torneoKey || !legaKey) return;
-  // Chiave modulistica: torneo_lega o solo torneo (per slim_it → 'slim')
-  var modKey = torneoKey === 'slim' && legaKey === 'it' ? 'slim'
-    : torneoKey === 'tsm' && legaKey === 'it' ? 'tsm_it'
-    : torneoKey + '_' + legaKey;
-  // Carica da localStorage se salvati dall'admin
-  var saved = localStorage.getItem('admin_modulistica');
-  if (saved) { try { var sd=JSON.parse(saved); if(sd) { Object.keys(sd).forEach(function(k){MODULISTICA_DATA[k]=sd[k];}); } } catch(e){} }
+  var modKey = _modKey(torneoKey, legaKey);
   renderModulistica(modKey, 'slim-modulistica-body');
-}
-
-function renderModulistica(torneoKey, containerId) {
-  containerId = containerId || ((torneoKey === 'tsm_it') ? 'tsm-modulistica-body' : 'slim-modulistica-body');
-  var el = document.getElementById(containerId);
-  if (!el) return;
-  var data = MODULISTICA_DATA[torneoKey] || MODULISTICA_DATA['slim'];
-  if (!data || !data.moduli || !data.moduli.length) {
-    el.innerHTML = '<div style="color:var(--text3);font-size:13px;padding:20px">Nessun modulo configurato per questa lega.</div>';
-    return;
-  }
-  el.innerHTML = data.moduli.map(function(m) {
-    var hex = m.colore;
-    var rgb = hex === '#3b82f6' ? '59,130,246' : hex === '#f59e0b' ? '245,158,11' : hex === '#10b981' ? '16,185,129' : hex === '#8b5cf6' ? '139,92,246' : '239,68,68';
-    return '<a href="' + m.link + '" target="_blank" style="text-decoration:none">'
-      + '<div style="background:var(--card);border:2px solid var(--border);border-radius:16px;padding:20px;cursor:pointer;transition:all .25s;display:flex;align-items:flex-start;gap:14px"'
-      + ' onmouseover="this.style.borderColor=\'' + hex + '\';this.style.transform=\'translateY(-3px)\';this.style.boxShadow=\'0 8px 30px rgba(' + rgb + ',.15)\'"'
-      + ' onmouseout="this.style.borderColor=\'var(--border)\';this.style.transform=\'\';this.style.boxShadow=\'\'">'
-      + '<div style="width:44px;height:44px;border-radius:12px;background:rgba(' + rgb + ',.12);border:1px solid rgba(' + rgb + ',.25);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:22px">' + m.icona + '</div>'
-      + '<div>'
-      + '<div style="font-size:13px;font-weight:800;color:var(--text);margin-bottom:4px">' + m.titolo + '</div>'
-      + '<div style="font-size:11px;color:var(--text2);line-height:1.5">' + m.descrizione + '</div>'
-      + '<div style="display:inline-flex;align-items:center;gap:4px;margin-top:8px;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:' + hex + '">'
-      + 'Apri modulo <svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>'
-      + '</div></div></div></a>';
-  }).join('');
 }
 
 
@@ -7850,6 +7883,8 @@ function admSaveCalGiornata(t,l,g) {
 // ═══════════════════════════════════════════════════════
 function admRenderModulistica() {
   var el = document.getElementById('adm-mod-body'); if(!el) return;
+  // Carica dati salvati da localStorage
+  _modMergeFromStorage();
   // Sincronizza MODULISTICA_DATA con i tornei in ADMIN_TORNEI
   ADMIN_TORNEI.forEach(function(t) {
     if (!MODULISTICA_DATA[t.key]) {
@@ -8326,220 +8361,6 @@ function showTSMSection(id, el) {
   else if (id === 'modulistica') renderModulistica('tsm_it', 'tsm-modulistica-body');
 }
 
-
-// ═══════════════════════════════════════════════════════
-// TORNEI DINAMICI — pagina generica
-// ═══════════════════════════════════════════════════════
-function enterDynamicLeague(torneoKey, legaKey) {
-  var loggedUser = localStorage.getItem('current_user');
-  if (!loggedUser) { openLoginModal(); return; }
-
-  // Carica configurazione torneo
-  var config = {};
-  try { config = JSON.parse(localStorage.getItem('adm_config_'+torneoKey)||'{}'); } catch(e){}
-  var giornate = config.giornate || 34;
-  var formato = config.formato || 'classic';
-
-  // Carica rose
-  var rose = {};
-  try { rose = JSON.parse(localStorage.getItem('adm_rose_'+torneoKey+'_'+legaKey)||'{}'); } catch(e){}
-  var squadre = Object.keys(rose);
-
-  // Carica calendario
-  var cal = {};
-  try { cal = JSON.parse(localStorage.getItem('adm_cal_'+torneoKey+'_'+legaKey)||'{}'); } catch(e){}
-
-  // Carica crediti base
-  var cr = {};
-  try { cr = JSON.parse(localStorage.getItem('adm_crediti_base_'+torneoKey+'_'+legaKey)||'{}'); } catch(e){}
-
-  // Trova utente corrente
-  var u = JSON.parse(loggedUser);
-  var teamKey = u.lega === torneoKey+'_'+legaKey ? u.squadra : (squadre[0]||'');
-
-  // Costruisci pagina dinamica
-  showPage('dynamic-lega');
-  var titleEl = document.getElementById('dyn-torneo-title');
-  var legaEl = document.getElementById('dyn-lega-title');
-  if (titleEl) titleEl.textContent = config.label || torneoKey.toUpperCase();
-  if (legaEl) legaEl.textContent = legaKey.toUpperCase();
-
-  // Imposta stato globale
-  window._dynTorneo = torneoKey;
-  window._dynLega = legaKey;
-  window._dynConfig = config;
-  window._dynRose = rose;
-  window._dynCal = cal;
-  window._dynCr = cr;
-  window._dynSquadre = squadre;
-  window._dynTeam = teamKey;
-
-  dynBuildTeamsGrid();
-  dynRenderSection('dashboard');
-}
-
-function dynBuildTeamsGrid() {
-  var el = document.getElementById('dyn-teams-grid'); if(!el) return;
-  var squadre = window._dynSquadre || [];
-  var formato = (window._dynConfig||{}).formato || 'classic';
-  el.innerHTML = squadre.map(function(sq) {
-    var rose = (window._dynRose||{})[sq] || [];
-    var attivo = sq === window._dynTeam;
-    return '<div onclick="dynSelectTeam(\''+sq+'\')" style="background:var(--card);border:1.5px solid '+(attivo?'#10b981':'var(--border)')+';border-radius:10px;padding:10px;cursor:pointer;text-align:center">'
-      +'<div style="font-size:11px;font-weight:700">'+(sq||'')+'</div>'
-      +'<div style="font-size:9px;color:var(--text3)">'+rose.length+' giocatori</div>'
-      +'</div>';
-  }).join('');
-}
-
-function dynSelectTeam(sq) {
-  window._dynTeam = sq;
-  dynBuildTeamsGrid();
-  dynRenderSection(window._dynCurrentSection || 'rose');
-}
-
-function dynRenderSection(sec) {
-  window._dynCurrentSection = sec;
-  ['dashboard','rose','calendario','classifica'].forEach(function(s) {
-    var el = document.getElementById('dyn-s-'+s);
-    if (el) el.style.display = s===sec ? 'block' : 'none';
-    var nav = document.getElementById('dyn-nav-'+s);
-    if (nav) { nav.classList.toggle('active', s===sec); }
-  });
-  if (sec==='rose') dynRenderRose();
-  if (sec==='calendario') dynRenderCalendario();
-  if (sec==='classifica') dynRenderClassifica();
-  if (sec==='dashboard') dynRenderDashboard();
-}
-
-function dynRenderDashboard() {
-  var el = document.getElementById('dyn-dash-body'); if(!el) return;
-  var sq = window._dynTeam;
-  var cr = (window._dynCr||{})[sq] || 0;
-  var rose = ((window._dynRose||{})[sq]||[]);
-  var formato = (window._dynConfig||{}).formato || 'classic';
-  var ruoliLabel = formato==='mantra' ? ['P','D','C','A'] : ['Por','Dc','Dd','Ds','M','C','A','Pc'];
-  var counts = {};
-  ruoliLabel.forEach(function(r){counts[r]=0;});
-  rose.forEach(function(p){
-    var r = (p.ruolo||'').split(';')[0].trim();
-    if(counts[r]!==undefined) counts[r]++;
-  });
-  el.innerHTML = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">'
-    +'<div style="background:var(--card);border-radius:10px;padding:14px;text-align:center">'
-    +'<div style="font-size:9px;color:var(--text3);font-weight:700;text-transform:uppercase;margin-bottom:4px">💰 Crediti</div>'
-    +'<div style="font-family:Bebas Neue,sans-serif;font-size:28px;color:#f59e0b">'+cr+'</div>'
-    +'</div>'
-    +'<div style="background:var(--card);border-radius:10px;padding:14px;text-align:center">'
-    +'<div style="font-size:9px;color:var(--text3);font-weight:700;text-transform:uppercase;margin-bottom:4px">👥 Giocatori</div>'
-    +'<div style="font-family:Bebas Neue,sans-serif;font-size:28px;color:#10b981">'+rose.length+'</div>'
-    +'</div></div>'
-    +'<div style="display:flex;flex-wrap:wrap;gap:8px">'
-    +ruoliLabel.map(function(r){return '<span style="background:var(--bg2);border-radius:6px;padding:4px 10px;font-size:11px"><b>'+counts[r]+'</b> '+r+'</span>';}).join('')
-    +'</div>';
-}
-
-function dynRenderRose() {
-  var el = document.getElementById('dyn-rose-body'); if(!el) return;
-  var sq = window._dynTeam;
-  var rose = ((window._dynRose||{})[sq]||[]);
-  var formato = (window._dynConfig||{}).formato || 'classic';
-  var ruoliOrder = formato==='mantra' ? ['P','D','C','A'] : ['Por','Dc','B','Dd','Ds','E','M','C','T','W','A','Pc'];
-  rose = rose.slice().sort(function(a,b){
-    var ia=ruoliOrder.indexOf((a.ruolo||'').split(';')[0].trim());
-    var ib=ruoliOrder.indexOf((b.ruolo||'').split(';')[0].trim());
-    if(ia!==ib)return(ia>=0?ia:99)-(ib>=0?ib:99);
-    return (a.nome||'').localeCompare(b.nome||'');
-  });
-  if (!rose.length) { el.innerHTML='<div style="color:var(--text3);font-size:12px;padding:20px;text-align:center">Rosa non ancora disponibile</div>'; return; }
-  el.innerHTML = '<table style="width:100%;border-collapse:collapse">'
-    +'<thead><tr style="background:var(--bg2);font-size:9px;font-weight:800;text-transform:uppercase;color:var(--text3)">'
-    +'<th style="padding:7px 10px;text-align:left">Ruolo</th><th style="padding:7px 10px;text-align:left">Nome</th>'
-    +'<th style="padding:7px 10px;text-align:left">Club</th><th style="padding:7px 10px;text-align:right">Costo</th>'
-    +'</tr></thead><tbody>'
-    + rose.map(function(p){
-        return '<tr style="border-bottom:1px solid var(--border)">'
-          +'<td style="padding:7px 10px;font-size:10px;color:var(--text2)">'+p.ruolo+'</td>'
-          +'<td style="padding:7px 10px;font-size:12px;font-weight:700">'+p.nome+'</td>'
-          +'<td style="padding:7px 10px;font-size:11px;color:var(--text2)">'+(p.squadra||'')+'</td>'
-          +'<td style="padding:7px 10px;font-size:13px;font-family:Bebas Neue,sans-serif;color:#10b981;text-align:right">'+(p.costo||0)+'</td>'
-          +'</tr>';
-      }).join('')
-    +'</tbody></table>';
-}
-
-function dynRenderCalendario() {
-  var el = document.getElementById('dyn-cal-body'); if(!el) return;
-  var cal = window._dynCal || {};
-  var giornate = (window._dynConfig||{}).giornate || 34;
-  var RC = {VC:'rgba(16,185,129,.15);color:#10b981',VF:'rgba(16,185,129,.1);color:#34d399',
-            PC:'rgba(59,130,246,.12);color:#3b82f6',PF:'rgba(59,130,246,.08);color:#60a5fa',
-            SC:'rgba(239,68,68,.12);color:#ef4444',SF:'rgba(239,68,68,.08);color:#f87171',
-            V:'rgba(16,185,129,.15);color:#10b981',P:'rgba(59,130,246,.12);color:#3b82f6',
-            S:'rgba(239,68,68,.12);color:#ef4444'};
-  var h = '';
-  for (var g=1; g<=giornate; g++) {
-    var gio = cal[String(g)] || {};
-    var hasData = Object.values(gio).some(function(v){return v;});
-    h += '<div style="margin-bottom:10px"><div style="font-size:10px;font-weight:800;color:var(--text3);margin-bottom:6px">G'+g+'</div>'
-      +'<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:4px">';
-    (window._dynSquadre||[]).forEach(function(sq){
-      var res = gio[sq] || gio[sq.toUpperCase()] || '';
-      var style = res && RC[res] ? 'background:'+RC[res]+';' : 'background:var(--bg2);color:var(--text3);';
-      h += '<div style="'+style+'border-radius:6px;padding:5px 8px;font-size:10px;display:flex;justify-content:space-between;align-items:center">'
-        +'<span style="font-weight:700">'+sq+'</span>'
-        +(res?'<span style="font-family:Bebas Neue,sans-serif;font-size:13px">'+res+'</span>':'<span style="font-size:9px">-</span>')
-        +'</div>';
-    });
-    h += '</div></div>';
-  }
-  el.innerHTML = h || '<div style="color:var(--text3);font-size:12px;padding:20px;text-align:center">Calendario non disponibile</div>';
-}
-
-function dynRenderClassifica() {
-  var el = document.getElementById('dyn-class-body'); if(!el) return;
-  var cal = window._dynCal || {};
-  var squadre = window._dynSquadre || [];
-  var s = {};
-  squadre.forEach(function(t){ s[t]={v:0,p:0,s2:0,pt:0}; });
-  Object.keys(cal).forEach(function(g){
-    var gio = cal[g];
-    if (!Object.values(gio).some(function(v){return v;})) return;
-    Object.keys(gio).forEach(function(tRaw){
-      var t = squadre.find(function(sq){return sq.toUpperCase()===tRaw.toUpperCase();})||tRaw;
-      var res = gio[tRaw];
-      if (!res || !s[t]) return;
-      if (res==='VC'||res==='VF'||res==='V') { s[t].v++; s[t].pt+=3; }
-      else if (res==='PC'||res==='PF'||res==='P') { s[t].p++; s[t].pt+=1; }
-      else if (res==='SC'||res==='SF'||res==='S') { s[t].s2++; }
-    });
-  });
-  var sorted = squadre.slice().sort(function(a,b){
-    if(s[b].pt!==s[a].pt) return s[b].pt-s[a].pt;
-    return s[b].v-s[a].v;
-  });
-  el.innerHTML = '<table style="width:100%;border-collapse:collapse">'
-    +'<thead><tr style="background:var(--bg2);font-size:9px;font-weight:800;text-transform:uppercase;color:var(--text3)">'
-    +'<th style="padding:7px 8px">#</th><th style="padding:7px 8px;text-align:left">Squadra</th>'
-    +'<th style="padding:7px 8px;text-align:center">G</th><th style="padding:7px 8px;text-align:center;color:#10b981">V</th>'
-    +'<th style="padding:7px 8px;text-align:center">P</th><th style="padding:7px 8px;text-align:center;color:#ef4444">S</th>'
-    +'<th style="padding:7px 8px;text-align:center;color:var(--green)">Pt</th>'
-    +'</tr></thead><tbody>'
-    + sorted.map(function(t,i){
-        var st=s[t]; var g=st.v+st.p+st.s2;
-        return '<tr style="border-bottom:1px solid var(--border)">'
-          +'<td style="padding:7px 8px;font-family:Bebas Neue,sans-serif;font-size:15px;text-align:center">'+(i+1)+'</td>'
-          +'<td style="padding:7px 8px;font-size:12px;font-weight:700">'+t+'</td>'
-          +'<td style="padding:7px 8px;text-align:center;font-size:11px;color:var(--text2)">'+g+'</td>'
-          +'<td style="padding:7px 8px;text-align:center;font-size:11px;color:#10b981">'+st.v+'</td>'
-          +'<td style="padding:7px 8px;text-align:center;font-size:11px;color:var(--text2)">'+st.p+'</td>'
-          +'<td style="padding:7px 8px;text-align:center;font-size:11px;color:#ef4444">'+st.s2+'</td>'
-          +'<td style="padding:7px 8px;text-align:center;font-family:Bebas Neue,sans-serif;font-size:17px;color:var(--green)">'+st.pt+'</td>'
-          +'</tr>';
-      }).join('')
-    +'</tbody></table>';
-}
-
 function enterLeague(tournament, leagueKey) {
   // Verifica login utente
   var loggedUser = localStorage.getItem('current_user');
@@ -8786,7 +8607,7 @@ function showSection(id,el){
   else if(id==='stadio')slimRenderStadio();
   else if(id==='multe')renderMulte();
   else if(id==='coppe'){initCoppaLogos();closeBracket();}
-  else if(id==='modulistica'){ initModulistica(); }
+  else if(id==='modulistica'){ initModulistica('slim'); }
 }
 var currentTeam='SALERNITANA',currentFilter='ALL';
 function roleBadge(r){var roles=r.split(';').map(function(x){return x.trim();}).filter(function(x){return x;});return roles.map(function(x){var c=ROLE_COLORS[x]||['rgba(107,114,128,.15)','#6b7280'];return'<span style="display:inline-block;font-size:8px;font-weight:800;padding:2px 5px;border-radius:3px;background:'+c[0]+';color:'+c[1]+';margin:1px">'+x+'</span>';}).join('');}
@@ -10235,117 +10056,6 @@ function tsmRenderMulte(){
   });
   el.innerHTML=h;
 }
-
-var MODULISTICA_DATA = {
-  'slim': {
-    titolo: 'Scudetto Slim',
-    sottotitolo: 'Moduli ufficiali Scudetto Slim — clicca per compilare',
-    moduli: [
-      { titolo: 'Scambi', icona: '🔄', colore: '#3b82f6', descrizione: 'Richiesta ufficiale di scambio calciatori tra due manager della lega.', link: '#' },
-      { titolo: 'Acquisto Gettoni Bonus', icona: '🎫', colore: '#f59e0b', descrizione: 'Acquista gettoni bonus aggiuntivi da utilizzare durante la stagione.', link: '#' },
-      { titolo: 'Utilizzo Gettone Medico Sociale', icona: '🏥', colore: '#10b981', descrizione: 'Utilizza il gettone Medico Sociale per sostituire un calciatore infortunato.', link: '#' },
-      { titolo: 'Utilizzo Gettone Talent Scout', icona: '🔭', colore: '#8b5cf6', descrizione: 'Utilizza il gettone Talent Scout per scoprire e acquisire nuovi talenti.', link: '#' },
-      { titolo: 'Utilizzo Gettone Sold Out', icona: '🏷️', colore: '#ef4444', descrizione: 'Utilizza il gettone Sold Out per bloccare la vendita di un tuo calciatore.', link: '#' }
-    ]
-  },
-  'tsm_it': {
-    titolo: 'TSM Italia',
-    sottotitolo: 'Moduli ufficiali TSM Italia — clicca per compilare',
-    moduli: [
-      { titolo: 'Scambi', icona: '🔄', colore: '#3b82f6', descrizione: 'Richiesta ufficiale di scambio calciatori tra due manager della lega.', link: '#' },
-      { titolo: 'Acquisto Gettoni Bonus', icona: '🎫', colore: '#f59e0b', descrizione: 'Acquista gettoni bonus aggiuntivi da utilizzare durante la stagione.', link: '#' },
-      { titolo: 'Utilizzo Gettone Medico Sociale', icona: '🏥', colore: '#10b981', descrizione: 'Utilizza il gettone Medico Sociale per sostituire un calciatore infortunato.', link: '#' },
-      { titolo: 'Utilizzo Gettone Talent Scout', icona: '🔭', colore: '#8b5cf6', descrizione: 'Utilizza il gettone Talent Scout per scoprire e acquisire nuovi talenti.', link: '#' },
-      { titolo: 'Utilizzo Gettone Sold Out', icona: '🏷️', colore: '#ef4444', descrizione: 'Utilizza il gettone Sold Out per bloccare la vendita di un tuo calciatore.', link: '#' }
-    ]
-  }
-};
-
-function initModulistica() {
-  // Popola il selettore torneo con tutti i tornei da ADMIN_TORNEI
-  var sel = document.getElementById('mod-sel-torneo');
-  if (!sel) return;
-  sel.innerHTML = '<option value="">-- Seleziona Torneo --</option>';
-  var at = JSON.parse(localStorage.getItem('admin_tornei')||'[]');
-  at.forEach(function(t) {
-    var o = document.createElement('option');
-    o.value = t.key;
-    o.textContent = t.label || t.key;
-    sel.appendChild(o);
-  });
-  // Se c'è un solo torneo, selezionalo automaticamente
-  if (at.length === 1) {
-    sel.value = at[0].key;
-    modSelTorneoChange();
-  }
-}
-
-function modSelTorneoChange() {
-  var torneoKey = document.getElementById('mod-sel-torneo').value;
-  var legaSel = document.getElementById('mod-sel-lega');
-  legaSel.innerHTML = '<option value="">-- Seleziona Lega --</option>';
-  document.getElementById('slim-modulistica-body').innerHTML = '';
-  if (!torneoKey) return;
-  var at = JSON.parse(localStorage.getItem('admin_tornei')||'[]');
-  var torneo = at.find(function(t){return t.key===torneoKey;});
-  if (!torneo) return;
-  torneo.leghe.forEach(function(l) {
-    var o = document.createElement('option');
-    o.value = l.key;
-    o.textContent = l.label || l.key;
-    legaSel.appendChild(o);
-  });
-  // Se c'è una sola lega, selezionala automaticamente
-  if (torneo.leghe.length === 1) {
-    legaSel.value = torneo.leghe[0].key;
-    modSelLegaChange();
-  }
-}
-
-function modSelLegaChange() {
-  var torneoKey = document.getElementById('mod-sel-torneo').value;
-  var legaKey = document.getElementById('mod-sel-lega').value;
-  if (!torneoKey || !legaKey) return;
-  // Chiave modulistica: torneo_lega o solo torneo (per slim_it → 'slim')
-  var modKey = torneoKey === 'slim' && legaKey === 'it' ? 'slim'
-    : torneoKey === 'tsm' && legaKey === 'it' ? 'tsm_it'
-    : torneoKey + '_' + legaKey;
-  // Carica da localStorage se salvati dall'admin
-  var saved = localStorage.getItem('admin_modulistica');
-  if (saved) { try { var sd=JSON.parse(saved); if(sd) { Object.keys(sd).forEach(function(k){MODULISTICA_DATA[k]=sd[k];}); } } catch(e){} }
-  renderModulistica(modKey, 'slim-modulistica-body');
-}
-
-function renderModulistica(torneoKey, containerId) {
-  containerId = containerId || ((torneoKey === 'tsm_it') ? 'tsm-modulistica-body' : 'slim-modulistica-body');
-  var el = document.getElementById(containerId);
-  if (!el) return;
-  var data = MODULISTICA_DATA[torneoKey] || MODULISTICA_DATA['slim'];
-  if (!data || !data.moduli || !data.moduli.length) {
-    el.innerHTML = '<div style="color:var(--text3);font-size:13px;padding:20px">Nessun modulo configurato per questa lega.</div>';
-    return;
-  }
-  el.innerHTML = data.moduli.map(function(m) {
-    var hex = m.colore;
-    var rgb = hex === '#3b82f6' ? '59,130,246' : hex === '#f59e0b' ? '245,158,11' : hex === '#10b981' ? '16,185,129' : hex === '#8b5cf6' ? '139,92,246' : '239,68,68';
-    return '<a href="' + m.link + '" target="_blank" style="text-decoration:none">'
-      + '<div style="background:var(--card);border:2px solid var(--border);border-radius:16px;padding:20px;cursor:pointer;transition:all .25s;display:flex;align-items:flex-start;gap:14px"'
-      + ' onmouseover="this.style.borderColor=\'' + hex + '\';this.style.transform=\'translateY(-3px)\';this.style.boxShadow=\'0 8px 30px rgba(' + rgb + ',.15)\'"'
-      + ' onmouseout="this.style.borderColor=\'var(--border)\';this.style.transform=\'\';this.style.boxShadow=\'\'">'
-      + '<div style="width:44px;height:44px;border-radius:12px;background:rgba(' + rgb + ',.12);border:1px solid rgba(' + rgb + ',.25);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:22px">' + m.icona + '</div>'
-      + '<div>'
-      + '<div style="font-size:13px;font-weight:800;color:var(--text);margin-bottom:4px">' + m.titolo + '</div>'
-      + '<div style="font-size:11px;color:var(--text2);line-height:1.5">' + m.descrizione + '</div>'
-      + '<div style="display:inline-flex;align-items:center;gap:4px;margin-top:8px;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:' + hex + '">'
-      + 'Apri modulo <svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>'
-      + '</div></div></div></a>';
-  }).join('');
-}
-
-
-// ═══════════════════════════════════════════════════════
-// ADMIN — Configurazione
-// ═══════════════════════════════════════════════════════
 
 // ═══════════════════════════════════════════════════════
 // GOOGLE SHEETS — Layer di sincronizzazione
@@ -12927,78 +12637,6 @@ function admSaveCalGiornata(t,l,g) {
   gsSaveCalendario(t, l, cal);
   var msg=document.createElement('div');msg.textContent='✅ Giornata '+g+' salvata'+(GS_ONLINE?' · Sincronizzato':'');msg.style.cssText='position:fixed;top:70px;right:20px;background:#10b981;color:#fff;padding:8px 16px;border-radius:8px;font-weight:700;font-size:12px;z-index:9999';document.body.appendChild(msg);setTimeout(function(){msg.remove();},2000);
 }
-
-// ═══════════════════════════════════════════════════════
-// ADMIN — Modulistica
-// ═══════════════════════════════════════════════════════
-function admRenderModulistica() {
-  var el = document.getElementById('adm-mod-body'); if(!el) return;
-  // Sincronizza MODULISTICA_DATA con i tornei in ADMIN_TORNEI
-  ADMIN_TORNEI.forEach(function(t) {
-    if (!MODULISTICA_DATA[t.key]) {
-      MODULISTICA_DATA[t.key] = {
-        titolo: t.label,
-        sottotitolo: 'Moduli ufficiali ' + t.label + ' — clicca per compilare',
-        moduli: [
-          {titolo:'Scambi', icona:'🔄', colore:'#3b82f6', descrizione:'Richiesta ufficiale di scambio calciatori.', link:'#'},
-          {titolo:'Acquisto Gettoni Bonus', icona:'🎫', colore:'#f59e0b', descrizione:'Acquista gettoni bonus aggiuntivi.', link:'#'},
-          {titolo:'Utilizzo Gettone Medico Sociale', icona:'🏥', colore:'#10b981', descrizione:'Utilizza il gettone Medico Sociale.', link:'#'},
-          {titolo:'Utilizzo Gettone Talent Scout', icona:'🔭', colore:'#8b5cf6', descrizione:'Utilizza il gettone Talent Scout.', link:'#'},
-          {titolo:'Utilizzo Gettone Sold Out', icona:'🏷️', colore:'#ef4444', descrizione:'Utilizza il gettone Sold Out.', link:'#'}
-        ]
-      };
-    }
-  });
-  // Mostra SOLO i tornei presenti in ADMIN_TORNEI (ordine coerente, niente duplicati)
-  var h = '';
-  ADMIN_TORNEI.forEach(function(t) {
-    var key = t.key;
-    var d = MODULISTICA_DATA[key];
-    if (!d) return;
-    h += '<div class="card" style="padding:0;overflow:hidden;margin-bottom:16px">'
-      +'<div style="padding:12px 16px;background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px">'
-      +'<span style="font-size:11px;font-weight:800;text-transform:uppercase;color:var(--text2);flex:1">'+d.titolo+'</span>'
-      +'</div>';
-    d.moduli.forEach(function(m, mi) {
-      h += '<div style="display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--border)">'
-        +'<span style="font-size:20px;flex-shrink:0">'+m.icona+'</span>'
-        +'<div style="flex:1;min-width:500px">'
-        +'<div style="font-size:12px;font-weight:700;margin-bottom:4px">'+m.titolo+'</div>'
-        +'<input type="text" value="'+m.link+'" placeholder="https://forms.google.com/..." '
-        +'data-key="'+key+'" data-mi="'+mi+'" onchange="admUpdateModuloLinkEl(this)" '
-        +'style="width:100%;padding:6px 10px;background:var(--bg2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:12px;outline:none;box-sizing:border-box">'
-        +'</div>'
-        +'<button data-key="'+key+'" data-mi="'+mi+'" onclick="admDeleteModuloEl(this)" style="background:none;border:none;color:#ef4444;cursor:pointer;font-size:16px;flex-shrink:0" title="Rimuovi modulo">✕</button>'
-        +'</div>';
-    });
-    h += '<div style="padding:10px 14px;display:flex;gap:8px;border-top:1px solid var(--border)">'
-      +'<button data-key="'+key+'" onclick="admAddModuloEl(this)" style="padding:6px 14px;background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.2);color:#10b981;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer">+ Aggiungi Modulo</button>'
-      +'<button onclick="admSaveModulistica()" style="padding:6px 14px;background:#10b981;color:#fff;border:none;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer">Salva Tutti</button>'
-      +'</div>'
-      +'</div>';
-  });
-  el.innerHTML = h;
-}
-function admUpdateModuloLinkEl(el) {
-  admUpdateModuloLink(el.dataset.key, +el.dataset.mi, el.value);
-}
-function admUpdateModuloLink(key, mi, val) {
-  if (MODULISTICA_DATA[key]&&MODULISTICA_DATA[key].moduli[mi]) MODULISTICA_DATA[key].moduli[mi].link=val;
-}
-function admAddModulo(key) {
-  var titolo = prompt('Nome del nuovo modulo:');
-  if (!titolo) return;
-  MODULISTICA_DATA[key].moduli.push({titolo:titolo, icona:'📄', colore:'#6b7280', descrizione:'Nuovo modulo', link:'#'});
-  admSaveModulistica();
-  admRenderModulistica();
-}
-function admSaveModulistica() {
-  localStorage.setItem('admin_modulistica', JSON.stringify(MODULISTICA_DATA));
-  gsSaveKey('admin_modulistica', JSON.stringify(MODULISTICA_DATA));
-  gsSaveKey('admin_modulistica', localStorage.getItem('admin_modulistica'));
-  var msg=document.createElement('div');msg.textContent='✅ Modulistica salvata';msg.style.cssText='position:fixed;top:70px;right:20px;background:#10b981;color:#fff;padding:8px 16px;border-radius:8px;font-weight:700;font-size:12px;z-index:9999';document.body.appendChild(msg);setTimeout(function(){msg.remove();},2000);
-}
-
 // ═══════════════════════════════════════════════════════
 // ADMIN — Sponsor
 // ═══════════════════════════════════════════════════════
@@ -13483,7 +13121,7 @@ function dynSelectTeam(sq) {
 
 function dynRenderSection(sec) {
   window._dynCurrentSection = sec;
-  ['dashboard','rose','calendario','classifica'].forEach(function(s) {
+  ['dashboard','rose','calendario','classifica','modulistica'].forEach(function(s) {
     var el = document.getElementById('dyn-s-'+s);
     if (el) el.style.display = s===sec ? 'block' : 'none';
     var nav = document.getElementById('dyn-nav-'+s);
@@ -13493,6 +13131,7 @@ function dynRenderSection(sec) {
   if (sec==='calendario') dynRenderCalendario();
   if (sec==='classifica') dynRenderClassifica();
   if (sec==='dashboard') dynRenderDashboard();
+  if (sec==='modulistica') dynRenderModulistica();
 }
 
 function dynRenderDashboard() {
@@ -13621,6 +13260,14 @@ function dynRenderClassifica() {
           +'</tr>';
       }).join('')
     +'</tbody></table>';
+}
+
+function dynRenderModulistica() {
+  var torneo = window._dynTorneo || '';
+  var lega   = window._dynLega  || '';
+  if (!torneo) return;
+  var modKey = _modKey(torneo, lega);
+  renderModulistica(modKey, 'dyn-modulistica-body');
 }
 
 function enterLeague(tournament, leagueKey) {
@@ -13869,7 +13516,7 @@ function showSection(id,el){
   else if(id==='stadio')slimRenderStadio();
   else if(id==='multe')renderMulte();
   else if(id==='coppe'){initCoppaLogos();closeBracket();}
-  else if(id==='modulistica'){ initModulistica(); }
+  else if(id==='modulistica'){ initModulistica('slim'); }
 }
 var currentTeam='SALERNITANA',currentFilter='ALL';
 function roleBadge(r){var roles=r.split(';').map(function(x){return x.trim();}).filter(function(x){return x;});return roles.map(function(x){var c=ROLE_COLORS[x]||['rgba(107,114,128,.15)','#6b7280'];return'<span style="display:inline-block;font-size:8px;font-weight:800;padding:2px 5px;border-radius:3px;background:'+c[0]+';color:'+c[1]+';margin:1px">'+x+'</span>';}).join('');}
@@ -14597,6 +14244,7 @@ function doLogin(){
       <button id="dyn-nav-rose" onclick="dynRenderSection('rose')" class="nav-item" style="flex-shrink:0;padding:6px 14px;border-radius:8px;font-size:11px;font-weight:700;border:1px solid var(--border);background:var(--bg2);color:var(--text);cursor:pointer">Rose</button>
       <button id="dyn-nav-calendario" onclick="dynRenderSection('calendario')" class="nav-item" style="flex-shrink:0;padding:6px 14px;border-radius:8px;font-size:11px;font-weight:700;border:1px solid var(--border);background:var(--bg2);color:var(--text);cursor:pointer">Calendario</button>
       <button id="dyn-nav-classifica" onclick="dynRenderSection('classifica')" class="nav-item" style="flex-shrink:0;padding:6px 14px;border-radius:8px;font-size:11px;font-weight:700;border:1px solid var(--border);background:var(--bg2);color:var(--text);cursor:pointer">Classifica</button>
+      <button id="dyn-nav-modulistica" onclick="dynRenderSection('modulistica')" class="nav-item" style="flex-shrink:0;padding:6px 14px;border-radius:8px;font-size:11px;font-weight:700;border:1px solid var(--border);background:var(--bg2);color:var(--text);cursor:pointer">📑 Moduli</button>
     </div>
 
     <!-- Sezioni -->
@@ -14604,6 +14252,11 @@ function doLogin(){
     <div id="dyn-s-rose" style="display:none"><div id="dyn-rose-body"></div></div>
     <div id="dyn-s-calendario" style="display:none"><div id="dyn-cal-body"></div></div>
     <div id="dyn-s-classifica" style="display:none"><div id="dyn-class-body"></div></div>
+    <div id="dyn-s-modulistica" style="display:none">
+      <div style="font-family:'Bebas Neue';font-size:24px;letter-spacing:2px;margin-bottom:6px">📋 <span style="color:#10b981">Modulistica</span></div>
+      <div style="font-size:11px;color:var(--text2);margin-bottom:20px">Moduli ufficiali — clicca per compilare</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px" id="dyn-modulistica-body"></div>
+    </div>
   </div>
 </div>
 
