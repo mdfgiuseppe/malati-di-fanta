@@ -4722,6 +4722,12 @@ function gsPing() {
           gsLoadKey('adm_stadio_saved_'+t.key+'_'+l.key, function(val) {
             if (val !== null) localStorage.setItem('adm_stadio_saved_'+t.key+'_'+l.key, typeof val === 'string' ? val : JSON.stringify(val));
           });
+          // Logo lega
+          (function(_tk, _lk) {
+            gsLoadKey('adm_logo_lega_'+_tk+'_'+_lk, function(val) {
+              if (val !== null && val !== undefined && val !== '') localStorage.setItem('adm_logo_lega_'+_tk+'_'+_lk, val);
+            });
+          })(t.key, l.key);
         });
       });
     }
@@ -6242,7 +6248,7 @@ function admRenderTornei() {
   if (!ADMIN_TORNEI.length) { el.innerHTML='<div style="color:var(--text2);font-size:12px;padding:10px">Nessun torneo presente</div>'; return; }
   el.innerHTML = ADMIN_TORNEI.map(function(t, ti) {
     var badge = t.formato==='mantra' ? '<span style="background:rgba(139,92,246,.15);color:#8b5cf6;font-size:9px;font-weight:800;padding:2px 8px;border-radius:20px;text-transform:uppercase">Mantra</span>' : '<span style="background:rgba(16,185,129,.15);color:#10b981;font-size:9px;font-weight:800;padding:2px 8px;border-radius:20px;text-transform:uppercase">Classic</span>';
-    var leghe = t.leghe.map(function(l, li) {
+    var leghe = t.leghe.map(function(l,li){return {l:l,li:li};}).sort(function(a,b){return a.l.label.localeCompare(b.l.label);}).map(function(item){var l=item.l,li=item.li;
       return '<div style="display:flex;align-items:center;gap:8px;padding:6px 10px;background:var(--bg2);border-radius:6px;margin-bottom:4px">'
         +'<span style="font-size:11px;font-weight:700;flex:1">'+l.label+'</span>'
         +'<span style="font-size:9px;color:var(--text3)">'+l.key+'</span>'
@@ -6724,8 +6730,8 @@ function admEditLogoLega(ti, li) {
   if (url === null) return;
   url = url.trim();
   url = _normalizeImgUrl(url);
-  if (url) localStorage.setItem('adm_logo_lega_'+t.key+'_'+l.key, url);
-  else localStorage.removeItem('adm_logo_lega_'+t.key+'_'+l.key);
+  if (url) { localStorage.setItem('adm_logo_lega_'+t.key+'_'+l.key, url); gsSaveKey('adm_logo_lega_'+t.key+'_'+l.key, url); }
+  else { localStorage.removeItem('adm_logo_lega_'+t.key+'_'+l.key); gsSaveKey('adm_logo_lega_'+t.key+'_'+l.key, ''); }
   var msg = document.createElement('div');
   msg.textContent = url ? '✅ URL logo lega salvato' : '✅ URL rimosso';
   msg.style.cssText = 'position:fixed;top:70px;right:20px;background:#3b82f6;color:#fff;padding:8px 16px;border-radius:8px;font-weight:700;font-size:12px;z-index:9999';
@@ -11444,7 +11450,7 @@ function admRenderTornei() {
   if (!ADMIN_TORNEI.length) { el.innerHTML='<div style="color:var(--text2);font-size:12px;padding:10px">Nessun torneo presente</div>'; return; }
   el.innerHTML = ADMIN_TORNEI.map(function(t, ti) {
     var badge = t.formato==='mantra' ? '<span style="background:rgba(139,92,246,.15);color:#8b5cf6;font-size:9px;font-weight:800;padding:2px 8px;border-radius:20px;text-transform:uppercase">Mantra</span>' : '<span style="background:rgba(16,185,129,.15);color:#10b981;font-size:9px;font-weight:800;padding:2px 8px;border-radius:20px;text-transform:uppercase">Classic</span>';
-    var leghe = t.leghe.map(function(l, li) {
+    var leghe = t.leghe.map(function(l,li){return {l:l,li:li};}).sort(function(a,b){return a.l.label.localeCompare(b.l.label);}).map(function(item){var l=item.l,li=item.li;
       return '<div style="display:flex;align-items:center;gap:8px;padding:6px 10px;background:var(--bg2);border-radius:6px;margin-bottom:4px">'
         +'<span style="font-size:11px;font-weight:700;flex:1">'+l.label+'</span>'
         +'<span style="font-size:9px;color:var(--text3)">'+l.key+'</span>'
@@ -11737,8 +11743,8 @@ function admEditLogoLega(ti, li) {
   if (url === null) return;
   url = url.trim();
   url = _normalizeImgUrl(url);
-  if (url) localStorage.setItem('adm_logo_lega_'+t.key+'_'+l.key, url);
-  else localStorage.removeItem('adm_logo_lega_'+t.key+'_'+l.key);
+  if (url) { localStorage.setItem('adm_logo_lega_'+t.key+'_'+l.key, url); gsSaveKey('adm_logo_lega_'+t.key+'_'+l.key, url); }
+  else { localStorage.removeItem('adm_logo_lega_'+t.key+'_'+l.key); gsSaveKey('adm_logo_lega_'+t.key+'_'+l.key, ''); }
   var msg = document.createElement('div');
   msg.textContent = url ? '✅ URL logo lega salvato' : '✅ URL rimosso';
   msg.style.cssText = 'position:fixed;top:70px;right:20px;background:#3b82f6;color:#fff;padding:8px 16px;border-radius:8px;font-weight:700;font-size:12px;z-index:9999';
