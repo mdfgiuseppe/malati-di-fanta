@@ -3751,11 +3751,12 @@ var currentTournament = null;
 // Aggiorna contatori leghe e club nella dashboard
 function updateLogosTornei() {
   try {
-    var at = JSON.parse(localStorage.getItem('admin_tornei')||'null') || [];
+    var at = (typeof ADMIN_TORNEI !== 'undefined' && ADMIN_TORNEI.length)
+      ? ADMIN_TORNEI
+      : JSON.parse(localStorage.getItem('admin_tornei')||'null') || [];
     at.forEach(function(t) {
       var url = localStorage.getItem('adm_logo_torneo_'+t.key);
       if (!url) return;
-      // Aggiorna img nella t-card
       document.querySelectorAll('.t-card').forEach(function(card) {
         if (card.getAttribute('onclick') && card.getAttribute('onclick').indexOf("'"+t.key+"'") >= 0) {
           var img = card.querySelector('.t-logo-area img');
@@ -9505,11 +9506,12 @@ var currentTournament = null;
 // Aggiorna contatori leghe e club nella dashboard
 function updateLogosTornei() {
   try {
-    var at = JSON.parse(localStorage.getItem('admin_tornei')||'null') || [];
+    var at = (typeof ADMIN_TORNEI !== 'undefined' && ADMIN_TORNEI.length)
+      ? ADMIN_TORNEI
+      : JSON.parse(localStorage.getItem('admin_tornei')||'null') || [];
     at.forEach(function(t) {
       var url = localStorage.getItem('adm_logo_torneo_'+t.key);
       if (!url) return;
-      // Aggiorna img nella t-card
       document.querySelectorAll('.t-card').forEach(function(card) {
         if (card.getAttribute('onclick') && card.getAttribute('onclick').indexOf("'"+t.key+"'") >= 0) {
           var img = card.querySelector('.t-logo-area img');
