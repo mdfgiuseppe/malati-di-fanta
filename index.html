@@ -3918,17 +3918,23 @@ function _updateLegaDashboard(leagueKey) {
   // Aggiorna immagine trofeo nazionale nella dashboard della lega
   var trophyEl = document.getElementById('lega-dash-trophy');
   if (trophyEl) {
-    // Cerca torneo di questa lega
+    trophyEl.src = '';
     var _trofeoTorneoKey = '';
     if (typeof ADMIN_TORNEI !== 'undefined') {
       ADMIN_TORNEI.forEach(function(t) {
-        t.leghe.slice().sort(function(a,b){return a.label.localeCompare(b.label);}).forEach(function(l){ if(l.key===leagueKey) _trofeoTorneoKey=t.key; });
+        t.leghe.forEach(function(l){ if(l.key===leagueKey) _trofeoTorneoKey=t.key; });
       });
     }
     var _trofeoUrl = (_trofeoTorneoKey ? localStorage.getItem('adm_trofeo_lega_'+_trofeoTorneoKey+'_'+leagueKey) : null)
       || (_trofeoTorneoKey ? localStorage.getItem('adm_trofeo_url_'+_trofeoTorneoKey) : null);
     if (_trofeoUrl) {
       trophyEl.src = _normalizeImgUrl(_trofeoUrl);
+    } else if (_trofeoTorneoKey && typeof gsLoadKey === 'function' && typeof GS_ONLINE !== 'undefined' && GS_ONLINE) {
+      (function(el, tk, lk) {
+        gsLoadKey('adm_trofeo_lega_'+tk+'_'+lk, function(val) {
+          if (val) { localStorage.setItem('adm_trofeo_lega_'+tk+'_'+lk, val); el.src = _normalizeImgUrl(val); }
+        });
+      })(trophyEl, _trofeoTorneoKey, leagueKey);
     } else if (typeof TROPHY_MAP !== 'undefined') {
       var trophyName = trophyMap[leagueKey];
       if (trophyName && TROPHY_MAP[trophyName]) trophyEl.src = TROPHY_MAP[trophyName];
@@ -9676,17 +9682,23 @@ function _updateLegaDashboard(leagueKey) {
   // Aggiorna immagine trofeo nazionale nella dashboard della lega
   var trophyEl = document.getElementById('lega-dash-trophy');
   if (trophyEl) {
-    // Cerca torneo di questa lega
+    trophyEl.src = '';
     var _trofeoTorneoKey = '';
     if (typeof ADMIN_TORNEI !== 'undefined') {
       ADMIN_TORNEI.forEach(function(t) {
-        t.leghe.slice().sort(function(a,b){return a.label.localeCompare(b.label);}).forEach(function(l){ if(l.key===leagueKey) _trofeoTorneoKey=t.key; });
+        t.leghe.forEach(function(l){ if(l.key===leagueKey) _trofeoTorneoKey=t.key; });
       });
     }
     var _trofeoUrl = (_trofeoTorneoKey ? localStorage.getItem('adm_trofeo_lega_'+_trofeoTorneoKey+'_'+leagueKey) : null)
       || (_trofeoTorneoKey ? localStorage.getItem('adm_trofeo_url_'+_trofeoTorneoKey) : null);
     if (_trofeoUrl) {
       trophyEl.src = _normalizeImgUrl(_trofeoUrl);
+    } else if (_trofeoTorneoKey && typeof gsLoadKey === 'function' && typeof GS_ONLINE !== 'undefined' && GS_ONLINE) {
+      (function(el, tk, lk) {
+        gsLoadKey('adm_trofeo_lega_'+tk+'_'+lk, function(val) {
+          if (val) { localStorage.setItem('adm_trofeo_lega_'+tk+'_'+lk, val); el.src = _normalizeImgUrl(val); }
+        });
+      })(trophyEl, _trofeoTorneoKey, leagueKey);
     } else if (typeof TROPHY_MAP !== 'undefined') {
       var trophyName = trophyMap[leagueKey];
       if (trophyName && TROPHY_MAP[trophyName]) trophyEl.src = TROPHY_MAP[trophyName];
