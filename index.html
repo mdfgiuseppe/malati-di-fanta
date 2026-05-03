@@ -1323,15 +1323,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   <!-- ===== MODULISTICA ===== -->
   <div id="s-modulistica" class="section">
     <div style="font-family:'Bebas Neue';font-size:28px;letter-spacing:2px;margin-bottom:6px">📋 <span style="color:#10b981">Modulistica</span></div>
-    <div style="font-size:11px;color:var(--text2);margin-bottom:16px" id="slim-mod-subtitle">Moduli ufficiali — clicca per compilare</div>
-    <div style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap">
-      <select id="mod-sel-torneo" onchange="modSelTorneoChange()" style="padding:8px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;outline:none">
-        <option value="">-- Seleziona Torneo --</option>
-      </select>
-      <select id="mod-sel-lega" onchange="modSelLegaChange()" style="padding:8px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;outline:none">
-        <option value="">-- Seleziona Lega --</option>
-      </select>
-    </div>
+    <div style="font-size:11px;color:var(--text2);margin-bottom:20px" id="slim-mod-subtitle">Moduli ufficiali — clicca per compilare</div>
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px" id="slim-modulistica-body"></div>
   </div>
 
@@ -8634,7 +8626,7 @@ function showSection(id,el){
   else if(id==='stadio')slimRenderStadio();
   else if(id==='multe')renderMulte();
   else if(id==='coppe'){initCoppaLogos();closeBracket();}
-  else if(id==='modulistica'){ initModulistica('slim'); }
+  else if(id==='modulistica'){ renderModulistica('slim', 'slim-modulistica-body'); }
 }
 var currentTeam='SALERNITANA',currentFilter='ALL';
 function roleBadge(r){var roles=r.split(';').map(function(x){return x.trim();}).filter(function(x){return x;});return roles.map(function(x){var c=ROLE_COLORS[x]||['rgba(107,114,128,.15)','#6b7280'];return'<span style="display:inline-block;font-size:8px;font-weight:800;padding:2px 5px;border-radius:3px;background:'+c[0]+';color:'+c[1]+';margin:1px">'+x+'</span>';}).join('');}
@@ -13543,7 +13535,7 @@ function showSection(id,el){
   else if(id==='stadio')slimRenderStadio();
   else if(id==='multe')renderMulte();
   else if(id==='coppe'){initCoppaLogos();closeBracket();}
-  else if(id==='modulistica'){ initModulistica('slim'); }
+  else if(id==='modulistica'){ renderModulistica('slim', 'slim-modulistica-body'); }
 }
 var currentTeam='SALERNITANA',currentFilter='ALL';
 function roleBadge(r){var roles=r.split(';').map(function(x){return x.trim();}).filter(function(x){return x;});return roles.map(function(x){var c=ROLE_COLORS[x]||['rgba(107,114,128,.15)','#6b7280'];return'<span style="display:inline-block;font-size:8px;font-weight:800;padding:2px 5px;border-radius:3px;background:'+c[0]+';color:'+c[1]+';margin:1px">'+x+'</span>';}).join('');}
