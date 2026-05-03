@@ -3924,9 +3924,10 @@ function _updateLegaDashboard(leagueKey) {
         t.leghe.slice().sort(function(a,b){return a.label.localeCompare(b.label);}).forEach(function(l){ if(l.key===leagueKey) _trofeoTorneoKey=t.key; });
       });
     }
-    var _trofeoUrl = _trofeoTorneoKey ? localStorage.getItem('adm_trofeo_url_'+_trofeoTorneoKey) : null;
+    var _trofeoUrl = (_trofeoTorneoKey ? localStorage.getItem('adm_trofeo_lega_'+_trofeoTorneoKey+'_'+leagueKey) : null)
+      || (_trofeoTorneoKey ? localStorage.getItem('adm_trofeo_url_'+_trofeoTorneoKey) : null);
     if (_trofeoUrl) {
-      trophyEl.src = _trofeoUrl;
+      trophyEl.src = _normalizeImgUrl(_trofeoUrl);
     } else if (typeof TROPHY_MAP !== 'undefined') {
       var trophyName = trophyMap[leagueKey];
       if (trophyName && TROPHY_MAP[trophyName]) trophyEl.src = TROPHY_MAP[trophyName];
@@ -6275,7 +6276,6 @@ function admRenderTornei() {
       +'<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">'
       +'<div style="font-family:\'Bebas Neue\';font-size:18px;flex:1">'+t.label+'</div>'
       +badge
-      +'<button onclick="admEditTrofeoUrl('+ti+')" style="background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.2);color:#3b82f6;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer">🖼 Trofeo</button>'
       +'<button onclick="admEditLogoTorneo('+ti+')" style="background:rgba(139,92,246,.1);border:1px solid rgba(139,92,246,.2);color:#8b5cf6;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer">🖼 Logo</button>'
       +'<button onclick="admConfirmRemoveTorneo('+ti+')" style="background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);color:#ef4444;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer">🗑 Elimina</button>'
       +'</div>'
@@ -9678,9 +9678,10 @@ function _updateLegaDashboard(leagueKey) {
         t.leghe.slice().sort(function(a,b){return a.label.localeCompare(b.label);}).forEach(function(l){ if(l.key===leagueKey) _trofeoTorneoKey=t.key; });
       });
     }
-    var _trofeoUrl = _trofeoTorneoKey ? localStorage.getItem('adm_trofeo_url_'+_trofeoTorneoKey) : null;
+    var _trofeoUrl = (_trofeoTorneoKey ? localStorage.getItem('adm_trofeo_lega_'+_trofeoTorneoKey+'_'+leagueKey) : null)
+      || (_trofeoTorneoKey ? localStorage.getItem('adm_trofeo_url_'+_trofeoTorneoKey) : null);
     if (_trofeoUrl) {
-      trophyEl.src = _trofeoUrl;
+      trophyEl.src = _normalizeImgUrl(_trofeoUrl);
     } else if (typeof TROPHY_MAP !== 'undefined') {
       var trophyName = trophyMap[leagueKey];
       if (trophyName && TROPHY_MAP[trophyName]) trophyEl.src = TROPHY_MAP[trophyName];
@@ -11497,7 +11498,6 @@ function admRenderTornei() {
       +'<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">'
       +'<div style="font-family:\'Bebas Neue\';font-size:18px;flex:1">'+t.label+'</div>'
       +badge
-      +'<button onclick="admEditTrofeoUrl('+ti+')" style="background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.2);color:#3b82f6;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer">🖼 Trofeo</button>'
       +'<button onclick="admEditLogoTorneo('+ti+')" style="background:rgba(139,92,246,.1);border:1px solid rgba(139,92,246,.2);color:#8b5cf6;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer">🖼 Logo</button>'
       +'<button onclick="admConfirmRemoveTorneo('+ti+')" style="background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);color:#ef4444;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer">🗑 Elimina</button>'
       +'</div>'
