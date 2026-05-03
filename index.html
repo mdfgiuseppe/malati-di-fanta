@@ -4743,6 +4743,9 @@ function gsPing() {
             gsLoadKey('adm_logo_lega_'+_tk+'_'+_lk, function(val) {
               if (val !== null && val !== undefined && val !== '') localStorage.setItem('adm_logo_lega_'+_tk+'_'+_lk, val);
             });
+            gsLoadKey('adm_trofeo_lega_'+_tk+'_'+_lk, function(val) {
+              if (val !== null && val !== undefined && val !== '') localStorage.setItem('adm_trofeo_lega_'+_tk+'_'+_lk, val);
+            });
           })(t.key, l.key);
         });
       });
