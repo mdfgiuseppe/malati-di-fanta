@@ -3429,7 +3429,12 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
     <!-- ===== MODULISTICA ===== -->
     <div id="adm-s-modulistica" class="adm-section" style="display:none">
       <div style="font-family:'Bebas Neue';font-size:28px;letter-spacing:2px;margin-bottom:6px">Gestione <span style="color:#ef4444">Modulistica</span></div>
-      <div style="font-size:11px;color:var(--text2);margin-bottom:20px">Modifica i moduli e i link Google Form per ogni torneo</div>
+      <div style="font-size:11px;color:var(--text2);margin-bottom:16px">Seleziona un torneo per modificare i moduli e i link Google Form</div>
+      <div style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;align-items:center">
+        <select id="adm-mod-sel-torneo" onchange="admModSelTorneoChange()" style="padding:8px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;outline:none">
+          <option value="">-- Seleziona Torneo --</option>
+        </select>
+      </div>
       <div id="adm-mod-body"></div>
     </div>
 
@@ -7882,10 +7887,8 @@ function admSaveCalGiornata(t,l,g) {
 // ADMIN — Modulistica
 // ═══════════════════════════════════════════════════════
 function admRenderModulistica() {
-  var el = document.getElementById('adm-mod-body'); if(!el) return;
-  // Carica dati salvati da localStorage
   _modMergeFromStorage();
-  // Sincronizza MODULISTICA_DATA con i tornei in ADMIN_TORNEI
+  // Assicura che ogni torneo abbia la sua entry in MODULISTICA_DATA
   ADMIN_TORNEI.forEach(function(t) {
     if (!MODULISTICA_DATA[t.key]) {
       MODULISTICA_DATA[t.key] = {
@@ -7901,34 +7904,58 @@ function admRenderModulistica() {
       };
     }
   });
-  // Mostra SOLO i tornei presenti in ADMIN_TORNEI (ordine coerente, niente duplicati)
-  var h = '';
-  ADMIN_TORNEI.forEach(function(t) {
-    var key = t.key;
-    var d = MODULISTICA_DATA[key];
-    if (!d) return;
-    h += '<div class="card" style="padding:0;overflow:hidden;margin-bottom:16px">'
-      +'<div style="padding:12px 16px;background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px">'
-      +'<span style="font-size:11px;font-weight:800;text-transform:uppercase;color:var(--text2);flex:1">'+d.titolo+'</span>'
-      +'</div>';
-    d.moduli.forEach(function(m, mi) {
-      h += '<div style="display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--border)">'
-        +'<span style="font-size:20px;flex-shrink:0">'+m.icona+'</span>'
-        +'<div style="flex:1;min-width:500px">'
-        +'<div style="font-size:12px;font-weight:700;margin-bottom:4px">'+m.titolo+'</div>'
-        +'<input type="text" value="'+m.link+'" placeholder="https://forms.google.com/..." '
-        +'data-key="'+key+'" data-mi="'+mi+'" onchange="admUpdateModuloLinkEl(this)" '
-        +'style="width:100%;padding:6px 10px;background:var(--bg2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:12px;outline:none;box-sizing:border-box">'
-        +'</div>'
-        +'<button data-key="'+key+'" data-mi="'+mi+'" onclick="admDeleteModuloEl(this)" style="background:none;border:none;color:#ef4444;cursor:pointer;font-size:16px;flex-shrink:0" title="Rimuovi modulo">✕</button>'
-        +'</div>';
+  // Popola select torneo
+  var sel = document.getElementById('adm-mod-sel-torneo');
+  if (sel) {
+    var prev = sel.value;
+    sel.innerHTML = '<option value="">-- Seleziona Torneo --</option>';
+    ADMIN_TORNEI.forEach(function(t) {
+      var o = document.createElement('option');
+      o.value = t.key;
+      o.textContent = t.label || t.key;
+      sel.appendChild(o);
     });
-    h += '<div style="padding:10px 14px;display:flex;gap:8px;border-top:1px solid var(--border)">'
-      +'<button data-key="'+key+'" onclick="admAddModuloEl(this)" style="padding:6px 14px;background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.2);color:#10b981;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer">+ Aggiungi Modulo</button>'
-      +'<button onclick="admSaveModulistica()" style="padding:6px 14px;background:#10b981;color:#fff;border:none;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer">Salva Tutti</button>'
+    // Ripristina selezione precedente o auto-seleziona se unico
+    if (prev && ADMIN_TORNEI.find(function(t){return t.key===prev;})) {
+      sel.value = prev;
+    } else if (ADMIN_TORNEI.length === 1) {
+      sel.value = ADMIN_TORNEI[0].key;
+    }
+  }
+  admModRenderBody();
+}
+
+function admModSelTorneoChange() {
+  admModRenderBody();
+}
+
+function admModRenderBody() {
+  var el = document.getElementById('adm-mod-body'); if(!el) return;
+  var sel = document.getElementById('adm-mod-sel-torneo');
+  var key = sel ? sel.value : '';
+  if (!key) {
+    el.innerHTML = '<div style="color:var(--text3);font-size:13px;padding:20px 0">Seleziona un torneo per gestire i moduli.</div>';
+    return;
+  }
+  var d = MODULISTICA_DATA[key];
+  if (!d) { el.innerHTML = ''; return; }
+  var h = '<div class="card" style="padding:0;overflow:hidden">';
+  d.moduli.forEach(function(m, mi) {
+    h += '<div style="display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--border)">'
+      +'<span style="font-size:22px;flex-shrink:0">'+m.icona+'</span>'
+      +'<div style="flex:1">'
+      +'<div style="font-size:12px;font-weight:700;margin-bottom:6px">'+m.titolo+'</div>'
+      +'<input type="text" value="'+(m.link==='#'?'':m.link)+'" placeholder="https://forms.google.com/..." '
+      +'data-key="'+key+'" data-mi="'+mi+'" onchange="admUpdateModuloLinkEl(this)" '
+      +'style="width:100%;padding:7px 10px;background:var(--bg2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:12px;outline:none;box-sizing:border-box">'
       +'</div>'
+      +'<button data-key="'+key+'" data-mi="'+mi+'" onclick="admDeleteModuloEl(this)" style="background:none;border:none;color:#ef4444;cursor:pointer;font-size:18px;flex-shrink:0;padding:4px" title="Rimuovi modulo">✕</button>'
       +'</div>';
   });
+  h += '<div style="padding:12px 16px;display:flex;gap:8px">'
+    +'<button data-key="'+key+'" onclick="admAddModuloEl(this)" style="padding:7px 16px;background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.2);color:#10b981;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer">+ Aggiungi Modulo</button>'
+    +'<button onclick="admSaveModulistica()" style="padding:7px 16px;background:#10b981;color:#fff;border:none;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer">💾 Salva</button>'
+    +'</div></div>';
   el.innerHTML = h;
 }
 function admUpdateModuloLinkEl(el) {
@@ -7947,7 +7974,7 @@ function admAddModulo(key) {
 function admSaveModulistica() {
   localStorage.setItem('admin_modulistica', JSON.stringify(MODULISTICA_DATA));
   gsSaveKey('admin_modulistica', JSON.stringify(MODULISTICA_DATA));
-  gsSaveKey('admin_modulistica', localStorage.getItem('admin_modulistica'));
+  admModRenderBody();
   var msg=document.createElement('div');msg.textContent='✅ Modulistica salvata';msg.style.cssText='position:fixed;top:70px;right:20px;background:#10b981;color:#fff;padding:8px 16px;border-radius:8px;font-weight:700;font-size:12px;z-index:9999';document.body.appendChild(msg);setTimeout(function(){msg.remove();},2000);
 }
 
