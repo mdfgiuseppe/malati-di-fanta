@@ -6167,7 +6167,7 @@ function showAdminSection(id, el) {
    'adm-cop-editor-body','adm-cop-config-body','adm-stagioni-body',
    'adm-immagini-list','adm-mul-body','adm-sc-playersA',
    'adm-sc-playersB','adm-sc-riepilogo','adm-cs-body',
-   'adm-utenti-body','adm-tornei-body'].forEach(function(bid){
+   'adm-utenti-body','adm-tornei-body','adm-mod-body'].forEach(function(bid){
     var b = document.getElementById(bid); if(b) b.innerHTML='';
   });
   // Reset tutti i select a "Seleziona"
@@ -6179,7 +6179,7 @@ function showAdminSection(id, el) {
    'adm-sc-torneo','adm-sc-lega','adm-sc-sqA','adm-sc-sqB',
    'adm-cs-torneo','adm-cs-lega',
    'adm-cop-torneo','adm-import-torneo','adm-import-lega',
-   'adm-cat-torneo'].forEach(function(sid){
+   'adm-cat-torneo','adm-mod-sel-torneo'].forEach(function(sid){
     var s = document.getElementById(sid);
     if(s) { s.innerHTML='<option value="">-- Seleziona --</option>'; s.selectedIndex=0; }
   });
