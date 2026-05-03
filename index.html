@@ -6267,6 +6267,7 @@ function admRenderTornei() {
         +'<span style="font-size:11px;font-weight:700;flex:1">'+l.label+'</span>'
         +'<span style="font-size:9px;color:var(--text3)">'+l.key+'</span>'
         +'<button onclick="admEditLogoLega('+ti+','+li+')" style="background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.2);color:#3b82f6;cursor:pointer;font-size:12px;border-radius:5px;padding:2px 6px;margin-right:3px">🖼 Logo</button>'
+        +'<button onclick="admEditTrofeoLega('+ti+','+li+')" style="background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.2);color:#f59e0b;cursor:pointer;font-size:12px;border-radius:5px;padding:2px 6px;margin-right:3px">🏆 Trofeo</button>'
         +'<button onclick="admConfirmRemoveLega('+ti+','+li+')" style="background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);color:#ef4444;cursor:pointer;font-size:12px;border-radius:5px;padding:2px 6px">🗑</button>'
         +'</div>';
     }).join('');
@@ -6749,6 +6750,22 @@ function admEditLogoLega(ti, li) {
   var msg = document.createElement('div');
   msg.textContent = url ? '✅ URL logo lega salvato' : '✅ URL rimosso';
   msg.style.cssText = 'position:fixed;top:70px;right:20px;background:#3b82f6;color:#fff;padding:8px 16px;border-radius:8px;font-weight:700;font-size:12px;z-index:9999';
+  document.body.appendChild(msg);
+  setTimeout(function(){msg.remove();},2000);
+}
+function admEditTrofeoLega(ti, li) {
+  var t = ADMIN_TORNEI[ti]; if(!t) return;
+  var l = t.leghe[li]; if(!l) return;
+  var current = localStorage.getItem('adm_trofeo_lega_'+t.key+'_'+l.key) || '';
+  var url = prompt('URL Trofeo per "'+l.label+'":', current);
+  if (url === null) return;
+  url = url.trim();
+  url = _normalizeImgUrl(url);
+  if (url) { localStorage.setItem('adm_trofeo_lega_'+t.key+'_'+l.key, url); gsSaveKey('adm_trofeo_lega_'+t.key+'_'+l.key, url); }
+  else { localStorage.removeItem('adm_trofeo_lega_'+t.key+'_'+l.key); gsSaveKey('adm_trofeo_lega_'+t.key+'_'+l.key, ''); }
+  var msg = document.createElement('div');
+  msg.textContent = url ? '✅ URL trofeo lega salvato' : '✅ URL rimosso';
+  msg.style.cssText = 'position:fixed;top:70px;right:20px;background:#f59e0b;color:#fff;padding:8px 16px;border-radius:8px;font-weight:700;font-size:12px;z-index:9999';
   document.body.appendChild(msg);
   setTimeout(function(){msg.remove();},2000);
 }
@@ -11472,6 +11489,7 @@ function admRenderTornei() {
         +'<span style="font-size:11px;font-weight:700;flex:1">'+l.label+'</span>'
         +'<span style="font-size:9px;color:var(--text3)">'+l.key+'</span>'
         +'<button onclick="admEditLogoLega('+ti+','+li+')" style="background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.2);color:#3b82f6;cursor:pointer;font-size:12px;border-radius:5px;padding:2px 6px;margin-right:3px">🖼 Logo</button>'
+        +'<button onclick="admEditTrofeoLega('+ti+','+li+')" style="background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.2);color:#f59e0b;cursor:pointer;font-size:12px;border-radius:5px;padding:2px 6px;margin-right:3px">🏆 Trofeo</button>'
         +'<button onclick="admConfirmRemoveLega('+ti+','+li+')" style="background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);color:#ef4444;cursor:pointer;font-size:12px;border-radius:5px;padding:2px 6px">🗑</button>'
         +'</div>';
     }).join('');
@@ -11765,6 +11783,22 @@ function admEditLogoLega(ti, li) {
   var msg = document.createElement('div');
   msg.textContent = url ? '✅ URL logo lega salvato' : '✅ URL rimosso';
   msg.style.cssText = 'position:fixed;top:70px;right:20px;background:#3b82f6;color:#fff;padding:8px 16px;border-radius:8px;font-weight:700;font-size:12px;z-index:9999';
+  document.body.appendChild(msg);
+  setTimeout(function(){msg.remove();},2000);
+}
+function admEditTrofeoLega(ti, li) {
+  var t = ADMIN_TORNEI[ti]; if(!t) return;
+  var l = t.leghe[li]; if(!l) return;
+  var current = localStorage.getItem('adm_trofeo_lega_'+t.key+'_'+l.key) || '';
+  var url = prompt('URL Trofeo per "'+l.label+'":', current);
+  if (url === null) return;
+  url = url.trim();
+  url = _normalizeImgUrl(url);
+  if (url) { localStorage.setItem('adm_trofeo_lega_'+t.key+'_'+l.key, url); gsSaveKey('adm_trofeo_lega_'+t.key+'_'+l.key, url); }
+  else { localStorage.removeItem('adm_trofeo_lega_'+t.key+'_'+l.key); gsSaveKey('adm_trofeo_lega_'+t.key+'_'+l.key, ''); }
+  var msg = document.createElement('div');
+  msg.textContent = url ? '✅ URL trofeo lega salvato' : '✅ URL rimosso';
+  msg.style.cssText = 'position:fixed;top:70px;right:20px;background:#f59e0b;color:#fff;padding:8px 16px;border-radius:8px;font-weight:700;font-size:12px;z-index:9999';
   document.body.appendChild(msg);
   setTimeout(function(){msg.remove();},2000);
 }
