@@ -3815,11 +3815,15 @@ try {
     _at.forEach(function(t, i) {
       if (!LEAGUES_DATA[t.key]) LEAGUES_DATA[t.key] = {color:_colors[i%_colors.length], leghe:[]};
       t.leghe.slice().sort(function(a,b){return a.label.localeCompare(b.label);}).forEach(function(l) {
-        // Controlla sia la chiave diretta che il formato torneo_lega (es. tsm_it)
-        var exists = LEAGUES_DATA[t.key].leghe.some(function(x){
+        // Controlla sia la chiave diretta che il formato torneo_lega (es. tdm_it)
+        var existing = LEAGUES_DATA[t.key].leghe.find(function(x){
           return x.key===l.key || x.key===t.key+'_'+l.key;
         });
-        if (!exists) LEAGUES_DATA[t.key].leghe.push({key:l.key, label:l.label, flag:'🏆', clubs:0});
+        if (existing) {
+          existing.label = l.label; // aggiorna label admin (es. "Serie Trapattoni")
+        } else {
+          LEAGUES_DATA[t.key].leghe.push({key:l.key, label:l.label, flag:'🏆', clubs:0});
+        }
       });
     });
   }
@@ -9670,11 +9674,15 @@ try {
     _at.forEach(function(t, i) {
       if (!LEAGUES_DATA[t.key]) LEAGUES_DATA[t.key] = {color:_colors[i%_colors.length], leghe:[]};
       t.leghe.slice().sort(function(a,b){return a.label.localeCompare(b.label);}).forEach(function(l) {
-        // Controlla sia la chiave diretta che il formato torneo_lega (es. tsm_it)
-        var exists = LEAGUES_DATA[t.key].leghe.some(function(x){
+        // Controlla sia la chiave diretta che il formato torneo_lega (es. tdm_it)
+        var existing = LEAGUES_DATA[t.key].leghe.find(function(x){
           return x.key===l.key || x.key===t.key+'_'+l.key;
         });
-        if (!exists) LEAGUES_DATA[t.key].leghe.push({key:l.key, label:l.label, flag:'🏆', clubs:0});
+        if (existing) {
+          existing.label = l.label; // aggiorna label admin (es. "Serie Trapattoni")
+        } else {
+          LEAGUES_DATA[t.key].leghe.push({key:l.key, label:l.label, flag:'🏆', clubs:0});
+        }
       });
     });
   }
