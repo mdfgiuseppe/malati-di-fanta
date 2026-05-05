@@ -3096,6 +3096,28 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
         <button onclick="admEditLogoMain()" style="background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.3);color:#10b981;cursor:pointer;font-size:12px;border-radius:8px;padding:6px 12px;font-weight:700">🖼 Logo</button>
       </div>
 
+      <!-- Loghi Tornei Dashboard -->
+      <div class="card" style="padding:14px 16px;margin-bottom:20px">
+        <div style="font-size:12px;font-weight:800;margin-bottom:12px;color:var(--text)">🖼 Loghi Tornei Dashboard</div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div style="display:flex;align-items:center;gap:10px;padding:8px 10px;background:var(--bg2);border-radius:8px">
+            <img id="adm-logo-torneo-tdm-prev" src="" alt="" style="width:36px;height:36px;object-fit:contain;background:var(--bg3);border-radius:6px;border:1px solid var(--border)">
+            <span style="flex:1;font-size:11px;font-weight:700">Tana dei Mister (TDM)</span>
+            <button onclick="admEditLogoTorneoStatic('tdm','Tana dei Mister')" style="background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.2);color:#3b82f6;cursor:pointer;font-size:11px;border-radius:6px;padding:4px 10px;font-weight:700">🖼 Logo</button>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;padding:8px 10px;background:var(--bg2);border-radius:8px">
+            <img id="adm-logo-torneo-ilm-prev" src="" alt="" style="width:36px;height:36px;object-fit:contain;background:var(--bg3);border-radius:6px;border:1px solid var(--border)">
+            <span style="flex:1;font-size:11px;font-weight:700">International League Mantra (ILM)</span>
+            <button onclick="admEditLogoTorneoStatic('ilm','International League Mantra')" style="background:rgba(139,92,246,.1);border:1px solid rgba(139,92,246,.2);color:#8b5cf6;cursor:pointer;font-size:11px;border-radius:6px;padding:4px 10px;font-weight:700">🖼 Logo</button>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;padding:8px 10px;background:var(--bg2);border-radius:8px">
+            <img id="adm-logo-torneo-ilc-prev" src="" alt="" style="width:36px;height:36px;object-fit:contain;background:var(--bg3);border-radius:6px;border:1px solid var(--border)">
+            <span style="flex:1;font-size:11px;font-weight:700">International League Classic (ILC)</span>
+            <button onclick="admEditLogoTorneoStatic('ilc','International League Classic')" style="background:rgba(236,72,153,.1);border:1px solid rgba(236,72,153,.2);color:#ec4899;cursor:pointer;font-size:11px;border-radius:6px;padding:4px 10px;font-weight:700">🖼 Logo</button>
+          </div>
+        </div>
+      </div>
+
       <!-- Aggiungi Torneo -->
       <div class="card" style="padding:20px;margin-bottom:20px">
         <div style="font-size:13px;font-weight:800;margin-bottom:16px;display:flex;align-items:center;gap:8px">
@@ -3761,18 +3783,14 @@ var currentTournament = null;
 // Aggiorna contatori leghe e club nella dashboard
 function updateLogosTornei() {
   try {
-    var at = (typeof ADMIN_TORNEI !== 'undefined' && ADMIN_TORNEI.length)
-      ? ADMIN_TORNEI
-      : JSON.parse(localStorage.getItem('admin_tornei')||'null') || [];
-    at.forEach(function(t) {
-      var url = localStorage.getItem('adm_logo_torneo_'+t.key);
+    document.querySelectorAll('.t-card').forEach(function(card) {
+      var oc = card.getAttribute('onclick') || '';
+      var m = oc.match(/selectTournament\('([^']+)'/);
+      if (!m) return;
+      var url = localStorage.getItem('adm_logo_torneo_'+m[1]);
       if (!url) return;
-      document.querySelectorAll('.t-card').forEach(function(card) {
-        if (card.getAttribute('onclick') && card.getAttribute('onclick').indexOf("'"+t.key+"'") >= 0) {
-          var img = card.querySelector('.t-logo-area img');
-          if (img) img.src = url;
-        }
-      });
+      var img = card.querySelector('.t-logo-area img');
+      if (img) img.src = url;
     });
   } catch(e) {}
 }
@@ -6760,6 +6778,23 @@ function admEditLogoLega(ti, li) {
   document.body.appendChild(msg);
   setTimeout(function(){msg.remove();},2000);
 }
+function admEditLogoTorneoStatic(key, label) {
+  var current = localStorage.getItem('adm_logo_torneo_'+key) || '';
+  var url = prompt('URL Logo "'+label+'":', current);
+  if (url === null) return;
+  url = url.trim();
+  url = _normalizeImgUrl(url);
+  if (url) { localStorage.setItem('adm_logo_torneo_'+key, url); gsSaveKey('adm_logo_torneo_'+key, url); }
+  else { localStorage.removeItem('adm_logo_torneo_'+key); gsSaveKey('adm_logo_torneo_'+key, ''); }
+  var prev = document.getElementById('adm-logo-torneo-'+key+'-prev');
+  if (prev) prev.src = url || '';
+  updateLogosTornei();
+  var msg = document.createElement('div');
+  msg.textContent = url ? '✅ Logo torneo salvato' : '✅ Logo rimosso';
+  msg.style.cssText = 'position:fixed;top:70px;right:20px;background:#3b82f6;color:#fff;padding:8px 16px;border-radius:8px;font-weight:700;font-size:12px;z-index:9999';
+  document.body.appendChild(msg);
+  setTimeout(function(){msg.remove();},2000);
+}
 function admEditLogoMain() {
   var current = localStorage.getItem('adm_logo_main') || '';
   var url = prompt('URL Logo Principale App (splash + topbar):', current);
@@ -8960,9 +8995,22 @@ document.addEventListener('DOMContentLoaded',function(){
   // Carica logo principale app da localStorage/GSheets
   var _logoMain = localStorage.getItem('adm_logo_main');
   if (_logoMain) _applyLogoMain(_logoMain);
+  // Carica loghi tornei statici (TDM, ILM, ILC) da localStorage
+  ['tdm','ilm','ilc'].forEach(function(k) {
+    var _u = localStorage.getItem('adm_logo_torneo_'+k);
+    if (_u) { var _p=document.getElementById('adm-logo-torneo-'+k+'-prev'); if(_p) _p.src=_u; }
+  });
+  updateLogosTornei();
   if (typeof gsLoadKey === 'function') {
     gsLoadKey('adm_logo_main', function(val) {
       if (val) { localStorage.setItem('adm_logo_main', val); _applyLogoMain(val); var p=document.getElementById('adm-logo-main-preview'); if(p) p.src=val; }
+    });
+    ['tdm','ilm','ilc'].forEach(function(k) {
+      (function(_k) {
+        gsLoadKey('adm_logo_torneo_'+_k, function(val) {
+          if (val) { localStorage.setItem('adm_logo_torneo_'+_k, val); updateLogosTornei(); var p=document.getElementById('adm-logo-torneo-'+_k+'-prev'); if(p) p.src=val; }
+        });
+      })(k);
     });
   }
   // Nessun auto-login — le credenziali vengono pre-compilate solo quando si apre il modal login
@@ -9542,18 +9590,14 @@ var currentTournament = null;
 // Aggiorna contatori leghe e club nella dashboard
 function updateLogosTornei() {
   try {
-    var at = (typeof ADMIN_TORNEI !== 'undefined' && ADMIN_TORNEI.length)
-      ? ADMIN_TORNEI
-      : JSON.parse(localStorage.getItem('admin_tornei')||'null') || [];
-    at.forEach(function(t) {
-      var url = localStorage.getItem('adm_logo_torneo_'+t.key);
+    document.querySelectorAll('.t-card').forEach(function(card) {
+      var oc = card.getAttribute('onclick') || '';
+      var m = oc.match(/selectTournament\('([^']+)'/);
+      if (!m) return;
+      var url = localStorage.getItem('adm_logo_torneo_'+m[1]);
       if (!url) return;
-      document.querySelectorAll('.t-card').forEach(function(card) {
-        if (card.getAttribute('onclick') && card.getAttribute('onclick').indexOf("'"+t.key+"'") >= 0) {
-          var img = card.querySelector('.t-logo-area img');
-          if (img) img.src = url;
-        }
-      });
+      var img = card.querySelector('.t-logo-area img');
+      if (img) img.src = url;
     });
   } catch(e) {}
 }
@@ -11811,6 +11855,23 @@ function admEditLogoLega(ti, li) {
   document.body.appendChild(msg);
   setTimeout(function(){msg.remove();},2000);
 }
+function admEditLogoTorneoStatic(key, label) {
+  var current = localStorage.getItem('adm_logo_torneo_'+key) || '';
+  var url = prompt('URL Logo "'+label+'":', current);
+  if (url === null) return;
+  url = url.trim();
+  url = _normalizeImgUrl(url);
+  if (url) { localStorage.setItem('adm_logo_torneo_'+key, url); gsSaveKey('adm_logo_torneo_'+key, url); }
+  else { localStorage.removeItem('adm_logo_torneo_'+key); gsSaveKey('adm_logo_torneo_'+key, ''); }
+  var prev = document.getElementById('adm-logo-torneo-'+key+'-prev');
+  if (prev) prev.src = url || '';
+  updateLogosTornei();
+  var msg = document.createElement('div');
+  msg.textContent = url ? '✅ Logo torneo salvato' : '✅ Logo rimosso';
+  msg.style.cssText = 'position:fixed;top:70px;right:20px;background:#3b82f6;color:#fff;padding:8px 16px;border-radius:8px;font-weight:700;font-size:12px;z-index:9999';
+  document.body.appendChild(msg);
+  setTimeout(function(){msg.remove();},2000);
+}
 function admEditLogoMain() {
   var current = localStorage.getItem('adm_logo_main') || '';
   var url = prompt('URL Logo Principale App (splash + topbar):', current);
@@ -13907,9 +13968,22 @@ document.addEventListener('DOMContentLoaded',function(){
   // Carica logo principale app da localStorage/GSheets
   var _logoMain = localStorage.getItem('adm_logo_main');
   if (_logoMain) _applyLogoMain(_logoMain);
+  // Carica loghi tornei statici (TDM, ILM, ILC) da localStorage
+  ['tdm','ilm','ilc'].forEach(function(k) {
+    var _u = localStorage.getItem('adm_logo_torneo_'+k);
+    if (_u) { var _p=document.getElementById('adm-logo-torneo-'+k+'-prev'); if(_p) _p.src=_u; }
+  });
+  updateLogosTornei();
   if (typeof gsLoadKey === 'function') {
     gsLoadKey('adm_logo_main', function(val) {
       if (val) { localStorage.setItem('adm_logo_main', val); _applyLogoMain(val); var p=document.getElementById('adm-logo-main-preview'); if(p) p.src=val; }
+    });
+    ['tdm','ilm','ilc'].forEach(function(k) {
+      (function(_k) {
+        gsLoadKey('adm_logo_torneo_'+_k, function(val) {
+          if (val) { localStorage.setItem('adm_logo_torneo_'+_k, val); updateLogosTornei(); var p=document.getElementById('adm-logo-torneo-'+_k+'-prev'); if(p) p.src=val; }
+        });
+      })(k);
     });
   }
   // Nessun auto-login — le credenziali vengono pre-compilate solo quando si apre il modal login
