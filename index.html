@@ -8521,6 +8521,8 @@ function enterLeague(tournament, leagueKey) {
     if (nm) nm.textContent = u.ruolo==='admin' ? 'Admin' : (u.nome||'').split(' ')[0];
   } catch(e) {}
   if (leagueKey === 'tsm_it') { enterTSM(); return; }
+  // ILM e ILC non ancora disponibili lato utente
+  if (tournament === 'ilm' || tournament === 'ilc') return;
   // Tornei dinamici (creati col wizard)
   if (tournament && tournament !== 'slim' && tournament !== 'tsm' && tournament !== 'tdm' && tournament !== 'ilm' && tournament !== 'ilc') {
     enterDynamicLeague(tournament, leagueKey);
@@ -13540,6 +13542,8 @@ function enterLeague(tournament, leagueKey) {
     if (nm) nm.textContent = u.ruolo==='admin' ? 'Admin' : (u.nome||'').split(' ')[0];
   } catch(e) {}
   if (leagueKey === 'tsm_it') { enterTSM(); return; }
+  // ILM e ILC non ancora disponibili lato utente
+  if (tournament === 'ilm' || tournament === 'ilc') return;
   // Tornei dinamici (creati col wizard)
   if (tournament && tournament !== 'slim' && tournament !== 'tsm' && tournament !== 'tdm' && tournament !== 'ilm' && tournament !== 'ilc') {
     enterDynamicLeague(tournament, leagueKey);
