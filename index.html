@@ -3848,8 +3848,8 @@ function selectTournament(key, el) {
     var _lk = lega.key;
     var logo;
     if (_lk.indexOf('tsm_') === 0) {
-      var _el = document.getElementById('tsm-it-logo');
-      logo = (_el && _el.src) ? _el.src : (LOGOS && LOGOS['tsm']) || '';
+      var _tsmLogoUrl = localStorage.getItem('adm_logo_lega_'+_lk);
+      logo = (_tsmLogoUrl ? _normalizeImgUrl(_tsmLogoUrl) : '') || (LOGOS && LOGOS['tsm']) || '';
     } else {
       // Prima cerca URL da localStorage, poi embedded
       var _torneoK = currentTournament || '';
@@ -9685,8 +9685,8 @@ function selectTournament(key, el) {
     var _lk = lega.key;
     var logo;
     if (_lk.indexOf('tsm_') === 0) {
-      var _el = document.getElementById('tsm-it-logo');
-      logo = (_el && _el.src) ? _el.src : (LOGOS && LOGOS['tsm']) || '';
+      var _tsmLogoUrl = localStorage.getItem('adm_logo_lega_'+_lk);
+      logo = (_tsmLogoUrl ? _normalizeImgUrl(_tsmLogoUrl) : '') || (LOGOS && LOGOS['tsm']) || '';
     } else {
       // Prima cerca URL da localStorage, poi embedded
       var _torneoK = currentTournament || '';
