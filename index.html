@@ -3906,6 +3906,11 @@ function _updateLegaDashboard(leagueKey) {
       });
     });
   }
+  // Fallback euristico: 'tsm_it' → torneoKey='tsm', legaKey='it' (quando ADMIN_TORNEI non ancora caricato)
+  if (!_admTK && leagueKey.indexOf('_') > 0) {
+    var _hParts = leagueKey.match(/^([a-z]+)_(.+)$/);
+    if (_hParts) { _admTK = _hParts[1]; _realLK = _hParts[2]; }
+  }
   var trophyMap = {
     'it':'Slim Italia','en':'Slim Inghilterra','de':'Slim Germania',
     'es':'Slim Spagna','fr':'Slim Francia','pt':'Slim Portogallo',
@@ -9712,6 +9717,11 @@ function _updateLegaDashboard(leagueKey) {
         if (l.key === leagueKey || leagueKey === t.key+'_'+l.key) { _admTK = t.key; _realLK = l.key; }
       });
     });
+  }
+  // Fallback euristico: 'tsm_it' → torneoKey='tsm', legaKey='it' (quando ADMIN_TORNEI non ancora caricato)
+  if (!_admTK && leagueKey.indexOf('_') > 0) {
+    var _hParts = leagueKey.match(/^([a-z]+)_(.+)$/);
+    if (_hParts) { _admTK = _hParts[1]; _realLK = _hParts[2]; }
   }
   var trophyMap = {
     'it':'Slim Italia','en':'Slim Inghilterra','de':'Slim Germania',
