@@ -3088,34 +3088,11 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 
       <!-- Logo Principale App -->
       <div class="card" style="padding:14px 16px;margin-bottom:16px;display:flex;align-items:center;gap:12px">
-        <img id="adm-logo-main-preview" src="" alt="" style="width:44px;height:44px;object-fit:contain;border-radius:8px;background:var(--bg2);border:1px solid var(--border)">
         <div style="flex:1">
-          <div style="font-size:12px;font-weight:800;margin-bottom:2px">Logo Principale App</div>
+          <div style="font-size:12px;font-weight:800;margin-bottom:2px;text-transform:uppercase;letter-spacing:1px">Logo Principale App</div>
           <div style="font-size:10px;color:var(--text2)">Splash screen e topbar (tutte le pagine)</div>
         </div>
         <button onclick="admEditLogoMain()" style="background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.3);color:#10b981;cursor:pointer;font-size:12px;border-radius:8px;padding:6px 12px;font-weight:700">🖼 Logo</button>
-      </div>
-
-      <!-- Loghi Tornei Dashboard -->
-      <div class="card" style="padding:14px 16px;margin-bottom:20px">
-        <div style="font-size:12px;font-weight:800;margin-bottom:12px;color:var(--text)">🖼 Loghi Tornei Dashboard</div>
-        <div style="display:flex;flex-direction:column;gap:8px">
-          <div style="display:flex;align-items:center;gap:10px;padding:8px 10px;background:var(--bg2);border-radius:8px">
-            <img id="adm-logo-torneo-tdm-prev" src="" alt="" style="width:36px;height:36px;object-fit:contain;background:var(--bg3);border-radius:6px;border:1px solid var(--border)">
-            <span style="flex:1;font-size:11px;font-weight:700">Tana dei Mister (TDM)</span>
-            <button onclick="admEditLogoTorneoStatic('tdm','Tana dei Mister')" style="background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.2);color:#3b82f6;cursor:pointer;font-size:11px;border-radius:6px;padding:4px 10px;font-weight:700">🖼 Logo</button>
-          </div>
-          <div style="display:flex;align-items:center;gap:10px;padding:8px 10px;background:var(--bg2);border-radius:8px">
-            <img id="adm-logo-torneo-ilm-prev" src="" alt="" style="width:36px;height:36px;object-fit:contain;background:var(--bg3);border-radius:6px;border:1px solid var(--border)">
-            <span style="flex:1;font-size:11px;font-weight:700">International League Mantra (ILM)</span>
-            <button onclick="admEditLogoTorneoStatic('ilm','International League Mantra')" style="background:rgba(139,92,246,.1);border:1px solid rgba(139,92,246,.2);color:#8b5cf6;cursor:pointer;font-size:11px;border-radius:6px;padding:4px 10px;font-weight:700">🖼 Logo</button>
-          </div>
-          <div style="display:flex;align-items:center;gap:10px;padding:8px 10px;background:var(--bg2);border-radius:8px">
-            <img id="adm-logo-torneo-ilc-prev" src="" alt="" style="width:36px;height:36px;object-fit:contain;background:var(--bg3);border-radius:6px;border:1px solid var(--border)">
-            <span style="flex:1;font-size:11px;font-weight:700">International League Classic (ILC)</span>
-            <button onclick="admEditLogoTorneoStatic('ilc','International League Classic')" style="background:rgba(236,72,153,.1);border:1px solid rgba(236,72,153,.2);color:#ec4899;cursor:pointer;font-size:11px;border-radius:6px;padding:4px 10px;font-weight:700">🖼 Logo</button>
-          </div>
-        </div>
       </div>
 
       <!-- Aggiungi Torneo -->
@@ -3207,8 +3184,14 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
         </div>
       </div>
 
-      <!-- Lista Tornei -->
-      <div id="adm-tornei-list"></div>
+      <!-- Select + Dettaglio Torneo -->
+      <div style="margin-bottom:12px">
+        <select id="adm-tornei-select" onchange="admSelectTorneoDetail(this.value)" style="width:100%;padding:10px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:13px;font-weight:700;outline:none;cursor:pointer">
+          <option value="">-- Seleziona torneo --</option>
+        </select>
+      </div>
+      <div id="adm-tornei-detail" style="margin-bottom:12px"></div>
+      <div id="adm-tornei-list" style="display:none"></div>
     </div>
 
     <!-- ===== UTENTI ===== -->
@@ -6210,7 +6193,7 @@ function showAdminSection(id, el) {
    'adm-cop-editor-body','adm-cop-config-body','adm-stagioni-body',
    'adm-immagini-list','adm-mul-body','adm-sc-playersA',
    'adm-sc-playersB','adm-sc-riepilogo','adm-cs-body',
-   'adm-utenti-body','adm-tornei-body','adm-mod-body'].forEach(function(bid){
+   'adm-utenti-body','adm-tornei-body','adm-tornei-detail','adm-mod-body'].forEach(function(bid){
     var b = document.getElementById(bid); if(b) b.innerHTML='';
   });
   // Reset tutti i select a "Seleziona"
@@ -6222,7 +6205,7 @@ function showAdminSection(id, el) {
    'adm-sc-torneo','adm-sc-lega','adm-sc-sqA','adm-sc-sqB',
    'adm-cs-torneo','adm-cs-lega',
    'adm-cop-torneo','adm-import-torneo','adm-import-lega',
-   'adm-cat-torneo','adm-mod-sel-torneo'].forEach(function(sid){
+   'adm-cat-torneo','adm-mod-sel-torneo','adm-tornei-select'].forEach(function(sid){
     var s = document.getElementById(sid);
     if(s) { s.innerHTML='<option value="">-- Seleziona --</option>'; s.selectedIndex=0; }
   });
@@ -6289,34 +6272,54 @@ function admSaveTornei() {
 }
 
 function admRenderTornei() {
-  var el = document.getElementById('adm-tornei-list'); if(!el) return;
-  if (!ADMIN_TORNEI.length) { el.innerHTML='<div style="color:var(--text2);font-size:12px;padding:10px">Nessun torneo presente</div>'; return; }
-  el.innerHTML = ADMIN_TORNEI.map(function(t, ti) {
-    var badge = t.formato==='mantra' ? '<span style="background:rgba(139,92,246,.15);color:#8b5cf6;font-size:9px;font-weight:800;padding:2px 8px;border-radius:20px;text-transform:uppercase">Mantra</span>' : '<span style="background:rgba(16,185,129,.15);color:#10b981;font-size:9px;font-weight:800;padding:2px 8px;border-radius:20px;text-transform:uppercase">Classic</span>';
-    var leghe = t.leghe.map(function(l,li){return {l:l,li:li};}).sort(function(a,b){return a.l.label.localeCompare(b.l.label);}).map(function(item){var l=item.l,li=item.li;
-      return '<div style="display:flex;align-items:center;gap:8px;padding:6px 10px;background:var(--bg2);border-radius:6px;margin-bottom:4px">'
-        +'<span style="font-size:11px;font-weight:700;flex:1">'+l.label+'</span>'
-        +'<span style="font-size:9px;color:var(--text3)">'+l.key+'</span>'
-        +'<button onclick="admEditLogoLega('+ti+','+li+')" style="background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.2);color:#3b82f6;cursor:pointer;font-size:12px;border-radius:5px;padding:2px 6px;margin-right:3px">🖼 Logo</button>'
-        +'<button onclick="admEditTrofeoLega('+ti+','+li+')" style="background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.2);color:#f59e0b;cursor:pointer;font-size:12px;border-radius:5px;padding:2px 6px;margin-right:3px">🏆 Trofeo</button>'
-        +'<button onclick="admConfirmRemoveLega('+ti+','+li+')" style="background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);color:#ef4444;cursor:pointer;font-size:12px;border-radius:5px;padding:2px 6px">🗑</button>'
-        +'</div>';
+  var sel = document.getElementById('adm-tornei-select');
+  var det = document.getElementById('adm-tornei-detail');
+  if (det) det.innerHTML = '';
+  if (!sel) return;
+  if (!ADMIN_TORNEI.length) {
+    sel.innerHTML = '<option value="">-- Nessun torneo creato --</option>';
+    return;
+  }
+  sel.innerHTML = '<option value="">-- Seleziona torneo --</option>' +
+    ADMIN_TORNEI.map(function(t, ti) {
+      return '<option value="'+ti+'">'+t.label+' ('+t.key.toUpperCase()+')</option>';
     }).join('');
-    return '<div class="card" style="padding:16px;margin-bottom:12px">'
-      +'<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">'
-      +'<div style="font-family:\'Bebas Neue\';font-size:18px;flex:1">'+t.label+'</div>'
-      +badge
-      +'<button onclick="admEditLogoTorneo('+ti+')" style="background:rgba(139,92,246,.1);border:1px solid rgba(139,92,246,.2);color:#8b5cf6;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer">🖼 Logo</button>'
-      +'<button onclick="admConfirmRemoveTorneo('+ti+')" style="background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);color:#ef4444;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer">🗑 Elimina</button>'
-      +'</div>'
-      +'<div style="margin-bottom:10px">'+leghe+'</div>'
-      +'<div style="display:flex;gap:8px">'
-      +'<input id="adm-new-lega-label-'+ti+'" type="text" placeholder="Nome lega (es. Francia)" style="flex:1;padding:6px 10px;background:var(--bg2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:12px;outline:none">'
-      +'<input id="adm-new-lega-key-'+ti+'" type="text" placeholder="Key (es. fr)" style="width:80px;padding:6px 10px;background:var(--bg2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:12px;outline:none">'
-      +'<button onclick="admAddLega('+ti+')" style="padding:6px 12px;background:#10b981;color:#fff;border:none;border-radius:6px;font-weight:700;font-size:11px;cursor:pointer">+ Lega</button>'
-      +'</div>'
+  sel.selectedIndex = 0;
+}
+
+function admSelectTorneoDetail(val) {
+  var det = document.getElementById('adm-tornei-detail');
+  if (!det) return;
+  if (val === '' || val === undefined) { det.innerHTML = ''; return; }
+  var ti = parseInt(val);
+  var t = ADMIN_TORNEI[ti]; if (!t) { det.innerHTML = ''; return; }
+  var badge = t.formato==='mantra'
+    ? '<span style="background:rgba(139,92,246,.15);color:#8b5cf6;font-size:9px;font-weight:800;padding:2px 8px;border-radius:20px;text-transform:uppercase">Mantra</span>'
+    : '<span style="background:rgba(16,185,129,.15);color:#10b981;font-size:9px;font-weight:800;padding:2px 8px;border-radius:20px;text-transform:uppercase">Classic</span>';
+  var leghe = t.leghe.map(function(l,li){return {l:l,li:li};}).sort(function(a,b){return a.l.label.localeCompare(b.l.label);}).map(function(item){
+    var l=item.l, li=item.li;
+    return '<div style="display:flex;align-items:center;gap:8px;padding:6px 10px;background:var(--bg2);border-radius:6px;margin-bottom:4px">'
+      +'<span style="font-size:11px;font-weight:700;flex:1">'+l.label+'</span>'
+      +'<span style="font-size:9px;color:var(--text3)">'+l.key+'</span>'
+      +'<button onclick="admEditLogoLega('+ti+','+li+')" style="background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.2);color:#3b82f6;cursor:pointer;font-size:12px;border-radius:5px;padding:2px 6px;margin-right:3px">🖼 Logo</button>'
+      +'<button onclick="admEditTrofeoLega('+ti+','+li+')" style="background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.2);color:#f59e0b;cursor:pointer;font-size:12px;border-radius:5px;padding:2px 6px;margin-right:3px">🏆 Trofeo</button>'
+      +'<button onclick="admConfirmRemoveLega('+ti+','+li+')" style="background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);color:#ef4444;cursor:pointer;font-size:12px;border-radius:5px;padding:2px 6px">🗑</button>'
       +'</div>';
   }).join('');
+  det.innerHTML = '<div class="card" style="padding:16px;margin-bottom:12px">'
+    +'<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">'
+    +'<div style="font-family:\'Bebas Neue\';font-size:18px;flex:1">'+t.label+'</div>'
+    +badge
+    +'<button onclick="admEditLogoTorneo('+ti+')" style="background:rgba(139,92,246,.1);border:1px solid rgba(139,92,246,.2);color:#8b5cf6;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer">🖼 Logo</button>'
+    +'<button onclick="admConfirmRemoveTorneo('+ti+')" style="background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);color:#ef4444;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer">🗑 Elimina</button>'
+    +'</div>'
+    +'<div style="margin-bottom:10px">'+leghe+'</div>'
+    +'<div style="display:flex;gap:8px">'
+    +'<input id="adm-new-lega-label-'+ti+'" type="text" placeholder="Nome lega (es. Francia)" style="flex:1;padding:6px 10px;background:var(--bg2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:12px;outline:none">'
+    +'<input id="adm-new-lega-key-'+ti+'" type="text" placeholder="Key (es. fr)" style="width:80px;padding:6px 10px;background:var(--bg2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:12px;outline:none">'
+    +'<button onclick="admAddLega('+ti+')" style="padding:6px 12px;background:#10b981;color:#fff;border:none;border-radius:6px;font-weight:700;font-size:11px;cursor:pointer">+ Lega</button>'
+    +'</div>'
+    +'</div>';
 }
 
 
@@ -11560,34 +11563,54 @@ function admSaveTornei() {
 }
 
 function admRenderTornei() {
-  var el = document.getElementById('adm-tornei-list'); if(!el) return;
-  if (!ADMIN_TORNEI.length) { el.innerHTML='<div style="color:var(--text2);font-size:12px;padding:10px">Nessun torneo presente</div>'; return; }
-  el.innerHTML = ADMIN_TORNEI.map(function(t, ti) {
-    var badge = t.formato==='mantra' ? '<span style="background:rgba(139,92,246,.15);color:#8b5cf6;font-size:9px;font-weight:800;padding:2px 8px;border-radius:20px;text-transform:uppercase">Mantra</span>' : '<span style="background:rgba(16,185,129,.15);color:#10b981;font-size:9px;font-weight:800;padding:2px 8px;border-radius:20px;text-transform:uppercase">Classic</span>';
-    var leghe = t.leghe.map(function(l,li){return {l:l,li:li};}).sort(function(a,b){return a.l.label.localeCompare(b.l.label);}).map(function(item){var l=item.l,li=item.li;
-      return '<div style="display:flex;align-items:center;gap:8px;padding:6px 10px;background:var(--bg2);border-radius:6px;margin-bottom:4px">'
-        +'<span style="font-size:11px;font-weight:700;flex:1">'+l.label+'</span>'
-        +'<span style="font-size:9px;color:var(--text3)">'+l.key+'</span>'
-        +'<button onclick="admEditLogoLega('+ti+','+li+')" style="background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.2);color:#3b82f6;cursor:pointer;font-size:12px;border-radius:5px;padding:2px 6px;margin-right:3px">🖼 Logo</button>'
-        +'<button onclick="admEditTrofeoLega('+ti+','+li+')" style="background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.2);color:#f59e0b;cursor:pointer;font-size:12px;border-radius:5px;padding:2px 6px;margin-right:3px">🏆 Trofeo</button>'
-        +'<button onclick="admConfirmRemoveLega('+ti+','+li+')" style="background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);color:#ef4444;cursor:pointer;font-size:12px;border-radius:5px;padding:2px 6px">🗑</button>'
-        +'</div>';
+  var sel = document.getElementById('adm-tornei-select');
+  var det = document.getElementById('adm-tornei-detail');
+  if (det) det.innerHTML = '';
+  if (!sel) return;
+  if (!ADMIN_TORNEI.length) {
+    sel.innerHTML = '<option value="">-- Nessun torneo creato --</option>';
+    return;
+  }
+  sel.innerHTML = '<option value="">-- Seleziona torneo --</option>' +
+    ADMIN_TORNEI.map(function(t, ti) {
+      return '<option value="'+ti+'">'+t.label+' ('+t.key.toUpperCase()+')</option>';
     }).join('');
-    return '<div class="card" style="padding:16px;margin-bottom:12px">'
-      +'<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">'
-      +'<div style="font-family:\'Bebas Neue\';font-size:18px;flex:1">'+t.label+'</div>'
-      +badge
-      +'<button onclick="admEditLogoTorneo('+ti+')" style="background:rgba(139,92,246,.1);border:1px solid rgba(139,92,246,.2);color:#8b5cf6;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer">🖼 Logo</button>'
-      +'<button onclick="admConfirmRemoveTorneo('+ti+')" style="background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);color:#ef4444;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer">🗑 Elimina</button>'
-      +'</div>'
-      +'<div style="margin-bottom:10px">'+leghe+'</div>'
-      +'<div style="display:flex;gap:8px">'
-      +'<input id="adm-new-lega-label-'+ti+'" type="text" placeholder="Nome lega (es. Francia)" style="flex:1;padding:6px 10px;background:var(--bg2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:12px;outline:none">'
-      +'<input id="adm-new-lega-key-'+ti+'" type="text" placeholder="Key (es. fr)" style="width:80px;padding:6px 10px;background:var(--bg2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:12px;outline:none">'
-      +'<button onclick="admAddLega('+ti+')" style="padding:6px 12px;background:#10b981;color:#fff;border:none;border-radius:6px;font-weight:700;font-size:11px;cursor:pointer">+ Lega</button>'
-      +'</div>'
+  sel.selectedIndex = 0;
+}
+
+function admSelectTorneoDetail(val) {
+  var det = document.getElementById('adm-tornei-detail');
+  if (!det) return;
+  if (val === '' || val === undefined) { det.innerHTML = ''; return; }
+  var ti = parseInt(val);
+  var t = ADMIN_TORNEI[ti]; if (!t) { det.innerHTML = ''; return; }
+  var badge = t.formato==='mantra'
+    ? '<span style="background:rgba(139,92,246,.15);color:#8b5cf6;font-size:9px;font-weight:800;padding:2px 8px;border-radius:20px;text-transform:uppercase">Mantra</span>'
+    : '<span style="background:rgba(16,185,129,.15);color:#10b981;font-size:9px;font-weight:800;padding:2px 8px;border-radius:20px;text-transform:uppercase">Classic</span>';
+  var leghe = t.leghe.map(function(l,li){return {l:l,li:li};}).sort(function(a,b){return a.l.label.localeCompare(b.l.label);}).map(function(item){
+    var l=item.l, li=item.li;
+    return '<div style="display:flex;align-items:center;gap:8px;padding:6px 10px;background:var(--bg2);border-radius:6px;margin-bottom:4px">'
+      +'<span style="font-size:11px;font-weight:700;flex:1">'+l.label+'</span>'
+      +'<span style="font-size:9px;color:var(--text3)">'+l.key+'</span>'
+      +'<button onclick="admEditLogoLega('+ti+','+li+')" style="background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.2);color:#3b82f6;cursor:pointer;font-size:12px;border-radius:5px;padding:2px 6px;margin-right:3px">🖼 Logo</button>'
+      +'<button onclick="admEditTrofeoLega('+ti+','+li+')" style="background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.2);color:#f59e0b;cursor:pointer;font-size:12px;border-radius:5px;padding:2px 6px;margin-right:3px">🏆 Trofeo</button>'
+      +'<button onclick="admConfirmRemoveLega('+ti+','+li+')" style="background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);color:#ef4444;cursor:pointer;font-size:12px;border-radius:5px;padding:2px 6px">🗑</button>'
       +'</div>';
   }).join('');
+  det.innerHTML = '<div class="card" style="padding:16px;margin-bottom:12px">'
+    +'<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">'
+    +'<div style="font-family:\'Bebas Neue\';font-size:18px;flex:1">'+t.label+'</div>'
+    +badge
+    +'<button onclick="admEditLogoTorneo('+ti+')" style="background:rgba(139,92,246,.1);border:1px solid rgba(139,92,246,.2);color:#8b5cf6;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer">🖼 Logo</button>'
+    +'<button onclick="admConfirmRemoveTorneo('+ti+')" style="background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);color:#ef4444;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer">🗑 Elimina</button>'
+    +'</div>'
+    +'<div style="margin-bottom:10px">'+leghe+'</div>'
+    +'<div style="display:flex;gap:8px">'
+    +'<input id="adm-new-lega-label-'+ti+'" type="text" placeholder="Nome lega (es. Francia)" style="flex:1;padding:6px 10px;background:var(--bg2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:12px;outline:none">'
+    +'<input id="adm-new-lega-key-'+ti+'" type="text" placeholder="Key (es. fr)" style="width:80px;padding:6px 10px;background:var(--bg2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:12px;outline:none">'
+    +'<button onclick="admAddLega('+ti+')" style="padding:6px 12px;background:#10b981;color:#fff;border:none;border-radius:6px;font-weight:700;font-size:11px;cursor:pointer">+ Lega</button>'
+    +'</div>'
+    +'</div>';
 }
 
 
