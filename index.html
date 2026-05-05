@@ -2892,8 +2892,8 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
         <div class="t-name">International League Mantra</div>
         <div class="t-mode-row"><span class="t-badge">ILM</span><span class="t-badge mode">Mantra</span></div>
         <div class="t-stats">
-          <div class="t-stat"><span class="t-stat-l">Leghe</span><span class="t-stat-v">In config.</span></div>
-          <div class="t-stat"><span class="t-stat-l">Club partecipanti</span><span class="t-stat-v">—</span></div>
+          <div class="t-stat"><span class="t-stat-l">Leghe</span><span class="t-stat-v" id="ilm-n-leghe">In config.</span></div>
+          <div class="t-stat"><span class="t-stat-l">Club partecipanti</span><span class="t-stat-v" id="ilm-n-club">—</span></div>
         </div>
         <div class="t-cta">Visualizza leghe →</div>
 <div style="display:flex;gap:6px;margin-top:6px"><div onclick="event.stopPropagation();openRegModal('ilm','International League Mantra')" style="flex:1;padding:5px 6px;border-radius:7px;font-size:8px;font-weight:800;text-transform:uppercase;text-align:center;cursor:pointer;background:rgba(255,255,255,.03);color:var(--text2);border:1px solid var(--border)">📋 Regolamento</div><div onclick="event.stopPropagation();openAlboBtn('ilm','International League Mantra')" style="flex:1;padding:5px 6px;border-radius:7px;font-size:8px;font-weight:800;text-transform:uppercase;text-align:center;cursor:pointer;color:#8b5cf6;border:1px solid #8b5cf633;background:#8b5cf611">🏆 Albo d'Oro</div></div>
@@ -2906,8 +2906,8 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
         <div class="t-name">International League Classic</div>
         <div class="t-mode-row"><span class="t-badge">ILC</span><span class="t-badge mode">Classic</span></div>
         <div class="t-stats">
-          <div class="t-stat"><span class="t-stat-l">Leghe</span><span class="t-stat-v">In config.</span></div>
-          <div class="t-stat"><span class="t-stat-l">Club partecipanti</span><span class="t-stat-v">—</span></div>
+          <div class="t-stat"><span class="t-stat-l">Leghe</span><span class="t-stat-v" id="ilc-n-leghe">In config.</span></div>
+          <div class="t-stat"><span class="t-stat-l">Club partecipanti</span><span class="t-stat-v" id="ilc-n-club">—</span></div>
         </div>
         <div class="t-cta">Visualizza leghe →</div>
 <div style="display:flex;gap:6px;margin-top:6px"><div onclick="event.stopPropagation();openRegModal('ilc','International League Classic')" style="flex:1;padding:5px 6px;border-radius:7px;font-size:8px;font-weight:800;text-transform:uppercase;text-align:center;cursor:pointer;background:rgba(255,255,255,.03);color:var(--text2);border:1px solid var(--border)">📋 Regolamento</div><div onclick="event.stopPropagation();openAlboBtn('ilc','International League Classic')" style="flex:1;padding:5px 6px;border-radius:7px;font-size:8px;font-weight:800;text-transform:uppercase;text-align:center;cursor:pointer;color:#ef4444;border:1px solid #ef444433;background:#ef444411">🏆 Albo d'Oro</div></div>
@@ -3844,6 +3844,10 @@ function selectTournament(key, el) {
   html += '<div style="font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:'+dati.color+';margin-bottom:14px">Leghe disponibili</div>';
   html += '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px">';
 
+  // Numero club per lega da adm_config o da adm_rose
+  var _cfgClub = 0;
+  try { _cfgClub = JSON.parse(localStorage.getItem('adm_config_'+key)||'{}').nSquadre || 0; } catch(e){}
+
   dati.leghe.slice().sort(function(a,b){return a.label.localeCompare(b.label);}).forEach(function(lega) {
     var _lk = lega.key;
     var logo;
@@ -3861,12 +3865,19 @@ function selectTournament(key, el) {
       if (_urlLogo) _urlLogo = _normalizeImgUrl(_urlLogo);
       logo = _urlLogo || (LOGOS && LOGOS[_lk]) || '';
     }
+    // Club count: hardcoded > rose > config
+    var _nClub = lega.clubs || 0;
+    if (!_nClub) {
+      var _realLk = _lk.replace(key+'_', '');
+      try { _nClub = Object.keys(JSON.parse(localStorage.getItem('adm_rose_'+key+'_'+_realLk)||'{}')).length; } catch(e){}
+      if (!_nClub) _nClub = _cfgClub;
+    }
     html += '<div onclick="enterLeague(\''+key+'\',\''+lega.key+'\')" style="background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:14px 10px;cursor:pointer;text-align:center;transition:all .2s;display:flex;flex-direction:column;align-items:center;gap:8px;" '
           + 'onmouseover="this.style.borderColor=\''+dati.color+'\';this.style.background=\''+dati.color+'1a\'" '
           + 'onmouseout="this.style.borderColor=\'var(--border)\';this.style.background=\'var(--card)\'">'
           + (logo ? '<img src="'+logo+'" data-flag="'+lega.flag+'" onerror="this.outerHTML=\'<div style=&quot;font-size:28px&quot;>\'+this.dataset.flag+\'</div>\'" style="width:40px;height:40px;object-fit:contain;filter:drop-shadow(0 2px 6px rgba(0,0,0,.3))">' : '<div style="font-size:28px">'+lega.flag+'</div>')
           + '<div style="font-size:12px;font-weight:700;color:var(--text)">'+lega.label+'</div>'
-          + (lega.clubs ? '<div style="font-size:10px;color:var(--text2)">'+lega.clubs+' club</div>' : '')
+          + (_nClub ? '<div style="font-size:10px;color:var(--text2)">'+_nClub+' club</div>' : '')
           + '</div>';
   });
 
@@ -9681,6 +9692,10 @@ function selectTournament(key, el) {
   html += '<div style="font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:'+dati.color+';margin-bottom:14px">Leghe disponibili</div>';
   html += '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px">';
 
+  // Numero club per lega da adm_config o da adm_rose
+  var _cfgClub = 0;
+  try { _cfgClub = JSON.parse(localStorage.getItem('adm_config_'+key)||'{}').nSquadre || 0; } catch(e){}
+
   dati.leghe.slice().sort(function(a,b){return a.label.localeCompare(b.label);}).forEach(function(lega) {
     var _lk = lega.key;
     var logo;
@@ -9698,12 +9713,19 @@ function selectTournament(key, el) {
       if (_urlLogo) _urlLogo = _normalizeImgUrl(_urlLogo);
       logo = _urlLogo || (LOGOS && LOGOS[_lk]) || '';
     }
+    // Club count: hardcoded > rose > config
+    var _nClub = lega.clubs || 0;
+    if (!_nClub) {
+      var _realLk = _lk.replace(key+'_', '');
+      try { _nClub = Object.keys(JSON.parse(localStorage.getItem('adm_rose_'+key+'_'+_realLk)||'{}')).length; } catch(e){}
+      if (!_nClub) _nClub = _cfgClub;
+    }
     html += '<div onclick="enterLeague(\''+key+'\',\''+lega.key+'\')" style="background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:14px 10px;cursor:pointer;text-align:center;transition:all .2s;display:flex;flex-direction:column;align-items:center;gap:8px;" '
           + 'onmouseover="this.style.borderColor=\''+dati.color+'\';this.style.background=\''+dati.color+'1a\'" '
           + 'onmouseout="this.style.borderColor=\'var(--border)\';this.style.background=\'var(--card)\'">'
           + (logo ? '<img src="'+logo+'" data-flag="'+lega.flag+'" onerror="this.outerHTML=\'<div style=&quot;font-size:28px&quot;>\'+this.dataset.flag+\'</div>\'" style="width:40px;height:40px;object-fit:contain;filter:drop-shadow(0 2px 6px rgba(0,0,0,.3))">' : '<div style="font-size:28px">'+lega.flag+'</div>')
           + '<div style="font-size:12px;font-weight:700;color:var(--text)">'+lega.label+'</div>'
-          + (lega.clubs ? '<div style="font-size:10px;color:var(--text2)">'+lega.clubs+' club</div>' : '')
+          + (_nClub ? '<div style="font-size:10px;color:var(--text2)">'+_nClub+' club</div>' : '')
           + '</div>';
   });
 
