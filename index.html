@@ -4016,14 +4016,21 @@ function enterTSM() {
   }
   showPage('tsm-lega');
   setTimeout(function(){
-    var src = (document.getElementById('tsm-it-logo')||{}).src || '';
-    if (src) {
-      ['tsm-breadcrumb-logo','tsm-league-logo'].forEach(function(id){
-        var el = document.getElementById(id);
-        if (el) el.src = src;
-      });
-    var coppaSrc = (document.getElementById('tsm-coppa-src')||{}).src || '';
-    if (coppaSrc) { var tEl = document.getElementById('tsm-lega-dash-trophy'); if(tEl) tEl.src = coppaSrc; }
+    // Logo TSM Italia
+    var _tsmLogo = localStorage.getItem('adm_logo_lega_tsm_it');
+    if (_tsmLogo) {
+      _tsmLogo = _normalizeImgUrl(_tsmLogo);
+      ['tsm-breadcrumb-logo','tsm-league-logo'].forEach(function(id){ var el=document.getElementById(id); if(el) el.src=_tsmLogo; });
+    }
+    // Trofeo TSM Italia
+    var _tsmTrofeo = localStorage.getItem('adm_trofeo_lega_tsm_it');
+    if (_tsmTrofeo) {
+      var _tEl = document.getElementById('tsm-lega-dash-trophy');
+      if (_tEl) _tEl.src = _normalizeImgUrl(_tsmTrofeo);
+    } else if (typeof GS_ONLINE !== 'undefined' && GS_ONLINE && typeof gsLoadKey === 'function') {
+      (function(){ var _t=document.getElementById('tsm-lega-dash-trophy');
+        gsLoadKey('adm_trofeo_lega_tsm_it', function(val){ if(val){ localStorage.setItem('adm_trofeo_lega_tsm_it',val); if(_t) _t.src=_normalizeImgUrl(val); } });
+      })();
     }
     showTSMSection('dashboard', null);
   }, 50);
@@ -9846,14 +9853,21 @@ function enterTSM() {
   }
   showPage('tsm-lega');
   setTimeout(function(){
-    var src = (document.getElementById('tsm-it-logo')||{}).src || '';
-    if (src) {
-      ['tsm-breadcrumb-logo','tsm-league-logo'].forEach(function(id){
-        var el = document.getElementById(id);
-        if (el) el.src = src;
-      });
-    var coppaSrc = (document.getElementById('tsm-coppa-src')||{}).src || '';
-    if (coppaSrc) { var tEl = document.getElementById('tsm-lega-dash-trophy'); if(tEl) tEl.src = coppaSrc; }
+    // Logo TSM Italia
+    var _tsmLogo = localStorage.getItem('adm_logo_lega_tsm_it');
+    if (_tsmLogo) {
+      _tsmLogo = _normalizeImgUrl(_tsmLogo);
+      ['tsm-breadcrumb-logo','tsm-league-logo'].forEach(function(id){ var el=document.getElementById(id); if(el) el.src=_tsmLogo; });
+    }
+    // Trofeo TSM Italia
+    var _tsmTrofeo = localStorage.getItem('adm_trofeo_lega_tsm_it');
+    if (_tsmTrofeo) {
+      var _tEl = document.getElementById('tsm-lega-dash-trophy');
+      if (_tEl) _tEl.src = _normalizeImgUrl(_tsmTrofeo);
+    } else if (typeof GS_ONLINE !== 'undefined' && GS_ONLINE && typeof gsLoadKey === 'function') {
+      (function(){ var _t=document.getElementById('tsm-lega-dash-trophy');
+        gsLoadKey('adm_trofeo_lega_tsm_it', function(val){ if(val){ localStorage.setItem('adm_trofeo_lega_tsm_it',val); if(_t) _t.src=_normalizeImgUrl(val); } });
+      })();
     }
     showTSMSection('dashboard', null);
   }, 50);
