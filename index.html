@@ -3754,7 +3754,6 @@ var LEAGUES_DATA = {
     color: '#ef4444',
     leghe: [
       {key:'ilc_a', label:'Girone A', flag:'🅰', clubs:null},
-      {key:'ilc_b', label:'Girone B', flag:'🅱', clubs:null},
     ]
   },
 };
@@ -3785,13 +3784,19 @@ function updateDashboardCounters() {
       if (clubEl) {
         // Calcola club totali da tutte le leghe
         var totalClub = 0;
+        var _cfgN = 0;
+        try { _cfgN = JSON.parse(localStorage.getItem('adm_config_'+t.key)||'{}').nSquadre || 0; } catch(e){}
         t.leghe.slice().sort(function(a,b){return a.label.localeCompare(b.label);}).forEach(function(l) {
           var rose = {};
           try { rose = JSON.parse(localStorage.getItem('adm_rose_'+t.key+'_'+l.key)||'{}'); } catch(e){}
-          // fallback per leghe embedded
-          if (!Object.keys(rose).length && typeof LEAGUES_DATA!=='undefined' && LEAGUES_DATA[t.key]) {
-            var ld = LEAGUES_DATA[t.key].leghe.find(function(x){return x.key===l.key;});
-            if (ld && ld.clubs) totalClub += ld.clubs;
+          if (!Object.keys(rose).length) {
+            // Fallback 1: LEAGUES_DATA (gestisce key mismatch ilm_a vs a)
+            if (typeof LEAGUES_DATA!=='undefined' && LEAGUES_DATA[t.key]) {
+              var ld = LEAGUES_DATA[t.key].leghe.find(function(x){return x.key===l.key||x.key===t.key+'_'+l.key;});
+              if (ld && ld.clubs) { totalClub += ld.clubs; return; }
+            }
+            // Fallback 2: nSquadre da adm_config
+            if (_cfgN) { totalClub += _cfgN; return; }
             return;
           }
           totalClub += Object.keys(rose).length;
@@ -9602,7 +9607,6 @@ var LEAGUES_DATA = {
     color: '#ef4444',
     leghe: [
       {key:'ilc_a', label:'Girone A', flag:'🅰', clubs:null},
-      {key:'ilc_b', label:'Girone B', flag:'🅱', clubs:null},
     ]
   },
 };
@@ -9633,13 +9637,19 @@ function updateDashboardCounters() {
       if (clubEl) {
         // Calcola club totali da tutte le leghe
         var totalClub = 0;
+        var _cfgN = 0;
+        try { _cfgN = JSON.parse(localStorage.getItem('adm_config_'+t.key)||'{}').nSquadre || 0; } catch(e){}
         t.leghe.slice().sort(function(a,b){return a.label.localeCompare(b.label);}).forEach(function(l) {
           var rose = {};
           try { rose = JSON.parse(localStorage.getItem('adm_rose_'+t.key+'_'+l.key)||'{}'); } catch(e){}
-          // fallback per leghe embedded
-          if (!Object.keys(rose).length && typeof LEAGUES_DATA!=='undefined' && LEAGUES_DATA[t.key]) {
-            var ld = LEAGUES_DATA[t.key].leghe.find(function(x){return x.key===l.key;});
-            if (ld && ld.clubs) totalClub += ld.clubs;
+          if (!Object.keys(rose).length) {
+            // Fallback 1: LEAGUES_DATA (gestisce key mismatch ilm_a vs a)
+            if (typeof LEAGUES_DATA!=='undefined' && LEAGUES_DATA[t.key]) {
+              var ld = LEAGUES_DATA[t.key].leghe.find(function(x){return x.key===l.key||x.key===t.key+'_'+l.key;});
+              if (ld && ld.clubs) { totalClub += ld.clubs; return; }
+            }
+            // Fallback 2: nSquadre da adm_config
+            if (_cfgN) { totalClub += _cfgN; return; }
             return;
           }
           totalClub += Object.keys(rose).length;
