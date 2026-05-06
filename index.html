@@ -4674,6 +4674,43 @@ function gsPing() {
     setTimeout(function(){ updateDashboardCounters(); updateLogosTornei(); }, 500);
     // ── Carica tutti i dati generici da GSheets (chiavi KV) ──────────
     if (GS_ONLINE) {
+      // Carica admin_tornei da GSheets (fondamentale per sessioni nuove/incognito)
+      gsLoadKey('admin_tornei', function(val) {
+        if (!val) return;
+        try {
+          var _atGS = typeof val === 'string' ? JSON.parse(val) : val;
+          if (!Array.isArray(_atGS) || !_atGS.length) return;
+          localStorage.setItem('admin_tornei', JSON.stringify(_atGS));
+          // Aggiorna ADMIN_TORNEI in memoria
+          if (typeof ADMIN_TORNEI !== 'undefined') {
+            ADMIN_TORNEI.length = 0;
+            _atGS.forEach(function(t){ ADMIN_TORNEI.push(t); });
+          }
+          // Re-sincronizza label LEAGUES_DATA
+          var _cl = ['#10b981','#3b82f6','#8b5cf6','#f59e0b','#ec4899','#06b6d4'];
+          _atGS.forEach(function(t, i) {
+            if (!LEAGUES_DATA[t.key]) LEAGUES_DATA[t.key] = {color:_cl[i%_cl.length], leghe:[]};
+            (t.leghe||[]).forEach(function(l) {
+              var ex = LEAGUES_DATA[t.key].leghe.find(function(x){return x.key===l.key||x.key===t.key+'_'+l.key;});
+              if (ex) ex.label = l.label;
+              else LEAGUES_DATA[t.key].leghe.push({key:l.key, label:l.label, flag:'🏆', clubs:0});
+            });
+          });
+          updateDashboardCounters();
+          updateLogosTornei();
+          // Carica loghi/trofei/rose per ogni torneo e lega
+          gsLoadKey('adm_logo_main', function(v){ if(v){ localStorage.setItem('adm_logo_main',v); _applyLogoMain(v); } });
+          _atGS.forEach(function(t) {
+            gsLoadKey('adm_logo_torneo_'+t.key, function(v){ if(v){ localStorage.setItem('adm_logo_torneo_'+t.key,v); updateLogosTornei(); } });
+            gsLoadKey('adm_config_'+t.key, function(v){ if(v) localStorage.setItem('adm_config_'+t.key, typeof v==='string'?v:JSON.stringify(v)); });
+            (t.leghe||[]).forEach(function(l) {
+              gsLoadKey('adm_logo_lega_'+t.key+'_'+l.key, function(v){ if(v) localStorage.setItem('adm_logo_lega_'+t.key+'_'+l.key,v); });
+              gsLoadKey('adm_trofeo_lega_'+t.key+'_'+l.key, function(v){ if(v) localStorage.setItem('adm_trofeo_lega_'+t.key+'_'+l.key,v); });
+              gsLoadKey('adm_rose_'+t.key+'_'+l.key, function(v){ if(v) localStorage.setItem('adm_rose_'+t.key+'_'+l.key, typeof v==='string'?v:JSON.stringify(v)); });
+            });
+          });
+        } catch(e) {}
+      });
       var _syncKeys = [
         'adm_stadio_table_global',
         'admin_modulistica',
