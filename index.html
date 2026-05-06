@@ -7694,7 +7694,7 @@ function admRenderRosaEditor(players, torneoKey, legaKey, squadra) {
   var _rosaAttuale = admGetPlayers(torneoKey, legaKey, squadra);
   var _costiAttuali = _rosaAttuale.reduce(function(s,p){return s+(parseFloat(p.costo)||0);},0);
   // Per TSM i movimenti non si calcolano (crediti base già finali)
-  var _movimenti = torneoKey==='tsm' ? 0 : (_costiOrig - _costiAttuali);
+  var _movimenti = torneoKey==='tsm' ? 0 : (_rosaOrig && _rosaOrig.length > 0 ? (_costiOrig - _costiAttuali) : 0);
   // Multe crediti
   var _multeKey = typeof admGetMulteKey==='function' ? admGetMulteKey(torneoKey, legaKey) : 'slim_multe_'+legaKey;
   var _multeRaw = localStorage.getItem(_multeKey);
@@ -7814,10 +7814,9 @@ function admSaveCreditiGestioneEl(el) {
   var t=el.dataset.t, l=el.dataset.l, s=el.dataset.s;
   var val = parseFloat(document.getElementById('adm-cr-gest-'+s).value||0);
   admSaveCreditiGestione(t, l, s, val);
-  // Reset input a 0 e ricarica pannello crediti
-  var inp = document.getElementById('adm-cr-gest-'+s);
-  if (inp) inp.value = '0';
   admLoadRosaGiocatori();
+  // Reset a 0 dopo il rebuild del pannello
+  setTimeout(function(){ var inp=document.getElementById('adm-cr-gest-'+s); if(inp) inp.value='0'; }, 100);
   var msg=document.createElement('div');
   msg.textContent='✅ Crediti salvati: '+s+' → '+val+' cr';
   msg.style.cssText='position:fixed;top:70px;right:20px;background:#10b981;color:#fff;padding:8px 16px;border-radius:8px;font-weight:700;font-size:12px;z-index:9999';
