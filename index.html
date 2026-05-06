@@ -3915,6 +3915,10 @@ function _updateLegaDashboard(leagueKey) {
     var _hParts = leagueKey.match(/^([a-z]+)_(.+)$/);
     if (_hParts) { _admTK = _hParts[1]; _realLK = _hParts[2]; }
   }
+  // Fallback slim: le leghe standard hanno chiave singola (it,en,de,es,fr,pt,nl,tr)
+  if (!_admTK && ['it','en','de','es','fr','pt','nl','tr'].indexOf(leagueKey) !== -1) {
+    _admTK = 'slim'; _realLK = leagueKey;
+  }
   var trophyMap = {
     'it':'Slim Italia','en':'Slim Inghilterra','de':'Slim Germania',
     'es':'Slim Spagna','fr':'Slim Francia','pt':'Slim Portogallo',
@@ -4707,6 +4711,16 @@ function gsPing() {
               gsLoadKey('adm_logo_lega_'+t.key+'_'+l.key, function(v){ if(v) localStorage.setItem('adm_logo_lega_'+t.key+'_'+l.key,v); });
               gsLoadKey('adm_trofeo_lega_'+t.key+'_'+l.key, function(v){ if(v) localStorage.setItem('adm_trofeo_lega_'+t.key+'_'+l.key,v); });
               gsLoadKey('adm_rose_'+t.key+'_'+l.key, function(v){ if(v) localStorage.setItem('adm_rose_'+t.key+'_'+l.key, typeof v==='string'?v:JSON.stringify(v)); });
+            });
+          });
+          // Carica trofei e crediti per tutte le leghe slim (indipendente da admin_tornei)
+          ['it','en','de','es','fr','pt','nl','tr'].forEach(function(lk) {
+            gsLoadKey('adm_trofeo_lega_slim_'+lk, function(v){ if(v) localStorage.setItem('adm_trofeo_lega_slim_'+lk,v); });
+            gsLoadKey('adm_crediti_base_slim_'+lk, function(v){
+              if(v){
+                localStorage.setItem('adm_crediti_base_slim_'+lk, typeof v==='string'?v:JSON.stringify(v));
+                try { if(typeof syncCreditiToUser==='function') syncCreditiToUser('slim', lk, typeof v==='string'?JSON.parse(v):v); } catch(e) {}
+              }
             });
           });
         } catch(e) {}
@@ -8624,7 +8638,7 @@ function enterLeague(tournament, leagueKey) {
       if (GS_ONLINE && typeof gsLoadKey === 'function') {
         gsLoadKey(_rk, function(val) { if(val===null)return; try{var p=typeof val==='string'?JSON.parse(val):val; TEAMS_ROSE=p; localStorage.setItem(_rk,JSON.stringify(p));}catch(e){} });
         gsLoadKey(_ik, function(val) { if(val===null)return; try{var a=typeof val==='string'?JSON.parse(val):val; INFERMERIA=a; localStorage.setItem(_ik,JSON.stringify(a));}catch(e){} });
-        gsLoadKey(_ck, function(val) { if(val===null)return; try{var c=typeof val==='string'?JSON.parse(val):val; CREDITS=c; localStorage.setItem(_ck,JSON.stringify(c)); if(typeof syncCreditiToUser==='function') syncCreditiToUser(_tk,_lk,c);}catch(e){} });
+        gsLoadKey(_ck, function(val) { if(val===null)return; try{var c=typeof val==='string'?JSON.parse(val):val; CREDITS=c; localStorage.setItem(_ck,JSON.stringify(c)); if(typeof syncCreditiToUser==='function') syncCreditiToUser(_tk,_lk,c); if(typeof updateHeader==='function') updateHeader();}catch(e){} });
       }
     })('slim', leagueKey);
     FANTASY_LOGOS = (typeof FANTASY_LOGOS_ALL !== 'undefined') ? FANTASY_LOGOS_ALL : {};
@@ -9815,6 +9829,10 @@ function _updateLegaDashboard(leagueKey) {
   if (!_admTK && leagueKey.indexOf('_') > 0) {
     var _hParts = leagueKey.match(/^([a-z]+)_(.+)$/);
     if (_hParts) { _admTK = _hParts[1]; _realLK = _hParts[2]; }
+  }
+  // Fallback slim: le leghe standard hanno chiave singola (it,en,de,es,fr,pt,nl,tr)
+  if (!_admTK && ['it','en','de','es','fr','pt','nl','tr'].indexOf(leagueKey) !== -1) {
+    _admTK = 'slim'; _realLK = leagueKey;
   }
   var trophyMap = {
     'it':'Slim Italia','en':'Slim Inghilterra','de':'Slim Germania',
@@ -13654,7 +13672,7 @@ function enterLeague(tournament, leagueKey) {
       if (GS_ONLINE && typeof gsLoadKey === 'function') {
         gsLoadKey(_rk, function(val) { if(val===null)return; try{var p=typeof val==='string'?JSON.parse(val):val; TEAMS_ROSE=p; localStorage.setItem(_rk,JSON.stringify(p));}catch(e){} });
         gsLoadKey(_ik, function(val) { if(val===null)return; try{var a=typeof val==='string'?JSON.parse(val):val; INFERMERIA=a; localStorage.setItem(_ik,JSON.stringify(a));}catch(e){} });
-        gsLoadKey(_ck, function(val) { if(val===null)return; try{var c=typeof val==='string'?JSON.parse(val):val; CREDITS=c; localStorage.setItem(_ck,JSON.stringify(c)); if(typeof syncCreditiToUser==='function') syncCreditiToUser(_tk,_lk,c);}catch(e){} });
+        gsLoadKey(_ck, function(val) { if(val===null)return; try{var c=typeof val==='string'?JSON.parse(val):val; CREDITS=c; localStorage.setItem(_ck,JSON.stringify(c)); if(typeof syncCreditiToUser==='function') syncCreditiToUser(_tk,_lk,c); if(typeof updateHeader==='function') updateHeader();}catch(e){} });
       }
     })('slim', leagueKey);
     FANTASY_LOGOS = (typeof FANTASY_LOGOS_ALL !== 'undefined') ? FANTASY_LOGOS_ALL : {};
