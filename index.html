@@ -8838,6 +8838,13 @@ function updateHeader(){
     var _baseCr = (_admCrObj[currentTeam]!==undefined) ? _admCrObj[currentTeam]
                 : (_userCred[currentTeam]!==undefined) ? _userCred[currentTeam]
                 : (CREDITS[currentTeam]!==undefined ? CREDITS[currentTeam] : null);
+    // Fallback case-insensitive (CSV Leghe FC usa MAIUSCOLO, ALL_LEAGUES_DATA usa ProperCase)
+    if (_baseCr===null||_baseCr===undefined) {
+      var _ctU=currentTeam.toUpperCase();
+      Object.keys(_admCrObj).forEach(function(k){if(k.toUpperCase()===_ctU&&_admCrObj[k]!==undefined)_baseCr=_admCrObj[k];});
+      if(_baseCr===null||_baseCr===undefined) Object.keys(_userCred).forEach(function(k){if(k.toUpperCase()===_ctU&&_userCred[k]!==undefined)_baseCr=_userCred[k];});
+      if(_baseCr===null||_baseCr===undefined) Object.keys(CREDITS).forEach(function(k){if(k.toUpperCase()===_ctU&&CREDITS[k]!==undefined)_baseCr=CREDITS[k];});
+    }
     // Movimenti: costi rosa originale - costi rosa attuale
     var _rosaImport = JSON.parse(localStorage.getItem('adm_rose_import_slim_'+_legaKey)||localStorage.getItem('adm_rose_slim_'+_legaKey)||'{}');
     var _rosaOrig2 = _rosaImport[currentTeam]||_rosaImport[currentTeam.toUpperCase()]||(window._TEAMS_ROSE_IT&&(window._TEAMS_ROSE_IT[currentTeam]||window._TEAMS_ROSE_IT[currentTeam.toUpperCase()]))||[];
@@ -12509,7 +12516,7 @@ function admConfirmImport(){
   if(tk==='slim'&&lk==='it'){Object.keys(sk).forEach(function(s){TEAMS_ROSE[s]=sk[s];});localStorage.setItem('adm_rose_slim_it',JSON.stringify(sk));
   localStorage.setItem('adm_rose_import_slim_it',JSON.stringify(sk));}
   else if(tk==='tsm'&&lk==='it'){Object.keys(sk).forEach(function(s){if(typeof TSM_ROSE_IT!=='undefined')TSM_ROSE_IT[s]=sk[s];});localStorage.setItem('adm_rose_tsm_it',JSON.stringify(sk));}
-  else{localStorage.setItem('adm_rose_'+tk+'_'+lk,JSON.stringify(sk));}
+  else{localStorage.setItem('adm_rose_'+tk+'_'+lk,JSON.stringify(sk)); gsSaveKey('adm_rose_'+tk+'_'+lk,JSON.stringify(sk));}
   if(inf&&inf.length>0) localStorage.setItem('adm_infermeria_'+tk+'_'+lk,JSON.stringify(inf));
   gsSaveKey('adm_infermeria_'+tk+'_'+lk, JSON.stringify(inf));
   var n=Object.values(sk).reduce(function(a,b){return a+b.length;},0);
@@ -13872,6 +13879,13 @@ function updateHeader(){
     var _baseCr = (_admCrObj[currentTeam]!==undefined) ? _admCrObj[currentTeam]
                 : (_userCred[currentTeam]!==undefined) ? _userCred[currentTeam]
                 : (CREDITS[currentTeam]!==undefined ? CREDITS[currentTeam] : null);
+    // Fallback case-insensitive (CSV Leghe FC usa MAIUSCOLO, ALL_LEAGUES_DATA usa ProperCase)
+    if (_baseCr===null||_baseCr===undefined) {
+      var _ctU=currentTeam.toUpperCase();
+      Object.keys(_admCrObj).forEach(function(k){if(k.toUpperCase()===_ctU&&_admCrObj[k]!==undefined)_baseCr=_admCrObj[k];});
+      if(_baseCr===null||_baseCr===undefined) Object.keys(_userCred).forEach(function(k){if(k.toUpperCase()===_ctU&&_userCred[k]!==undefined)_baseCr=_userCred[k];});
+      if(_baseCr===null||_baseCr===undefined) Object.keys(CREDITS).forEach(function(k){if(k.toUpperCase()===_ctU&&CREDITS[k]!==undefined)_baseCr=CREDITS[k];});
+    }
     // Movimenti: costi rosa originale - costi rosa attuale
     var _rosaImport = JSON.parse(localStorage.getItem('adm_rose_import_slim_'+_legaKey)||localStorage.getItem('adm_rose_slim_'+_legaKey)||'{}');
     var _rosaOrig2 = _rosaImport[currentTeam]||_rosaImport[currentTeam.toUpperCase()]||(window._TEAMS_ROSE_IT&&(window._TEAMS_ROSE_IT[currentTeam]||window._TEAMS_ROSE_IT[currentTeam.toUpperCase()]))||[];
