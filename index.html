@@ -4606,12 +4606,28 @@ function gsPing() {
   gsCall({action:'ping'}, function(err, data) {
     GS_ONLINE = !err && data && data.ok;
     if (GS_ONLINE) {
-      // Controlla richieste pendenti (solo se admin)
+      // Controlla richieste pendenti (solo se admin) + sync trofei locali → GSheets
       var cu = localStorage.getItem('current_user');
       if (cu) {
         try {
           var u = JSON.parse(cu);
-          if (u.ruolo === 'admin') checkPendingRequests();
+          if (u.ruolo === 'admin') {
+            checkPendingRequests();
+            // Sync: trofei e crediti salvati localmente ma non su GSheets
+            // (accade se l'admin ha salvato prima che GS_ONLINE diventasse true)
+            var _sTornei = JSON.parse(localStorage.getItem('admin_tornei')||'[]');
+            if (!_sTornei.length) _sTornei = [{key:'slim',leghe:[{key:'it'},{key:'en'},{key:'de'},{key:'es'},{key:'fr'},{key:'pt'},{key:'nl'},{key:'tr'}]},{key:'tsm',leghe:[{key:'it'}]}];
+            _sTornei.forEach(function(t) {
+              (t.leghe||[]).forEach(function(l) {
+                var _trofKey = 'adm_trofeo_lega_'+t.key+'_'+l.key;
+                var _trofVal = localStorage.getItem(_trofKey);
+                if (_trofVal) gsSaveKey(_trofKey, _trofVal);
+                var _logoKey = 'adm_logo_lega_'+t.key+'_'+l.key;
+                var _logoVal = localStorage.getItem(_logoKey);
+                if (_logoVal) gsSaveKey(_logoKey, _logoVal);
+              });
+            });
+          }
         } catch(e) {}
       }
       // Carica crediti da GSheets
