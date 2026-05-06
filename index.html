@@ -3956,10 +3956,10 @@ function _updateLegaDashboard(leagueKey) {
       || (_admTK ? localStorage.getItem('adm_trofeo_url_'+_admTK) : null);
     if (_trofeoUrl) {
       trophyEl.src = _normalizeImgUrl(_trofeoUrl);
-    } else if (_admTK && typeof gsLoadKey === 'function' && typeof GS_ONLINE !== 'undefined' && GS_ONLINE) {
+    } else if (_admTK && typeof gsCall === 'function' && typeof GS_URL !== 'undefined' && GS_URL) {
       (function(el, tk, lk) {
-        gsLoadKey('adm_trofeo_lega_'+tk+'_'+lk, function(val) {
-          if (val) { localStorage.setItem('adm_trofeo_lega_'+tk+'_'+lk, val); el.src = _normalizeImgUrl(val); }
+        gsCall({action:'getKey', key:'adm_trofeo_lega_'+tk+'_'+lk}, function(err, res) {
+          if (!err && res && res.ok && res.data) { localStorage.setItem('adm_trofeo_lega_'+tk+'_'+lk, res.data); el.src = _normalizeImgUrl(res.data); }
         });
       })(trophyEl, _admTK, _realLK);
     } else if (typeof TROPHY_MAP !== 'undefined') {
@@ -8635,10 +8635,10 @@ function enterLeague(tournament, leagueKey) {
       var _rl=localStorage.getItem(_rk); if(_rl){try{TEAMS_ROSE=JSON.parse(_rl);}catch(e){}}
       var _il=localStorage.getItem(_ik); if(_il){try{INFERMERIA=JSON.parse(_il);}catch(e){}}
       var _cl=localStorage.getItem(_ck); if(_cl){try{CREDITS=JSON.parse(_cl);}catch(e){}}
-      if (GS_ONLINE && typeof gsLoadKey === 'function') {
-        gsLoadKey(_rk, function(val) { if(val===null)return; try{var p=typeof val==='string'?JSON.parse(val):val; TEAMS_ROSE=p; localStorage.setItem(_rk,JSON.stringify(p));}catch(e){} });
-        gsLoadKey(_ik, function(val) { if(val===null)return; try{var a=typeof val==='string'?JSON.parse(val):val; INFERMERIA=a; localStorage.setItem(_ik,JSON.stringify(a));}catch(e){} });
-        gsLoadKey(_ck, function(val) { if(val===null)return; try{var c=typeof val==='string'?JSON.parse(val):val; CREDITS=c; localStorage.setItem(_ck,JSON.stringify(c)); if(typeof syncCreditiToUser==='function') syncCreditiToUser(_tk,_lk,c); if(typeof updateHeader==='function') updateHeader();}catch(e){} });
+      if (typeof gsCall === 'function' && typeof GS_URL !== 'undefined' && GS_URL) {
+        gsCall({action:'getKey',key:_rk}, function(e,r){ if(!e&&r&&r.ok&&r.data){try{var p=typeof r.data==='string'?JSON.parse(r.data):r.data; TEAMS_ROSE=p; localStorage.setItem(_rk,JSON.stringify(p));}catch(e2){}} });
+        gsCall({action:'getKey',key:_ik}, function(e,r){ if(!e&&r&&r.ok&&r.data){try{var a=typeof r.data==='string'?JSON.parse(r.data):r.data; INFERMERIA=a; localStorage.setItem(_ik,JSON.stringify(a));}catch(e2){}} });
+        gsCall({action:'getKey',key:_ck}, function(e,r){ if(!e&&r&&r.ok&&r.data){try{var c=typeof r.data==='string'?JSON.parse(r.data):r.data; CREDITS=c; localStorage.setItem(_ck,JSON.stringify(c)); if(typeof syncCreditiToUser==='function') syncCreditiToUser(_tk,_lk,c); if(typeof updateHeader==='function') updateHeader();}catch(e2){}} });
       }
     })('slim', leagueKey);
     FANTASY_LOGOS = (typeof FANTASY_LOGOS_ALL !== 'undefined') ? FANTASY_LOGOS_ALL : {};
@@ -9871,10 +9871,10 @@ function _updateLegaDashboard(leagueKey) {
       || (_admTK ? localStorage.getItem('adm_trofeo_url_'+_admTK) : null);
     if (_trofeoUrl) {
       trophyEl.src = _normalizeImgUrl(_trofeoUrl);
-    } else if (_admTK && typeof gsLoadKey === 'function' && typeof GS_ONLINE !== 'undefined' && GS_ONLINE) {
+    } else if (_admTK && typeof gsCall === 'function' && typeof GS_URL !== 'undefined' && GS_URL) {
       (function(el, tk, lk) {
-        gsLoadKey('adm_trofeo_lega_'+tk+'_'+lk, function(val) {
-          if (val) { localStorage.setItem('adm_trofeo_lega_'+tk+'_'+lk, val); el.src = _normalizeImgUrl(val); }
+        gsCall({action:'getKey', key:'adm_trofeo_lega_'+tk+'_'+lk}, function(err, res) {
+          if (!err && res && res.ok && res.data) { localStorage.setItem('adm_trofeo_lega_'+tk+'_'+lk, res.data); el.src = _normalizeImgUrl(res.data); }
         });
       })(trophyEl, _admTK, _realLK);
     } else if (typeof TROPHY_MAP !== 'undefined') {
@@ -13669,10 +13669,10 @@ function enterLeague(tournament, leagueKey) {
       var _rl=localStorage.getItem(_rk); if(_rl){try{TEAMS_ROSE=JSON.parse(_rl);}catch(e){}}
       var _il=localStorage.getItem(_ik); if(_il){try{INFERMERIA=JSON.parse(_il);}catch(e){}}
       var _cl=localStorage.getItem(_ck); if(_cl){try{CREDITS=JSON.parse(_cl);}catch(e){}}
-      if (GS_ONLINE && typeof gsLoadKey === 'function') {
-        gsLoadKey(_rk, function(val) { if(val===null)return; try{var p=typeof val==='string'?JSON.parse(val):val; TEAMS_ROSE=p; localStorage.setItem(_rk,JSON.stringify(p));}catch(e){} });
-        gsLoadKey(_ik, function(val) { if(val===null)return; try{var a=typeof val==='string'?JSON.parse(val):val; INFERMERIA=a; localStorage.setItem(_ik,JSON.stringify(a));}catch(e){} });
-        gsLoadKey(_ck, function(val) { if(val===null)return; try{var c=typeof val==='string'?JSON.parse(val):val; CREDITS=c; localStorage.setItem(_ck,JSON.stringify(c)); if(typeof syncCreditiToUser==='function') syncCreditiToUser(_tk,_lk,c); if(typeof updateHeader==='function') updateHeader();}catch(e){} });
+      if (typeof gsCall === 'function' && typeof GS_URL !== 'undefined' && GS_URL) {
+        gsCall({action:'getKey',key:_rk}, function(e,r){ if(!e&&r&&r.ok&&r.data){try{var p=typeof r.data==='string'?JSON.parse(r.data):r.data; TEAMS_ROSE=p; localStorage.setItem(_rk,JSON.stringify(p));}catch(e2){}} });
+        gsCall({action:'getKey',key:_ik}, function(e,r){ if(!e&&r&&r.ok&&r.data){try{var a=typeof r.data==='string'?JSON.parse(r.data):r.data; INFERMERIA=a; localStorage.setItem(_ik,JSON.stringify(a));}catch(e2){}} });
+        gsCall({action:'getKey',key:_ck}, function(e,r){ if(!e&&r&&r.ok&&r.data){try{var c=typeof r.data==='string'?JSON.parse(r.data):r.data; CREDITS=c; localStorage.setItem(_ck,JSON.stringify(c)); if(typeof syncCreditiToUser==='function') syncCreditiToUser(_tk,_lk,c); if(typeof updateHeader==='function') updateHeader();}catch(e2){}} });
       }
     })('slim', leagueKey);
     FANTASY_LOGOS = (typeof FANTASY_LOGOS_ALL !== 'undefined') ? FANTASY_LOGOS_ALL : {};
