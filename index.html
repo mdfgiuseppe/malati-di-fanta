@@ -8867,7 +8867,7 @@ function updateHeader(){
     var _costiOrig2 = _rosaOrig2.reduce(function(s,p){return s+(parseFloat(p.costo)||0);},0);
     var _rosaAtt2 = TEAMS_ROSE[currentTeam]||[];
     var _costiAtt2 = _rosaAtt2.reduce(function(s,p){return s+(parseFloat(p.costo)||0);},0);
-    var _movUser = _costiOrig2 - _costiAtt2;
+    var _movUser = _rosaOrig2.length > 0 ? (_costiOrig2 - _costiAtt2) : 0;
     var _multeKey2 = 'slim_multe_'+_legaKey;
     var _multeRaw2 = localStorage.getItem(_multeKey2);
     var _crMulUser = 0;
@@ -13908,7 +13908,7 @@ function updateHeader(){
     var _costiOrig2 = _rosaOrig2.reduce(function(s,p){return s+(parseFloat(p.costo)||0);},0);
     var _rosaAtt2 = TEAMS_ROSE[currentTeam]||[];
     var _costiAtt2 = _rosaAtt2.reduce(function(s,p){return s+(parseFloat(p.costo)||0);},0);
-    var _movUser = _costiOrig2 - _costiAtt2;
+    var _movUser = _rosaOrig2.length > 0 ? (_costiOrig2 - _costiAtt2) : 0;
     var _multeKey2 = 'slim_multe_'+_legaKey;
     var _multeRaw2 = localStorage.getItem(_multeKey2);
     var _crMulUser = 0;
