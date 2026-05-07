@@ -3098,6 +3098,15 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
         <button onclick="admEditLogoMain()" style="background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.3);color:#10b981;cursor:pointer;font-size:12px;border-radius:8px;padding:6px 12px;font-weight:700">🖼 Logo</button>
       </div>
 
+      <!-- Select + Dettaglio Torneo -->
+      <div style="margin-bottom:12px">
+        <select id="adm-tornei-select" onchange="admSelectTorneoDetail(this.value)" style="width:100%;padding:10px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:13px;font-weight:700;outline:none;cursor:pointer">
+          <option value="">-- Seleziona torneo --</option>
+        </select>
+      </div>
+      <div id="adm-tornei-detail" style="margin-bottom:12px"></div>
+      <div id="adm-tornei-list" style="display:none"></div>
+
       <!-- Aggiungi Torneo -->
       <div class="card" style="padding:20px;margin-bottom:20px">
         <div style="font-size:13px;font-weight:800;margin-bottom:16px;display:flex;align-items:center;gap:8px">
@@ -3186,15 +3195,6 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
           </div>
         </div>
       </div>
-
-      <!-- Select + Dettaglio Torneo -->
-      <div style="margin-bottom:12px">
-        <select id="adm-tornei-select" onchange="admSelectTorneoDetail(this.value)" style="width:100%;padding:10px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:13px;font-weight:700;outline:none;cursor:pointer">
-          <option value="">-- Seleziona torneo --</option>
-        </select>
-      </div>
-      <div id="adm-tornei-detail" style="margin-bottom:12px"></div>
-      <div id="adm-tornei-list" style="display:none"></div>
     </div>
 
     <!-- ===== UTENTI ===== -->
@@ -6380,9 +6380,11 @@ function admRenderTornei() {
     sel.innerHTML = '<option value="">-- Nessun torneo creato --</option>';
     return;
   }
+  var _sorted = ADMIN_TORNEI.map(function(t,i){return{t:t,i:i};}).sort(function(a,b){return a.t.label.localeCompare(b.t.label);});
   sel.innerHTML = '<option value="">-- Seleziona torneo --</option>' +
-    ADMIN_TORNEI.map(function(t, ti) {
-      return '<option value="'+ti+'">'+t.label+' ('+t.key.toUpperCase()+')</option>';
+    _sorted.map(function(s) {
+      var _lbl = s.t.key==='tsm' ? 'Torneo Semi Manageriale' : s.t.label;
+      return '<option value="'+s.i+'">'+_lbl+' ('+s.t.key.toUpperCase()+')</option>';
     }).join('');
   sel.selectedIndex = 0;
 }
@@ -11705,9 +11707,11 @@ function admRenderTornei() {
     sel.innerHTML = '<option value="">-- Nessun torneo creato --</option>';
     return;
   }
+  var _sorted = ADMIN_TORNEI.map(function(t,i){return{t:t,i:i};}).sort(function(a,b){return a.t.label.localeCompare(b.t.label);});
   sel.innerHTML = '<option value="">-- Seleziona torneo --</option>' +
-    ADMIN_TORNEI.map(function(t, ti) {
-      return '<option value="'+ti+'">'+t.label+' ('+t.key.toUpperCase()+')</option>';
+    _sorted.map(function(s) {
+      var _lbl = s.t.key==='tsm' ? 'Torneo Semi Manageriale' : s.t.label;
+      return '<option value="'+s.i+'">'+_lbl+' ('+s.t.key.toUpperCase()+')</option>';
     }).join('');
   sel.selectedIndex = 0;
 }
