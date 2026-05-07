@@ -5652,7 +5652,9 @@ function admRenderCoppeList(torneoKey) {
   var h = '<div class="card" style="padding:0;overflow:hidden">'
     +'<div style="padding:10px 14px;background:var(--bg2);border-bottom:1px solid var(--border);font-size:10px;font-weight:800;text-transform:uppercase;color:var(--text3)">Coppe Configurate</div>';
   config.forEach(function(c, ci) {
-    h += '<div style="display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--border)">'
+    var _trofeoVal = localStorage.getItem('adm_coppa_trofeo_'+torneoKey+'_'+c.key) || '';
+    h += '<div style="border-bottom:1px solid var(--border)">';
+    h += '<div style="display:flex;align-items:center;gap:10px;padding:10px 14px">'
       +'<div style="width:12px;height:12px;border-radius:50%;background:'+c.color+';flex-shrink:0"></div>'
       +'<div style="flex:1">'
       +'<input type="text" value="'+c.label+'" data-t="'+torneoKey+'" data-ci="'+ci+'" data-f="label" onchange="admUpdateCoppaConfig(this)" style="background:transparent;border:none;border-bottom:1px solid var(--border);color:var(--text);font-size:13px;font-weight:700;outline:none;width:200px">'
@@ -5661,6 +5663,11 @@ function admRenderCoppeList(torneoKey) {
       +'<span style="font-size:11px;color:var(--text3)">'+c.rounds.length+' turni · '+c.teams+' squadre</span>'
       +'<button data-t="'+torneoKey+'" data-ci="'+ci+'" onclick="admDeleteCoppa(this)" style="background:none;border:none;color:#ef4444;cursor:pointer;font-size:14px">✕</button>'
       +'</div>';
+    h += '<div style="padding:4px 14px 10px;display:flex;align-items:center;gap:8px">'
+      +'<div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:#f59e0b;white-space:nowrap;flex-shrink:0">🖼️ URL Trofeo</div>'
+      +'<input type="text" value="'+_trofeoVal+'" data-t="'+torneoKey+'" data-k="'+c.key+'" onchange="admSaveCoppaTrofeo(this)" placeholder="https://... URL immagine trofeo" style="flex:1;padding:5px 8px;background:var(--bg2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:11px;outline:none">'
+      +'</div>';
+    h += '</div>';
   });
   h += '</div>';
   el.innerHTML = h;
@@ -5671,6 +5678,15 @@ function admUpdateCoppaConfig(el) {
   var config = admGetCoppeConfig(torneoKey);
   if(config[ci]) config[ci][f] = el.value;
   admSaveCoppeConfig(torneoKey, config);
+}
+
+function admSaveCoppaTrofeo(el) {
+  var t = el.dataset.t, k = el.dataset.k;
+  var url = el.value.trim();
+  var storeKey = 'adm_coppa_trofeo_'+t+'_'+k;
+  if (url) { localStorage.setItem(storeKey, url); gsSaveKey(storeKey, url); }
+  else { localStorage.removeItem(storeKey); gsSaveKey(storeKey, ''); }
+  if (typeof COPPA_TROPHIES !== 'undefined') COPPA_TROPHIES[k] = url;
 }
 
 function admDeleteCoppa(el) {
@@ -5815,11 +5831,6 @@ function admLoadCoppaEditor() {
   h += '<div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:#f59e0b;margin-bottom:8px">🏆 Squadra Campione</div>';
   h += '<select id="adm-coppa-vincitore-'+coppaKey+'" style="width:100%;padding:7px 10px;background:var(--bg2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:12px;font-weight:700;outline:none">'+vincitoreOpts+'</select>';
   h += '</div>';
-  var _trofeoVal = localStorage.getItem('adm_coppa_trofeo_'+torneoKey+'_'+coppaKey) || '';
-  h += '<div style="padding:10px 14px;border-top:1px solid var(--border)">';
-  h += '<div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:#f59e0b;margin-bottom:6px">🖼️ URL Immagine Trofeo</div>';
-  h += '<input id="adm-coppa-trofeo-'+coppaKey+'" type="text" value="'+_trofeoVal+'" placeholder="https://... URL immagine trofeo" style="width:100%;padding:7px 10px;background:var(--bg2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:12px;outline:none;box-sizing:border-box">';
-  h += '</div>';
   h += '<div style="padding:10px 14px;border-top:1px solid var(--border);display:flex;gap:8px">'
     +'<button data-t="'+torneoKey+'" data-k="'+coppaKey+'" onclick="admSaveCoppaEl(this)" style="padding:6px 16px;background:#10b981;color:#fff;border:none;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer">💾 Salva Risultati</button>'
     +'</div></div>';
@@ -5856,15 +5867,6 @@ function admSaveCoppaEl(el) {
   // Salva anche vincitore dal select
   var vincSel = document.getElementById('adm-coppa-vincitore-'+k);
   if (vincSel) data.vincitore = vincSel.value || '';
-  // Salva URL trofeo coppa
-  var trofeoInp = document.getElementById('adm-coppa-trofeo-'+k);
-  if (trofeoInp) {
-    var trofeoUrl = trofeoInp.value.trim();
-    var trofeoStoreKey = 'adm_coppa_trofeo_'+t+'_'+k;
-    if (trofeoUrl) { localStorage.setItem(trofeoStoreKey, trofeoUrl); gsSaveKey(trofeoStoreKey, trofeoUrl); }
-    else { localStorage.removeItem(trofeoStoreKey); gsSaveKey(trofeoStoreKey, ''); }
-    if (typeof COPPA_TROPHIES !== 'undefined') COPPA_TROPHIES[k] = trofeoUrl;
-  }
   admSaveCoppaData(t, k, data);
   if(window._admCoppaTemp) delete window._admCoppaTemp[cacheKey];
   var msg=document.createElement('div');msg.textContent='✅ Risultati salvati';msg.style.cssText='position:fixed;top:70px;right:20px;background:#10b981;color:#fff;padding:8px 16px;border-radius:8px;font-weight:700;font-size:12px;z-index:9999';document.body.appendChild(msg);setTimeout(function(){msg.remove();},2000);
@@ -11126,7 +11128,9 @@ function admRenderCoppeList(torneoKey) {
   var h = '<div class="card" style="padding:0;overflow:hidden">'
     +'<div style="padding:10px 14px;background:var(--bg2);border-bottom:1px solid var(--border);font-size:10px;font-weight:800;text-transform:uppercase;color:var(--text3)">Coppe Configurate</div>';
   config.forEach(function(c, ci) {
-    h += '<div style="display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--border)">'
+    var _trofeoVal = localStorage.getItem('adm_coppa_trofeo_'+torneoKey+'_'+c.key) || '';
+    h += '<div style="border-bottom:1px solid var(--border)">';
+    h += '<div style="display:flex;align-items:center;gap:10px;padding:10px 14px">'
       +'<div style="width:12px;height:12px;border-radius:50%;background:'+c.color+';flex-shrink:0"></div>'
       +'<div style="flex:1">'
       +'<input type="text" value="'+c.label+'" data-t="'+torneoKey+'" data-ci="'+ci+'" data-f="label" onchange="admUpdateCoppaConfig(this)" style="background:transparent;border:none;border-bottom:1px solid var(--border);color:var(--text);font-size:13px;font-weight:700;outline:none;width:200px">'
@@ -11135,6 +11139,11 @@ function admRenderCoppeList(torneoKey) {
       +'<span style="font-size:11px;color:var(--text3)">'+c.rounds.length+' turni · '+c.teams+' squadre</span>'
       +'<button data-t="'+torneoKey+'" data-ci="'+ci+'" onclick="admDeleteCoppa(this)" style="background:none;border:none;color:#ef4444;cursor:pointer;font-size:14px">✕</button>'
       +'</div>';
+    h += '<div style="padding:4px 14px 10px;display:flex;align-items:center;gap:8px">'
+      +'<div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:#f59e0b;white-space:nowrap;flex-shrink:0">🖼️ URL Trofeo</div>'
+      +'<input type="text" value="'+_trofeoVal+'" data-t="'+torneoKey+'" data-k="'+c.key+'" onchange="admSaveCoppaTrofeo(this)" placeholder="https://... URL immagine trofeo" style="flex:1;padding:5px 8px;background:var(--bg2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:11px;outline:none">'
+      +'</div>';
+    h += '</div>';
   });
   h += '</div>';
   el.innerHTML = h;
@@ -11145,6 +11154,15 @@ function admUpdateCoppaConfig(el) {
   var config = admGetCoppeConfig(torneoKey);
   if(config[ci]) config[ci][f] = el.value;
   admSaveCoppeConfig(torneoKey, config);
+}
+
+function admSaveCoppaTrofeo(el) {
+  var t = el.dataset.t, k = el.dataset.k;
+  var url = el.value.trim();
+  var storeKey = 'adm_coppa_trofeo_'+t+'_'+k;
+  if (url) { localStorage.setItem(storeKey, url); gsSaveKey(storeKey, url); }
+  else { localStorage.removeItem(storeKey); gsSaveKey(storeKey, ''); }
+  if (typeof COPPA_TROPHIES !== 'undefined') COPPA_TROPHIES[k] = url;
 }
 
 function admDeleteCoppa(el) {
@@ -11289,11 +11307,6 @@ function admLoadCoppaEditor() {
   h += '<div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:#f59e0b;margin-bottom:8px">🏆 Squadra Campione</div>';
   h += '<select id="adm-coppa-vincitore-'+coppaKey+'" style="width:100%;padding:7px 10px;background:var(--bg2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:12px;font-weight:700;outline:none">'+vincitoreOpts+'</select>';
   h += '</div>';
-  var _trofeoVal = localStorage.getItem('adm_coppa_trofeo_'+torneoKey+'_'+coppaKey) || '';
-  h += '<div style="padding:10px 14px;border-top:1px solid var(--border)">';
-  h += '<div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:#f59e0b;margin-bottom:6px">🖼️ URL Immagine Trofeo</div>';
-  h += '<input id="adm-coppa-trofeo-'+coppaKey+'" type="text" value="'+_trofeoVal+'" placeholder="https://... URL immagine trofeo" style="width:100%;padding:7px 10px;background:var(--bg2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:12px;outline:none;box-sizing:border-box">';
-  h += '</div>';
   h += '<div style="padding:10px 14px;border-top:1px solid var(--border);display:flex;gap:8px">'
     +'<button data-t="'+torneoKey+'" data-k="'+coppaKey+'" onclick="admSaveCoppaEl(this)" style="padding:6px 16px;background:#10b981;color:#fff;border:none;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer">💾 Salva Risultati</button>'
     +'</div></div>';
@@ -11330,15 +11343,6 @@ function admSaveCoppaEl(el) {
   // Salva anche vincitore dal select
   var vincSel = document.getElementById('adm-coppa-vincitore-'+k);
   if (vincSel) data.vincitore = vincSel.value || '';
-  // Salva URL trofeo coppa
-  var trofeoInp = document.getElementById('adm-coppa-trofeo-'+k);
-  if (trofeoInp) {
-    var trofeoUrl = trofeoInp.value.trim();
-    var trofeoStoreKey = 'adm_coppa_trofeo_'+t+'_'+k;
-    if (trofeoUrl) { localStorage.setItem(trofeoStoreKey, trofeoUrl); gsSaveKey(trofeoStoreKey, trofeoUrl); }
-    else { localStorage.removeItem(trofeoStoreKey); gsSaveKey(trofeoStoreKey, ''); }
-    if (typeof COPPA_TROPHIES !== 'undefined') COPPA_TROPHIES[k] = trofeoUrl;
-  }
   admSaveCoppaData(t, k, data);
   if(window._admCoppaTemp) delete window._admCoppaTemp[cacheKey];
   var msg=document.createElement('div');msg.textContent='✅ Risultati salvati';msg.style.cssText='position:fixed;top:70px;right:20px;background:#10b981;color:#fff;padding:8px 16px;border-radius:8px;font-weight:700;font-size:12px;z-index:9999';document.body.appendChild(msg);setTimeout(function(){msg.remove();},2000);
