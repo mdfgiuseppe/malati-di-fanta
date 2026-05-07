@@ -6881,8 +6881,9 @@ function admEditLogoTorneo(ti) {
   if (url === null) return;
   url = url.trim();
   url = _normalizeImgUrl(url);
-  if (url) localStorage.setItem('adm_logo_torneo_'+t.key, url);
-  else localStorage.removeItem('adm_logo_torneo_'+t.key);
+  if (url) { localStorage.setItem('adm_logo_torneo_'+t.key, url); gsSaveKey('adm_logo_torneo_'+t.key, url); }
+  else { localStorage.removeItem('adm_logo_torneo_'+t.key); gsSaveKey('adm_logo_torneo_'+t.key, ''); }
+  updateLogosTornei();
   var msg = document.createElement('div');
   msg.textContent = url ? '✅ URL logo torneo salvato' : '✅ URL rimosso';
   msg.style.cssText = 'position:fixed;top:70px;right:20px;background:#3b82f6;color:#fff;padding:8px 16px;border-radius:8px;font-weight:700;font-size:12px;z-index:9999';
@@ -12102,8 +12103,9 @@ function admEditLogoTorneo(ti) {
   if (url === null) return;
   url = url.trim();
   url = _normalizeImgUrl(url);
-  if (url) localStorage.setItem('adm_logo_torneo_'+t.key, url);
-  else localStorage.removeItem('adm_logo_torneo_'+t.key);
+  if (url) { localStorage.setItem('adm_logo_torneo_'+t.key, url); gsSaveKey('adm_logo_torneo_'+t.key, url); }
+  else { localStorage.removeItem('adm_logo_torneo_'+t.key); gsSaveKey('adm_logo_torneo_'+t.key, ''); }
+  updateLogosTornei();
   var msg = document.createElement('div');
   msg.textContent = url ? '✅ URL logo torneo salvato' : '✅ URL rimosso';
   msg.style.cssText = 'position:fixed;top:70px;right:20px;background:#3b82f6;color:#fff;padding:8px 16px;border-radius:8px;font-weight:700;font-size:12px;z-index:9999';
