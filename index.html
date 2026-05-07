@@ -3089,6 +3089,15 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
       <div style="font-family:'Bebas Neue';font-size:28px;letter-spacing:2px;margin-bottom:6px">Tornei & <span style="color:#ef4444">Leghe</span></div>
       <div style="font-size:11px;color:var(--text2);margin-bottom:20px">Gestisci i tornei presenti nella dashboard e le loro leghe</div>
 
+      <!-- Reset Trofei -->
+      <div class="card" style="padding:14px 16px;margin-bottom:16px;display:flex;align-items:center;gap:12px;border:1px solid rgba(239,68,68,.3);background:rgba(239,68,68,.05)">
+        <div style="flex:1">
+          <div style="font-size:12px;font-weight:800;margin-bottom:2px;text-transform:uppercase;letter-spacing:1px;color:#ef4444">Reset Trofei</div>
+          <div style="font-size:10px;color:var(--text2)">Cancella tutti i trofei da localStorage e GSheets — poi ricaricali dal pannello torneo</div>
+        </div>
+        <button onclick="admResetTrofei()" style="background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.4);color:#ef4444;cursor:pointer;font-size:12px;border-radius:8px;padding:6px 12px;font-weight:700">🗑 Reset</button>
+      </div>
+
       <!-- Logo Principale App -->
       <div class="card" style="padding:14px 16px;margin-bottom:16px;display:flex;align-items:center;gap:12px">
         <div style="flex:1">
@@ -6904,6 +6913,23 @@ function admEditLogoTorneoStatic(key, label) {
   msg.style.cssText = 'position:fixed;top:70px;right:20px;background:#3b82f6;color:#fff;padding:8px 16px;border-radius:8px;font-weight:700;font-size:12px;z-index:9999';
   document.body.appendChild(msg);
   setTimeout(function(){msg.remove();},2000);
+}
+function admResetTrofei() {
+  if (!confirm('Sei sicuro? Tutti i trofei verranno cancellati da localStorage e GSheets.')) return;
+  var tornei = JSON.parse(localStorage.getItem('admin_tornei')||'[]');
+  if (!tornei.length) tornei = [{key:'slim',leghe:[{key:'it'},{key:'en'},{key:'de'},{key:'es'},{key:'fr'},{key:'pt'},{key:'nl'},{key:'tr'}]},{key:'tsm',leghe:[{key:'it'}]},{key:'tdm',leghe:[{key:'it'}]}];
+  tornei.forEach(function(t) {
+    (t.leghe||[]).forEach(function(l) {
+      var k = 'adm_trofeo_lega_'+t.key+'_'+l.key;
+      localStorage.removeItem(k);
+      gsSaveKey(k, '');
+    });
+  });
+  var msg = document.createElement('div');
+  msg.textContent = '✅ Trofei resettati — ricaricali dal pannello torneo';
+  msg.style.cssText = 'position:fixed;top:70px;right:20px;background:#ef4444;color:#fff;padding:8px 16px;border-radius:8px;font-weight:700;font-size:12px;z-index:9999';
+  document.body.appendChild(msg);
+  setTimeout(function(){msg.remove();},3000);
 }
 function admEditLogoMain() {
   var current = localStorage.getItem('adm_logo_main') || '';
@@ -12067,6 +12093,23 @@ function admEditLogoTorneoStatic(key, label) {
   msg.style.cssText = 'position:fixed;top:70px;right:20px;background:#3b82f6;color:#fff;padding:8px 16px;border-radius:8px;font-weight:700;font-size:12px;z-index:9999';
   document.body.appendChild(msg);
   setTimeout(function(){msg.remove();},2000);
+}
+function admResetTrofei() {
+  if (!confirm('Sei sicuro? Tutti i trofei verranno cancellati da localStorage e GSheets.')) return;
+  var tornei = JSON.parse(localStorage.getItem('admin_tornei')||'[]');
+  if (!tornei.length) tornei = [{key:'slim',leghe:[{key:'it'},{key:'en'},{key:'de'},{key:'es'},{key:'fr'},{key:'pt'},{key:'nl'},{key:'tr'}]},{key:'tsm',leghe:[{key:'it'}]},{key:'tdm',leghe:[{key:'it'}]}];
+  tornei.forEach(function(t) {
+    (t.leghe||[]).forEach(function(l) {
+      var k = 'adm_trofeo_lega_'+t.key+'_'+l.key;
+      localStorage.removeItem(k);
+      gsSaveKey(k, '');
+    });
+  });
+  var msg = document.createElement('div');
+  msg.textContent = '✅ Trofei resettati — ricaricali dal pannello torneo';
+  msg.style.cssText = 'position:fixed;top:70px;right:20px;background:#ef4444;color:#fff;padding:8px 16px;border-radius:8px;font-weight:700;font-size:12px;z-index:9999';
+  document.body.appendChild(msg);
+  setTimeout(function(){msg.remove();},3000);
 }
 function admEditLogoMain() {
   var current = localStorage.getItem('adm_logo_main') || '';
