@@ -8596,7 +8596,7 @@ function enterLeague(tournament, leagueKey) {
   // ILM e ILC non ancora disponibili lato utente
   if (tournament === 'ilm' || tournament === 'ilc') return;
   // Tornei dinamici (creati col wizard)
-  if (tournament && tournament !== 'slim' && tournament !== 'tsm' && tournament !== 'tdm' && tournament !== 'ilm' && tournament !== 'ilc') {
+  if (tournament && tournament !== 'slim' && tournament !== 'tsm' && tournament !== 'ilm' && tournament !== 'ilc') {
     enterDynamicLeague(tournament, leagueKey);
     return;
   }
@@ -13441,6 +13441,16 @@ function enterDynamicLeague(torneoKey, legaKey) {
 
   dynBuildTeamsGrid();
   dynRenderSection('dashboard');
+
+  // Carica dati aggiornati da GSheets se disponibile
+  if (typeof gsCall === 'function' && typeof GS_URL !== 'undefined' && GS_URL) {
+    var _rk = 'adm_rose_'+torneoKey+'_'+legaKey;
+    var _ck = 'adm_crediti_base_'+torneoKey+'_'+legaKey;
+    var _cfk = 'adm_config_'+torneoKey;
+    gsCall({action:'getKey',key:_rk}, function(e,r){ if(!e&&r&&r.ok&&r.data){try{var p=typeof r.data==='string'?JSON.parse(r.data):r.data; window._dynRose=p; window._dynSquadre=Object.keys(p); localStorage.setItem(_rk,JSON.stringify(p)); dynBuildTeamsGrid(); dynRenderSection('dashboard');}catch(ex){}} });
+    gsCall({action:'getKey',key:_ck}, function(e,r){ if(!e&&r&&r.ok&&r.data){try{var c=typeof r.data==='string'?JSON.parse(r.data):r.data; window._dynCr=c; localStorage.setItem(_ck,JSON.stringify(c)); dynRenderSection('dashboard');}catch(ex){}} });
+    gsCall({action:'getKey',key:_cfk}, function(e,r){ if(!e&&r&&r.ok&&r.data){try{var cf=typeof r.data==='string'?JSON.parse(r.data):r.data; window._dynConfig=cf; var te=document.getElementById('dyn-torneo-title'); if(te&&cf.label) te.textContent=cf.label; localStorage.setItem(_cfk,JSON.stringify(cf));}catch(ex){}} });
+  }
 }
 
 function dynBuildTeamsGrid() {
@@ -13491,7 +13501,14 @@ function dynRenderDashboard() {
     var r = (p.ruolo||'').split(';')[0].trim();
     if(counts[r]!==undefined) counts[r]++;
   });
-  el.innerHTML = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">'
+  var _tk = window._dynTorneo, _lk = window._dynLega;
+  var _trofKey = 'adm_trofeo_lega_'+_tk+'_'+_lk;
+  var _trofUrl = localStorage.getItem(_trofKey) || '';
+  var _trofHtml = _trofUrl
+    ? '<div style="text-align:center;margin-bottom:16px"><img src="'+_trofUrl+'" style="max-height:80px;object-fit:contain"></div>'
+    : '<div style="text-align:center;margin-bottom:16px"><img id="dyn-trophy-img" src="" style="display:none;max-height:80px;object-fit:contain"></div>';
+  el.innerHTML = _trofHtml
+    +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">'
     +'<div style="background:var(--card);border-radius:10px;padding:14px;text-align:center">'
     +'<div style="font-size:9px;color:var(--text3);font-weight:700;text-transform:uppercase;margin-bottom:4px">💰 Crediti</div>'
     +'<div style="font-family:Bebas Neue,sans-serif;font-size:28px;color:#f59e0b">'+cr+'</div>'
@@ -13503,6 +13520,11 @@ function dynRenderDashboard() {
     +'<div style="display:flex;flex-wrap:wrap;gap:8px">'
     +ruoliLabel.map(function(r){return '<span style="background:var(--bg2);border-radius:6px;padding:4px 10px;font-size:11px"><b>'+counts[r]+'</b> '+r+'</span>';}).join('')
     +'</div>';
+  if (!_trofUrl && typeof gsCall==='function' && typeof GS_URL!=='undefined' && GS_URL) {
+    gsCall({action:'getKey',key:_trofKey}, function(e,r){
+      if(!e&&r&&r.ok&&r.data){ localStorage.setItem(_trofKey,r.data); var tEl=document.getElementById('dyn-trophy-img'); if(tEl){tEl.src=typeof _normalizeImgUrl==='function'?_normalizeImgUrl(r.data):r.data; tEl.style.display='';} }
+    });
+  }
 }
 
 function dynRenderRose() {
@@ -13633,7 +13655,7 @@ function enterLeague(tournament, leagueKey) {
   // ILM e ILC non ancora disponibili lato utente
   if (tournament === 'ilm' || tournament === 'ilc') return;
   // Tornei dinamici (creati col wizard)
-  if (tournament && tournament !== 'slim' && tournament !== 'tsm' && tournament !== 'tdm' && tournament !== 'ilm' && tournament !== 'ilc') {
+  if (tournament && tournament !== 'slim' && tournament !== 'tsm' && tournament !== 'ilm' && tournament !== 'ilc') {
     enterDynamicLeague(tournament, leagueKey);
     return;
   }
