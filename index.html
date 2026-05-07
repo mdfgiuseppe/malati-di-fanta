@@ -5683,6 +5683,7 @@ function admUpdateCoppaConfig(el) {
 function admSaveCoppaTrofeo(el) {
   var t = el.dataset.t, k = el.dataset.k;
   var url = el.value.trim();
+  if (url && typeof _normalizeImgUrl === 'function') url = _normalizeImgUrl(url);
   var storeKey = 'adm_coppa_trofeo_'+t+'_'+k;
   if (url) { localStorage.setItem(storeKey, url); gsSaveKey(storeKey, url); }
   else { localStorage.removeItem(storeKey); gsSaveKey(storeKey, ''); }
@@ -9387,11 +9388,30 @@ function initCoppaLogos() {
       } catch(e) {}
     }
   });
-  // Carica URL trofei coppe in COPPA_TROPHIES
+  // Carica URL trofei coppe in COPPA_TROPHIES (sempre, anche vuoto, per evitare contaminazione da altri tornei)
   ['cl','el','conf','sc'].forEach(function(key) {
-    var storedTrofeo = localStorage.getItem('adm_coppa_trofeo_slim_'+key);
-    if (storedTrofeo && typeof COPPA_TROPHIES !== 'undefined') COPPA_TROPHIES[key] = storedTrofeo;
+    if (typeof COPPA_TROPHIES !== 'undefined') {
+      var _raw = localStorage.getItem('adm_coppa_trofeo_slim_'+key) || '';
+      COPPA_TROPHIES[key] = (_raw && typeof _normalizeImgUrl === 'function') ? _normalizeImgUrl(_raw) : _raw;
+    }
   });
+  // Carica da GSheets se mancante in localStorage
+  if (typeof gsCall === 'function' && typeof GS_URL !== 'undefined' && GS_URL) {
+    ['cl','el','conf','sc'].forEach(function(key) {
+      (function(_k) {
+        var _stk = 'adm_coppa_trofeo_slim_'+_k;
+        if (!localStorage.getItem(_stk)) {
+          gsCall({action:'getKey', key:_stk}, function(e,r) {
+            if (!e && r && r.ok && r.data) {
+              var _v = (typeof _normalizeImgUrl === 'function') ? _normalizeImgUrl(r.data) : r.data;
+              localStorage.setItem(_stk, _v);
+              if (typeof COPPA_TROPHIES !== 'undefined') COPPA_TROPHIES[_k] = _v;
+            }
+          });
+        }
+      })(key);
+    });
+  }
 }
 function openCoppa(key) {
   var hub = document.getElementById('coppe-hub');
@@ -11159,6 +11179,7 @@ function admUpdateCoppaConfig(el) {
 function admSaveCoppaTrofeo(el) {
   var t = el.dataset.t, k = el.dataset.k;
   var url = el.value.trim();
+  if (url && typeof _normalizeImgUrl === 'function') url = _normalizeImgUrl(url);
   var storeKey = 'adm_coppa_trofeo_'+t+'_'+k;
   if (url) { localStorage.setItem(storeKey, url); gsSaveKey(storeKey, url); }
   else { localStorage.removeItem(storeKey); gsSaveKey(storeKey, ''); }
@@ -14509,11 +14530,30 @@ function initCoppaLogos() {
       } catch(e) {}
     }
   });
-  // Carica URL trofei coppe in COPPA_TROPHIES
+  // Carica URL trofei coppe in COPPA_TROPHIES (sempre, anche vuoto, per evitare contaminazione da altri tornei)
   ['cl','el','conf','sc'].forEach(function(key) {
-    var storedTrofeo = localStorage.getItem('adm_coppa_trofeo_slim_'+key);
-    if (storedTrofeo && typeof COPPA_TROPHIES !== 'undefined') COPPA_TROPHIES[key] = storedTrofeo;
+    if (typeof COPPA_TROPHIES !== 'undefined') {
+      var _raw = localStorage.getItem('adm_coppa_trofeo_slim_'+key) || '';
+      COPPA_TROPHIES[key] = (_raw && typeof _normalizeImgUrl === 'function') ? _normalizeImgUrl(_raw) : _raw;
+    }
   });
+  // Carica da GSheets se mancante in localStorage
+  if (typeof gsCall === 'function' && typeof GS_URL !== 'undefined' && GS_URL) {
+    ['cl','el','conf','sc'].forEach(function(key) {
+      (function(_k) {
+        var _stk = 'adm_coppa_trofeo_slim_'+_k;
+        if (!localStorage.getItem(_stk)) {
+          gsCall({action:'getKey', key:_stk}, function(e,r) {
+            if (!e && r && r.ok && r.data) {
+              var _v = (typeof _normalizeImgUrl === 'function') ? _normalizeImgUrl(r.data) : r.data;
+              localStorage.setItem(_stk, _v);
+              if (typeof COPPA_TROPHIES !== 'undefined') COPPA_TROPHIES[_k] = _v;
+            }
+          });
+        }
+      })(key);
+    });
+  }
 }
 function openCoppa(key) {
   var hub = document.getElementById('coppe-hub');
