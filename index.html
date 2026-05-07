@@ -8697,7 +8697,7 @@ function enterLeague(tournament, leagueKey) {
     FANTASY_LOGOS = {};
     showPage('lega');
     setTimeout(function(){
-      _updateLegaDashboard(leagueKey);
+      _updateLegaDashboard('slim_'+leagueKey);
       buildTeamsGrid();
       showSection('dashboard', null);
     }, 50);
@@ -8818,7 +8818,7 @@ function enterLeague(tournament, leagueKey) {
   
   showPage('lega');
   setTimeout(function(){
-    _updateLegaDashboard(currentLeagueKey);
+    _updateLegaDashboard('slim_'+currentLeagueKey);
     buildTeamsGrid();
     showSection('dashboard', null);
   }, 50);
@@ -9222,7 +9222,7 @@ document.addEventListener('DOMContentLoaded',function(){
     if(dC) dC.textContent=SLIM_CONFIG.n_club+' Club';
   }
   // Aggiorna dashboard lega con trofeo della nazione corrente
-  _updateLegaDashboard('it');
+  _updateLegaDashboard('slim_it');
 });
 function openAlboModal(){var modal=document.getElementById('albo-modal');if(!modal)return;modal.style.display='block';document.body.style.overflow='hidden';var first=document.querySelector('.albo-btn');if(first)alboTab(first,first.getAttribute('data-key'));}
 
@@ -13847,7 +13847,7 @@ function enterLeague(tournament, leagueKey) {
     FANTASY_LOGOS = {};
     showPage('lega');
     setTimeout(function(){
-      _updateLegaDashboard(leagueKey);
+      _updateLegaDashboard('slim_'+leagueKey);
       buildTeamsGrid();
       showSection('dashboard', null);
     }, 50);
@@ -13968,7 +13968,7 @@ function enterLeague(tournament, leagueKey) {
   
   showPage('lega');
   setTimeout(function(){
-    _updateLegaDashboard(currentLeagueKey);
+    _updateLegaDashboard('slim_'+currentLeagueKey);
     buildTeamsGrid();
     showSection('dashboard', null);
   }, 50);
@@ -14372,7 +14372,7 @@ document.addEventListener('DOMContentLoaded',function(){
     if(dC) dC.textContent=SLIM_CONFIG.n_club+' Club';
   }
   // Aggiorna dashboard lega con trofeo della nazione corrente
-  _updateLegaDashboard('it');
+  _updateLegaDashboard('slim_it');
 });
 function openAlboModal(){var modal=document.getElementById('albo-modal');if(!modal)return;modal.style.display='block';document.body.style.overflow='hidden';var first=document.querySelector('.albo-btn');if(first)alboTab(first,first.getAttribute('data-key'));}
 
