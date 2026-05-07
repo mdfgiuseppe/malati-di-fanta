@@ -4617,7 +4617,11 @@ function gsPing() {
             // (accade se l'admin ha salvato prima che GS_ONLINE diventasse true)
             var _sTornei = JSON.parse(localStorage.getItem('admin_tornei')||'[]');
             if (!_sTornei.length) _sTornei = [{key:'slim',leghe:[{key:'it'},{key:'en'},{key:'de'},{key:'es'},{key:'fr'},{key:'pt'},{key:'nl'},{key:'tr'}]},{key:'tsm',leghe:[{key:'it'}]}];
+            // Sync admin_tornei e logo principale
+            var _atRaw = localStorage.getItem('admin_tornei'); if (_atRaw) gsSaveKey('admin_tornei', _atRaw);
+            var _lmRaw = localStorage.getItem('adm_logo_main'); if (_lmRaw) gsSaveKey('adm_logo_main', _lmRaw);
             _sTornei.forEach(function(t) {
+              var _ltRaw = localStorage.getItem('adm_logo_torneo_'+t.key); if (_ltRaw) gsSaveKey('adm_logo_torneo_'+t.key, _ltRaw);
               (t.leghe||[]).forEach(function(l) {
                 var _trofKey = 'adm_trofeo_lega_'+t.key+'_'+l.key;
                 var _trofVal = localStorage.getItem(_trofKey);
@@ -4729,7 +4733,8 @@ function gsPing() {
               gsLoadKey('adm_rose_'+t.key+'_'+l.key, function(v){ if(v) localStorage.setItem('adm_rose_'+t.key+'_'+l.key, typeof v==='string'?v:JSON.stringify(v)); });
             });
           });
-          // Carica trofei e crediti per tutte le leghe slim (indipendente da admin_tornei)
+          // Carica logo principale e trofei/crediti slim (indipendente da admin_tornei)
+          gsLoadKey('adm_logo_main', function(v){ if(v){ localStorage.setItem('adm_logo_main',v); if(typeof _applyLogoMain==='function') _applyLogoMain(v); } });
           ['it','en','de','es','fr','pt','nl','tr'].forEach(function(lk) {
             gsLoadKey('adm_trofeo_lega_slim_'+lk, function(v){ if(v) localStorage.setItem('adm_trofeo_lega_slim_'+lk,v); });
             gsLoadKey('adm_crediti_base_slim_'+lk, function(v){
