@@ -3771,9 +3771,16 @@ function updateLogosTornei() {
       var m = oc.match(/selectTournament\('([^']+)'/);
       if (!m) return;
       var url = localStorage.getItem('adm_logo_torneo_'+m[1]);
-      if (!url) return;
       var img = card.querySelector('.t-logo-area img');
-      if (img) img.src = url;
+      if (!img) return;
+      if (url) {
+        img.style.display = '';
+        img.src = url;
+        img.onerror = function() { this.style.display = 'none'; };
+      } else {
+        img.style.display = 'none';
+        img.src = '';
+      }
     });
   } catch(e) {}
 }
@@ -9791,9 +9798,16 @@ function updateLogosTornei() {
       var m = oc.match(/selectTournament\('([^']+)'/);
       if (!m) return;
       var url = localStorage.getItem('adm_logo_torneo_'+m[1]);
-      if (!url) return;
       var img = card.querySelector('.t-logo-area img');
-      if (img) img.src = url;
+      if (!img) return;
+      if (url) {
+        img.style.display = '';
+        img.src = url;
+        img.onerror = function() { this.style.display = 'none'; };
+      } else {
+        img.style.display = 'none';
+        img.src = '';
+      }
     });
   } catch(e) {}
 }
