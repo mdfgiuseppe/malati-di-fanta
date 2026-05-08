@@ -8731,6 +8731,10 @@ function enterLeague(tournament, leagueKey) {
     window._currentLeagueStaKey = 'adm_stadio_'+tournament+'_'+currentLeagueKey;
     window._currentTourneyKey = tournament;
     FANTASY_LOGOS = {};
+    Object.keys(TEAMS_ROSE).forEach(function(team) {
+      var _lv=localStorage.getItem('adm_logo_'+tournament+'_'+currentLeagueKey+'_'+team)||localStorage.getItem('adm_logo_'+tournament+'_'+currentLeagueKey+'_'+team.toUpperCase());
+      if(_lv) FANTASY_LOGOS[team]=typeof _normalizeImgUrl==='function'?_normalizeImgUrl(_lv):_lv;
+    });
     showPage('lega');
     setTimeout(function(){
       _updateLegaDashboard(tournament+'_'+currentLeagueKey);
@@ -8776,6 +8780,10 @@ function enterLeague(tournament, leagueKey) {
     var teamList = SLIM_TEAMS;
     currentTeam = teamList.length > 0 ? teamList[0] : '';
     FANTASY_LOGOS = {};
+    Object.keys(TEAMS_ROSE).forEach(function(team) {
+      var _lv=localStorage.getItem('adm_logo_slim_'+leagueKey+'_'+team)||localStorage.getItem('adm_logo_slim_'+leagueKey+'_'+team.toUpperCase());
+      if(_lv) FANTASY_LOGOS[team]=typeof _normalizeImgUrl==='function'?_normalizeImgUrl(_lv):_lv;
+    });
     showPage('lega');
     setTimeout(function(){
       _updateLegaDashboard('slim_'+leagueKey);
@@ -8804,6 +8812,10 @@ function enterLeague(tournament, leagueKey) {
       }
     })('slim', leagueKey);
     FANTASY_LOGOS = (typeof FANTASY_LOGOS_ALL !== 'undefined') ? FANTASY_LOGOS_ALL : {};
+    Object.keys(TEAMS_ROSE).forEach(function(team) {
+      var _lv=localStorage.getItem('adm_logo_slim_'+leagueKey+'_'+team)||localStorage.getItem('adm_logo_slim_'+leagueKey+'_'+team.toUpperCase());
+      if(_lv) FANTASY_LOGOS[team]=typeof _normalizeImgUrl==='function'?_normalizeImgUrl(_lv):_lv;
+    });
     var teamList = Object.keys(TEAMS_ROSE).sort();
     currentTeam = teamList.length > 0 ? teamList[0] : 'INFERMERIA';
     // Carica dati stagione (calendario, stadio)
@@ -13946,6 +13958,10 @@ function enterLeague(tournament, leagueKey) {
     window._currentLeagueStaKey = 'adm_stadio_'+tournament+'_'+currentLeagueKey;
     window._currentTourneyKey = tournament;
     FANTASY_LOGOS = {};
+    Object.keys(TEAMS_ROSE).forEach(function(team) {
+      var _lv=localStorage.getItem('adm_logo_'+tournament+'_'+currentLeagueKey+'_'+team)||localStorage.getItem('adm_logo_'+tournament+'_'+currentLeagueKey+'_'+team.toUpperCase());
+      if(_lv) FANTASY_LOGOS[team]=typeof _normalizeImgUrl==='function'?_normalizeImgUrl(_lv):_lv;
+    });
     showPage('lega');
     setTimeout(function(){
       _updateLegaDashboard(tournament+'_'+currentLeagueKey);
@@ -13991,6 +14007,10 @@ function enterLeague(tournament, leagueKey) {
     var teamList = SLIM_TEAMS;
     currentTeam = teamList.length > 0 ? teamList[0] : '';
     FANTASY_LOGOS = {};
+    Object.keys(TEAMS_ROSE).forEach(function(team) {
+      var _lv=localStorage.getItem('adm_logo_slim_'+leagueKey+'_'+team)||localStorage.getItem('adm_logo_slim_'+leagueKey+'_'+team.toUpperCase());
+      if(_lv) FANTASY_LOGOS[team]=typeof _normalizeImgUrl==='function'?_normalizeImgUrl(_lv):_lv;
+    });
     showPage('lega');
     setTimeout(function(){
       _updateLegaDashboard('slim_'+leagueKey);
@@ -14019,6 +14039,10 @@ function enterLeague(tournament, leagueKey) {
       }
     })('slim', leagueKey);
     FANTASY_LOGOS = (typeof FANTASY_LOGOS_ALL !== 'undefined') ? FANTASY_LOGOS_ALL : {};
+    Object.keys(TEAMS_ROSE).forEach(function(team) {
+      var _lv=localStorage.getItem('adm_logo_slim_'+leagueKey+'_'+team)||localStorage.getItem('adm_logo_slim_'+leagueKey+'_'+team.toUpperCase());
+      if(_lv) FANTASY_LOGOS[team]=typeof _normalizeImgUrl==='function'?_normalizeImgUrl(_lv):_lv;
+    });
     var teamList = Object.keys(TEAMS_ROSE).sort();
     currentTeam = teamList.length > 0 ? teamList[0] : 'INFERMERIA';
     // Carica dati stagione (calendario, stadio)
