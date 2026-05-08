@@ -4773,7 +4773,9 @@ function gsPing() {
         'adm_config_slim',
         'adm_config_tsm',
         'adm_coppe_config_slim',
-        'adm_coppe_config_tsm'
+        'adm_coppe_config_tsm',
+        'adm_leagues_data_extra',
+        'adm_immagini_index'
       ];
       _syncKeys.forEach(function(k) {
         gsLoadKey(k, function(val) {
@@ -6120,6 +6122,7 @@ function admGetImmagini() {
 
 function admSaveImmaginiIndex(list) {
   localStorage.setItem('adm_immagini_index', JSON.stringify(list));
+  gsSaveKey('adm_immagini_index', JSON.stringify(list));
 }
 
 function admUploadImmagine() {
@@ -6623,6 +6626,7 @@ function admWizardConfirm() {
   // Salva configurazione torneo
   var config = { giornate: _wzData.giornate, nSquadre: _wzData.nSquadre, crediti: _wzData.crediti };
   localStorage.setItem('adm_config_'+_wzData.key, JSON.stringify(config));
+  gsSaveKey('adm_config_'+_wzData.key, JSON.stringify(config));
 
   // Salva squadre e crediti per ogni lega
   _wzData.leghe.slice().sort(function(a,b){return a.label.localeCompare(b.label);}).forEach(function(lega) {
@@ -6702,6 +6706,7 @@ function admWizardUpdateLeaguesData(key, label, leghe) {
     }
   });
   localStorage.setItem('adm_leagues_data_extra', JSON.stringify(saved));
+  gsSaveKey('adm_leagues_data_extra', JSON.stringify(saved));
 }
 
 
@@ -7114,7 +7119,9 @@ function admAddLegaConfirm(ti, legaKey, legaLabel, giornate, nSquadre, crediti) 
   // Salva config del torneo se non esiste
   var _existingConfig = localStorage.getItem('adm_config_'+torneo.key);
   if (!_existingConfig) {
-    localStorage.setItem('adm_config_'+torneo.key, JSON.stringify({giornate:giornate,nSquadre:nSquadre,crediti:crediti,formato:torneo.formato||'classic',label:torneo.label,leghe:torneo.leghe}));
+    var _newCfg = JSON.stringify({giornate:giornate,nSquadre:nSquadre,crediti:crediti,formato:torneo.formato||'classic',label:torneo.label,leghe:torneo.leghe});
+    localStorage.setItem('adm_config_'+torneo.key, _newCfg);
+    gsSaveKey('adm_config_'+torneo.key, _newCfg);
   }
   // Salva struttura dati
   var rose = {};
@@ -11684,6 +11691,7 @@ function admGetImmagini() {
 
 function admSaveImmaginiIndex(list) {
   localStorage.setItem('adm_immagini_index', JSON.stringify(list));
+  gsSaveKey('adm_immagini_index', JSON.stringify(list));
 }
 
 function admUploadImmagine() {
@@ -12101,6 +12109,7 @@ function admWizardConfirm() {
   // Salva configurazione torneo
   var config = { giornate: _wzData.giornate, nSquadre: _wzData.nSquadre, crediti: _wzData.crediti };
   localStorage.setItem('adm_config_'+_wzData.key, JSON.stringify(config));
+  gsSaveKey('adm_config_'+_wzData.key, JSON.stringify(config));
 
   // Salva squadre e crediti per ogni lega
   _wzData.leghe.slice().sort(function(a,b){return a.label.localeCompare(b.label);}).forEach(function(lega) {
@@ -12180,6 +12189,7 @@ function admWizardUpdateLeaguesData(key, label, leghe) {
     }
   });
   localStorage.setItem('adm_leagues_data_extra', JSON.stringify(saved));
+  gsSaveKey('adm_leagues_data_extra', JSON.stringify(saved));
 }
 
 
@@ -12403,7 +12413,9 @@ function admAddLegaConfirm(ti, legaKey, legaLabel, giornate, nSquadre, crediti) 
   // Salva config del torneo se non esiste
   var _existingConfig = localStorage.getItem('adm_config_'+torneo.key);
   if (!_existingConfig) {
-    localStorage.setItem('adm_config_'+torneo.key, JSON.stringify({giornate:giornate,nSquadre:nSquadre,crediti:crediti,formato:torneo.formato||'classic',label:torneo.label,leghe:torneo.leghe}));
+    var _newCfg = JSON.stringify({giornate:giornate,nSquadre:nSquadre,crediti:crediti,formato:torneo.formato||'classic',label:torneo.label,leghe:torneo.leghe});
+    localStorage.setItem('adm_config_'+torneo.key, _newCfg);
+    gsSaveKey('adm_config_'+torneo.key, _newCfg);
   }
   // Salva struttura dati
   var rose = {};
