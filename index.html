@@ -3951,12 +3951,14 @@ function _updateLegaDashboard(leagueKey) {
   }
   var _torneoShort = _admTK ? _admTK.charAt(0).toUpperCase()+_admTK.slice(1) : '';
   var bcEl = document.getElementById('breadcrumb-league');
-  if (bcEl) bcEl.textContent = breadcrumbNames[_realLK] || _dynLegaLabel || _realLK.toUpperCase();
+  if (bcEl) bcEl.textContent = _dynLegaLabel || breadcrumbNames[_realLK] || _realLK.toUpperCase();
   var nameEl = document.querySelector('.league-info-name');
   var subEl  = document.querySelector('.league-info-sub');
-  if (nameEl) nameEl.textContent = legaNames[leagueKey] || (_torneoShort ? _torneoShort+' '+(_dynLegaLabel||_realLK.toUpperCase()) : 'Slim '+_realLK.toUpperCase());
+  if (nameEl) nameEl.textContent = legaNames[leagueKey] || _dynLegaLabel || (_torneoShort ? _torneoShort+' '+_realLK.toUpperCase() : 'Slim '+_realLK.toUpperCase());
   var nTeams = Object.keys(TEAMS_ROSE).length;
-  if (subEl) subEl.textContent = nTeams + ' squadre · Mantra';
+  var _modo = 'Classic';
+  try { var _tObj=(typeof ADMIN_TORNEI!=='undefined'?ADMIN_TORNEI:[]).find(function(t){return t.key===_admTK;}); if(_tObj&&_tObj.formato) _modo=_tObj.formato==='mantra'?'Mantra':'Classic'; } catch(e){}
+  if (subEl) subEl.textContent = nTeams + ' squadre · ' + _modo;
   // Trofeo
   var trophyEl = document.getElementById('lega-dash-trophy');
   if (trophyEl) {
@@ -3978,7 +3980,7 @@ function _updateLegaDashboard(leagueKey) {
   }
   // Titolo dashboard
   var titleEl = document.getElementById('lega-dash-title');
-  if (titleEl) titleEl.textContent = (legaNames[leagueKey] || (_torneoShort && (_dynLegaLabel||_realLK) ? _torneoShort+' '+(_dynLegaLabel||_realLK) : 'Slim '+_realLK)).toUpperCase();
+  if (titleEl) titleEl.textContent = (legaNames[leagueKey] || _dynLegaLabel || (_torneoShort ? _torneoShort+' '+_realLK.toUpperCase() : 'Slim '+_realLK.toUpperCase())).toUpperCase();
   // Logo: prima adm URL da localStorage, poi LOGOS embedded
   var _admLogoUrl = _admTK ? localStorage.getItem('adm_logo_lega_'+_admTK+'_'+_realLK) : null;
   var _logoFinal = (_admLogoUrl ? _normalizeImgUrl(_admLogoUrl) : '') || (typeof LOGOS!=='undefined' ? (LOGOS[leagueKey]||LOGOS[_realLK]||LOGOS['it']||'') : '');
@@ -8677,7 +8679,8 @@ function enterLeague(tournament, leagueKey) {
   if (tournament === 'ilm' || tournament === 'ilc') return;
   // Tornei non-slim/non-tsm (es. TDM): usano page-lega con chiavi proprie
   if (tournament && tournament !== 'slim' && tournament !== 'tsm' && tournament !== 'ilm' && tournament !== 'ilc') {
-    currentLeagueKey = leagueKey || 'it';
+    // Normalizza: LEAGUES_DATA usa chiavi full (es. 'tdm_en'), ma lo storage usa chiavi short (es. 'en')
+    currentLeagueKey = (leagueKey && leagueKey.indexOf(tournament+'_') === 0) ? leagueKey.slice(tournament.length+1) : (leagueKey || 'it');
     var _dynRoseRaw = localStorage.getItem('adm_rose_'+tournament+'_'+currentLeagueKey);
     TEAMS_ROSE = _dynRoseRaw ? (function(){try{return JSON.parse(_dynRoseRaw);}catch(e){return{};}}()) : {};
     INFERMERIA = [];
@@ -10007,12 +10010,14 @@ function _updateLegaDashboard(leagueKey) {
   }
   var _torneoShort = _admTK ? _admTK.charAt(0).toUpperCase()+_admTK.slice(1) : '';
   var bcEl = document.getElementById('breadcrumb-league');
-  if (bcEl) bcEl.textContent = breadcrumbNames[_realLK] || _dynLegaLabel || _realLK.toUpperCase();
+  if (bcEl) bcEl.textContent = _dynLegaLabel || breadcrumbNames[_realLK] || _realLK.toUpperCase();
   var nameEl = document.querySelector('.league-info-name');
   var subEl  = document.querySelector('.league-info-sub');
-  if (nameEl) nameEl.textContent = legaNames[leagueKey] || (_torneoShort ? _torneoShort+' '+(_dynLegaLabel||_realLK.toUpperCase()) : 'Slim '+_realLK.toUpperCase());
+  if (nameEl) nameEl.textContent = legaNames[leagueKey] || _dynLegaLabel || (_torneoShort ? _torneoShort+' '+_realLK.toUpperCase() : 'Slim '+_realLK.toUpperCase());
   var nTeams = Object.keys(TEAMS_ROSE).length;
-  if (subEl) subEl.textContent = nTeams + ' squadre · Mantra';
+  var _modo = 'Classic';
+  try { var _tObj=(typeof ADMIN_TORNEI!=='undefined'?ADMIN_TORNEI:[]).find(function(t){return t.key===_admTK;}); if(_tObj&&_tObj.formato) _modo=_tObj.formato==='mantra'?'Mantra':'Classic'; } catch(e){}
+  if (subEl) subEl.textContent = nTeams + ' squadre · ' + _modo;
   // Trofeo
   var trophyEl = document.getElementById('lega-dash-trophy');
   if (trophyEl) {
@@ -10034,7 +10039,7 @@ function _updateLegaDashboard(leagueKey) {
   }
   // Titolo dashboard
   var titleEl = document.getElementById('lega-dash-title');
-  if (titleEl) titleEl.textContent = (legaNames[leagueKey] || (_torneoShort && (_dynLegaLabel||_realLK) ? _torneoShort+' '+(_dynLegaLabel||_realLK) : 'Slim '+_realLK)).toUpperCase();
+  if (titleEl) titleEl.textContent = (legaNames[leagueKey] || _dynLegaLabel || (_torneoShort ? _torneoShort+' '+_realLK.toUpperCase() : 'Slim '+_realLK.toUpperCase())).toUpperCase();
   // Logo: prima adm URL da localStorage, poi LOGOS embedded
   var _admLogoUrl = _admTK ? localStorage.getItem('adm_logo_lega_'+_admTK+'_'+_realLK) : null;
   var _logoFinal = (_admLogoUrl ? _normalizeImgUrl(_admLogoUrl) : '') || (typeof LOGOS!=='undefined' ? (LOGOS[leagueKey]||LOGOS[_realLK]||LOGOS['it']||'') : '');
@@ -13856,7 +13861,8 @@ function enterLeague(tournament, leagueKey) {
   if (tournament === 'ilm' || tournament === 'ilc') return;
   // Tornei non-slim/non-tsm (es. TDM): usano page-lega con chiavi proprie
   if (tournament && tournament !== 'slim' && tournament !== 'tsm' && tournament !== 'ilm' && tournament !== 'ilc') {
-    currentLeagueKey = leagueKey || 'it';
+    // Normalizza: LEAGUES_DATA usa chiavi full (es. 'tdm_en'), ma lo storage usa chiavi short (es. 'en')
+    currentLeagueKey = (leagueKey && leagueKey.indexOf(tournament+'_') === 0) ? leagueKey.slice(tournament.length+1) : (leagueKey || 'it');
     var _dynRoseRaw = localStorage.getItem('adm_rose_'+tournament+'_'+currentLeagueKey);
     TEAMS_ROSE = _dynRoseRaw ? (function(){try{return JSON.parse(_dynRoseRaw);}catch(e){return{};}}()) : {};
     INFERMERIA = [];
