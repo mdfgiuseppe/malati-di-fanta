@@ -3795,6 +3795,7 @@ function updateDashboardCounters() {
         var totalClub = 0;
         var _cfgN = 0;
         try { _cfgN = JSON.parse(localStorage.getItem('adm_config_'+t.key)||'{}').nSquadre || 0; } catch(e){}
+        var _ldLeghe = (typeof LEAGUES_DATA !== 'undefined' && LEAGUES_DATA[t.key]) ? LEAGUES_DATA[t.key].leghe : [];
         t.leghe.forEach(function(l) {
           var rose = {};
           try { rose = JSON.parse(localStorage.getItem('adm_rose_'+t.key+'_'+l.key)||'{}'); } catch(e){}
@@ -3802,6 +3803,9 @@ function updateDashboardCounters() {
             totalClub += Object.keys(rose).length;
           } else if (_cfgN) {
             totalClub += _cfgN;
+          } else {
+            var _ldL = _ldLeghe.find(function(x){return x.key===l.key||x.key===t.key+'_'+l.key;});
+            if (_ldL && _ldL.clubs) totalClub += _ldL.clubs;
           }
         });
         clubEl.textContent = totalClub > 0 ? totalClub : '—';
@@ -9807,6 +9811,7 @@ function updateDashboardCounters() {
         var totalClub = 0;
         var _cfgN = 0;
         try { _cfgN = JSON.parse(localStorage.getItem('adm_config_'+t.key)||'{}').nSquadre || 0; } catch(e){}
+        var _ldLeghe = (typeof LEAGUES_DATA !== 'undefined' && LEAGUES_DATA[t.key]) ? LEAGUES_DATA[t.key].leghe : [];
         t.leghe.forEach(function(l) {
           var rose = {};
           try { rose = JSON.parse(localStorage.getItem('adm_rose_'+t.key+'_'+l.key)||'{}'); } catch(e){}
@@ -9814,6 +9819,9 @@ function updateDashboardCounters() {
             totalClub += Object.keys(rose).length;
           } else if (_cfgN) {
             totalClub += _cfgN;
+          } else {
+            var _ldL = _ldLeghe.find(function(x){return x.key===l.key||x.key===t.key+'_'+l.key;});
+            if (_ldL && _ldL.clubs) totalClub += _ldL.clubs;
           }
         });
         clubEl.textContent = totalClub > 0 ? totalClub : '—';
