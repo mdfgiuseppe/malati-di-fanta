@@ -1666,7 +1666,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
     <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:420px;padding:40px 20px;text-align:center;width:100%">
       <div style="position:relative;margin-bottom:36px">
         <div style="position:absolute;inset:-40px;background:radial-gradient(ellipse at center,rgba(16,185,129,.15),transparent 70%);border-radius:50%;pointer-events:none"></div>
-        <img src="" style="width:160px;height:160px;object-fit:contain;filter:drop-shadow(0 8px 40px rgba(16,185,129,.4));position:relative;z-index:1">
+        <img src="" id="sponsor-tsm-logo" style="width:160px;height:160px;object-fit:contain;filter:drop-shadow(0 8px 40px rgba(16,185,129,.4));position:relative;z-index:1">
       </div>
       <div style="display:inline-flex;align-items:center;gap:10px;padding:10px 24px;background:rgba(239,68,68,.08);border:1.5px solid rgba(239,68,68,.25);border-radius:50px;margin-bottom:24px">
         <svg width="16" height="16" fill="none" stroke="#ef4444" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M4.93 4.93l14.14 14.14"/></svg>
@@ -3785,6 +3785,9 @@ function updateLogosTornei() {
     var _slLogo = localStorage.getItem('adm_logo_torneo_slim');
     var _slEl = document.getElementById('sponsor-slim-logo');
     if (_slEl) _slEl.src = _slLogo || '';
+    var _tsmLogo = localStorage.getItem('adm_logo_torneo_tsm');
+    var _tsmEl = document.getElementById('sponsor-tsm-logo');
+    if (_tsmEl) _tsmEl.src = _tsmLogo || '';
   } catch(e) {}
 }
 function updateDashboardCounters() {
@@ -9838,6 +9841,9 @@ function updateLogosTornei() {
     var _slLogo = localStorage.getItem('adm_logo_torneo_slim');
     var _slEl = document.getElementById('sponsor-slim-logo');
     if (_slEl) _slEl.src = _slLogo || '';
+    var _tsmLogo = localStorage.getItem('adm_logo_torneo_tsm');
+    var _tsmEl = document.getElementById('sponsor-tsm-logo');
+    if (_tsmEl) _tsmEl.src = _tsmLogo || '';
   } catch(e) {}
 }
 function updateDashboardCounters() {
