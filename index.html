@@ -3793,10 +3793,16 @@ function updateDashboardCounters() {
       if (legheEl) legheEl.textContent = t.leghe.length;
       if (clubEl) {
         var totalClub = 0;
+        var _cfgN = 0;
+        try { _cfgN = JSON.parse(localStorage.getItem('adm_config_'+t.key)||'{}').nSquadre || 0; } catch(e){}
         t.leghe.forEach(function(l) {
           var rose = {};
           try { rose = JSON.parse(localStorage.getItem('adm_rose_'+t.key+'_'+l.key)||'{}'); } catch(e){}
-          totalClub += Object.keys(rose).length;
+          if (Object.keys(rose).length) {
+            totalClub += Object.keys(rose).length;
+          } else if (_cfgN) {
+            totalClub += _cfgN;
+          }
         });
         clubEl.textContent = totalClub > 0 ? totalClub : '—';
       }
@@ -3876,7 +3882,7 @@ function selectTournament(key, el) {
     var _nClub = 0;
     try { _nClub = Object.keys(JSON.parse(localStorage.getItem('adm_rose_'+key+'_'+_realLk)||'{}')).length; } catch(e){}
     if (!_nClub && _realLk !== _lk) { try { _nClub = Object.keys(JSON.parse(localStorage.getItem('adm_rose_'+key+'_'+_lk)||'{}')).length; } catch(e){} }
-    if (!_nClub) _nClub = _cfgClub;
+    if (!_nClub) _nClub = lega.clubs || _cfgClub;
     html += '<div onclick="enterLeague(\''+key+'\',\''+lega.key+'\')" style="background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:14px 10px;cursor:pointer;text-align:center;transition:all .2s;display:flex;flex-direction:column;align-items:center;gap:8px;" '
           + 'onmouseover="this.style.borderColor=\''+dati.color+'\';this.style.background=\''+dati.color+'1a\'" '
           + 'onmouseout="this.style.borderColor=\'var(--border)\';this.style.background=\'var(--card)\'">'
@@ -9799,10 +9805,16 @@ function updateDashboardCounters() {
       if (legheEl) legheEl.textContent = t.leghe.length;
       if (clubEl) {
         var totalClub = 0;
+        var _cfgN = 0;
+        try { _cfgN = JSON.parse(localStorage.getItem('adm_config_'+t.key)||'{}').nSquadre || 0; } catch(e){}
         t.leghe.forEach(function(l) {
           var rose = {};
           try { rose = JSON.parse(localStorage.getItem('adm_rose_'+t.key+'_'+l.key)||'{}'); } catch(e){}
-          totalClub += Object.keys(rose).length;
+          if (Object.keys(rose).length) {
+            totalClub += Object.keys(rose).length;
+          } else if (_cfgN) {
+            totalClub += _cfgN;
+          }
         });
         clubEl.textContent = totalClub > 0 ? totalClub : '—';
       }
@@ -9882,7 +9894,7 @@ function selectTournament(key, el) {
     var _nClub = 0;
     try { _nClub = Object.keys(JSON.parse(localStorage.getItem('adm_rose_'+key+'_'+_realLk)||'{}')).length; } catch(e){}
     if (!_nClub && _realLk !== _lk) { try { _nClub = Object.keys(JSON.parse(localStorage.getItem('adm_rose_'+key+'_'+_lk)||'{}')).length; } catch(e){} }
-    if (!_nClub) _nClub = _cfgClub;
+    if (!_nClub) _nClub = lega.clubs || _cfgClub;
     html += '<div onclick="enterLeague(\''+key+'\',\''+lega.key+'\')" style="background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:14px 10px;cursor:pointer;text-align:center;transition:all .2s;display:flex;flex-direction:column;align-items:center;gap:8px;" '
           + 'onmouseover="this.style.borderColor=\''+dati.color+'\';this.style.background=\''+dati.color+'1a\'" '
           + 'onmouseout="this.style.borderColor=\'var(--border)\';this.style.background=\'var(--card)\'">'
