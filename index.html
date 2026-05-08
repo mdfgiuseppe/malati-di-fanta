@@ -1183,7 +1183,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
     <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:420px;padding:40px 20px;text-align:center">
       <div style="position:relative;margin-bottom:36px">
         <div style="position:absolute;inset:-40px;background:radial-gradient(ellipse at center,rgba(16,185,129,.15),transparent 70%);border-radius:50%;pointer-events:none"></div>
-        <img src="" style="width:160px;height:160px;object-fit:contain;filter:drop-shadow(0 8px 40px rgba(16,185,129,.4));position:relative;z-index:1">
+        <img src="" id="sponsor-slim-logo" style="width:160px;height:160px;object-fit:contain;filter:drop-shadow(0 8px 40px rgba(16,185,129,.4));position:relative;z-index:1">
       </div>
       <div style="display:inline-flex;align-items:center;gap:10px;padding:10px 24px;background:rgba(239,68,68,.08);border:1.5px solid rgba(239,68,68,.25);border-radius:50px;margin-bottom:24px">
         <svg width="16" height="16" fill="none" stroke="#ef4444" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M4.93 4.93l14.14 14.14"/></svg>
@@ -3782,6 +3782,9 @@ function updateLogosTornei() {
         img.src = '';
       }
     });
+    var _slLogo = localStorage.getItem('adm_logo_torneo_slim');
+    var _slEl = document.getElementById('sponsor-slim-logo');
+    if (_slEl) _slEl.src = _slLogo || '';
   } catch(e) {}
 }
 function updateDashboardCounters() {
@@ -5658,8 +5661,8 @@ function admRenderCoppeList(torneoKey) {
       +'<button data-t="'+torneoKey+'" data-ci="'+ci+'" onclick="admDeleteCoppa(this)" style="background:none;border:none;color:#ef4444;cursor:pointer;font-size:14px">✕</button>'
       +'</div>';
     h += '<div style="padding:4px 14px 10px;display:flex;align-items:center;gap:8px">'
-      +'<div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:#f59e0b;white-space:nowrap;flex-shrink:0">🖼️ URL Trofeo</div>'
-      +'<input type="text" value="'+_trofeoVal+'" data-t="'+torneoKey+'" data-k="'+c.key+'" onchange="admSaveCoppaTrofeo(this)" placeholder="https://... URL immagine trofeo" style="flex:1;padding:5px 8px;background:var(--bg2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:11px;outline:none">'
+      +'<button onclick="admEditCoppaLogo(\''+torneoKey+'\',\''+c.key+'\')" style="background:rgba(139,92,246,.1);border:1px solid rgba(139,92,246,.2);color:#8b5cf6;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer">🖼 Logo</button>'
+      +'<button onclick="admEditCoppaTrofeo(\''+torneoKey+'\',\''+c.key+'\')" style="background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.2);color:#f59e0b;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer">🏆 Trofeo</button>'
       +'</div>';
     h += '</div>';
   });
@@ -5682,6 +5685,40 @@ function admSaveCoppaTrofeo(el) {
   if (url) { localStorage.setItem(storeKey, url); gsSaveKey(storeKey, url); }
   else { localStorage.removeItem(storeKey); gsSaveKey(storeKey, ''); }
   if (typeof COPPA_TROPHIES !== 'undefined') COPPA_TROPHIES[k] = url;
+}
+
+function admEditCoppaLogo(torneoKey, coppaKey) {
+  var current = localStorage.getItem('adm_img_coppa_'+coppaKey) || '';
+  var url = prompt('URL Logo Coppa:', current);
+  if (url === null) return;
+  url = url.trim();
+  if (typeof _normalizeImgUrl === 'function') url = _normalizeImgUrl(url);
+  var storeKey = 'adm_img_coppa_'+coppaKey;
+  if (url) { localStorage.setItem(storeKey, url); gsSaveKey(storeKey, url); }
+  else { localStorage.removeItem(storeKey); gsSaveKey(storeKey, ''); }
+  if (typeof initCoppaLogos === 'function') initCoppaLogos();
+  admRenderCoppeList(torneoKey);
+  var msg = document.createElement('div');
+  msg.textContent = url ? '✅ Logo coppa salvato' : '✅ Logo rimosso';
+  msg.style.cssText = 'position:fixed;bottom:20px;right:20px;background:#8b5cf6;color:#fff;padding:10px 18px;border-radius:10px;font-size:12px;font-weight:700;z-index:9999';
+  document.body.appendChild(msg); setTimeout(function(){msg.remove();},2200);
+}
+
+function admEditCoppaTrofeo(torneoKey, coppaKey) {
+  var current = localStorage.getItem('adm_coppa_trofeo_'+torneoKey+'_'+coppaKey) || '';
+  var url = prompt('URL Trofeo Coppa:', current);
+  if (url === null) return;
+  url = url.trim();
+  if (typeof _normalizeImgUrl === 'function') url = _normalizeImgUrl(url);
+  var storeKey = 'adm_coppa_trofeo_'+torneoKey+'_'+coppaKey;
+  if (url) { localStorage.setItem(storeKey, url); gsSaveKey(storeKey, url); }
+  else { localStorage.removeItem(storeKey); gsSaveKey(storeKey, ''); }
+  if (typeof COPPA_TROPHIES !== 'undefined') COPPA_TROPHIES[coppaKey] = url;
+  admRenderCoppeList(torneoKey);
+  var msg = document.createElement('div');
+  msg.textContent = url ? '✅ Trofeo coppa salvato' : '✅ Trofeo rimosso';
+  msg.style.cssText = 'position:fixed;bottom:20px;right:20px;background:#f59e0b;color:#fff;padding:10px 18px;border-radius:10px;font-size:12px;font-weight:700;z-index:9999';
+  document.body.appendChild(msg); setTimeout(function(){msg.remove();},2200);
 }
 
 function admDeleteCoppa(el) {
@@ -9798,6 +9835,9 @@ function updateLogosTornei() {
         img.src = '';
       }
     });
+    var _slLogo = localStorage.getItem('adm_logo_torneo_slim');
+    var _slEl = document.getElementById('sponsor-slim-logo');
+    if (_slEl) _slEl.src = _slLogo || '';
   } catch(e) {}
 }
 function updateDashboardCounters() {
@@ -11151,8 +11191,8 @@ function admRenderCoppeList(torneoKey) {
       +'<button data-t="'+torneoKey+'" data-ci="'+ci+'" onclick="admDeleteCoppa(this)" style="background:none;border:none;color:#ef4444;cursor:pointer;font-size:14px">✕</button>'
       +'</div>';
     h += '<div style="padding:4px 14px 10px;display:flex;align-items:center;gap:8px">'
-      +'<div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:#f59e0b;white-space:nowrap;flex-shrink:0">🖼️ URL Trofeo</div>'
-      +'<input type="text" value="'+_trofeoVal+'" data-t="'+torneoKey+'" data-k="'+c.key+'" onchange="admSaveCoppaTrofeo(this)" placeholder="https://... URL immagine trofeo" style="flex:1;padding:5px 8px;background:var(--bg2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:11px;outline:none">'
+      +'<button onclick="admEditCoppaLogo(\''+torneoKey+'\',\''+c.key+'\')" style="background:rgba(139,92,246,.1);border:1px solid rgba(139,92,246,.2);color:#8b5cf6;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer">🖼 Logo</button>'
+      +'<button onclick="admEditCoppaTrofeo(\''+torneoKey+'\',\''+c.key+'\')" style="background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.2);color:#f59e0b;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer">🏆 Trofeo</button>'
       +'</div>';
     h += '</div>';
   });
@@ -11175,6 +11215,40 @@ function admSaveCoppaTrofeo(el) {
   if (url) { localStorage.setItem(storeKey, url); gsSaveKey(storeKey, url); }
   else { localStorage.removeItem(storeKey); gsSaveKey(storeKey, ''); }
   if (typeof COPPA_TROPHIES !== 'undefined') COPPA_TROPHIES[k] = url;
+}
+
+function admEditCoppaLogo(torneoKey, coppaKey) {
+  var current = localStorage.getItem('adm_img_coppa_'+coppaKey) || '';
+  var url = prompt('URL Logo Coppa:', current);
+  if (url === null) return;
+  url = url.trim();
+  if (typeof _normalizeImgUrl === 'function') url = _normalizeImgUrl(url);
+  var storeKey = 'adm_img_coppa_'+coppaKey;
+  if (url) { localStorage.setItem(storeKey, url); gsSaveKey(storeKey, url); }
+  else { localStorage.removeItem(storeKey); gsSaveKey(storeKey, ''); }
+  if (typeof initCoppaLogos === 'function') initCoppaLogos();
+  admRenderCoppeList(torneoKey);
+  var msg = document.createElement('div');
+  msg.textContent = url ? '✅ Logo coppa salvato' : '✅ Logo rimosso';
+  msg.style.cssText = 'position:fixed;bottom:20px;right:20px;background:#8b5cf6;color:#fff;padding:10px 18px;border-radius:10px;font-size:12px;font-weight:700;z-index:9999';
+  document.body.appendChild(msg); setTimeout(function(){msg.remove();},2200);
+}
+
+function admEditCoppaTrofeo(torneoKey, coppaKey) {
+  var current = localStorage.getItem('adm_coppa_trofeo_'+torneoKey+'_'+coppaKey) || '';
+  var url = prompt('URL Trofeo Coppa:', current);
+  if (url === null) return;
+  url = url.trim();
+  if (typeof _normalizeImgUrl === 'function') url = _normalizeImgUrl(url);
+  var storeKey = 'adm_coppa_trofeo_'+torneoKey+'_'+coppaKey;
+  if (url) { localStorage.setItem(storeKey, url); gsSaveKey(storeKey, url); }
+  else { localStorage.removeItem(storeKey); gsSaveKey(storeKey, ''); }
+  if (typeof COPPA_TROPHIES !== 'undefined') COPPA_TROPHIES[coppaKey] = url;
+  admRenderCoppeList(torneoKey);
+  var msg = document.createElement('div');
+  msg.textContent = url ? '✅ Trofeo coppa salvato' : '✅ Trofeo rimosso';
+  msg.style.cssText = 'position:fixed;bottom:20px;right:20px;background:#f59e0b;color:#fff;padding:10px 18px;border-radius:10px;font-size:12px;font-weight:700;z-index:9999';
+  document.body.appendChild(msg); setTimeout(function(){msg.remove();},2200);
 }
 
 function admDeleteCoppa(el) {
