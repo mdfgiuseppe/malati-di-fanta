@@ -4828,6 +4828,21 @@ function gsPing() {
                 typeof admLoadRosaGiocatori === 'function') {
               admLoadRosaGiocatori();
             }
+            // Carica loghi squadre fantasy da GSheets
+            try {
+              var _rTeams = typeof val === 'string' ? JSON.parse(val) : val;
+              Object.keys(_rTeams).forEach(function(sq) {
+                (function(_sq) {
+                  var _lk = 'adm_logo_'+t.key+'_'+l.key+'_'+_sq;
+                  gsLoadKey(_lk, function(v) {
+                    if (!v) return;
+                    localStorage.setItem(_lk, v);
+                    var _nv = typeof _normalizeImgUrl === 'function' ? _normalizeImgUrl(v) : v;
+                    if (typeof FANTASY_LOGOS !== 'undefined') { FANTASY_LOGOS[_sq] = _nv; FANTASY_LOGOS[_sq.toUpperCase()] = _nv; }
+                  });
+                })(sq);
+              });
+            } catch(e) {}
           });
           // Crediti base
           var crKey = 'adm_crediti_base_'+t.key+'_'+l.key;
