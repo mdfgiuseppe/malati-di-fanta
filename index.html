@@ -7534,8 +7534,9 @@ function admCsLoadSquadre() {
     +'<div style="padding:8px 0">';
   teams.forEach(function(team){
     var k=team.replace(/\s+/g,'-').toLowerCase();
-    var logoUrl=baseUrl+k+'.png';
     var ki=team.replace(/\s+/g,'_');
+    var _storedLogo=localStorage.getItem('adm_logo_'+torneoKey+'_'+legaKey+'_'+team)||localStorage.getItem('adm_logo_'+torneoKey+'_'+legaKey+'_'+team.toUpperCase())||(typeof FANTASY_LOGOS!=='undefined'?FANTASY_LOGOS[team]||FANTASY_LOGOS[team.toUpperCase()]||'':'');
+    var logoUrl=_storedLogo||(baseUrl+k+'.png');
     h+='<div style="display:flex;align-items:center;gap:10px;padding:8px 14px;border-bottom:1px solid var(--border)">'
       +'<img src="'+logoUrl+'" onerror="this.style.opacity=0.2" style="width:32px;height:32px;object-fit:contain;border-radius:4px;flex-shrink:0">'
       +'<div style="flex:1;min-width:0"><div style="font-size:9px;color:var(--text3);font-weight:700;text-transform:uppercase;margin-bottom:3px">Nome attuale</div><div style="font-size:12px;font-weight:800">'+team+'</div></div>'
@@ -12806,8 +12807,9 @@ function admCsLoadSquadre() {
     +'<div style="padding:8px 0">';
   teams.forEach(function(team){
     var k=team.replace(/\s+/g,'-').toLowerCase();
-    var logoUrl=baseUrl+k+'.png';
     var ki=team.replace(/\s+/g,'_');
+    var _storedLogo=localStorage.getItem('adm_logo_'+torneoKey+'_'+legaKey+'_'+team)||localStorage.getItem('adm_logo_'+torneoKey+'_'+legaKey+'_'+team.toUpperCase())||(typeof FANTASY_LOGOS!=='undefined'?FANTASY_LOGOS[team]||FANTASY_LOGOS[team.toUpperCase()]||'':'');
+    var logoUrl=_storedLogo||(baseUrl+k+'.png');
     h+='<div style="display:flex;align-items:center;gap:10px;padding:8px 14px;border-bottom:1px solid var(--border)">'
       +'<img src="'+logoUrl+'" onerror="this.style.opacity=0.2" style="width:32px;height:32px;object-fit:contain;border-radius:4px;flex-shrink:0">'
       +'<div style="flex:1;min-width:0"><div style="font-size:9px;color:var(--text3);font-weight:700;text-transform:uppercase;margin-bottom:3px">Nome attuale</div><div style="font-size:12px;font-weight:800">'+team+'</div></div>'
