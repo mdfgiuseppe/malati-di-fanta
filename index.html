@@ -7541,8 +7541,9 @@ function admCsLoadSquadre() {
       +'<div style="flex:1;min-width:0"><div style="font-size:9px;color:var(--text3);font-weight:700;text-transform:uppercase;margin-bottom:3px">Nome attuale</div><div style="font-size:12px;font-weight:800">'+team+'</div></div>'
       +'<div style="flex:1;min-width:0"><div style="font-size:9px;color:var(--text3);font-weight:700;text-transform:uppercase;margin-bottom:3px">Nuovo nome</div>'
       +'<input type="text" id="adm-cs-new-'+ki+'" placeholder="'+team+'" style="width:100%;padding:5px 8px;background:var(--bg2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:12px;font-weight:700;outline:none"></div>'
-      +'<div style="flex:1;min-width:0"><div style="font-size:9px;color:var(--text3);font-weight:700;text-transform:uppercase;margin-bottom:3px">URL Logo</div>'
-      +'<input type="text" id="adm-cs-logo-'+ki+'" placeholder="'+logoUrl+'" style="width:100%;padding:5px 8px;background:var(--bg2);border:1px solid var(--border);border-radius:6px;color:var(--text2);font-size:10px;outline:none"></div>'
+      +'<div style="flex:1;min-width:0"><div style="font-size:9px;color:var(--text3);font-weight:700;text-transform:uppercase;margin-bottom:3px">Logo</div>'
+      +'<input type="hidden" id="adm-cs-logo-'+ki+'" value="">'
+      +'<button id="adm-cs-logo-btn-'+ki+'" onclick="admCsEditLogo(\''+ki+'\')" style="background:rgba(139,92,246,.1);border:1px solid rgba(139,92,246,.2);color:#8b5cf6;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer;width:100%">🖼 Logo</button></div>'
       +'</div>';
   });
   h+='</div></div>'
@@ -7628,6 +7629,17 @@ function admCsConfirm() {
   var el=document.getElementById('adm-cs-preview');
   el.innerHTML='<div style="background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.3);border-radius:8px;padding:14px;color:#10b981;font-size:13px;font-weight:700">✅ Cambio squadre completato!</div>';
   setTimeout(admCsLoadSquadre,500);
+}
+function admCsEditLogo(ki) {
+  var inp = document.getElementById('adm-cs-logo-'+ki);
+  var btn = document.getElementById('adm-cs-logo-btn-'+ki);
+  if (!inp) return;
+  var url = prompt('URL Logo Squadra:', inp.value || '');
+  if (url === null) return;
+  url = url.trim();
+  if (typeof _normalizeImgUrl === 'function') url = _normalizeImgUrl(url);
+  inp.value = url;
+  if (btn) { btn.textContent = url ? '✅ Logo impostato' : '🖼 Logo'; btn.style.color = url ? '#10b981' : '#8b5cf6'; btn.style.borderColor = url ? 'rgba(16,185,129,.3)' : 'rgba(139,92,246,.2)'; btn.style.background = url ? 'rgba(16,185,129,.1)' : 'rgba(139,92,246,.1)'; }
 }
 function admLoadRoseLeghe() {
   var torneoKey = document.getElementById('adm-rose-torneo').value;
@@ -12797,8 +12809,9 @@ function admCsLoadSquadre() {
       +'<div style="flex:1;min-width:0"><div style="font-size:9px;color:var(--text3);font-weight:700;text-transform:uppercase;margin-bottom:3px">Nome attuale</div><div style="font-size:12px;font-weight:800">'+team+'</div></div>'
       +'<div style="flex:1;min-width:0"><div style="font-size:9px;color:var(--text3);font-weight:700;text-transform:uppercase;margin-bottom:3px">Nuovo nome</div>'
       +'<input type="text" id="adm-cs-new-'+ki+'" placeholder="'+team+'" style="width:100%;padding:5px 8px;background:var(--bg2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:12px;font-weight:700;outline:none"></div>'
-      +'<div style="flex:1;min-width:0"><div style="font-size:9px;color:var(--text3);font-weight:700;text-transform:uppercase;margin-bottom:3px">URL Logo</div>'
-      +'<input type="text" id="adm-cs-logo-'+ki+'" placeholder="'+logoUrl+'" style="width:100%;padding:5px 8px;background:var(--bg2);border:1px solid var(--border);border-radius:6px;color:var(--text2);font-size:10px;outline:none"></div>'
+      +'<div style="flex:1;min-width:0"><div style="font-size:9px;color:var(--text3);font-weight:700;text-transform:uppercase;margin-bottom:3px">Logo</div>'
+      +'<input type="hidden" id="adm-cs-logo-'+ki+'" value="">'
+      +'<button id="adm-cs-logo-btn-'+ki+'" onclick="admCsEditLogo(\''+ki+'\')" style="background:rgba(139,92,246,.1);border:1px solid rgba(139,92,246,.2);color:#8b5cf6;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer;width:100%">🖼 Logo</button></div>'
       +'</div>';
   });
   h+='</div></div>'
@@ -12884,6 +12897,17 @@ function admCsConfirm() {
   var el=document.getElementById('adm-cs-preview');
   el.innerHTML='<div style="background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.3);border-radius:8px;padding:14px;color:#10b981;font-size:13px;font-weight:700">✅ Cambio squadre completato!</div>';
   setTimeout(admCsLoadSquadre,500);
+}
+function admCsEditLogo(ki) {
+  var inp = document.getElementById('adm-cs-logo-'+ki);
+  var btn = document.getElementById('adm-cs-logo-btn-'+ki);
+  if (!inp) return;
+  var url = prompt('URL Logo Squadra:', inp.value || '');
+  if (url === null) return;
+  url = url.trim();
+  if (typeof _normalizeImgUrl === 'function') url = _normalizeImgUrl(url);
+  inp.value = url;
+  if (btn) { btn.textContent = url ? '✅ Logo impostato' : '🖼 Logo'; btn.style.color = url ? '#10b981' : '#8b5cf6'; btn.style.borderColor = url ? 'rgba(16,185,129,.3)' : 'rgba(139,92,246,.2)'; btn.style.background = url ? 'rgba(16,185,129,.1)' : 'rgba(139,92,246,.1)'; }
 }
 function admGetTeams(torneoKey, legaKey) {
   if (torneoKey==='slim') {
