@@ -4995,6 +4995,27 @@ function gsLoadKey(key, callback) {
 }
 // ──────────────────────────────────────────────────────────────────
 
+function _findTeamLogo(name) {
+  if (!name || name === '—') return '';
+  if (typeof FANTASY_LOGOS !== 'undefined' && FANTASY_LOGOS[name]) return FANTASY_LOGOS[name];
+  var _leghe = ['it','en','de','es','fr','pt','nl','tr'];
+  for (var _i = 0; _i < _leghe.length; _i++) {
+    var _v = localStorage.getItem('adm_logo_slim_'+_leghe[_i]+'_'+name) || localStorage.getItem('adm_logo_slim_'+_leghe[_i]+'_'+name.toUpperCase());
+    if (_v) return typeof _normalizeImgUrl === 'function' ? _normalizeImgUrl(_v) : _v;
+  }
+  try {
+    var _at = JSON.parse(localStorage.getItem('admin_tornei') || '[]');
+    for (var _j = 0; _j < _at.length; _j++) {
+      var _t = _at[_j]; var _ll = _t.leghe || [];
+      for (var _k = 0; _k < _ll.length; _k++) {
+        var _v2 = localStorage.getItem('adm_logo_'+_t.key+'_'+_ll[_k].key+'_'+name) || localStorage.getItem('adm_logo_'+_t.key+'_'+_ll[_k].key+'_'+name.toUpperCase());
+        if (_v2) return typeof _normalizeImgUrl === 'function' ? _normalizeImgUrl(_v2) : _v2;
+      }
+    }
+  } catch(e) {}
+  return '';
+}
+
 // Salva calendario su GSheets
 function gsSaveCalendario(torneo, lega, cal) {
   if (!GS_ONLINE) return;
@@ -9422,8 +9443,10 @@ function renderMatchDouble(m, color) {
   var hasRitorno = m.rh2 !== '' && m.ra2 !== '' && m.rh2 !== undefined;
   var esito = m.esito || '';
   var scoreStyle = 'font-size:9px;font-weight:800;min-width:14px;text-align:center;';
-  var _lh=(typeof FANTASY_LOGOS!=='undefined'&&FANTASY_LOGOS[home])?'<img src="'+FANTASY_LOGOS[home]+'" style="width:14px;height:14px;object-fit:contain;flex-shrink:0">':'';
-  var _la=(typeof FANTASY_LOGOS!=='undefined'&&FANTASY_LOGOS[away])?'<img src="'+FANTASY_LOGOS[away]+'" style="width:14px;height:14px;object-fit:contain;flex-shrink:0">':'';
+  var _lhU=(typeof _findTeamLogo==='function')?_findTeamLogo(home):'';
+  var _laU=(typeof _findTeamLogo==='function')?_findTeamLogo(away):'';
+  var _lh=_lhU?'<img src="'+_lhU+'" style="width:14px;height:14px;object-fit:contain;flex-shrink:0">':'';
+  var _la=_laU?'<img src="'+_laU+'" style="width:14px;height:14px;object-fit:contain;flex-shrink:0">':'';
   return '<div style="background:var(--card);border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:4px">'    +'<div style="display:flex;align-items:center;justify-content:space-between;padding:5px 8px;border-bottom:1px solid var(--border)">'    +'<div style="flex:1;display:flex;align-items:center;gap:4px;overflow:hidden">'+_lh+'<span style="font-size:10px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+home+'</span></div>'    +(hasAndata?'<span style="'+scoreStyle+'color:#10b981;margin:0 2px">'+m.rh1+'</span>':'<span style="'+scoreStyle+'color:var(--text3)">·</span>')    +(hasRitorno?'<span style="'+scoreStyle+'color:var(--text3)">|</span><span style="'+scoreStyle+'color:#10b981">'+m.rh2+'</span>':'')    +'</div>'    +'<div style="display:flex;align-items:center;justify-content:space-between;padding:5px 8px'+(esito?';border-bottom:1px solid var(--border)':'')+'">'    +'<div style="flex:1;display:flex;align-items:center;gap:4px;overflow:hidden">'+_la+'<span style="font-size:10px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+away+'</span></div>'    +(hasAndata?'<span style="'+scoreStyle+'color:#ef4444;margin:0 2px">'+m.ra1+'</span>':'<span style="'+scoreStyle+'color:var(--text3)">·</span>')    +(hasRitorno?'<span style="'+scoreStyle+'color:var(--text3)">|</span><span style="'+scoreStyle+'color:#ef4444">'+m.ra2+'</span>':'')    +'</div>'    +(esito?'<div style="padding:3px 8px;font-size:9px;font-weight:700;color:#f59e0b;text-align:center">'+esito+'</div>':'')    +'</div>';
 }
 
@@ -9433,8 +9456,10 @@ function renderMatch(home, away, scoreH, scoreA, color, isFinal) {
   var aWin = played && parseInt(scoreA) > parseInt(scoreH);
   var size = isFinal ? '13px' : '11px';
   var pad = isFinal ? '10px 12px' : '6px 8px';
-  var _lh=(typeof FANTASY_LOGOS!=='undefined'&&FANTASY_LOGOS[home])?'<img src="'+FANTASY_LOGOS[home]+'" style="width:14px;height:14px;object-fit:contain;flex-shrink:0">':'';
-  var _la=(typeof FANTASY_LOGOS!=='undefined'&&FANTASY_LOGOS[away])?'<img src="'+FANTASY_LOGOS[away]+'" style="width:14px;height:14px;object-fit:contain;flex-shrink:0">':'';
+  var _lhU=(typeof _findTeamLogo==='function')?_findTeamLogo(home):'';
+  var _laU=(typeof _findTeamLogo==='function')?_findTeamLogo(away):'';
+  var _lh=_lhU?'<img src="'+_lhU+'" style="width:14px;height:14px;object-fit:contain;flex-shrink:0">':'';
+  var _la=_laU?'<img src="'+_laU+'" style="width:14px;height:14px;object-fit:contain;flex-shrink:0">':'';
   return '<div style="background:var(--card);border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:'+(isFinal?'0':'4px')+'">'
     + '<div style="display:flex;align-items:center;justify-content:space-between;padding:'+pad+';border-bottom:1px solid var(--border)">'
     + '<div style="flex:1;display:flex;align-items:center;gap:4px;overflow:hidden">'+_lh+'<span style="font-size:'+size+';font-weight:'+(hWin?'800':'600')+';color:'+(hWin?color:aWin?'var(--text2)':'var(--text)')+';overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+home+'</span></div>'
@@ -10575,6 +10600,27 @@ function gsLogin(username, password, callback) {
       callback(true, data.user);
     }
   });
+}
+
+function _findTeamLogo(name) {
+  if (!name || name === '—') return '';
+  if (typeof FANTASY_LOGOS !== 'undefined' && FANTASY_LOGOS[name]) return FANTASY_LOGOS[name];
+  var _leghe = ['it','en','de','es','fr','pt','nl','tr'];
+  for (var _i = 0; _i < _leghe.length; _i++) {
+    var _v = localStorage.getItem('adm_logo_slim_'+_leghe[_i]+'_'+name) || localStorage.getItem('adm_logo_slim_'+_leghe[_i]+'_'+name.toUpperCase());
+    if (_v) return typeof _normalizeImgUrl === 'function' ? _normalizeImgUrl(_v) : _v;
+  }
+  try {
+    var _at = JSON.parse(localStorage.getItem('admin_tornei') || '[]');
+    for (var _j = 0; _j < _at.length; _j++) {
+      var _t = _at[_j]; var _ll = _t.leghe || [];
+      for (var _k = 0; _k < _ll.length; _k++) {
+        var _v2 = localStorage.getItem('adm_logo_'+_t.key+'_'+_ll[_k].key+'_'+name) || localStorage.getItem('adm_logo_'+_t.key+'_'+_ll[_k].key+'_'+name.toUpperCase());
+        if (_v2) return typeof _normalizeImgUrl === 'function' ? _normalizeImgUrl(_v2) : _v2;
+      }
+    }
+  } catch(e) {}
+  return '';
 }
 
 // Salva calendario su GSheets
@@ -14649,8 +14695,10 @@ function renderMatchDouble(m, color) {
   var hasRitorno = m.rh2 !== '' && m.ra2 !== '' && m.rh2 !== undefined;
   var esito = m.esito || '';
   var scoreStyle = 'font-size:9px;font-weight:800;min-width:14px;text-align:center;';
-  var _lh=(typeof FANTASY_LOGOS!=='undefined'&&FANTASY_LOGOS[home])?'<img src="'+FANTASY_LOGOS[home]+'" style="width:14px;height:14px;object-fit:contain;flex-shrink:0">':'';
-  var _la=(typeof FANTASY_LOGOS!=='undefined'&&FANTASY_LOGOS[away])?'<img src="'+FANTASY_LOGOS[away]+'" style="width:14px;height:14px;object-fit:contain;flex-shrink:0">':'';
+  var _lhU=(typeof _findTeamLogo==='function')?_findTeamLogo(home):'';
+  var _laU=(typeof _findTeamLogo==='function')?_findTeamLogo(away):'';
+  var _lh=_lhU?'<img src="'+_lhU+'" style="width:14px;height:14px;object-fit:contain;flex-shrink:0">':'';
+  var _la=_laU?'<img src="'+_laU+'" style="width:14px;height:14px;object-fit:contain;flex-shrink:0">':'';
   return '<div style="background:var(--card);border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:4px">'    +'<div style="display:flex;align-items:center;justify-content:space-between;padding:5px 8px;border-bottom:1px solid var(--border)">'    +'<div style="flex:1;display:flex;align-items:center;gap:4px;overflow:hidden">'+_lh+'<span style="font-size:10px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+home+'</span></div>'    +(hasAndata?'<span style="'+scoreStyle+'color:#10b981;margin:0 2px">'+m.rh1+'</span>':'<span style="'+scoreStyle+'color:var(--text3)">·</span>')    +(hasRitorno?'<span style="'+scoreStyle+'color:var(--text3)">|</span><span style="'+scoreStyle+'color:#10b981">'+m.rh2+'</span>':'')    +'</div>'    +'<div style="display:flex;align-items:center;justify-content:space-between;padding:5px 8px'+(esito?';border-bottom:1px solid var(--border)':'')+'">'    +'<div style="flex:1;display:flex;align-items:center;gap:4px;overflow:hidden">'+_la+'<span style="font-size:10px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+away+'</span></div>'    +(hasAndata?'<span style="'+scoreStyle+'color:#ef4444;margin:0 2px">'+m.ra1+'</span>':'<span style="'+scoreStyle+'color:var(--text3)">·</span>')    +(hasRitorno?'<span style="'+scoreStyle+'color:var(--text3)">|</span><span style="'+scoreStyle+'color:#ef4444">'+m.ra2+'</span>':'')    +'</div>'    +(esito?'<div style="padding:3px 8px;font-size:9px;font-weight:700;color:#f59e0b;text-align:center">'+esito+'</div>':'')    +'</div>';
 }
 
@@ -14660,8 +14708,10 @@ function renderMatch(home, away, scoreH, scoreA, color, isFinal) {
   var aWin = played && parseInt(scoreA) > parseInt(scoreH);
   var size = isFinal ? '13px' : '11px';
   var pad = isFinal ? '10px 12px' : '6px 8px';
-  var _lh=(typeof FANTASY_LOGOS!=='undefined'&&FANTASY_LOGOS[home])?'<img src="'+FANTASY_LOGOS[home]+'" style="width:14px;height:14px;object-fit:contain;flex-shrink:0">':'';
-  var _la=(typeof FANTASY_LOGOS!=='undefined'&&FANTASY_LOGOS[away])?'<img src="'+FANTASY_LOGOS[away]+'" style="width:14px;height:14px;object-fit:contain;flex-shrink:0">':'';
+  var _lhU=(typeof _findTeamLogo==='function')?_findTeamLogo(home):'';
+  var _laU=(typeof _findTeamLogo==='function')?_findTeamLogo(away):'';
+  var _lh=_lhU?'<img src="'+_lhU+'" style="width:14px;height:14px;object-fit:contain;flex-shrink:0">':'';
+  var _la=_laU?'<img src="'+_laU+'" style="width:14px;height:14px;object-fit:contain;flex-shrink:0">':'';
   return '<div style="background:var(--card);border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:'+(isFinal?'0':'4px')+'">'
     + '<div style="display:flex;align-items:center;justify-content:space-between;padding:'+pad+';border-bottom:1px solid var(--border)">'
     + '<div style="flex:1;display:flex;align-items:center;gap:4px;overflow:hidden">'+_lh+'<span style="font-size:'+size+';font-weight:'+(hWin?'800':'600')+';color:'+(hWin?color:aWin?'var(--text2)':'var(--text)')+';overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+home+'</span></div>'
