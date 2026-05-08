@@ -9246,7 +9246,14 @@ document.addEventListener('DOMContentLoaded',function(){
   window._TEAMS_ROSE_IT = JSON.parse(JSON.stringify(TEAMS_ROSE));
   window._CREDITS_IT = JSON.parse(JSON.stringify(CREDITS));
   window._INFERMERIA_IT = JSON.parse(JSON.stringify(INFERMERIA));
-  window._FANTASY_LOGOS_IT = (typeof FANTASY_LOGOS !== 'undefined') ? FANTASY_LOGOS : {};
+  // Carica loghi squadre fantasy da localStorage (admin può averli salvati con 'adm_logo_slim_it_NomeSquadra')
+  if (typeof FANTASY_LOGOS !== 'undefined') {
+    Object.keys(FANTASY_LOGOS).forEach(function(team) {
+      var _sl = localStorage.getItem('adm_logo_slim_it_'+team) || localStorage.getItem('adm_logo_slim_it_'+team.toUpperCase());
+      if (_sl) FANTASY_LOGOS[team] = _sl;
+    });
+  }
+  window._FANTASY_LOGOS_IT = (typeof FANTASY_LOGOS !== 'undefined') ? JSON.parse(JSON.stringify(FANTASY_LOGOS)) : {};
   // Init chiavi lega Italia
   window._currentLeagueCalKey = 'slim_calendar';
   window._currentLeagueStaKey = 'slim_stadio';
@@ -14430,7 +14437,14 @@ document.addEventListener('DOMContentLoaded',function(){
   window._TEAMS_ROSE_IT = JSON.parse(JSON.stringify(TEAMS_ROSE));
   window._CREDITS_IT = JSON.parse(JSON.stringify(CREDITS));
   window._INFERMERIA_IT = JSON.parse(JSON.stringify(INFERMERIA));
-  window._FANTASY_LOGOS_IT = (typeof FANTASY_LOGOS !== 'undefined') ? FANTASY_LOGOS : {};
+  // Carica loghi squadre fantasy da localStorage (admin può averli salvati con 'adm_logo_slim_it_NomeSquadra')
+  if (typeof FANTASY_LOGOS !== 'undefined') {
+    Object.keys(FANTASY_LOGOS).forEach(function(team) {
+      var _sl = localStorage.getItem('adm_logo_slim_it_'+team) || localStorage.getItem('adm_logo_slim_it_'+team.toUpperCase());
+      if (_sl) FANTASY_LOGOS[team] = _sl;
+    });
+  }
+  window._FANTASY_LOGOS_IT = (typeof FANTASY_LOGOS !== 'undefined') ? JSON.parse(JSON.stringify(FANTASY_LOGOS)) : {};
   // Init chiavi lega Italia
   window._currentLeagueCalKey = 'slim_calendar';
   window._currentLeagueStaKey = 'slim_stadio';
