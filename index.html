@@ -2853,8 +2853,8 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
         <div class="t-name">Tana dei Mister</div>
         <div class="t-mode-row"><span class="t-badge">TDM</span><span class="t-badge mode">Classic</span></div>
         <div class="t-stats">
-          <div class="t-stat"><span class="t-stat-l">Leghe</span><span class="t-stat-v" id="tdm-n-leghe">5</span></div>
-          <div class="t-stat"><span class="t-stat-l">Club partecipanti</span><span class="t-stat-v" id="tdm-n-club">70</span></div>
+          <div class="t-stat"><span class="t-stat-l">Leghe</span><span class="t-stat-v" id="tdm-n-leghe">—</span></div>
+          <div class="t-stat"><span class="t-stat-l">Club partecipanti</span><span class="t-stat-v" id="tdm-n-club">—</span></div>
         </div>
         <div class="t-cta">Visualizza leghe →</div>
 <div style="display:flex;gap:6px;margin-top:6px"><div onclick="event.stopPropagation();openRegModal('tdm','Tana dei Mister')" style="flex:1;padding:5px 6px;border-radius:7px;font-size:8px;font-weight:800;text-transform:uppercase;text-align:center;cursor:pointer;background:rgba(255,255,255,.03);color:var(--text2);border:1px solid var(--border)">📋 Regolamento</div><div onclick="event.stopPropagation();openAlboBtn('tdm','Tana dei Mister')" style="flex:1;padding:5px 6px;border-radius:7px;font-size:8px;font-weight:800;text-transform:uppercase;text-align:center;cursor:pointer;color:#3b82f6;border:1px solid #3b82f633;background:#3b82f611">🏆 Albo d'Oro</div></div>
@@ -2867,8 +2867,8 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
         <div class="t-name">Scudetto Slim</div>
         <div class="t-mode-row"><span class="t-badge">SLIM</span><span class="t-badge mode">Mantra</span></div>
         <div class="t-stats">
-          <div class="t-stat"><span class="t-stat-l">Leghe</span><span class="t-stat-v" id="slim-n-leghe">8</span></div>
-          <div class="t-stat"><span class="t-stat-l">Club partecipanti</span><span class="t-stat-v" id="slim-n-club">80</span></div>
+          <div class="t-stat"><span class="t-stat-l">Leghe</span><span class="t-stat-v" id="slim-n-leghe">—</span></div>
+          <div class="t-stat"><span class="t-stat-l">Club partecipanti</span><span class="t-stat-v" id="slim-n-club">—</span></div>
         </div>
         <div class="t-cta">Visualizza leghe →</div>
 <div style="display:flex;gap:6px;margin-top:6px"><div onclick="event.stopPropagation();openRegModal('slim','Scudetto Slim')" style="flex:1;padding:5px 6px;border-radius:7px;font-size:8px;font-weight:800;text-transform:uppercase;text-align:center;cursor:pointer;background:rgba(255,255,255,.03);color:var(--text2);border:1px solid var(--border)">📋 Regolamento</div><div onclick="event.stopPropagation();openAlboBtn('slim','Scudetto Slim')" style="flex:1;padding:5px 6px;border-radius:7px;font-size:8px;font-weight:800;text-transform:uppercase;text-align:center;cursor:pointer;color:#10b981;border:1px solid #10b98133;background:#10b98111">🏆 Albo d'Oro</div></div>
@@ -2881,8 +2881,8 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
         <div class="t-name">Torneo Semi Manageriale</div>
         <div class="t-mode-row"><span class="t-badge">TSM</span><span class="t-badge mode">Classic</span></div>
         <div class="t-stats">
-          <div class="t-stat"><span class="t-stat-l">Leghe</span><span class="t-stat-v" id="tsm-n-leghe">1</span></div>
-          <div class="t-stat"><span class="t-stat-l">Club partecipanti</span><span class="t-stat-v" id="tsm-n-club">10</span></div>
+          <div class="t-stat"><span class="t-stat-l">Leghe</span><span class="t-stat-v" id="tsm-n-leghe">—</span></div>
+          <div class="t-stat"><span class="t-stat-l">Club partecipanti</span><span class="t-stat-v" id="tsm-n-club">—</span></div>
         </div>
         <div class="t-cta">Visualizza leghe →</div>
 <div style="display:flex;gap:6px;margin-top:6px"><div onclick="event.stopPropagation();openRegModal('tsm','Torneo Semi Manageriale')" style="flex:1;padding:5px 6px;border-radius:7px;font-size:8px;font-weight:800;text-transform:uppercase;text-align:center;cursor:pointer;background:rgba(255,255,255,.03);color:var(--text2);border:1px solid var(--border)">📋 Regolamento</div><div onclick="event.stopPropagation();openAlboBtn('tsm','Torneo Semi Manageriale')" style="flex:1;padding:5px 6px;border-radius:7px;font-size:8px;font-weight:800;text-transform:uppercase;text-align:center;cursor:pointer;color:#f59e0b;border:1px solid #f59e0b33;background:#f59e0b11">🏆 Albo d'Oro</div></div>
@@ -3786,32 +3786,19 @@ function updateLogosTornei() {
 }
 function updateDashboardCounters() {
   try {
-    var at = JSON.parse(localStorage.getItem('admin_tornei')||'null') || [];
+    var at = (typeof ADMIN_TORNEI !== 'undefined') ? ADMIN_TORNEI : (JSON.parse(localStorage.getItem('admin_tornei')||'null') || []);
     at.forEach(function(t) {
       var legheEl = document.getElementById(t.key+'-n-leghe');
       var clubEl = document.getElementById(t.key+'-n-club');
       if (legheEl) legheEl.textContent = t.leghe.length;
       if (clubEl) {
-        // Calcola club totali da tutte le leghe
         var totalClub = 0;
-        var _cfgN = 0;
-        try { _cfgN = JSON.parse(localStorage.getItem('adm_config_'+t.key)||'{}').nSquadre || 0; } catch(e){}
-        t.leghe.slice().sort(function(a,b){return a.label.localeCompare(b.label);}).forEach(function(l) {
+        t.leghe.forEach(function(l) {
           var rose = {};
           try { rose = JSON.parse(localStorage.getItem('adm_rose_'+t.key+'_'+l.key)||'{}'); } catch(e){}
-          if (!Object.keys(rose).length) {
-            // Fallback 1: LEAGUES_DATA (gestisce key mismatch ilm_a vs a)
-            if (typeof LEAGUES_DATA!=='undefined' && LEAGUES_DATA[t.key]) {
-              var ld = LEAGUES_DATA[t.key].leghe.find(function(x){return x.key===l.key||x.key===t.key+'_'+l.key;});
-              if (ld && ld.clubs) { totalClub += ld.clubs; return; }
-            }
-            // Fallback 2: nSquadre da adm_config
-            if (_cfgN) { totalClub += _cfgN; return; }
-            return;
-          }
           totalClub += Object.keys(rose).length;
         });
-        if (totalClub > 0) clubEl.textContent = totalClub;
+        clubEl.textContent = totalClub > 0 ? totalClub : '—';
       }
     });
   } catch(e) {}
@@ -3884,13 +3871,12 @@ function selectTournament(key, el) {
       if (_urlLogo) _urlLogo = _normalizeImgUrl(_urlLogo);
       logo = _urlLogo || (LOGOS && LOGOS[_lk]) || '';
     }
-    // Club count: hardcoded > rose > config
-    var _nClub = lega.clubs || 0;
-    if (!_nClub) {
-      var _realLk = _lk.replace(key+'_', '');
-      try { _nClub = Object.keys(JSON.parse(localStorage.getItem('adm_rose_'+key+'_'+_realLk)||'{}')).length; } catch(e){}
-      if (!_nClub) _nClub = _cfgClub;
-    }
+    // Club count: rose da localStorage (fonte più aggiornata) > config
+    var _realLk = _lk.indexOf(key+'_') === 0 ? _lk.slice(key.length+1) : _lk;
+    var _nClub = 0;
+    try { _nClub = Object.keys(JSON.parse(localStorage.getItem('adm_rose_'+key+'_'+_realLk)||'{}')).length; } catch(e){}
+    if (!_nClub && _realLk !== _lk) { try { _nClub = Object.keys(JSON.parse(localStorage.getItem('adm_rose_'+key+'_'+_lk)||'{}')).length; } catch(e){} }
+    if (!_nClub) _nClub = _cfgClub;
     html += '<div onclick="enterLeague(\''+key+'\',\''+lega.key+'\')" style="background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:14px 10px;cursor:pointer;text-align:center;transition:all .2s;display:flex;flex-direction:column;align-items:center;gap:8px;" '
           + 'onmouseover="this.style.borderColor=\''+dati.color+'\';this.style.background=\''+dati.color+'1a\'" '
           + 'onmouseout="this.style.borderColor=\'var(--border)\';this.style.background=\'var(--card)\'">'
@@ -4856,7 +4842,7 @@ function gsPing() {
             gsLoadKey('adm_trofeo_lega_'+_tk+'_'+_lk, function(val) {
               if (val !== null && val !== undefined && val !== '') {
                 localStorage.setItem('adm_trofeo_lega_'+_tk+'_'+_lk, val);
-                if (typeof currentLeagueKey !== 'undefined' && (currentLeagueKey === _lk || currentLeagueKey === _tk+'_'+_lk)) {
+                if (typeof currentLeagueKey !== 'undefined' && typeof window._currentTourneyKey !== 'undefined' && window._currentTourneyKey === _tk && (currentLeagueKey === _lk || currentLeagueKey === _tk+'_'+_lk)) {
                   var _tel = document.getElementById('lega-dash-trophy');
                   if (_tel) _tel.src = _normalizeImgUrl(val);
                 }
@@ -6504,11 +6490,11 @@ function admWizardAddLega() {
 function admWizardRenderLeghe() {
   var el = document.getElementById('adm-wz-leghe-list'); if(!el) return;
   if (!_wzData.leghe.length) { el.innerHTML='<div style="color:var(--text3);font-size:11px;padding:8px">Nessuna lega aggiunta</div>'; return; }
-  el.innerHTML = _wzData.leghe.map(function(l,i) {
+  el.innerHTML = _wzData.leghe.map(function(l,i){return{l:l,i:i};}).sort(function(a,b){return a.l.label.localeCompare(b.l.label);}).map(function(item) {
     return '<div style="display:flex;align-items:center;gap:8px;padding:6px 10px;background:var(--bg2);border-radius:6px;margin-bottom:4px">'
-      +'<span style="flex:1;font-size:12px;font-weight:700">'+l.label+'</span>'
-      +'<span style="font-size:10px;color:var(--text3)">'+l.key+'</span>'
-      +'<button onclick="_wzData.leghe.splice('+i+',1);admWizardRenderLeghe()" style="background:none;border:none;color:#ef4444;cursor:pointer;font-size:13px">🗑</button>'
+      +'<span style="flex:1;font-size:12px;font-weight:700">'+item.l.label+'</span>'
+      +'<span style="font-size:10px;color:var(--text3)">'+item.l.key+'</span>'
+      +'<button onclick="_wzData.leghe.splice('+item.i+',1);admWizardRenderLeghe()" style="background:none;border:none;color:#ef4444;cursor:pointer;font-size:13px">🗑</button>'
       +'</div>';
   }).join('');
 }
@@ -6699,7 +6685,7 @@ function admScLoadSquadre() {
   var tk = document.getElementById('adm-sc-torneo').value;
   var lk = document.getElementById('adm-sc-lega').value;
   if (!tk||!lk) return;
-  var teams = admGetTeams(tk, lk).concat(['INFERMERIA']);
+  var teams = admGetTeams(tk, lk).slice().sort(function(a,b){return a.localeCompare(b);}).concat(['INFERMERIA']);
   ['A','B'].forEach(function(side) {
     var sel = document.getElementById('adm-sc-sq'+side);
     sel.innerHTML = '<option value="">-- Seleziona --</option>';
@@ -7053,6 +7039,7 @@ function admAddLegaConfirm(ti, legaKey, legaLabel, giornate, nSquadre, crediti) 
 
   // Aggiungi lega al torneo
   torneo.leghe.push({key: legaKey, label: legaLabel});
+  torneo.leghe.sort(function(a,b){return a.label.localeCompare(b.label);});
   admSaveTornei();
 
   // Salva config del torneo se non esiste
@@ -7077,6 +7064,7 @@ function admAddLegaConfirm(ti, legaKey, legaLabel, giornate, nSquadre, crediti) 
   // Aggiorna LEAGUES_DATA
   if (typeof LEAGUES_DATA !== 'undefined' && LEAGUES_DATA[torneo.key]) {
     LEAGUES_DATA[torneo.key].leghe.push({key:legaKey, label:legaLabel, flag:'🏆', clubs:squadre.length});
+    LEAGUES_DATA[torneo.key].leghe.sort(function(a,b){return a.label.localeCompare(b.label);});
   }
 
   // Salva su GSheets
@@ -7599,7 +7587,7 @@ function admLoadRoseSquadre() {
   var legaKey = document.getElementById('adm-rose-lega').value;
   var sel = document.getElementById('adm-rose-squadra');
   sel.innerHTML = '<option value="">-- Seleziona Squadra --</option>';
-  var teams = admGetTeams(torneoKey, legaKey);
+  var teams = admGetTeams(torneoKey, legaKey).slice().sort(function(a,b){return a.localeCompare(b);});
   teams.forEach(function(t){ var o=document.createElement('option');o.value=t;o.textContent=t;sel.appendChild(o); });
   var oI=document.createElement('option');oI.value='INFERMERIA';oI.textContent='🏥 Infermeria';sel.appendChild(oI);
   document.getElementById('adm-rose-body').innerHTML='';
@@ -8226,7 +8214,7 @@ function admLoadSpSquadre() {
   var legaKey = document.getElementById('adm-sp-lega').value;
   var sel = document.getElementById('adm-sp-squadra');
   sel.innerHTML = '<option value="">-- Seleziona Squadra --</option>';
-  var teams = admGetTeams(torneoKey, legaKey);
+  var teams = admGetTeams(torneoKey, legaKey).slice().sort(function(a,b){return a.localeCompare(b);});
   teams.forEach(function(t){ var o=document.createElement('option');o.value=t;o.textContent=t;sel.appendChild(o); });
   document.getElementById('adm-sp-body').innerHTML='';
 }
@@ -8640,20 +8628,20 @@ function enterLeague(tournament, leagueKey) {
   // Tornei non-slim/non-tsm (es. TDM): usano page-lega con chiavi proprie
   if (tournament && tournament !== 'slim' && tournament !== 'tsm' && tournament !== 'ilm' && tournament !== 'ilc') {
     currentLeagueKey = leagueKey || 'it';
-    var _dynRoseRaw = localStorage.getItem('adm_rose_'+tournament+'_'+leagueKey);
+    var _dynRoseRaw = localStorage.getItem('adm_rose_'+tournament+'_'+currentLeagueKey);
     TEAMS_ROSE = _dynRoseRaw ? (function(){try{return JSON.parse(_dynRoseRaw);}catch(e){return{};}}()) : {};
     INFERMERIA = [];
-    var _dynCrRaw = localStorage.getItem('adm_crediti_base_'+tournament+'_'+leagueKey);
+    var _dynCrRaw = localStorage.getItem('adm_crediti_base_'+tournament+'_'+currentLeagueKey);
     CREDITS = _dynCrRaw ? (function(){try{return JSON.parse(_dynCrRaw);}catch(e){return{};}}()) : {};
     SLIM_TEAMS = Object.keys(TEAMS_ROSE).sort();
     currentTeam = SLIM_TEAMS.length > 0 ? SLIM_TEAMS[0] : '';
-    window._currentLeagueCalKey = 'adm_cal_'+tournament+'_'+leagueKey;
-    window._currentLeagueStaKey = 'adm_stadio_'+tournament+'_'+leagueKey;
+    window._currentLeagueCalKey = 'adm_cal_'+tournament+'_'+currentLeagueKey;
+    window._currentLeagueStaKey = 'adm_stadio_'+tournament+'_'+currentLeagueKey;
     window._currentTourneyKey = tournament;
     FANTASY_LOGOS = {};
     showPage('lega');
     setTimeout(function(){
-      _updateLegaDashboard(tournament+'_'+leagueKey);
+      _updateLegaDashboard(tournament+'_'+currentLeagueKey);
       buildTeamsGrid();
       showSection('dashboard', null);
     }, 50);
@@ -8663,7 +8651,7 @@ function enterLeague(tournament, leagueKey) {
         var _ck = 'adm_crediti_base_'+_tk+'_'+_lk;
         gsCall({action:'getKey',key:_rk}, function(e,r){ if(!e&&r&&r.ok&&r.data){try{var p=typeof r.data==='string'?JSON.parse(r.data):r.data; TEAMS_ROSE=p; SLIM_TEAMS=Object.keys(p).sort(); localStorage.setItem(_rk,JSON.stringify(p)); if(typeof buildTeamsGrid==='function') buildTeamsGrid();}catch(e2){}} });
         gsCall({action:'getKey',key:_ck}, function(e,r){ if(!e&&r&&r.ok&&r.data){try{var c=typeof r.data==='string'?JSON.parse(r.data):r.data; CREDITS=c; localStorage.setItem(_ck,JSON.stringify(c)); if(typeof updateHeader==='function') updateHeader();}catch(e2){}} });
-      })(tournament, leagueKey);
+      })(tournament, currentLeagueKey);
     }
     return;
   }
@@ -8675,7 +8663,8 @@ function enterLeague(tournament, leagueKey) {
   }
 
   currentLeagueKey = leagueKey || 'it';
-  
+  window._currentTourneyKey = 'slim';
+
   // Carica i dati della lega selezionata
   // Leghe dinamiche (create col wizard) — non in ALL_LEAGUES_DATA
   var _isDynamic = leagueKey && leagueKey !== 'it' &&
@@ -9210,17 +9199,7 @@ document.addEventListener('DOMContentLoaded',function(){
   slimRenderClassifica();
   slimRenderCalendario();
   slimRenderStadio();
-  // Aggiorna contatori card Slim nella dashboard principale
-  if(typeof SLIM_CONFIG!=='undefined'){
-    var elL=document.getElementById('slim-n-leghe');
-    var elC=document.getElementById('slim-n-club');
-    if(elL) elL.textContent=SLIM_CONFIG.n_leghe;
-    if(elC) elC.textContent=SLIM_CONFIG.n_club;
-    var dL=document.getElementById('dash-n-leghe');
-    var dC=document.getElementById('dash-n-club');
-    if(dL) dL.textContent=SLIM_CONFIG.n_leghe+' Nazioni';
-    if(dC) dC.textContent=SLIM_CONFIG.n_club+' Club';
-  }
+  updateDashboardCounters();
   // Aggiorna dashboard lega con trofeo della nazione corrente
   _updateLegaDashboard('slim_it');
 });
@@ -9813,32 +9792,19 @@ function updateLogosTornei() {
 }
 function updateDashboardCounters() {
   try {
-    var at = JSON.parse(localStorage.getItem('admin_tornei')||'null') || [];
+    var at = (typeof ADMIN_TORNEI !== 'undefined') ? ADMIN_TORNEI : (JSON.parse(localStorage.getItem('admin_tornei')||'null') || []);
     at.forEach(function(t) {
       var legheEl = document.getElementById(t.key+'-n-leghe');
       var clubEl = document.getElementById(t.key+'-n-club');
       if (legheEl) legheEl.textContent = t.leghe.length;
       if (clubEl) {
-        // Calcola club totali da tutte le leghe
         var totalClub = 0;
-        var _cfgN = 0;
-        try { _cfgN = JSON.parse(localStorage.getItem('adm_config_'+t.key)||'{}').nSquadre || 0; } catch(e){}
-        t.leghe.slice().sort(function(a,b){return a.label.localeCompare(b.label);}).forEach(function(l) {
+        t.leghe.forEach(function(l) {
           var rose = {};
           try { rose = JSON.parse(localStorage.getItem('adm_rose_'+t.key+'_'+l.key)||'{}'); } catch(e){}
-          if (!Object.keys(rose).length) {
-            // Fallback 1: LEAGUES_DATA (gestisce key mismatch ilm_a vs a)
-            if (typeof LEAGUES_DATA!=='undefined' && LEAGUES_DATA[t.key]) {
-              var ld = LEAGUES_DATA[t.key].leghe.find(function(x){return x.key===l.key||x.key===t.key+'_'+l.key;});
-              if (ld && ld.clubs) { totalClub += ld.clubs; return; }
-            }
-            // Fallback 2: nSquadre da adm_config
-            if (_cfgN) { totalClub += _cfgN; return; }
-            return;
-          }
           totalClub += Object.keys(rose).length;
         });
-        if (totalClub > 0) clubEl.textContent = totalClub;
+        clubEl.textContent = totalClub > 0 ? totalClub : '—';
       }
     });
   } catch(e) {}
@@ -9911,13 +9877,12 @@ function selectTournament(key, el) {
       if (_urlLogo) _urlLogo = _normalizeImgUrl(_urlLogo);
       logo = _urlLogo || (LOGOS && LOGOS[_lk]) || '';
     }
-    // Club count: hardcoded > rose > config
-    var _nClub = lega.clubs || 0;
-    if (!_nClub) {
-      var _realLk = _lk.replace(key+'_', '');
-      try { _nClub = Object.keys(JSON.parse(localStorage.getItem('adm_rose_'+key+'_'+_realLk)||'{}')).length; } catch(e){}
-      if (!_nClub) _nClub = _cfgClub;
-    }
+    // Club count: rose da localStorage (fonte più aggiornata) > config
+    var _realLk = _lk.indexOf(key+'_') === 0 ? _lk.slice(key.length+1) : _lk;
+    var _nClub = 0;
+    try { _nClub = Object.keys(JSON.parse(localStorage.getItem('adm_rose_'+key+'_'+_realLk)||'{}')).length; } catch(e){}
+    if (!_nClub && _realLk !== _lk) { try { _nClub = Object.keys(JSON.parse(localStorage.getItem('adm_rose_'+key+'_'+_lk)||'{}')).length; } catch(e){} }
+    if (!_nClub) _nClub = _cfgClub;
     html += '<div onclick="enterLeague(\''+key+'\',\''+lega.key+'\')" style="background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:14px 10px;cursor:pointer;text-align:center;transition:all .2s;display:flex;flex-direction:column;align-items:center;gap:8px;" '
           + 'onmouseover="this.style.borderColor=\''+dati.color+'\';this.style.background=\''+dati.color+'1a\'" '
           + 'onmouseout="this.style.borderColor=\'var(--border)\';this.style.background=\'var(--card)\'">'
@@ -11922,11 +11887,11 @@ function admWizardAddLega() {
 function admWizardRenderLeghe() {
   var el = document.getElementById('adm-wz-leghe-list'); if(!el) return;
   if (!_wzData.leghe.length) { el.innerHTML='<div style="color:var(--text3);font-size:11px;padding:8px">Nessuna lega aggiunta</div>'; return; }
-  el.innerHTML = _wzData.leghe.map(function(l,i) {
+  el.innerHTML = _wzData.leghe.map(function(l,i){return{l:l,i:i};}).sort(function(a,b){return a.l.label.localeCompare(b.l.label);}).map(function(item) {
     return '<div style="display:flex;align-items:center;gap:8px;padding:6px 10px;background:var(--bg2);border-radius:6px;margin-bottom:4px">'
-      +'<span style="flex:1;font-size:12px;font-weight:700">'+l.label+'</span>'
-      +'<span style="font-size:10px;color:var(--text3)">'+l.key+'</span>'
-      +'<button onclick="_wzData.leghe.splice('+i+',1);admWizardRenderLeghe()" style="background:none;border:none;color:#ef4444;cursor:pointer;font-size:13px">🗑</button>'
+      +'<span style="flex:1;font-size:12px;font-weight:700">'+item.l.label+'</span>'
+      +'<span style="font-size:10px;color:var(--text3)">'+item.l.key+'</span>'
+      +'<button onclick="_wzData.leghe.splice('+item.i+',1);admWizardRenderLeghe()" style="background:none;border:none;color:#ef4444;cursor:pointer;font-size:13px">🗑</button>'
       +'</div>';
   }).join('');
 }
@@ -12282,6 +12247,7 @@ function admAddLegaConfirm(ti, legaKey, legaLabel, giornate, nSquadre, crediti) 
 
   // Aggiungi lega al torneo
   torneo.leghe.push({key: legaKey, label: legaLabel});
+  torneo.leghe.sort(function(a,b){return a.label.localeCompare(b.label);});
   admSaveTornei();
 
   // Salva config del torneo se non esiste
@@ -12306,6 +12272,7 @@ function admAddLegaConfirm(ti, legaKey, legaLabel, giornate, nSquadre, crediti) 
   // Aggiorna LEAGUES_DATA
   if (typeof LEAGUES_DATA !== 'undefined' && LEAGUES_DATA[torneo.key]) {
     LEAGUES_DATA[torneo.key].leghe.push({key:legaKey, label:legaLabel, flag:'🏆', clubs:squadre.length});
+    LEAGUES_DATA[torneo.key].leghe.sort(function(a,b){return a.label.localeCompare(b.label);});
   }
 
   // Salva su GSheets
@@ -13131,7 +13098,7 @@ function admLoadSpSquadre() {
   var legaKey = document.getElementById('adm-sp-lega').value;
   var sel = document.getElementById('adm-sp-squadra');
   sel.innerHTML = '<option value="">-- Seleziona Squadra --</option>';
-  var teams = admGetTeams(torneoKey, legaKey);
+  var teams = admGetTeams(torneoKey, legaKey).slice().sort(function(a,b){return a.localeCompare(b);});
   teams.forEach(function(t){ var o=document.createElement('option');o.value=t;o.textContent=t;sel.appendChild(o); });
   document.getElementById('adm-sp-body').innerHTML='';
 }
@@ -13541,7 +13508,7 @@ function enterDynamicLeague(torneoKey, legaKey) {
   // Carica rose
   var rose = {};
   try { rose = JSON.parse(localStorage.getItem('adm_rose_'+torneoKey+'_'+legaKey)||'{}'); } catch(e){}
-  var squadre = Object.keys(rose);
+  var squadre = Object.keys(rose).sort(function(a,b){return a.localeCompare(b);});
 
   // Carica calendario
   var cal = {};
@@ -13580,7 +13547,7 @@ function enterDynamicLeague(torneoKey, legaKey) {
     var _rk = 'adm_rose_'+torneoKey+'_'+legaKey;
     var _ck = 'adm_crediti_base_'+torneoKey+'_'+legaKey;
     var _cfk = 'adm_config_'+torneoKey;
-    gsCall({action:'getKey',key:_rk}, function(e,r){ if(!e&&r&&r.ok&&r.data){try{var p=typeof r.data==='string'?JSON.parse(r.data):r.data; window._dynRose=p; window._dynSquadre=Object.keys(p); localStorage.setItem(_rk,JSON.stringify(p)); dynBuildTeamsGrid(); dynRenderSection('dashboard');}catch(ex){}} });
+    gsCall({action:'getKey',key:_rk}, function(e,r){ if(!e&&r&&r.ok&&r.data){try{var p=typeof r.data==='string'?JSON.parse(r.data):r.data; window._dynRose=p; window._dynSquadre=Object.keys(p).sort(function(a,b){return a.localeCompare(b);}); localStorage.setItem(_rk,JSON.stringify(p)); dynBuildTeamsGrid(); dynRenderSection('dashboard');}catch(ex){}} });
     gsCall({action:'getKey',key:_ck}, function(e,r){ if(!e&&r&&r.ok&&r.data){try{var c=typeof r.data==='string'?JSON.parse(r.data):r.data; window._dynCr=c; localStorage.setItem(_ck,JSON.stringify(c)); dynRenderSection('dashboard');}catch(ex){}} });
     gsCall({action:'getKey',key:_cfk}, function(e,r){ if(!e&&r&&r.ok&&r.data){try{var cf=typeof r.data==='string'?JSON.parse(r.data):r.data; window._dynConfig=cf; var te=document.getElementById('dyn-torneo-title'); if(te&&cf.label) te.textContent=cf.label; localStorage.setItem(_cfk,JSON.stringify(cf));}catch(ex){}} });
   }
@@ -13790,20 +13757,20 @@ function enterLeague(tournament, leagueKey) {
   // Tornei non-slim/non-tsm (es. TDM): usano page-lega con chiavi proprie
   if (tournament && tournament !== 'slim' && tournament !== 'tsm' && tournament !== 'ilm' && tournament !== 'ilc') {
     currentLeagueKey = leagueKey || 'it';
-    var _dynRoseRaw = localStorage.getItem('adm_rose_'+tournament+'_'+leagueKey);
+    var _dynRoseRaw = localStorage.getItem('adm_rose_'+tournament+'_'+currentLeagueKey);
     TEAMS_ROSE = _dynRoseRaw ? (function(){try{return JSON.parse(_dynRoseRaw);}catch(e){return{};}}()) : {};
     INFERMERIA = [];
-    var _dynCrRaw = localStorage.getItem('adm_crediti_base_'+tournament+'_'+leagueKey);
+    var _dynCrRaw = localStorage.getItem('adm_crediti_base_'+tournament+'_'+currentLeagueKey);
     CREDITS = _dynCrRaw ? (function(){try{return JSON.parse(_dynCrRaw);}catch(e){return{};}}()) : {};
     SLIM_TEAMS = Object.keys(TEAMS_ROSE).sort();
     currentTeam = SLIM_TEAMS.length > 0 ? SLIM_TEAMS[0] : '';
-    window._currentLeagueCalKey = 'adm_cal_'+tournament+'_'+leagueKey;
-    window._currentLeagueStaKey = 'adm_stadio_'+tournament+'_'+leagueKey;
+    window._currentLeagueCalKey = 'adm_cal_'+tournament+'_'+currentLeagueKey;
+    window._currentLeagueStaKey = 'adm_stadio_'+tournament+'_'+currentLeagueKey;
     window._currentTourneyKey = tournament;
     FANTASY_LOGOS = {};
     showPage('lega');
     setTimeout(function(){
-      _updateLegaDashboard(tournament+'_'+leagueKey);
+      _updateLegaDashboard(tournament+'_'+currentLeagueKey);
       buildTeamsGrid();
       showSection('dashboard', null);
     }, 50);
@@ -13813,7 +13780,7 @@ function enterLeague(tournament, leagueKey) {
         var _ck = 'adm_crediti_base_'+_tk+'_'+_lk;
         gsCall({action:'getKey',key:_rk}, function(e,r){ if(!e&&r&&r.ok&&r.data){try{var p=typeof r.data==='string'?JSON.parse(r.data):r.data; TEAMS_ROSE=p; SLIM_TEAMS=Object.keys(p).sort(); localStorage.setItem(_rk,JSON.stringify(p)); if(typeof buildTeamsGrid==='function') buildTeamsGrid();}catch(e2){}} });
         gsCall({action:'getKey',key:_ck}, function(e,r){ if(!e&&r&&r.ok&&r.data){try{var c=typeof r.data==='string'?JSON.parse(r.data):r.data; CREDITS=c; localStorage.setItem(_ck,JSON.stringify(c)); if(typeof updateHeader==='function') updateHeader();}catch(e2){}} });
-      })(tournament, leagueKey);
+      })(tournament, currentLeagueKey);
     }
     return;
   }
@@ -13825,7 +13792,8 @@ function enterLeague(tournament, leagueKey) {
   }
 
   currentLeagueKey = leagueKey || 'it';
-  
+  window._currentTourneyKey = 'slim';
+
   // Carica i dati della lega selezionata
   // Leghe dinamiche (create col wizard) — non in ALL_LEAGUES_DATA
   var _isDynamic = leagueKey && leagueKey !== 'it' &&
@@ -14360,17 +14328,7 @@ document.addEventListener('DOMContentLoaded',function(){
   slimRenderClassifica();
   slimRenderCalendario();
   slimRenderStadio();
-  // Aggiorna contatori card Slim nella dashboard principale
-  if(typeof SLIM_CONFIG!=='undefined'){
-    var elL=document.getElementById('slim-n-leghe');
-    var elC=document.getElementById('slim-n-club');
-    if(elL) elL.textContent=SLIM_CONFIG.n_leghe;
-    if(elC) elC.textContent=SLIM_CONFIG.n_club;
-    var dL=document.getElementById('dash-n-leghe');
-    var dC=document.getElementById('dash-n-club');
-    if(dL) dL.textContent=SLIM_CONFIG.n_leghe+' Nazioni';
-    if(dC) dC.textContent=SLIM_CONFIG.n_club+' Club';
-  }
+  updateDashboardCounters();
   // Aggiorna dashboard lega con trofeo della nazione corrente
   _updateLegaDashboard('slim_it');
 });
