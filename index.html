@@ -7509,7 +7509,7 @@ function admParseRoseRows(rows,torneoKey,legaKey,status){
 function admCsInit() {
   var sel=document.getElementById('adm-cs-torneo'); if(!sel) return;
   sel.innerHTML='<option value="">-- Seleziona Torneo --</option>';
-  ADMIN_TORNEI.forEach(function(t){var o=document.createElement('option');o.value=t.key;o.textContent=t.label;sel.appendChild(o);});
+  ADMIN_TORNEI.slice().sort(function(a,b){return a.label.localeCompare(b.label);}).forEach(function(t){var o=document.createElement('option');o.value=t.key;o.textContent=t.label;sel.appendChild(o);});
   sel.onchange=admCsLoadLeghe;
 }
 function admCsLoadLeghe() {
@@ -12777,7 +12777,7 @@ function admConfirmImport(){
 function admCsInit() {
   var sel=document.getElementById('adm-cs-torneo'); if(!sel) return;
   sel.innerHTML='<option value="">-- Seleziona Torneo --</option>';
-  ADMIN_TORNEI.forEach(function(t){var o=document.createElement('option');o.value=t.key;o.textContent=t.label;sel.appendChild(o);});
+  ADMIN_TORNEI.slice().sort(function(a,b){return a.label.localeCompare(b.label);}).forEach(function(t){var o=document.createElement('option');o.value=t.key;o.textContent=t.label;sel.appendChild(o);});
   sel.onchange=admCsLoadLeghe;
 }
 function admCsLoadLeghe() {
