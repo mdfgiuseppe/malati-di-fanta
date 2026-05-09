@@ -1,4 +1,4 @@
-﻿<!-- build:20260509_1412 -->
+﻿<!-- build:20260509_1423 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260509_1412';
+  var BUILD='20260509_1423';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -7036,7 +7036,7 @@ function _updateManifestOnGithub(logoUrl) {
   var icons = [{src:'/malati-di-fanta/icon.svg',sizes:'any',type:'image/svg+xml',purpose:'maskable'}];
   if (logoUrl) icons.unshift({src:'/malati-di-fanta/logo.png',sizes:'512x512',purpose:'any'});
   var content = JSON.stringify({name:'Malati di Fanta',short_name:'MdF',description:'Fantacalcio Manageriale Continuativo',start_url:'/malati-di-fanta/',scope:'/malati-di-fanta/',display:'standalone',orientation:'portrait',theme_color:'#10b981',background_color:'#07090f',icons:icons},null,2);
-  var apiUrl = 'https://api.github.com/repos/mdfgiuseppe/malati-di-fanta/contents/manifest.json';
+  var apiUrl = 'https://api.github.com/repos/mdfgiuseppe-dev/malati-di-fanta/contents/manifest.json';
   var headers = {'Authorization':'Bearer '+token,'Accept':'application/vnd.github.v3+json','Content-Type':'application/json'};
   fetch(apiUrl, {headers:headers})
     .then(function(r){return r.json();})
@@ -7059,7 +7059,7 @@ function admUploadPwaIcon() {
     var reader = new FileReader();
     reader.onload = function() {
       var b64 = reader.result.split(',')[1];
-      var apiBase = 'https://api.github.com/repos/mdfgiuseppe/malati-di-fanta/contents/';
+      var apiBase = 'https://api.github.com/repos/mdfgiuseppe-dev/malati-di-fanta/contents/';
       var headers = {'Authorization':'Bearer '+token,'Accept':'application/vnd.github.v3+json','Content-Type':'application/json'};
       fetch(apiBase+'logo.png', {headers:headers})
         .then(function(r){ return r.ok ? r.json() : null; })
@@ -12464,7 +12464,7 @@ function _updateManifestOnGithub(logoUrl) {
   var icons = [{src:'/malati-di-fanta/icon.svg',sizes:'any',type:'image/svg+xml',purpose:'maskable'}];
   if (logoUrl) icons.unshift({src:'/malati-di-fanta/logo.png',sizes:'512x512',purpose:'any'});
   var content = JSON.stringify({name:'Malati di Fanta',short_name:'MdF',description:'Fantacalcio Manageriale Continuativo',start_url:'/malati-di-fanta/',scope:'/malati-di-fanta/',display:'standalone',orientation:'portrait',theme_color:'#10b981',background_color:'#07090f',icons:icons},null,2);
-  var apiUrl = 'https://api.github.com/repos/mdfgiuseppe/malati-di-fanta/contents/manifest.json';
+  var apiUrl = 'https://api.github.com/repos/mdfgiuseppe-dev/malati-di-fanta/contents/manifest.json';
   var headers = {'Authorization':'Bearer '+token,'Accept':'application/vnd.github.v3+json','Content-Type':'application/json'};
   fetch(apiUrl, {headers:headers})
     .then(function(r){return r.json();})
@@ -12487,7 +12487,7 @@ function admUploadPwaIcon() {
     var reader = new FileReader();
     reader.onload = function() {
       var b64 = reader.result.split(',')[1];
-      var apiBase = 'https://api.github.com/repos/mdfgiuseppe/malati-di-fanta/contents/';
+      var apiBase = 'https://api.github.com/repos/mdfgiuseppe-dev/malati-di-fanta/contents/';
       var headers = {'Authorization':'Bearer '+token,'Accept':'application/vnd.github.v3+json','Content-Type':'application/json'};
       fetch(apiBase+'logo.png', {headers:headers})
         .then(function(r){ return r.ok ? r.json() : null; })
