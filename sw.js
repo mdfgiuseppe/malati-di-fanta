@@ -1,4 +1,4 @@
-const CACHE_VERSION = '20260509_001';
+const CACHE_VERSION = '20260509_0905';
 const CACHE_NAME = 'mdf-' + CACHE_VERSION;
 
 // Installa subito senza aspettare che le vecchie tab si chiudano
@@ -35,3 +35,4 @@ self.addEventListener('fetch', event => {
       .catch(() => caches.match(req))
   );
 });
+
