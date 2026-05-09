@@ -1,4 +1,4 @@
-const CACHE_VERSION = '20260509_1041';
+const CACHE_VERSION = '20260509_1055';
 const CACHE_NAME = 'mdf-' + CACHE_VERSION;
 const LOGO_CACHE = 'mdf-logo-v1';
 
@@ -14,22 +14,17 @@ self.addEventListener('activate', event => {
   );
 });
 
-// Riceve logo URL dalla pagina, lo scarica e lo cacha come risorsa same-origin
 self.addEventListener('message', event => {
   if (event.data && event.data.type === 'setLogoUrl') {
-    var logoUrl = event.data.url;
     caches.open(LOGO_CACHE).then(function(c) {
-      c.put('/malati-di-fanta/_logo_url', new Response(logoUrl));
-      fetch(logoUrl, {mode: 'no-cors'}).then(function(res) {
-        if (res) c.put('/malati-di-fanta/_logo_img', res);
-      }).catch(function(){});
+      c.put('/malati-di-fanta/_logo_url', new Response(event.data.url));
     });
   }
 });
 
-function _buildManifest(hasLogo) {
+function _buildManifest(logoUrl) {
   var icons = [{src: '/malati-di-fanta/icon.svg', sizes: 'any', type: 'image/svg+xml', purpose: 'maskable'}];
-  if (hasLogo) icons.unshift({src: '/malati-di-fanta/_logo_img', sizes: '512x512', purpose: 'any'});
+  if (logoUrl) icons.unshift({src: logoUrl, sizes: '512x512', purpose: 'any'});
   return JSON.stringify({
     name: 'Malati di Fanta', short_name: 'MdF',
     description: 'Fantacalcio Manageriale Continuativo',
@@ -46,22 +41,12 @@ self.addEventListener('fetch', event => {
 
   if (url.origin !== self.location.origin) return;
 
-  // Serve il logo come risorsa same-origin (proxy per manifest icon)
-  if (url.pathname === '/malati-di-fanta/_logo_img') {
-    event.respondWith(
-      caches.open(LOGO_CACHE)
-        .then(c => c.match('/malati-di-fanta/_logo_img'))
-        .then(r => r || fetch('/malati-di-fanta/icon.svg'))
-    );
-    return;
-  }
-
-  // Manifest dinamico: usa _logo_img se disponibile in cache
   if (url.pathname === '/malati-di-fanta/manifest.json') {
     event.respondWith(
       caches.open(LOGO_CACHE)
-        .then(c => c.match('/malati-di-fanta/_logo_img'))
-        .then(r => new Response(_buildManifest(!!r), {
+        .then(c => c.match('/malati-di-fanta/_logo_url'))
+        .then(r => r ? r.text() : null)
+        .then(logoUrl => new Response(_buildManifest(logoUrl), {
           headers: {'Content-Type': 'application/manifest+json'}
         }))
     );
