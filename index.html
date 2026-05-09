@@ -1,4 +1,4 @@
-﻿<!-- build:20260506_120000 -->
+﻿<!-- build:20260509_001 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -7,6 +7,35 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
+<script>
+(function(){
+  var BUILD='20260509_001';
+  var stored=localStorage.getItem('_mdf_build');
+  if(stored && stored!==BUILD){
+    localStorage.setItem('_mdf_build',BUILD);
+    var clean=location.pathname+'?v='+BUILD;
+    location.replace(clean);
+  } else {
+    localStorage.setItem('_mdf_build',BUILD);
+    if(location.search) history.replaceState(null,'',location.pathname);
+  }
+  if('serviceWorker' in navigator){
+    window.addEventListener('load',function(){
+      navigator.serviceWorker.register('/malati-di-fanta/sw.js',{scope:'/malati-di-fanta/'})
+        .then(function(reg){
+          reg.addEventListener('updatefound',function(){
+            var nw=reg.installing;
+            nw.addEventListener('statechange',function(){
+              if(nw.state==='installed'&&navigator.serviceWorker.controller){
+                location.reload(true);
+              }
+            });
+          });
+        });
+    });
+  }
+})();
+</script>
 <meta name="theme-color" content="#10b981">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
