@@ -1,4 +1,4 @@
-﻿<!-- build:20260509_1432 -->
+﻿<!-- build:20260509_1444 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260509_1432';
+  var BUILD='20260509_1444';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -3117,8 +3117,6 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
           <div style="font-size:10px;color:var(--text2)">Splash screen e topbar (tutte le pagine)</div>
         </div>
         <button onclick="admEditLogoMain()" style="background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.3);color:#10b981;cursor:pointer;font-size:12px;border-radius:8px;padding:6px 12px;font-weight:700">🖼 Logo</button>
-        <button onclick="admSetGithubToken()" style="background:rgba(99,102,241,.1);border:1px solid rgba(99,102,241,.3);color:#818cf8;cursor:pointer;font-size:11px;border-radius:8px;padding:6px 10px;font-weight:700" title="Token GitHub per aggiornare icona PWA">🔑 GH Token</button>
-        <button onclick="admUploadPwaIcon()" style="background:rgba(99,102,241,.1);border:1px solid rgba(99,102,241,.3);color:#818cf8;cursor:pointer;font-size:11px;border-radius:8px;padding:6px 10px;font-weight:700" title="Carica icona PWA su GitHub">📱 Icona PWA</button>
       </div>
 
       <!-- Select + Dettaglio Torneo -->
@@ -7022,81 +7020,6 @@ function admResetTrofei() {
   document.body.appendChild(msg);
   setTimeout(function(){msg.remove();},3000);
 }
-function admSetGithubToken() {
-  var current = localStorage.getItem('adm_github_token') || '';
-  var token = prompt('GitHub Personal Access Token\n(serve permesso Contents:Write per repo mdfgiuseppe/malati-di-fanta)\n\nLascia vuoto per rimuovere:', current);
-  if (token === null) return;
-  token = token.trim();
-  if (token) { localStorage.setItem('adm_github_token', token); alert('✅ Token GitHub salvato'); }
-  else { localStorage.removeItem('adm_github_token'); alert('⚠️ Token rimosso'); }
-}
-function _updateManifestOnGithub(logoUrl) {
-  var token = localStorage.getItem('adm_github_token');
-  if (!token) return;
-  var icons = [{src:'/malati-di-fanta/icon.svg',sizes:'any',type:'image/svg+xml',purpose:'maskable'}];
-  if (logoUrl) icons.unshift({src:'/malati-di-fanta/logo.png',sizes:'512x512',purpose:'any'});
-  var content = JSON.stringify({name:'Malati di Fanta',short_name:'MdF',description:'Fantacalcio Manageriale Continuativo',start_url:'/malati-di-fanta/',scope:'/malati-di-fanta/',display:'standalone',orientation:'portrait',theme_color:'#10b981',background_color:'#07090f',icons:icons},null,2);
-  var apiUrl = 'https://api.github.com/repos/mdfgiuseppe-dev/malati-di-fanta/contents/manifest.json';
-  var headers = {'Authorization':'Bearer '+token,'Accept':'application/vnd.github.v3+json','Content-Type':'application/json'};
-  fetch(apiUrl, {headers:headers})
-    .then(function(r){return r.json();})
-    .then(function(data){
-      return fetch(apiUrl, {method:'PUT', headers:headers, body:JSON.stringify({
-        message:'Update PWA manifest icon',
-        content:btoa(unescape(encodeURIComponent(content))),
-        sha:data.sha
-      })});
-    })
-    .catch(function(e){console.warn('GitHub manifest update failed:',e);});
-}
-function admUploadPwaIcon() {
-  var token = localStorage.getItem('adm_github_token');
-  if (!token) { alert('Prima imposta il token GitHub con 🔑 GH Token'); return; }
-  var input = document.createElement('input');
-  input.type = 'file'; input.accept = 'image/png,image/jpeg,image/webp';
-  input.onchange = function() {
-    var file = input.files[0]; if (!file) return;
-    var reader = new FileReader();
-    reader.onload = function() {
-      var b64 = reader.result.split(',')[1];
-      var headers = {'Authorization':'Bearer '+token,'Accept':'application/vnd.github.v3+json','Content-Type':'application/json'};
-      fetch('https://api.github.com/user', {headers:headers})
-        .then(function(r){ return r.json(); })
-        .then(function(user){
-          if (!user.login) throw new Error('Token non valido (risposta: '+JSON.stringify(user).substring(0,100)+')');
-          var apiBase = 'https://api.github.com/repos/'+user.login+'/malati-di-fanta/contents/';
-          return fetch(apiBase+'logo.png', {headers:headers})
-            .then(function(r){ return r.ok ? r.json() : null; })
-            .then(function(existing){
-              var body = {message:'Update PWA icon', content:b64};
-              if (existing && existing.sha) body.sha = existing.sha;
-              return fetch(apiBase+'logo.png', {method:'PUT', headers:headers, body:JSON.stringify(body)});
-            })
-            .then(function(r){
-              if (!r.ok) return r.text().then(function(t){ throw new Error('HTTP '+r.status+' (owner:'+user.login+'): '+t.substring(0,200)); });
-              return fetch(apiBase+'manifest.json', {headers:headers})
-                .then(function(r2){return r2.json();})
-                .then(function(data){
-                  var icons = [{src:'/malati-di-fanta/logo.png',sizes:'512x512',purpose:'any'},{src:'/malati-di-fanta/icon.svg',sizes:'any',type:'image/svg+xml',purpose:'maskable'}];
-                  var content = JSON.stringify({name:'Malati di Fanta',short_name:'MdF',description:'Fantacalcio Manageriale Continuativo',start_url:'/malati-di-fanta/',scope:'/malati-di-fanta/',display:'standalone',orientation:'portrait',theme_color:'#10b981',background_color:'#07090f',icons:icons},null,2);
-                  return fetch(apiBase+'manifest.json', {method:'PUT', headers:headers, body:JSON.stringify({message:'Set PWA icon to logo.png', content:btoa(unescape(encodeURIComponent(content))), sha:data.sha})});
-                });
-            })
-            .then(function(r){
-              if(r.ok){
-                var msg=document.createElement('div');
-                msg.textContent='✅ Icona PWA caricata su GitHub (attendi 2 min, poi reinstalla app)';
-                msg.style.cssText='position:fixed;top:110px;right:20px;background:#6366f1;color:#fff;padding:8px 16px;border-radius:8px;font-weight:700;font-size:12px;z-index:9999;max-width:280px';
-                document.body.appendChild(msg); setTimeout(function(){msg.remove();},5000);
-              }
-            });
-        })
-        .catch(function(e){ alert('Errore: '+e.message); console.warn(e); });
-    };
-    reader.readAsDataURL(file);
-  };
-  input.click();
-}
 function admEditLogoMain() {
   var current = localStorage.getItem('adm_logo_main') || '';
   var url = prompt('URL Logo Principale App (splash + topbar):', current);
@@ -7106,7 +7029,6 @@ function admEditLogoMain() {
   if (url) { localStorage.setItem('adm_logo_main', url); gsSaveKey('adm_logo_main', url); }
   else { localStorage.removeItem('adm_logo_main'); gsSaveKey('adm_logo_main', ''); }
   _applyLogoMain(url);
-  _updateManifestOnGithub(url);
   var prev = document.getElementById('adm-logo-main-preview');
   if (prev) prev.src = url || '';
   var msg = document.createElement('div');
@@ -9333,27 +9255,6 @@ function _applyLogoMain(url) {
   document.querySelectorAll('.sp-logo, .topbar-logo').forEach(function(el){ el.src = url; });
   var _ati = document.querySelector('link[rel="apple-touch-icon"]');
   if (_ati) _ati.href = url;
-  // Aggiorna manifest con logo reale — Chrome 92+ rileva il cambio href e ri-legge il manifest
-  try {
-    var _m = JSON.stringify({
-      name:'Malati di Fanta', short_name:'MdF',
-      description:'Fantacalcio Manageriale Continuativo',
-      start_url:'/malati-di-fanta/', scope:'/malati-di-fanta/',
-      display:'standalone', orientation:'portrait',
-      theme_color:'#10b981', background_color:'#07090f',
-      icons:[{src:url, sizes:'512x512', purpose:'any'}]
-    });
-    var _mEl = document.querySelector('link[rel="manifest"]');
-    if (_mEl) {
-      if (_mEl._blobUrl) URL.revokeObjectURL(_mEl._blobUrl);
-      _mEl._blobUrl = URL.createObjectURL(new Blob([_m], {type:'application/manifest+json'}));
-      _mEl.href = _mEl._blobUrl;
-    }
-  } catch(e) {}
-  // Backup: invia anche al SW per le richieste manifest.json server-side
-  if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
-    navigator.serviceWorker.controller.postMessage({type: 'setLogoUrl', url: url});
-  }
 }
 
 window.addEventListener('storage', function(e) {
@@ -12455,81 +12356,6 @@ function admResetTrofei() {
   document.body.appendChild(msg);
   setTimeout(function(){msg.remove();},3000);
 }
-function admSetGithubToken() {
-  var current = localStorage.getItem('adm_github_token') || '';
-  var token = prompt('GitHub Personal Access Token\n(serve permesso Contents:Write per repo mdfgiuseppe/malati-di-fanta)\n\nLascia vuoto per rimuovere:', current);
-  if (token === null) return;
-  token = token.trim();
-  if (token) { localStorage.setItem('adm_github_token', token); alert('✅ Token GitHub salvato'); }
-  else { localStorage.removeItem('adm_github_token'); alert('⚠️ Token rimosso'); }
-}
-function _updateManifestOnGithub(logoUrl) {
-  var token = localStorage.getItem('adm_github_token');
-  if (!token) return;
-  var icons = [{src:'/malati-di-fanta/icon.svg',sizes:'any',type:'image/svg+xml',purpose:'maskable'}];
-  if (logoUrl) icons.unshift({src:'/malati-di-fanta/logo.png',sizes:'512x512',purpose:'any'});
-  var content = JSON.stringify({name:'Malati di Fanta',short_name:'MdF',description:'Fantacalcio Manageriale Continuativo',start_url:'/malati-di-fanta/',scope:'/malati-di-fanta/',display:'standalone',orientation:'portrait',theme_color:'#10b981',background_color:'#07090f',icons:icons},null,2);
-  var apiUrl = 'https://api.github.com/repos/mdfgiuseppe-dev/malati-di-fanta/contents/manifest.json';
-  var headers = {'Authorization':'Bearer '+token,'Accept':'application/vnd.github.v3+json','Content-Type':'application/json'};
-  fetch(apiUrl, {headers:headers})
-    .then(function(r){return r.json();})
-    .then(function(data){
-      return fetch(apiUrl, {method:'PUT', headers:headers, body:JSON.stringify({
-        message:'Update PWA manifest icon',
-        content:btoa(unescape(encodeURIComponent(content))),
-        sha:data.sha
-      })});
-    })
-    .catch(function(e){console.warn('GitHub manifest update failed:',e);});
-}
-function admUploadPwaIcon() {
-  var token = localStorage.getItem('adm_github_token');
-  if (!token) { alert('Prima imposta il token GitHub con 🔑 GH Token'); return; }
-  var input = document.createElement('input');
-  input.type = 'file'; input.accept = 'image/png,image/jpeg,image/webp';
-  input.onchange = function() {
-    var file = input.files[0]; if (!file) return;
-    var reader = new FileReader();
-    reader.onload = function() {
-      var b64 = reader.result.split(',')[1];
-      var headers = {'Authorization':'Bearer '+token,'Accept':'application/vnd.github.v3+json','Content-Type':'application/json'};
-      fetch('https://api.github.com/user', {headers:headers})
-        .then(function(r){ return r.json(); })
-        .then(function(user){
-          if (!user.login) throw new Error('Token non valido (risposta: '+JSON.stringify(user).substring(0,100)+')');
-          var apiBase = 'https://api.github.com/repos/'+user.login+'/malati-di-fanta/contents/';
-          return fetch(apiBase+'logo.png', {headers:headers})
-            .then(function(r){ return r.ok ? r.json() : null; })
-            .then(function(existing){
-              var body = {message:'Update PWA icon', content:b64};
-              if (existing && existing.sha) body.sha = existing.sha;
-              return fetch(apiBase+'logo.png', {method:'PUT', headers:headers, body:JSON.stringify(body)});
-            })
-            .then(function(r){
-              if (!r.ok) return r.text().then(function(t){ throw new Error('HTTP '+r.status+' (owner:'+user.login+'): '+t.substring(0,200)); });
-              return fetch(apiBase+'manifest.json', {headers:headers})
-                .then(function(r2){return r2.json();})
-                .then(function(data){
-                  var icons = [{src:'/malati-di-fanta/logo.png',sizes:'512x512',purpose:'any'},{src:'/malati-di-fanta/icon.svg',sizes:'any',type:'image/svg+xml',purpose:'maskable'}];
-                  var content = JSON.stringify({name:'Malati di Fanta',short_name:'MdF',description:'Fantacalcio Manageriale Continuativo',start_url:'/malati-di-fanta/',scope:'/malati-di-fanta/',display:'standalone',orientation:'portrait',theme_color:'#10b981',background_color:'#07090f',icons:icons},null,2);
-                  return fetch(apiBase+'manifest.json', {method:'PUT', headers:headers, body:JSON.stringify({message:'Set PWA icon to logo.png', content:btoa(unescape(encodeURIComponent(content))), sha:data.sha})});
-                });
-            })
-            .then(function(r){
-              if(r.ok){
-                var msg=document.createElement('div');
-                msg.textContent='✅ Icona PWA caricata su GitHub (attendi 2 min, poi reinstalla app)';
-                msg.style.cssText='position:fixed;top:110px;right:20px;background:#6366f1;color:#fff;padding:8px 16px;border-radius:8px;font-weight:700;font-size:12px;z-index:9999;max-width:280px';
-                document.body.appendChild(msg); setTimeout(function(){msg.remove();},5000);
-              }
-            });
-        })
-        .catch(function(e){ alert('Errore: '+e.message); console.warn(e); });
-    };
-    reader.readAsDataURL(file);
-  };
-  input.click();
-}
 function admEditLogoMain() {
   var current = localStorage.getItem('adm_logo_main') || '';
   var url = prompt('URL Logo Principale App (splash + topbar):', current);
@@ -12539,7 +12365,6 @@ function admEditLogoMain() {
   if (url) { localStorage.setItem('adm_logo_main', url); gsSaveKey('adm_logo_main', url); }
   else { localStorage.removeItem('adm_logo_main'); gsSaveKey('adm_logo_main', ''); }
   _applyLogoMain(url);
-  _updateManifestOnGithub(url);
   var prev = document.getElementById('adm-logo-main-preview');
   if (prev) prev.src = url || '';
   var msg = document.createElement('div');
@@ -14687,27 +14512,6 @@ function _applyLogoMain(url) {
   document.querySelectorAll('.sp-logo, .topbar-logo').forEach(function(el){ el.src = url; });
   var _ati = document.querySelector('link[rel="apple-touch-icon"]');
   if (_ati) _ati.href = url;
-  // Aggiorna manifest con logo reale — Chrome 92+ rileva il cambio href e ri-legge il manifest
-  try {
-    var _m = JSON.stringify({
-      name:'Malati di Fanta', short_name:'MdF',
-      description:'Fantacalcio Manageriale Continuativo',
-      start_url:'/malati-di-fanta/', scope:'/malati-di-fanta/',
-      display:'standalone', orientation:'portrait',
-      theme_color:'#10b981', background_color:'#07090f',
-      icons:[{src:url, sizes:'512x512', purpose:'any'}]
-    });
-    var _mEl = document.querySelector('link[rel="manifest"]');
-    if (_mEl) {
-      if (_mEl._blobUrl) URL.revokeObjectURL(_mEl._blobUrl);
-      _mEl._blobUrl = URL.createObjectURL(new Blob([_m], {type:'application/manifest+json'}));
-      _mEl.href = _mEl._blobUrl;
-    }
-  } catch(e) {}
-  // Backup: invia anche al SW per le richieste manifest.json server-side
-  if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
-    navigator.serviceWorker.controller.postMessage({type: 'setLogoUrl', url: url});
-  }
 }
 
 window.addEventListener('storage', function(e) {
