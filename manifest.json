@@ -1,0 +1,14 @@
+{
+  "name": "Malati di Fanta",
+  "short_name": "MdF",
+  "description": "Fantacalcio Manageriale Continuativo",
+  "start_url": "/malati-di-fanta/",
+  "scope": "/malati-di-fanta/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "#10b981",
+  "background_color": "#07090f",
+  "icons": [
+    { "src": "/malati-di-fanta/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}
