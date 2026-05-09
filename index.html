@@ -1,4 +1,4 @@
-﻿<!-- build:20260509_1017 -->
+﻿<!-- build:20260509_1025 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260509_1017';
+  var BUILD='20260509_1025';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -9262,24 +9262,15 @@ function _resetAdminClick() {
 function _applyLogoMain(url) {
   if (!url) return;
   document.querySelectorAll('.sp-logo, .topbar-logo').forEach(function(el){ el.src = url; });
+  // iOS: aggiorna apple-touch-icon
   var _ati = document.querySelector('link[rel="apple-touch-icon"]');
   if (_ati) _ati.href = url;
-  try {
-    var _manifest = {
-      name: 'Malati di Fanta', short_name: 'MdF',
-      description: 'Fantacalcio Manageriale Continuativo',
-      start_url: '/malati-di-fanta/', scope: '/malati-di-fanta/',
-      display: 'standalone', orientation: 'portrait',
-      theme_color: '#10b981', background_color: '#07090f',
-      icons: [
-        {src: url, sizes: '512x512', purpose: 'any'},
-        {src: '/malati-di-fanta/icon.svg', sizes: 'any', type: 'image/svg+xml', purpose: 'maskable'}
-      ]
-    };
-    var _blob = new Blob([JSON.stringify(_manifest)], {type: 'application/json'});
-    var _mEl = document.querySelector('link[rel="manifest"]');
-    if (_mEl) _mEl.href = URL.createObjectURL(_blob);
-  } catch(e) {}
+  // Android: salva logo URL nella cache SW per manifest dinamico
+  if ('caches' in window) {
+    caches.open('mdf-logo-v1').then(function(c) {
+      c.put('/malati-di-fanta/_logo_url', new Response(url, {headers: {'Content-Type': 'text/plain'}}));
+    });
+  }
 }
 
 window.addEventListener('storage', function(e) {
@@ -14535,24 +14526,15 @@ function _resetAdminClick() {
 function _applyLogoMain(url) {
   if (!url) return;
   document.querySelectorAll('.sp-logo, .topbar-logo').forEach(function(el){ el.src = url; });
+  // iOS: aggiorna apple-touch-icon
   var _ati = document.querySelector('link[rel="apple-touch-icon"]');
   if (_ati) _ati.href = url;
-  try {
-    var _manifest = {
-      name: 'Malati di Fanta', short_name: 'MdF',
-      description: 'Fantacalcio Manageriale Continuativo',
-      start_url: '/malati-di-fanta/', scope: '/malati-di-fanta/',
-      display: 'standalone', orientation: 'portrait',
-      theme_color: '#10b981', background_color: '#07090f',
-      icons: [
-        {src: url, sizes: '512x512', purpose: 'any'},
-        {src: '/malati-di-fanta/icon.svg', sizes: 'any', type: 'image/svg+xml', purpose: 'maskable'}
-      ]
-    };
-    var _blob = new Blob([JSON.stringify(_manifest)], {type: 'application/json'});
-    var _mEl = document.querySelector('link[rel="manifest"]');
-    if (_mEl) _mEl.href = URL.createObjectURL(_blob);
-  } catch(e) {}
+  // Android: salva logo URL nella cache SW per manifest dinamico
+  if ('caches' in window) {
+    caches.open('mdf-logo-v1').then(function(c) {
+      c.put('/malati-di-fanta/_logo_url', new Response(url, {headers: {'Content-Type': 'text/plain'}}));
+    });
+  }
 }
 
 window.addEventListener('storage', function(e) {
