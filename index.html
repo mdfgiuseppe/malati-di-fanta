@@ -1,4 +1,4 @@
-﻿<!-- build:20260509_0914 -->
+﻿<!-- build:20260509_0918 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260509_0914';
+  var BUILD='20260509_0918';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -6980,10 +6980,10 @@ function admAddTorneo() {
 
 function _normalizeImgUrl(url) {
   if (!url) return '';
-  // Estrae ID da qualsiasi formato link Drive (share, preview, lh3)
-  var m = url.match(/\/d\/([a-zA-Z0-9_-]+)/) || url.match(/id=([a-zA-Z0-9_-]+)/) || url.match(/lh3\.googleusercontent\.com\/d\/([a-zA-Z0-9_-]+)/);
-  if (m) return 'https://drive.google.com/thumbnail?id=' + m[1] + '&sz=w200';
-  // Già URL diretto
+  // Estrae ID da qualsiasi formato link Drive (share, preview, thumbnail, lh3)
+  var m = url.match(/\/d\/([a-zA-Z0-9_-]+)/) || url.match(/[?&]id=([a-zA-Z0-9_-]+)/) || url.match(/lh3\.googleusercontent\.com\/d\/([a-zA-Z0-9_-]+)/);
+  if (m) return 'https://lh3.googleusercontent.com/d/' + m[1] + '=w400';
+  // Già URL diretto non-Drive
   return url;
 }
 function admEditTrofeoUrl(ti) {
@@ -12337,10 +12337,10 @@ function admAddTorneo() {
 
 function _normalizeImgUrl(url) {
   if (!url) return '';
-  // Estrae ID da qualsiasi formato link Drive (share, preview, lh3)
-  var m = url.match(/\/d\/([a-zA-Z0-9_-]+)/) || url.match(/id=([a-zA-Z0-9_-]+)/) || url.match(/lh3\.googleusercontent\.com\/d\/([a-zA-Z0-9_-]+)/);
-  if (m) return 'https://drive.google.com/thumbnail?id=' + m[1] + '&sz=w200';
-  // Già URL diretto
+  // Estrae ID da qualsiasi formato link Drive (share, preview, thumbnail, lh3)
+  var m = url.match(/\/d\/([a-zA-Z0-9_-]+)/) || url.match(/[?&]id=([a-zA-Z0-9_-]+)/) || url.match(/lh3\.googleusercontent\.com\/d\/([a-zA-Z0-9_-]+)/);
+  if (m) return 'https://lh3.googleusercontent.com/d/' + m[1] + '=w400';
+  // Già URL diretto non-Drive
   return url;
 }
 function admEditTrofeoUrl(ti) {
