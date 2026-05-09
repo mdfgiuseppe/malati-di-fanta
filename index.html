@@ -1,4 +1,4 @@
-﻿<!-- build:20260509_1010 -->
+﻿<!-- build:20260509_1017 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260509_1010';
+  var BUILD='20260509_1017';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -4604,12 +4604,10 @@ function gsCall(params, callback) {
   var urlParams = Object.keys(params).map(function(k){
     return encodeURIComponent(k) + '=' + encodeURIComponent(params[k]);
   }).join('&');
-  var p = urlParams.length > 6000
-    ? fetch(GS_URL, {method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'}, body:urlParams})
-    : fetch(GS_URL + '?' + urlParams);
-  p.then(function(r){ return r.json(); })
-   .then(function(data){ if(callback) callback(null, data); })
-   .catch(function(e){ if(callback) callback(e, null); });
+  fetch(GS_URL, {method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'}, body:urlParams})
+    .then(function(r){ return r.json(); })
+    .then(function(data){ if(callback) callback(null, data); })
+    .catch(function(e){ if(callback) callback(e, null); });
 }
 
 // Ping al caricamento per verificare connessione
