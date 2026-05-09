@@ -9,7 +9,7 @@
   "theme_color": "#10b981",
   "background_color": "#07090f",
   "icons": [
-    { "src": "/malati-di-fanta/logo.jpg", "sizes": "512x512", "purpose": "any" },
+    { "src": "/malati-di-fanta/logo.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
     { "src": "/malati-di-fanta/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "maskable" }
   ]
 }
