@@ -1,4 +1,4 @@
-﻿<!-- build:20260509_1646 -->
+﻿<!-- build:20260509_1712 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260509_1646';
+  var BUILD='20260509_1712';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -4501,7 +4501,7 @@ function renderModulistica(torneoKey, containerId) {
     el.innerHTML = '<div style="color:var(--text3);font-size:13px;padding:20px 0">Nessun modulo configurato per questa lega.</div>';
     return;
   }
-  el.innerHTML = data.moduli.map(function(m) {
+  el.innerHTML = data.moduli.slice().sort(function(a,b){return a.titolo.localeCompare(b.titolo);}).map(function(m) {
     var href = m.link && m.link !== '#' ? m.link : null;
     var hex = m.colore || '#6b7280';
     var hexMap = {'#3b82f6':'59,130,246','#f59e0b':'245,158,11','#10b981':'16,185,129','#8b5cf6':'139,92,246','#ef4444':'239,68,68','#6b7280':'107,114,128'};
@@ -4529,7 +4529,7 @@ function initModulistica(presetTorneoKey) {
   if (!sel) return;
   sel.innerHTML = '<option value="">-- Seleziona Torneo --</option>';
   var at = _modGetTornei();
-  at.forEach(function(t) {
+  at.slice().sort(function(a,b){return (a.label||a.key).localeCompare(b.label||b.key);}).forEach(function(t) {
     var o = document.createElement('option');
     o.value = t.key;
     o.textContent = t.label || t.key;
@@ -5654,7 +5654,7 @@ function admInitCoppeSection() {
   var sel = document.getElementById('adm-cop-torneo');
   if (!sel) return;
   sel.innerHTML = '<option value="">-- Seleziona Torneo --</option>';
-  ADMIN_TORNEI.forEach(function(t) {
+  ADMIN_TORNEI.slice().sort(function(a,b){return a.label.localeCompare(b.label);}).forEach(function(t) {
     var o=document.createElement('option'); o.value=t.key; o.textContent=t.label; sel.appendChild(o);
   });
   document.getElementById('adm-cop-coppa').innerHTML='<option value="">-- Seleziona Coppa --</option>';
@@ -6439,7 +6439,7 @@ function showAdminSection(id, el) {
     var catSel = document.getElementById('adm-cat-torneo');
     if (catSel) {
       catSel.innerHTML = '<option value="">-- Seleziona Torneo --</option>';
-      ADMIN_TORNEI.forEach(function(t){
+      ADMIN_TORNEI.slice().sort(function(a,b){return a.label.localeCompare(b.label);}).forEach(function(t){
         var o=document.createElement('option');o.value=t.key;o.textContent=t.label;catSel.appendChild(o);
       });
     }
@@ -7475,7 +7475,7 @@ function admInitSelettori(prefix, resetAll) {
 function admInitImportSelectors() {
   var tSel=document.getElementById('adm-import-torneo'); if(!tSel) return;
   tSel.innerHTML='<option value="">-- Torneo --</option>';
-  ADMIN_TORNEI.forEach(function(t){var o=document.createElement('option');o.value=t.key;o.textContent=t.label;tSel.appendChild(o);});
+  ADMIN_TORNEI.slice().sort(function(a,b){return a.label.localeCompare(b.label);}).forEach(function(t){var o=document.createElement('option');o.value=t.key;o.textContent=t.label;tSel.appendChild(o);});
   tSel.onchange=function(){
     var lSel=document.getElementById('adm-import-lega');
     lSel.innerHTML='<option value="">-- Lega --</option>';
@@ -8236,7 +8236,7 @@ function admRenderModulistica() {
   if (sel) {
     var prev = sel.value;
     sel.innerHTML = '<option value="">-- Seleziona Torneo --</option>';
-    ADMIN_TORNEI.forEach(function(t) {
+    ADMIN_TORNEI.slice().sort(function(a,b){return a.label.localeCompare(b.label);}).forEach(function(t) {
       var o = document.createElement('option');
       o.value = t.key;
       o.textContent = t.label || t.key;
@@ -8267,7 +8267,7 @@ function admModRenderBody() {
   var d = MODULISTICA_DATA[key];
   if (!d) { el.innerHTML = ''; return; }
   var h = '<div class="card" style="padding:0;overflow:hidden">';
-  d.moduli.forEach(function(m, mi) {
+  d.moduli.slice().sort(function(a,b){return a.titolo.localeCompare(b.titolo);}).forEach(function(m, mi) {
     h += '<div style="display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--border)">'
       +'<div style="flex:1">'
       +'<div style="font-size:12px;font-weight:700;margin-bottom:6px">'+m.titolo+'</div>'
@@ -8307,6 +8307,7 @@ function admAddModulo(key) {
   var titolo = prompt('Nome del nuovo modulo:');
   if (!titolo) return;
   MODULISTICA_DATA[key].moduli.push({titolo:titolo, icona:'📄', colore:'#6b7280', descrizione:'Nuovo modulo', link:'#', immagine:''});
+  MODULISTICA_DATA[key].moduli.sort(function(a,b){return a.titolo.localeCompare(b.titolo);});
   admSaveModulistica();
   admRenderModulistica();
 }
@@ -11277,7 +11278,7 @@ function admInitCoppeSection() {
   var sel = document.getElementById('adm-cop-torneo');
   if (!sel) return;
   sel.innerHTML = '<option value="">-- Seleziona Torneo --</option>';
-  ADMIN_TORNEI.forEach(function(t) {
+  ADMIN_TORNEI.slice().sort(function(a,b){return a.label.localeCompare(b.label);}).forEach(function(t) {
     var o=document.createElement('option'); o.value=t.key; o.textContent=t.label; sel.appendChild(o);
   });
   document.getElementById('adm-cop-coppa').innerHTML='<option value="">-- Seleziona Coppa --</option>';
@@ -12778,7 +12779,7 @@ function admDeleteUser(i) {
 function admInitImportSelectors() {
   var tSel=document.getElementById('adm-import-torneo'); if(!tSel) return;
   tSel.innerHTML='<option value="">-- Torneo --</option>';
-  ADMIN_TORNEI.forEach(function(t){var o=document.createElement('option');o.value=t.key;o.textContent=t.label;tSel.appendChild(o);});
+  ADMIN_TORNEI.slice().sort(function(a,b){return a.label.localeCompare(b.label);}).forEach(function(t){var o=document.createElement('option');o.value=t.key;o.textContent=t.label;tSel.appendChild(o);});
   tSel.onchange=function(){
     var lSel=document.getElementById('adm-import-lega');
     lSel.innerHTML='<option value="">-- Lega --</option>';
