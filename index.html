@@ -1,4 +1,4 @@
-﻿<!-- build:20260509_1311 -->
+﻿<!-- build:20260509_1318 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260509_1311';
+  var BUILD='20260509_1318';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -34,7 +34,7 @@
 <meta name="apple-mobile-web-app-title" content="Malati di Fanta">
 <link rel="apple-touch-icon" href="/malati-di-fanta/icon.svg">
 <link rel="icon" type="image/svg+xml" href="/malati-di-fanta/icon.svg">
-<script>(function(){var _lu=localStorage.getItem('adm_logo_main');var _ic=[{src:'/malati-di-fanta/icon.svg',sizes:'any',type:'image/svg+xml',purpose:'maskable'}];if(_lu)_ic.unshift({src:_lu,sizes:'512x512',purpose:'any'});var _m=JSON.stringify({name:'Malati di Fanta',short_name:'MdF',description:'Fantacalcio Manageriale Continuativo',start_url:'/malati-di-fanta/',scope:'/malati-di-fanta/',display:'standalone',orientation:'portrait',theme_color:'#10b981',background_color:'#07090f',icons:_ic});var _b=new Blob([_m],{type:'application/manifest+json'});var _l=document.createElement('link');_l.rel='manifest';_l._blobUrl=URL.createObjectURL(_b);_l.href=_l._blobUrl;document.currentScript.parentNode.insertBefore(_l,document.currentScript);})();</script>
+<link rel="manifest" href="/malati-di-fanta/manifest.json">
 <title>Malati di Fanta</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:ital,wght@0,300;0,400;0,600;0,700;1,300&family=Barlow+Condensed:wght@300;400;600;700;800&display=swap" rel="stylesheet">
 <style>* {margin:0;padding:0;box-sizing:border-box;}html,body{width:100%;min-height:100vh;}body{font-family:"Barlow",sans-serif;background:var(--bg,#07090f);color:var(--text,#eef2ff);overflow-x:hidden;}:root[data-theme=dark]{--bg:#07090f;--bg2:#0d1220;--bg3:#131b2e;--card:#101622;--card2:#18213a;--border:rgba(255,255,255,.06);--border2:rgba(255,255,255,.11);--text:#eef2ff;--text2:#6a7d9e;--text3:#2e3e5e;--green:#10b981;}:root[data-theme=light]{--bg:#f0f4fc;--bg2:#e4eaf6;--bg3:#d6dff0;--card:#fff;--card2:#f4f7fe;--border:rgba(0,10,40,.07);--border2:rgba(0,10,40,.13);--text:#08101e;--text2:#4a5a7a;--text3:#9aacc0;--green:#059669;}.page{display:none !important;}.page.active{display:block !important;}#page-splash.active{display:flex !important;align-items:center;justify-content:center;min-height:100vh;position:relative;overflow:hidden;}.fbtn{padding:5px 10px;border-radius:6px;font-size:10px;font-weight:700;cursor:pointer;background:var(--bg3);color:var(--text2);transition:all .15s;border:1px solid var(--border);}.fbtn.active{background:rgba(16,185,129,.15);color:#10b981;border-color:rgba(16,185,129,.3);}.tbtn{padding:8px 4px;background:var(--card);border:1px solid var(--border);border-radius:8px;text-align:center;cursor:pointer;font-size:9px;font-weight:800;color:var(--text2);transition:all .15s;}.tbtn.active{background:rgba(16,185,129,.12);border-color:rgba(16,185,129,.4);color:#10b981;}</style>
@@ -3117,6 +3117,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
           <div style="font-size:10px;color:var(--text2)">Splash screen e topbar (tutte le pagine)</div>
         </div>
         <button onclick="admEditLogoMain()" style="background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.3);color:#10b981;cursor:pointer;font-size:12px;border-radius:8px;padding:6px 12px;font-weight:700">🖼 Logo</button>
+        <button onclick="admSetGithubToken()" style="background:rgba(99,102,241,.1);border:1px solid rgba(99,102,241,.3);color:#818cf8;cursor:pointer;font-size:11px;border-radius:8px;padding:6px 10px;font-weight:700" title="Token GitHub per aggiornare icona PWA">🔑 GH Token</button>
       </div>
 
       <!-- Select + Dettaglio Torneo -->
@@ -7020,6 +7021,41 @@ function admResetTrofei() {
   document.body.appendChild(msg);
   setTimeout(function(){msg.remove();},3000);
 }
+function admSetGithubToken() {
+  var current = localStorage.getItem('adm_github_token') || '';
+  var token = prompt('GitHub Personal Access Token\n(serve permesso Contents:Write per repo mdfgiuseppe/malati-di-fanta)\n\nLascia vuoto per rimuovere:', current);
+  if (token === null) return;
+  token = token.trim();
+  if (token) { localStorage.setItem('adm_github_token', token); alert('✅ Token GitHub salvato'); }
+  else { localStorage.removeItem('adm_github_token'); alert('⚠️ Token rimosso'); }
+}
+function _updateManifestOnGithub(logoUrl) {
+  var token = localStorage.getItem('adm_github_token');
+  if (!token) return;
+  var icons = [{src:'/malati-di-fanta/icon.svg',sizes:'any',type:'image/svg+xml',purpose:'maskable'}];
+  if (logoUrl) icons.unshift({src:logoUrl,sizes:'512x512',purpose:'any'});
+  var content = JSON.stringify({name:'Malati di Fanta',short_name:'MdF',description:'Fantacalcio Manageriale Continuativo',start_url:'/malati-di-fanta/',scope:'/malati-di-fanta/',display:'standalone',orientation:'portrait',theme_color:'#10b981',background_color:'#07090f',icons:icons},null,2);
+  var apiUrl = 'https://api.github.com/repos/mdfgiuseppe/malati-di-fanta/contents/manifest.json';
+  var headers = {'Authorization':'Bearer '+token,'Accept':'application/vnd.github.v3+json','Content-Type':'application/json'};
+  fetch(apiUrl, {headers:headers})
+    .then(function(r){return r.json();})
+    .then(function(data){
+      return fetch(apiUrl, {method:'PUT', headers:headers, body:JSON.stringify({
+        message:'Update PWA icon logo',
+        content:btoa(unescape(encodeURIComponent(content))),
+        sha:data.sha
+      })});
+    })
+    .then(function(r){
+      if(r.ok){
+        var msg=document.createElement('div');
+        msg.textContent='✅ manifest.json aggiornato su GitHub (attendi 2 min)';
+        msg.style.cssText='position:fixed;top:110px;right:20px;background:#6366f1;color:#fff;padding:8px 16px;border-radius:8px;font-weight:700;font-size:12px;z-index:9999';
+        document.body.appendChild(msg); setTimeout(function(){msg.remove();},4000);
+      }
+    })
+    .catch(function(e){console.warn('GitHub manifest update failed:',e);});
+}
 function admEditLogoMain() {
   var current = localStorage.getItem('adm_logo_main') || '';
   var url = prompt('URL Logo Principale App (splash + topbar):', current);
@@ -7029,6 +7065,7 @@ function admEditLogoMain() {
   if (url) { localStorage.setItem('adm_logo_main', url); gsSaveKey('adm_logo_main', url); }
   else { localStorage.removeItem('adm_logo_main'); gsSaveKey('adm_logo_main', ''); }
   _applyLogoMain(url);
+  _updateManifestOnGithub(url);
   var prev = document.getElementById('adm-logo-main-preview');
   if (prev) prev.src = url || '';
   var msg = document.createElement('div');
@@ -12377,6 +12414,41 @@ function admResetTrofei() {
   document.body.appendChild(msg);
   setTimeout(function(){msg.remove();},3000);
 }
+function admSetGithubToken() {
+  var current = localStorage.getItem('adm_github_token') || '';
+  var token = prompt('GitHub Personal Access Token\n(serve permesso Contents:Write per repo mdfgiuseppe/malati-di-fanta)\n\nLascia vuoto per rimuovere:', current);
+  if (token === null) return;
+  token = token.trim();
+  if (token) { localStorage.setItem('adm_github_token', token); alert('✅ Token GitHub salvato'); }
+  else { localStorage.removeItem('adm_github_token'); alert('⚠️ Token rimosso'); }
+}
+function _updateManifestOnGithub(logoUrl) {
+  var token = localStorage.getItem('adm_github_token');
+  if (!token) return;
+  var icons = [{src:'/malati-di-fanta/icon.svg',sizes:'any',type:'image/svg+xml',purpose:'maskable'}];
+  if (logoUrl) icons.unshift({src:logoUrl,sizes:'512x512',purpose:'any'});
+  var content = JSON.stringify({name:'Malati di Fanta',short_name:'MdF',description:'Fantacalcio Manageriale Continuativo',start_url:'/malati-di-fanta/',scope:'/malati-di-fanta/',display:'standalone',orientation:'portrait',theme_color:'#10b981',background_color:'#07090f',icons:icons},null,2);
+  var apiUrl = 'https://api.github.com/repos/mdfgiuseppe/malati-di-fanta/contents/manifest.json';
+  var headers = {'Authorization':'Bearer '+token,'Accept':'application/vnd.github.v3+json','Content-Type':'application/json'};
+  fetch(apiUrl, {headers:headers})
+    .then(function(r){return r.json();})
+    .then(function(data){
+      return fetch(apiUrl, {method:'PUT', headers:headers, body:JSON.stringify({
+        message:'Update PWA icon logo',
+        content:btoa(unescape(encodeURIComponent(content))),
+        sha:data.sha
+      })});
+    })
+    .then(function(r){
+      if(r.ok){
+        var msg=document.createElement('div');
+        msg.textContent='✅ manifest.json aggiornato su GitHub (attendi 2 min)';
+        msg.style.cssText='position:fixed;top:110px;right:20px;background:#6366f1;color:#fff;padding:8px 16px;border-radius:8px;font-weight:700;font-size:12px;z-index:9999';
+        document.body.appendChild(msg); setTimeout(function(){msg.remove();},4000);
+      }
+    })
+    .catch(function(e){console.warn('GitHub manifest update failed:',e);});
+}
 function admEditLogoMain() {
   var current = localStorage.getItem('adm_logo_main') || '';
   var url = prompt('URL Logo Principale App (splash + topbar):', current);
@@ -12386,6 +12458,7 @@ function admEditLogoMain() {
   if (url) { localStorage.setItem('adm_logo_main', url); gsSaveKey('adm_logo_main', url); }
   else { localStorage.removeItem('adm_logo_main'); gsSaveKey('adm_logo_main', ''); }
   _applyLogoMain(url);
+  _updateManifestOnGithub(url);
   var prev = document.getElementById('adm-logo-main-preview');
   if (prev) prev.src = url || '';
   var msg = document.createElement('div');
