@@ -1,4 +1,4 @@
-﻿<!-- build:20260509_1055 -->
+﻿<!-- build:20260509_1307 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260509_1055';
+  var BUILD='20260509_1307';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -9255,7 +9255,24 @@ function _applyLogoMain(url) {
   document.querySelectorAll('.sp-logo, .topbar-logo').forEach(function(el){ el.src = url; });
   var _ati = document.querySelector('link[rel="apple-touch-icon"]');
   if (_ati) _ati.href = url;
-  // Invia logo URL al SW: lo scarica e lo cacha come risorsa same-origin per l'icona PWA
+  // Aggiorna manifest con logo reale — Chrome 92+ rileva il cambio href e ri-legge il manifest
+  try {
+    var _m = JSON.stringify({
+      name:'Malati di Fanta', short_name:'MdF',
+      description:'Fantacalcio Manageriale Continuativo',
+      start_url:'/malati-di-fanta/', scope:'/malati-di-fanta/',
+      display:'standalone', orientation:'portrait',
+      theme_color:'#10b981', background_color:'#07090f',
+      icons:[{src:url, sizes:'512x512', purpose:'any'}]
+    });
+    var _mEl = document.querySelector('link[rel="manifest"]');
+    if (_mEl) {
+      if (_mEl._blobUrl) URL.revokeObjectURL(_mEl._blobUrl);
+      _mEl._blobUrl = URL.createObjectURL(new Blob([_m], {type:'application/manifest+json'}));
+      _mEl.href = _mEl._blobUrl;
+    }
+  } catch(e) {}
+  // Backup: invia anche al SW per le richieste manifest.json server-side
   if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
     navigator.serviceWorker.controller.postMessage({type: 'setLogoUrl', url: url});
   }
@@ -14516,7 +14533,24 @@ function _applyLogoMain(url) {
   document.querySelectorAll('.sp-logo, .topbar-logo').forEach(function(el){ el.src = url; });
   var _ati = document.querySelector('link[rel="apple-touch-icon"]');
   if (_ati) _ati.href = url;
-  // Invia logo URL al SW: lo scarica e lo cacha come risorsa same-origin per l'icona PWA
+  // Aggiorna manifest con logo reale — Chrome 92+ rileva il cambio href e ri-legge il manifest
+  try {
+    var _m = JSON.stringify({
+      name:'Malati di Fanta', short_name:'MdF',
+      description:'Fantacalcio Manageriale Continuativo',
+      start_url:'/malati-di-fanta/', scope:'/malati-di-fanta/',
+      display:'standalone', orientation:'portrait',
+      theme_color:'#10b981', background_color:'#07090f',
+      icons:[{src:url, sizes:'512x512', purpose:'any'}]
+    });
+    var _mEl = document.querySelector('link[rel="manifest"]');
+    if (_mEl) {
+      if (_mEl._blobUrl) URL.revokeObjectURL(_mEl._blobUrl);
+      _mEl._blobUrl = URL.createObjectURL(new Blob([_m], {type:'application/manifest+json'}));
+      _mEl.href = _mEl._blobUrl;
+    }
+  } catch(e) {}
+  // Backup: invia anche al SW per le richieste manifest.json server-side
   if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
     navigator.serviceWorker.controller.postMessage({type: 'setLogoUrl', url: url});
   }
