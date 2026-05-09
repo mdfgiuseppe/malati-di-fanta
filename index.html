@@ -1,4 +1,4 @@
-﻿<!-- build:20260509_1616 -->
+﻿<!-- build:20260509_1619 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260509_1616';
+  var BUILD='20260509_1619';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -4509,10 +4509,10 @@ function renderModulistica(torneoKey, containerId) {
     var inner = '<div style="background:var(--card);border:2px solid var(--border);border-radius:16px;padding:20px;cursor:pointer;transition:all .25s;display:flex;align-items:flex-start;gap:14px"'
       + ' onmouseover="this.style.borderColor=\''+hex+'\';this.style.transform=\'translateY(-3px)\';this.style.boxShadow=\'0 8px 30px rgba('+rgb+',.15)\'"'
       + ' onmouseout="this.style.borderColor=\'var(--border)\';this.style.transform=\'\';this.style.boxShadow=\'\'">'
-      + '<div style="width:44px;height:44px;border-radius:12px;background:rgba('+rgb+',.12);border:1px solid rgba('+rgb+',.25);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:22px">'+m.icona+'</div>'
       + '<div style="flex:1">'
       + '<div style="font-size:13px;font-weight:800;color:var(--text);margin-bottom:4px">'+m.titolo+'</div>'
       + '<div style="font-size:11px;color:var(--text2);line-height:1.5">'+m.descrizione+'</div>'
+      + (m.immagine ? '<img src="'+m.immagine+'" style="width:100%;max-height:220px;object-fit:contain;margin:10px 0 4px;border-radius:8px" onerror="this.style.display=\'none\'">' : '')
       + (href
           ? '<div style="display:inline-flex;align-items:center;gap:4px;margin-top:8px;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:'+hex+'">Apri modulo <svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>'
           : '<div style="display:inline-flex;align-items:center;gap:4px;margin-top:8px;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--text3)">Link non configurato</div>')
@@ -8269,13 +8269,14 @@ function admModRenderBody() {
   var h = '<div class="card" style="padding:0;overflow:hidden">';
   d.moduli.forEach(function(m, mi) {
     h += '<div style="display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--border)">'
-      +'<span style="font-size:22px;flex-shrink:0">'+m.icona+'</span>'
       +'<div style="flex:1">'
       +'<div style="font-size:12px;font-weight:700;margin-bottom:6px">'+m.titolo+'</div>'
       +'<input type="text" value="'+(m.link==='#'?'':m.link)+'" placeholder="https://forms.google.com/..." '
       +'data-key="'+key+'" data-mi="'+mi+'" onchange="admUpdateModuloLinkEl(this)" '
-      +'style="width:100%;padding:7px 10px;background:var(--bg2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:12px;outline:none;box-sizing:border-box">'
+      +'style="width:100%;padding:7px 10px;background:var(--bg2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:12px;outline:none;box-sizing:border-box;margin-bottom:6px">'
+      +'<div style="font-size:10px;color:var(--text3);margin-bottom:4px">Immagine: '+(m.immagine?'<span style="color:#10b981">✓ impostata</span>':'<span>non impostata</span>')+'</div>'
       +'</div>'
+      +'<button data-key="'+key+'" data-mi="'+mi+'" onclick="admSetModuloImmagineEl(this)" style="background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.3);color:#10b981;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer;flex-shrink:0">🖼 Logo</button>'
       +'<button data-key="'+key+'" data-mi="'+mi+'" onclick="admDeleteModuloEl(this)" style="background:none;border:none;color:#ef4444;cursor:pointer;font-size:18px;flex-shrink:0;padding:4px" title="Rimuovi modulo">✕</button>'
       +'</div>';
   });
@@ -8291,10 +8292,21 @@ function admUpdateModuloLinkEl(el) {
 function admUpdateModuloLink(key, mi, val) {
   if (MODULISTICA_DATA[key]&&MODULISTICA_DATA[key].moduli[mi]) MODULISTICA_DATA[key].moduli[mi].link=val;
 }
+function admSetModuloImmagineEl(el) {
+  var key = el.dataset.key; var mi = +el.dataset.mi;
+  if (!MODULISTICA_DATA[key]||!MODULISTICA_DATA[key].moduli[mi]) return;
+  var current = MODULISTICA_DATA[key].moduli[mi].immagine || '';
+  var url = prompt('URL immagine per "'+MODULISTICA_DATA[key].moduli[mi].titolo+'":\n(lascia vuoto per rimuovere)', current);
+  if (url === null) return;
+  url = url.trim();
+  if (typeof _normalizeImgUrl === 'function') url = _normalizeImgUrl(url);
+  MODULISTICA_DATA[key].moduli[mi].immagine = url;
+  admSaveModulistica();
+}
 function admAddModulo(key) {
   var titolo = prompt('Nome del nuovo modulo:');
   if (!titolo) return;
-  MODULISTICA_DATA[key].moduli.push({titolo:titolo, icona:'📄', colore:'#6b7280', descrizione:'Nuovo modulo', link:'#'});
+  MODULISTICA_DATA[key].moduli.push({titolo:titolo, icona:'📄', colore:'#6b7280', descrizione:'Nuovo modulo', link:'#', immagine:''});
   admSaveModulistica();
   admRenderModulistica();
 }
