@@ -1,10 +1,8 @@
-const CACHE_VERSION = '20260509_0918';
+const CACHE_VERSION = '20260509_0927';
 const CACHE_NAME = 'mdf-' + CACHE_VERSION;
 
-// Installa subito senza aspettare che le vecchie tab si chiudano
 self.addEventListener('install', () => self.skipWaiting());
 
-// Prendi il controllo di tutte le tab immediatamente, cancella cache vecchie
 self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys()
@@ -15,6 +13,13 @@ self.addEventListener('activate', event => {
 
 self.addEventListener('fetch', event => {
   const req = event.request;
+  const url = new URL(req.url);
+
+  // NON intercettare richieste cross-origin (GSheets, Google APIs, Drive, fonts)
+  if (url.origin !== self.location.origin) {
+    return;
+  }
+
   // Per navigazioni HTML: sempre rete, mai cache
   if (req.mode === 'navigate') {
     event.respondWith(
@@ -22,7 +27,8 @@ self.addEventListener('fetch', event => {
     );
     return;
   }
-  // Per tutto il resto: network first, poi cache come fallback offline
+
+  // Risorse same-origin: network first, cache come fallback offline
   event.respondWith(
     fetch(req)
       .then(res => {
@@ -35,4 +41,3 @@ self.addEventListener('fetch', event => {
       .catch(() => caches.match(req))
   );
 });
-

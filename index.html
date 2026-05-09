@@ -1,4 +1,4 @@
-﻿<!-- build:20260509_0918 -->
+﻿<!-- build:20260509_0927 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260509_0918';
+  var BUILD='20260509_0927';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -9300,29 +9300,48 @@ function _resetAdminClick() {
 function _applyLogoMain(url) {
   if (!url) return;
   document.querySelectorAll('.sp-logo, .topbar-logo').forEach(function(el){ el.src = url; });
-  // Aggiorna icona PWA (schermata Home) con il logo reale
-  var _ati = document.querySelector('link[rel="apple-touch-icon"]');
-  if (_ati) _ati.href = url;
-  var _ico = document.querySelector('link[rel="icon"]');
-  if (_ico) _ico.href = url;
-  // Aggiorna manifest dinamicamente con il logo reale (per Android PWA)
+  function _setIconUrl(iconUrl) {
+    var _ati = document.querySelector('link[rel="apple-touch-icon"]');
+    if (_ati) _ati.href = iconUrl;
+    var _ico = document.querySelector('link[rel="icon"]');
+    if (_ico) _ico.href = iconUrl;
+    try {
+      var _manifest = {
+        name: 'Malati di Fanta', short_name: 'MdF',
+        description: 'Fantacalcio Manageriale Continuativo',
+        start_url: '/malati-di-fanta/', scope: '/malati-di-fanta/',
+        display: 'standalone', orientation: 'portrait',
+        theme_color: '#10b981', background_color: '#07090f',
+        icons: [
+          {src: iconUrl, sizes: '192x192', type: 'image/png', purpose: 'any maskable'},
+          {src: iconUrl, sizes: '512x512', type: 'image/png', purpose: 'any maskable'}
+        ]
+      };
+      var _blob = new Blob([JSON.stringify(_manifest)], {type: 'application/json'});
+      var _mEl = document.querySelector('link[rel="manifest"]');
+      if (_mEl) _mEl.href = URL.createObjectURL(_blob);
+    } catch(e) {}
+  }
   try {
-    var _manifest = {
-      name: 'Malati di Fanta', short_name: 'MdF',
-      description: 'Fantacalcio Manageriale Continuativo',
-      start_url: '/malati-di-fanta/', scope: '/malati-di-fanta/',
-      display: 'standalone', orientation: 'portrait',
-      theme_color: '#10b981', background_color: '#07090f',
-      icons: [
-        {src: url, sizes: '192x192', type: 'image/png', purpose: 'any maskable'},
-        {src: url, sizes: '512x512', type: 'image/png', purpose: 'any maskable'},
-        {src: '/malati-di-fanta/icon.svg', sizes: 'any', type: 'image/svg+xml', purpose: 'any maskable'}
-      ]
+    var _img = new Image();
+    _img.crossOrigin = 'anonymous';
+    _img.onload = function() {
+      try {
+        var _c = document.createElement('canvas');
+        _c.width = 192; _c.height = 192;
+        var _ctx = _c.getContext('2d');
+        _ctx.fillStyle = '#07090f';
+        _ctx.fillRect(0, 0, 192, 192);
+        var _pad = 20, _size = 192 - _pad * 2;
+        var _r = Math.min(_size / _img.width, _size / _img.height);
+        var _w = _img.width * _r, _h = _img.height * _r;
+        _ctx.drawImage(_img, (192 - _w) / 2, (192 - _h) / 2, _w, _h);
+        _setIconUrl(_c.toDataURL('image/png'));
+      } catch(e) { _setIconUrl(url); }
     };
-    var _blob = new Blob([JSON.stringify(_manifest)], {type: 'application/json'});
-    var _mEl = document.querySelector('link[rel="manifest"]');
-    if (_mEl) _mEl.href = URL.createObjectURL(_blob);
-  } catch(e) {}
+    _img.onerror = function() { _setIconUrl(url); };
+    _img.src = url;
+  } catch(e) { _setIconUrl(url); }
 }
 
 window.addEventListener('storage', function(e) {
@@ -14578,29 +14597,48 @@ function _resetAdminClick() {
 function _applyLogoMain(url) {
   if (!url) return;
   document.querySelectorAll('.sp-logo, .topbar-logo').forEach(function(el){ el.src = url; });
-  // Aggiorna icona PWA (schermata Home) con il logo reale
-  var _ati = document.querySelector('link[rel="apple-touch-icon"]');
-  if (_ati) _ati.href = url;
-  var _ico = document.querySelector('link[rel="icon"]');
-  if (_ico) _ico.href = url;
-  // Aggiorna manifest dinamicamente con il logo reale (per Android PWA)
+  function _setIconUrl(iconUrl) {
+    var _ati = document.querySelector('link[rel="apple-touch-icon"]');
+    if (_ati) _ati.href = iconUrl;
+    var _ico = document.querySelector('link[rel="icon"]');
+    if (_ico) _ico.href = iconUrl;
+    try {
+      var _manifest = {
+        name: 'Malati di Fanta', short_name: 'MdF',
+        description: 'Fantacalcio Manageriale Continuativo',
+        start_url: '/malati-di-fanta/', scope: '/malati-di-fanta/',
+        display: 'standalone', orientation: 'portrait',
+        theme_color: '#10b981', background_color: '#07090f',
+        icons: [
+          {src: iconUrl, sizes: '192x192', type: 'image/png', purpose: 'any maskable'},
+          {src: iconUrl, sizes: '512x512', type: 'image/png', purpose: 'any maskable'}
+        ]
+      };
+      var _blob = new Blob([JSON.stringify(_manifest)], {type: 'application/json'});
+      var _mEl = document.querySelector('link[rel="manifest"]');
+      if (_mEl) _mEl.href = URL.createObjectURL(_blob);
+    } catch(e) {}
+  }
   try {
-    var _manifest = {
-      name: 'Malati di Fanta', short_name: 'MdF',
-      description: 'Fantacalcio Manageriale Continuativo',
-      start_url: '/malati-di-fanta/', scope: '/malati-di-fanta/',
-      display: 'standalone', orientation: 'portrait',
-      theme_color: '#10b981', background_color: '#07090f',
-      icons: [
-        {src: url, sizes: '192x192', type: 'image/png', purpose: 'any maskable'},
-        {src: url, sizes: '512x512', type: 'image/png', purpose: 'any maskable'},
-        {src: '/malati-di-fanta/icon.svg', sizes: 'any', type: 'image/svg+xml', purpose: 'any maskable'}
-      ]
+    var _img = new Image();
+    _img.crossOrigin = 'anonymous';
+    _img.onload = function() {
+      try {
+        var _c = document.createElement('canvas');
+        _c.width = 192; _c.height = 192;
+        var _ctx = _c.getContext('2d');
+        _ctx.fillStyle = '#07090f';
+        _ctx.fillRect(0, 0, 192, 192);
+        var _pad = 20, _size = 192 - _pad * 2;
+        var _r = Math.min(_size / _img.width, _size / _img.height);
+        var _w = _img.width * _r, _h = _img.height * _r;
+        _ctx.drawImage(_img, (192 - _w) / 2, (192 - _h) / 2, _w, _h);
+        _setIconUrl(_c.toDataURL('image/png'));
+      } catch(e) { _setIconUrl(url); }
     };
-    var _blob = new Blob([JSON.stringify(_manifest)], {type: 'application/json'});
-    var _mEl = document.querySelector('link[rel="manifest"]');
-    if (_mEl) _mEl.href = URL.createObjectURL(_blob);
-  } catch(e) {}
+    _img.onerror = function() { _setIconUrl(url); };
+    _img.src = url;
+  } catch(e) { _setIconUrl(url); }
 }
 
 window.addEventListener('storage', function(e) {
