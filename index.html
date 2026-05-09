@@ -4779,9 +4779,7 @@ function gsPing() {
         'adm_coppe_config_slim',
         'adm_coppe_config_tsm',
         'adm_leagues_data_extra',
-        'adm_immagini_index',
-        'stagione_corrente_slim',
-        'stagione_corrente_tsm'
+        'adm_immagini_index'
       ];
       _syncKeys.forEach(function(k) {
         gsLoadKey(k, function(val) {
@@ -4796,6 +4794,10 @@ function gsPing() {
       if (!_at.length) _at = [{key:'slim',leghe:[{key:'it'}]},{key:'tsm',leghe:[{key:'it'}]}];
       var _roseKeys = [];
       _at.forEach(function(t) {
+        // Stagione corrente
+        gsLoadKey('stagione_corrente_'+t.key, function(val) {
+          if (val !== null && val !== undefined) localStorage.setItem('stagione_corrente_'+t.key, val);
+        });
         // Sponsor catalog
         gsLoadKey('admin_sponsor_catalog_'+t.key, function(val) {
           if (val !== null) localStorage.setItem('admin_sponsor_catalog_'+t.key, typeof val === 'string' ? val : JSON.stringify(val));
