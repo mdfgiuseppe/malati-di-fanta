@@ -1,4 +1,4 @@
-﻿<!-- build:20260509_1712 -->
+﻿<!-- build:20260509_1723 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260509_1712';
+  var BUILD='20260509_1723';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -8267,7 +8267,8 @@ function admModRenderBody() {
   var d = MODULISTICA_DATA[key];
   if (!d) { el.innerHTML = ''; return; }
   var h = '<div class="card" style="padding:0;overflow:hidden">';
-  d.moduli.slice().sort(function(a,b){return a.titolo.localeCompare(b.titolo);}).forEach(function(m, mi) {
+  d.moduli.map(function(m,i){return{m:m,i:i};}).sort(function(a,b){return a.m.titolo.localeCompare(b.m.titolo);}).forEach(function(item) {
+    var m=item.m; var mi=item.i;
     h += '<div style="display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--border)">'
       +'<div style="flex:1">'
       +'<div style="font-size:12px;font-weight:700;margin-bottom:6px">'+m.titolo+'</div>'
