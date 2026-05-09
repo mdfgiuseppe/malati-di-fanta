@@ -1,4 +1,4 @@
-const CACHE_VERSION = '20260509_1307';
+const CACHE_VERSION = '20260509_1311';
 const CACHE_NAME = 'mdf-' + CACHE_VERSION;
 const LOGO_CACHE = 'mdf-logo-v1';
 
