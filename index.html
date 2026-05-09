@@ -1,4 +1,4 @@
-﻿<!-- build:20260509_1033 -->
+﻿<!-- build:20260509_1041 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260509_1033';
+  var BUILD='20260509_1041';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -9253,14 +9253,11 @@ function _resetAdminClick() {
 function _applyLogoMain(url) {
   if (!url) return;
   document.querySelectorAll('.sp-logo, .topbar-logo').forEach(function(el){ el.src = url; });
-  // iOS: aggiorna apple-touch-icon
   var _ati = document.querySelector('link[rel="apple-touch-icon"]');
   if (_ati) _ati.href = url;
-  // Android: salva logo URL nella cache SW per manifest dinamico
-  if ('caches' in window) {
-    caches.open('mdf-logo-v1').then(function(c) {
-      c.put('/malati-di-fanta/_logo_url', new Response(url, {headers: {'Content-Type': 'text/plain'}}));
-    });
+  // Invia logo URL al SW: lo scarica e lo cacha come risorsa same-origin per l'icona PWA
+  if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+    navigator.serviceWorker.controller.postMessage({type: 'setLogoUrl', url: url});
   }
 }
 
@@ -14517,14 +14514,11 @@ function _resetAdminClick() {
 function _applyLogoMain(url) {
   if (!url) return;
   document.querySelectorAll('.sp-logo, .topbar-logo').forEach(function(el){ el.src = url; });
-  // iOS: aggiorna apple-touch-icon
   var _ati = document.querySelector('link[rel="apple-touch-icon"]');
   if (_ati) _ati.href = url;
-  // Android: salva logo URL nella cache SW per manifest dinamico
-  if ('caches' in window) {
-    caches.open('mdf-logo-v1').then(function(c) {
-      c.put('/malati-di-fanta/_logo_url', new Response(url, {headers: {'Content-Type': 'text/plain'}}));
-    });
+  // Invia logo URL al SW: lo scarica e lo cacha come risorsa same-origin per l'icona PWA
+  if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+    navigator.serviceWorker.controller.postMessage({type: 'setLogoUrl', url: url});
   }
 }
 
