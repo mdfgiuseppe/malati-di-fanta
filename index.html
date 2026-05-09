@@ -1,4 +1,4 @@
-﻿<!-- build:20260509_1025 -->
+﻿<!-- build:20260509_1033 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260509_1025';
+  var BUILD='20260509_1033';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -21,17 +21,8 @@
   }
   if('serviceWorker' in navigator){
     window.addEventListener('load',function(){
-      navigator.serviceWorker.register('/malati-di-fanta/sw.js',{scope:'/malati-di-fanta/'})
-        .then(function(reg){
-          reg.addEventListener('updatefound',function(){
-            var nw=reg.installing;
-            nw.addEventListener('statechange',function(){
-              if(nw.state==='installed'&&navigator.serviceWorker.controller){
-                location.reload(true);
-              }
-            });
-          });
-        });
+      navigator.serviceWorker.addEventListener('controllerchange',function(){ location.reload(); });
+      navigator.serviceWorker.register('/malati-di-fanta/sw.js',{scope:'/malati-di-fanta/',updateViaCache:'none'});
     });
   }
 })();
