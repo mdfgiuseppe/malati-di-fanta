@@ -1,8 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-  <rect width="512" height="512" rx="112" fill="#07090f"/>
-  <circle cx="256" cy="220" r="130" fill="none" stroke="#10b981" stroke-width="14"/>
-  <polygon points="256,110 290,180 370,180 308,228 332,308 256,260 180,308 204,228 142,180 222,180" fill="#10b981" opacity="0.15"/>
-  <circle cx="256" cy="220" r="36" fill="#10b981" opacity="0.9"/>
-  <text x="256" y="406" font-family="Arial Black,Arial,sans-serif" font-weight="900" font-size="72" fill="#10b981" text-anchor="middle" letter-spacing="4">MdF</text>
-  <text x="256" y="446" font-family="Arial,sans-serif" font-weight="700" font-size="22" fill="#6a7d9e" text-anchor="middle" letter-spacing="6">MALATI DI FANTA</text>
+  <rect width="512" height="512" rx="90" fill="#07090f"/>
+  <circle cx="256" cy="256" r="200" fill="#10b981"/>
+  <text x="256" y="304" font-family="Arial Black,Arial,sans-serif" font-weight="900" font-size="148" fill="#07090f" text-anchor="middle">MdF</text>
 </svg>
