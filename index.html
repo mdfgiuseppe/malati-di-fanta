@@ -973,7 +973,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
         <div class="league-info-sub">10 squadre · Mantra</div>
       </div>
     </div>
-    <div class="league-season">⚽ Stagione 2026/27</div>
+    <div class="league-season" id="slim-league-season">⚽ Stagione 2026/27</div>
   </div>
 
   <div class="nav-section">Menu</div>
@@ -1375,7 +1375,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
         <div class="league-info-sub" id="tsm-sidebar-sub">10 squadre · Classic</div>
       </div>
     </div>
-    <div class="league-season">⚽ Stagione 2026/27</div>
+    <div class="league-season" id="tsm-league-season">⚽ Stagione 2026/27</div>
   </div>
   <div class="nav-section">Menu</div>
   <div class="nav-item active" onclick="showTSMSection('dashboard',this)">
@@ -3961,6 +3961,10 @@ function _updateLegaDashboard(leagueKey) {
   if (subEl) subEl.textContent = nTeams + ' squadre · ' + _modo;
   var subHeroEl = document.getElementById('lega-dash-subtitle');
   if (subHeroEl) subHeroEl.textContent = 'Fantacalcio Manageriale · Modalità ' + _modo;
+  var _stagione = localStorage.getItem('stagione_corrente_'+_admTK) || '2025/26';
+  var _seasonId = (_admTK === 'tsm') ? 'tsm-league-season' : 'slim-league-season';
+  var _seasonEl = document.getElementById(_seasonId);
+  if (_seasonEl) _seasonEl.textContent = '⚽ Stagione ' + _stagione;
   // Trofeo
   var trophyEl = document.getElementById('lega-dash-trophy');
   if (trophyEl) {
@@ -8966,8 +8970,11 @@ function _updateLeagueHeader(tournament, leagueKey) {
   };
   var nTeams = Object.keys(TEAMS_ROSE).length;
   if (nameEl) nameEl.textContent = leagueNames[leagueKey] || 'Slim '+leagueKey.toUpperCase();
-  if (subEl)  subEl.textContent  = nTeams + ' squadre · Mantra';
-  if (seasonEl) seasonEl.textContent = '⚽ Stagione 2026/27';
+  var _slimModo = 'Classic';
+  try { var _slimT=(typeof ADMIN_TORNEI!=='undefined'?ADMIN_TORNEI:[]).find(function(t){return t.key==='slim';}); if(_slimT&&_slimT.formato) _slimModo=_slimT.formato==='mantra'?'Mantra':'Classic'; } catch(e){}
+  if (subEl)  subEl.textContent  = nTeams + ' squadre · ' + _slimModo;
+  var _slimStagione = localStorage.getItem('stagione_corrente_slim') || '2025/26';
+  if (seasonEl) seasonEl.textContent = '⚽ Stagione ' + _slimStagione;
 }
 function goBackToLega(){showPage('lega');setTimeout(function(){showSection('dashboard',null);},50);}
 function goTo(page){showPage(page);}
@@ -10107,6 +10114,10 @@ function _updateLegaDashboard(leagueKey) {
   if (subEl) subEl.textContent = nTeams + ' squadre · ' + _modo;
   var subHeroEl = document.getElementById('lega-dash-subtitle');
   if (subHeroEl) subHeroEl.textContent = 'Fantacalcio Manageriale · Modalità ' + _modo;
+  var _stagione = localStorage.getItem('stagione_corrente_'+_admTK) || '2025/26';
+  var _seasonId = (_admTK === 'tsm') ? 'tsm-league-season' : 'slim-league-season';
+  var _seasonEl = document.getElementById(_seasonId);
+  if (_seasonEl) _seasonEl.textContent = '⚽ Stagione ' + _stagione;
   // Trofeo
   var trophyEl = document.getElementById('lega-dash-trophy');
   if (trophyEl) {
@@ -14218,8 +14229,11 @@ function _updateLeagueHeader(tournament, leagueKey) {
   };
   var nTeams = Object.keys(TEAMS_ROSE).length;
   if (nameEl) nameEl.textContent = leagueNames[leagueKey] || 'Slim '+leagueKey.toUpperCase();
-  if (subEl)  subEl.textContent  = nTeams + ' squadre · Mantra';
-  if (seasonEl) seasonEl.textContent = '⚽ Stagione 2026/27';
+  var _slimModo = 'Classic';
+  try { var _slimT=(typeof ADMIN_TORNEI!=='undefined'?ADMIN_TORNEI:[]).find(function(t){return t.key==='slim';}); if(_slimT&&_slimT.formato) _slimModo=_slimT.formato==='mantra'?'Mantra':'Classic'; } catch(e){}
+  if (subEl)  subEl.textContent  = nTeams + ' squadre · ' + _slimModo;
+  var _slimStagione = localStorage.getItem('stagione_corrente_slim') || '2025/26';
+  if (seasonEl) seasonEl.textContent = '⚽ Stagione ' + _slimStagione;
 }
 function goBackToLega(){showPage('lega');setTimeout(function(){showSection('dashboard',null);},50);}
 function goTo(page){showPage(page);}
