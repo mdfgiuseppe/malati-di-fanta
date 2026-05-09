@@ -4779,7 +4779,9 @@ function gsPing() {
         'adm_coppe_config_slim',
         'adm_coppe_config_tsm',
         'adm_leagues_data_extra',
-        'adm_immagini_index'
+        'adm_immagini_index',
+        'stagione_corrente_slim',
+        'stagione_corrente_tsm'
       ];
       _syncKeys.forEach(function(k) {
         gsLoadKey(k, function(val) {
@@ -6099,6 +6101,7 @@ function admNuovaStagioneEl(el) {
 
   // ─── Imposta nuova stagione ───────────────────────────────────────────────
   localStorage.setItem('stagione_corrente_'+torneoKey, nuovaLabel);
+  gsSaveKey('stagione_corrente_'+torneoKey, nuovaLabel);
 
   var msg = document.createElement('div');
   msg.textContent = '✅ Stagione "'+stagioneCorrente+'" archiviata! Nuova stagione: "'+nuovaLabel+'"';
@@ -11712,6 +11715,7 @@ function admNuovaStagioneEl(el) {
 
   // ─── Imposta nuova stagione ───────────────────────────────────────────────
   localStorage.setItem('stagione_corrente_'+torneoKey, nuovaLabel);
+  gsSaveKey('stagione_corrente_'+torneoKey, nuovaLabel);
 
   var msg = document.createElement('div');
   msg.textContent = '✅ Stagione "'+stagioneCorrente+'" archiviata! Nuova stagione: "'+nuovaLabel+'"';
