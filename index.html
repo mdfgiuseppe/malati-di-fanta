@@ -1,4 +1,4 @@
-﻿<!-- build:20260510_2120 -->
+﻿<!-- build:20260510_2123 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260510_2120';
+  var BUILD='20260510_2123';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -9657,7 +9657,9 @@ function buildBracket(key) {
         : '<div style="font-size:40px;margin-bottom:10px">🏆</div>';
       html += '<div style="background:linear-gradient(135deg,'+color+'22,'+color+'11);border:2px solid '+color+'66;border-radius:14px;padding:16px 10px;text-align:center;width:100%">';
       html += trophyImg;
-      html += '<div style="font-size:12px;font-weight:800;color:'+(champion?color:'var(--text3)')+'">'+(champion||'—')+'</div>';
+      var _chLogo=(champion&&typeof _findTeamLogo==='function')?_findTeamLogo(champion):'';
+      if(_chLogo) html+='<img src="'+_chLogo+'" style="width:28px;height:28px;object-fit:contain;display:block;margin:0 auto 6px">';
+      html += '<div style="font-size:12px;font-weight:800;color:'+(champion?color:'var(--text3)')+'">'+(_teamCase&&champion?_teamCase(champion):(champion||'—'))+'</div>';
       html += '</div></div>';
       html += '</div>';
     } else {
@@ -14922,7 +14924,9 @@ function buildBracket(key) {
         : '<div style="font-size:40px;margin-bottom:10px">🏆</div>';
       html += '<div style="background:linear-gradient(135deg,'+color+'22,'+color+'11);border:2px solid '+color+'66;border-radius:14px;padding:16px 10px;text-align:center;width:100%">';
       html += trophyImg;
-      html += '<div style="font-size:12px;font-weight:800;color:'+(champion?color:'var(--text3)')+'">'+(champion||'—')+'</div>';
+      var _chLogo=(champion&&typeof _findTeamLogo==='function')?_findTeamLogo(champion):'';
+      if(_chLogo) html+='<img src="'+_chLogo+'" style="width:28px;height:28px;object-fit:contain;display:block;margin:0 auto 6px">';
+      html += '<div style="font-size:12px;font-weight:800;color:'+(champion?color:'var(--text3)')+'">'+(_teamCase&&champion?_teamCase(champion):(champion||'—'))+'</div>';
       html += '</div></div>';
       html += '</div>';
     } else {
