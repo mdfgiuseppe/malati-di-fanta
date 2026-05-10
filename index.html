@@ -1,4 +1,4 @@
-﻿<!-- build:20260509_1751 -->
+﻿<!-- build:20260510_1612 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260509_1751';
+  var BUILD='20260510_1612';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -4629,6 +4629,18 @@ function gsPing() {
                 var _logoKey = 'adm_logo_lega_'+t.key+'_'+l.key;
                 var _logoVal = localStorage.getItem(_logoKey);
                 if (_logoVal) gsSaveKey(_logoKey, _logoVal);
+                // Sync loghi squadre: ri-salva su GSheets eventuali loghi salvati offline
+                try {
+                  var _roseRaw = localStorage.getItem('adm_rose_'+t.key+'_'+l.key);
+                  if (_roseRaw) {
+                    var _roseObj = JSON.parse(_roseRaw);
+                    Object.keys(_roseObj).forEach(function(team) {
+                      var _tlk = 'adm_logo_'+t.key+'_'+l.key+'_'+team;
+                      var _tlv = localStorage.getItem(_tlk) || localStorage.getItem('adm_logo_'+t.key+'_'+l.key+'_'+team.toUpperCase());
+                      if (_tlv) gsSaveKey(_tlk, _tlv);
+                    });
+                  }
+                } catch(e) {}
               });
             });
           }
@@ -4836,6 +4848,16 @@ function gsPing() {
                     localStorage.setItem(_lk, v);
                     var _nv = typeof _normalizeImgUrl === 'function' ? _normalizeImgUrl(v) : v;
                     if (typeof FANTASY_LOGOS !== 'undefined') { FANTASY_LOGOS[_sq] = _nv; FANTASY_LOGOS[_sq.toUpperCase()] = _nv; }
+                    if (window._pendingLogoRefresh) clearTimeout(window._pendingLogoRefresh);
+                    window._pendingLogoRefresh = setTimeout(function() {
+                      var _ap = document.querySelector('.page.active');
+                      if (!_ap || _ap.id !== 'page-lega' || window._currentTourneyKey !== t.key || currentLeagueKey !== l.key) return;
+                      var _sec = _ap.querySelector('.section.active');
+                      var _sid = _sec ? _sec.id.replace(/^s-/,'') : '';
+                      if (_sid === 'rose' && typeof buildTeamsGrid === 'function') { buildTeamsGrid(); if (typeof updateHeader === 'function') updateHeader(); }
+                      else if (_sid === 'classifica' && typeof slimRenderClassifica === 'function') slimRenderClassifica();
+                      else if (_sid === 'stadio' && typeof slimRenderStadio === 'function') slimRenderStadio();
+                    }, 300);
                   });
                 })(sq);
               });
