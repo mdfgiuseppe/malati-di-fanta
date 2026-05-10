@@ -1,4 +1,4 @@
-﻿<!-- build:20260510_2123 -->
+﻿<!-- build:20260510_2134 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260510_2123';
+  var BUILD='20260510_2134';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -4606,6 +4606,8 @@ function gsPing() {
   gsCall({action:'ping'}, function(err, data) {
     GS_ONLINE = !err && data && data.ok;
     if (GS_ONLINE) {
+      // Flush salvataggi pendenti (salvati offline)
+      if (typeof _gsFlushPending === 'function') _gsFlushPending();
       // Controlla richieste pendenti (solo se admin) + sync trofei locali → GSheets
       var cu = localStorage.getItem('current_user');
       if (cu) {
@@ -4999,9 +5001,30 @@ function gsPost(params, callback) {
   .catch(function(e){ if(callback) callback(e, null); });
 }
 
+function _gsMarkPending(key) {
+  try {
+    var q = JSON.parse(localStorage.getItem('_gs_pending_keys')||'[]');
+    if (q.indexOf(key) < 0) { q.push(key); localStorage.setItem('_gs_pending_keys', JSON.stringify(q)); }
+  } catch(e) {}
+}
+function _gsFlushPending() {
+  try {
+    var q = JSON.parse(localStorage.getItem('_gs_pending_keys')||'[]');
+    if (!q.length) return;
+    var remaining = [];
+    q.forEach(function(k) {
+      var v = localStorage.getItem(k);
+      if (v) gsPost({action:'saveKey', key:k, data:v}, null);
+      else remaining.push(k);
+    });
+    if (remaining.length) localStorage.setItem('_gs_pending_keys', JSON.stringify(remaining));
+    else localStorage.removeItem('_gs_pending_keys');
+  } catch(e) {}
+}
 function gsSaveKey(key, data) {
-  if (!GS_ONLINE) return;
-  gsPost({action:'saveKey', key:key, data: typeof data === 'string' ? data : JSON.stringify(data)}, null);
+  var val = typeof data === 'string' ? data : JSON.stringify(data);
+  if (!GS_ONLINE) { _gsMarkPending(key); return; }
+  gsPost({action:'saveKey', key:key, data:val}, null);
 }
 function gsLoadKey(key, callback) {
   if (!GS_ONLINE) { if(callback) callback(null); return; }
