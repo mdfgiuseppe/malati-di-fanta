@@ -1,4 +1,4 @@
-﻿<!-- build:20260512_1917 -->
+﻿<!-- build:20260512_1928 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260512_1917';
+  var BUILD='20260512_1928';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -4802,6 +4802,9 @@ function gsPing() {
                 if (_secSt && _secSt.id === 's-stadio' && typeof slimRenderStadio === 'function') slimRenderStadio();
                 if (_secSt && _secSt.id === 'tsm-s-stadio' && typeof tsmRenderStadio === 'function') tsmRenderStadio();
               }
+              // Re-render tabella admin se visibile
+              var _admTb = document.getElementById('adm-s-tablestadio');
+              if (_admTb && _admTb.style.display !== 'none' && typeof admRenderGlobalStadioTable === 'function') admRenderGlobalStadioTable();
             }
           }
         });
@@ -6036,7 +6039,7 @@ function admRenderStagioni() {
   var el = document.getElementById('adm-stagioni-body'); if(!el) return;
   var h = '';
 
-  ADMIN_TORNEI.forEach(function(torneo) {
+  ADMIN_TORNEI.slice().sort(function(a,b){return a.label.localeCompare(b.label);}).forEach(function(torneo) {
     var stagione = admGetStagioneCorrente(torneo.key);
     var storico = admGetStoricoStagioni(torneo.key);
 
@@ -6813,7 +6816,7 @@ function admScInit() {
   opt0.value=''; opt0.textContent='-- Seleziona --';
   opt0.style.cssText='color:#fff;background:#1e293b';
   sel.appendChild(opt0);
-  ADMIN_TORNEI.forEach(function(t) {
+  ADMIN_TORNEI.slice().sort(function(a,b){return a.label.localeCompare(b.label);}).forEach(function(t) {
     var o = document.createElement('option');
     o.value=t.key; o.textContent=t.label;
     o.style.cssText='color:#fff;background:#1e293b';
@@ -7512,7 +7515,7 @@ function admInitSelettori(prefix, resetAll) {
   var opt0 = document.createElement('option');
   opt0.value=''; opt0.textContent='-- Seleziona Torneo --';
   newSel.appendChild(opt0);
-  ADMIN_TORNEI.forEach(function(t) {
+  ADMIN_TORNEI.slice().sort(function(a,b){return a.label.localeCompare(b.label);}).forEach(function(t) {
     var opt = document.createElement('option');
     opt.value = t.key; opt.textContent = t.label;
     if (!resetAll && t.key===prevVal) opt.selected=true;
@@ -11677,7 +11680,7 @@ function admRenderStagioni() {
   var el = document.getElementById('adm-stagioni-body'); if(!el) return;
   var h = '';
 
-  ADMIN_TORNEI.forEach(function(torneo) {
+  ADMIN_TORNEI.slice().sort(function(a,b){return a.label.localeCompare(b.label);}).forEach(function(torneo) {
     var stagione = admGetStagioneCorrente(torneo.key);
     var storico = admGetStoricoStagioni(torneo.key);
 
