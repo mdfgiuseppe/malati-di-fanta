@@ -1,4 +1,4 @@
-﻿<!-- build:20260512_1916 -->
+﻿<!-- build:20260512_1917 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260512_1916';
+  var BUILD='20260512_1917';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -4792,6 +4792,16 @@ function gsPing() {
             if (_sm) {
               var _ak = (_sm[1]==='tsm'&&_sm[2]==='it') ? 'tsm_stadio_it' : (_sm[2]==='it'?'slim_stadio':'slim_stadio_'+_sm[2]);
               localStorage.setItem(_ak, _str);
+            }
+            // Se è la tabella globale stadio, aggiorna SLIM_STADIO_TABLE e re-render se attivo
+            if (k === 'adm_stadio_table_global') {
+              try { if (typeof SLIM_STADIO_TABLE !== 'undefined') SLIM_STADIO_TABLE = JSON.parse(_str); } catch(e) {}
+              var _apSt = document.querySelector('.page.active');
+              if (_apSt) {
+                var _secSt = _apSt.querySelector('.section.active');
+                if (_secSt && _secSt.id === 's-stadio' && typeof slimRenderStadio === 'function') slimRenderStadio();
+                if (_secSt && _secSt.id === 'tsm-s-stadio' && typeof tsmRenderStadio === 'function') tsmRenderStadio();
+              }
             }
           }
         });
