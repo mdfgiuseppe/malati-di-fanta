@@ -1,4 +1,4 @@
-﻿<!-- build:20260510_2134 -->
+﻿<!-- build:20260512_1916 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260510_2134';
+  var BUILD='20260512_1916';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -4785,7 +4785,14 @@ function gsPing() {
       _syncKeys.forEach(function(k) {
         gsLoadKey(k, function(val) {
           if (val !== null && val !== undefined) {
-            localStorage.setItem(k, typeof val === 'string' ? val : JSON.stringify(val));
+            var _str = typeof val === 'string' ? val : JSON.stringify(val);
+            localStorage.setItem(k, _str);
+            // Se è uno stadio saved, aggiorna anche la chiave app-facing
+            var _sm = k.match(/^adm_stadio_saved_(\w+)_(\w+)$/);
+            if (_sm) {
+              var _ak = (_sm[1]==='tsm'&&_sm[2]==='it') ? 'tsm_stadio_it' : (_sm[2]==='it'?'slim_stadio':'slim_stadio_'+_sm[2]);
+              localStorage.setItem(_ak, _str);
+            }
           }
         });
       });
@@ -4887,9 +4894,15 @@ function gsPing() {
             });
           })(t.key, l.key);
           // Stadio saved
-          gsLoadKey('adm_stadio_saved_'+t.key+'_'+l.key, function(val) {
-            if (val !== null) localStorage.setItem('adm_stadio_saved_'+t.key+'_'+l.key, typeof val === 'string' ? val : JSON.stringify(val));
-          });
+          (function(_t, _l) {
+            gsLoadKey('adm_stadio_saved_'+_t+'_'+_l, function(val) {
+              if (val === null) return;
+              var _str = typeof val === 'string' ? val : JSON.stringify(val);
+              localStorage.setItem('adm_stadio_saved_'+_t+'_'+_l, _str);
+              var _appKey = (_t==='tsm'&&_l==='it') ? 'tsm_stadio_it' : (_l==='it'?'slim_stadio':'slim_stadio_'+_l);
+              localStorage.setItem(_appKey, _str);
+            });
+          })(t.key, l.key);
           // Logo lega
           (function(_tk, _lk) {
             gsLoadKey('adm_logo_lega_'+_tk+'_'+_lk, function(val) {
