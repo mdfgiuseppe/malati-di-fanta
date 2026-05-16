@@ -1,4 +1,4 @@
-<!-- build:20260516_2044 -->
+<!-- build:20260516_2050 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260516_2044';
+  var BUILD='20260516_2050';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -4092,6 +4092,8 @@ function enterTSM() {
     var _lv = localStorage.getItem('adm_logo_tsm_it_'+team) || localStorage.getItem('adm_logo_tsm_it_'+team.toUpperCase());
     if (_lv) FANTASY_LOGOS[team] = typeof _normalizeImgUrl==='function' ? _normalizeImgUrl(_lv) : _lv;
   });
+  var _infLvT=localStorage.getItem('adm_logo_tsm_it_INFERMERIA');
+  if(_infLvT) FANTASY_LOGOS['INFERMERIA']=typeof _normalizeImgUrl==='function'?_normalizeImgUrl(_infLvT):_infLvT;
   window._currentLeagueCalKey = 'tsm_calendar_it';
   window._currentLeagueStaKey = 'tsm_stadio_it';
   window.currentLeagueKey = 'tsm_it';
@@ -4159,7 +4161,7 @@ function tsmBuildTeamsGrid() {
   if (!tsmCurrentTeam || list.indexOf(tsmCurrentTeam) < 0) tsmCurrentTeam = list[0];
   g.innerHTML = list.map(function(n) {
     var a = n === tsmCurrentTeam;
-    var _fl = (n!=='INFERMERIA' && typeof FANTASY_LOGOS!=='undefined' && FANTASY_LOGOS[n]) ? '<img src="'+FANTASY_LOGOS[n]+'" style="width:18px;height:18px;object-fit:contain;flex-shrink:0" onerror="this.style.display=\'none\'">' : '';
+    var _fl = (typeof FANTASY_LOGOS!=='undefined' && FANTASY_LOGOS[n]) ? '<img src="'+FANTASY_LOGOS[n]+'" style="width:18px;height:18px;object-fit:contain;flex-shrink:0" onerror="this.style.display=\'none\'">' : '';
     return '<div class="tbtn'+(a?' active':'')+'" onclick="tsmSelectTeam(this,\''+n+'\')" style="padding:8px 4px;border-radius:8px;cursor:pointer;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:5px">'+_fl+'<span>'+_teamCase(n)+'</span></div>';
   }).join('');
 }
@@ -7760,6 +7762,15 @@ function admCsLoadSquadre() {
       +'<button id="adm-cs-logo-btn-'+ki+'" onclick="admCsEditLogo(\''+ki+'\')" style="background:rgba(139,92,246,.1);border:1px solid rgba(139,92,246,.2);color:#8b5cf6;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer;width:100%">🖼 Logo</button></div>'
       +'</div>';
   });
+  // Riga speciale INFERMERIA (solo logo, no rinomina)
+  var _infLogo=localStorage.getItem('adm_logo_'+torneoKey+'_'+legaKey+'_INFERMERIA')||'';
+  h+='<div style="display:flex;align-items:center;gap:10px;padding:8px 14px;border-top:2px dashed var(--border);background:rgba(239,68,68,.04)">'
+    +'<img src="'+_infLogo+'" onerror="this.style.opacity=0.15" style="width:32px;height:32px;object-fit:contain;border-radius:4px;flex-shrink:0">'
+    +'<div style="flex:1;min-width:0"><div style="font-size:9px;color:#ef4444;font-weight:700;text-transform:uppercase;margin-bottom:3px">Speciale</div><div style="font-size:12px;font-weight:800;color:#ef4444">INFERMERIA</div></div>'
+    +'<div style="flex:2;min-width:0"><div style="font-size:9px;color:var(--text3);font-weight:700;text-transform:uppercase;margin-bottom:3px">Logo</div>'
+    +'<input type="hidden" id="adm-cs-logo-INFERMERIA" value="">'
+    +'<button id="adm-cs-logo-btn-INFERMERIA" onclick="admCsEditLogo(\'INFERMERIA\')" style="background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);color:#ef4444;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer;width:100%">🖼 Logo</button></div>'
+    +'</div>';
   h+='</div></div>'
     +'<div style="display:flex;gap:10px">'
     +'<button onclick="admCsPreview()" style="padding:8px 20px;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.3);color:#f59e0b;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer">👁 Anteprima Modifiche</button>'
@@ -7771,6 +7782,7 @@ function admCsPreview() {
   var torneoKey=document.getElementById('adm-cs-torneo').value;
   var legaKey=document.getElementById('adm-cs-lega').value;
   var teams=admGetTeams(torneoKey,legaKey);
+  teams.push('INFERMERIA');
   var changes=[];
   teams.forEach(function(team){
     var ki=team.replace(/\s+/g,'_');
@@ -7813,6 +7825,7 @@ function admCsConfirm() {
   var torneoKey=document.getElementById('adm-cs-torneo').value;
   var legaKey=document.getElementById('adm-cs-lega').value;
   var teams=admGetTeams(torneoKey,legaKey);
+  teams.push('INFERMERIA');
   var changes=[];
   teams.forEach(function(team){
     var ki=team.replace(/\s+/g,'_');
@@ -8987,6 +9000,8 @@ function enterLeague(tournament, leagueKey) {
       var _lv=localStorage.getItem('adm_logo_'+tournament+'_'+currentLeagueKey+'_'+team)||localStorage.getItem('adm_logo_'+tournament+'_'+currentLeagueKey+'_'+team.toUpperCase());
       if(_lv) FANTASY_LOGOS[team]=typeof _normalizeImgUrl==='function'?_normalizeImgUrl(_lv):_lv;
     });
+    var _infLv=localStorage.getItem('adm_logo_'+tournament+'_'+currentLeagueKey+'_INFERMERIA');
+    if(_infLv) FANTASY_LOGOS['INFERMERIA']=typeof _normalizeImgUrl==='function'?_normalizeImgUrl(_infLv):_infLv;
     // Reset coppe per isolamento dal torneo precedente
     if (typeof COPPA_DATA !== 'undefined') { ['cl','el','conf','sc'].forEach(function(k){ COPPA_DATA[k]={}; }); }
     if (typeof COPPA_TROPHIES !== 'undefined') { ['cl','el','conf','sc'].forEach(function(k){ COPPA_TROPHIES[k]=''; }); }
@@ -9042,6 +9057,8 @@ function enterLeague(tournament, leagueKey) {
       var _lv=localStorage.getItem('adm_logo_slim_'+leagueKey+'_'+team)||localStorage.getItem('adm_logo_slim_'+leagueKey+'_'+team.toUpperCase());
       if(_lv) FANTASY_LOGOS[team]=typeof _normalizeImgUrl==='function'?_normalizeImgUrl(_lv):_lv;
     });
+    var _infLvD=localStorage.getItem('adm_logo_slim_'+leagueKey+'_INFERMERIA');
+    if(_infLvD) FANTASY_LOGOS['INFERMERIA']=typeof _normalizeImgUrl==='function'?_normalizeImgUrl(_infLvD):_infLvD;
     showPage('lega');
     setTimeout(function(){
       _updateLegaDashboard('slim_'+leagueKey);
@@ -9074,6 +9091,8 @@ function enterLeague(tournament, leagueKey) {
       var _lv=localStorage.getItem('adm_logo_slim_'+leagueKey+'_'+team)||localStorage.getItem('adm_logo_slim_'+leagueKey+'_'+team.toUpperCase());
       if(_lv) FANTASY_LOGOS[team]=typeof _normalizeImgUrl==='function'?_normalizeImgUrl(_lv):_lv;
     });
+    var _infLvS=localStorage.getItem('adm_logo_slim_'+leagueKey+'_INFERMERIA');
+    if(_infLvS) FANTASY_LOGOS['INFERMERIA']=typeof _normalizeImgUrl==='function'?_normalizeImgUrl(_infLvS):_infLvS;
     var teamList = Object.keys(TEAMS_ROSE).sort();
     currentTeam = teamList.length > 0 ? teamList[0] : 'INFERMERIA';
     // Carica dati stagione (calendario, stadio)
@@ -9257,7 +9276,7 @@ function showSection(id,el){
 }
 var currentTeam='SALERNITANA',currentFilter='ALL';
 function roleBadge(r){var roles=r.split(';').map(function(x){return x.trim();}).filter(function(x){return x;});return roles.map(function(x){var c=ROLE_COLORS[x]||['rgba(107,114,128,.15)','#6b7280'];return'<span style="display:inline-block;font-size:8px;font-weight:800;padding:2px 5px;border-radius:3px;background:'+c[0]+';color:'+c[1]+';margin:1px">'+x+'</span>';}).join('');}
-function buildTeamsGrid(){var g=document.getElementById('rose-teams-grid');if(!g)return;var list=Object.keys(TEAMS_ROSE).sort().concat(['INFERMERIA']);g.innerHTML=list.map(function(n){var a=n===currentTeam;var label=_teamCase(n);var _fl=(n!=='INFERMERIA'&&typeof FANTASY_LOGOS!=='undefined'&&FANTASY_LOGOS[n])?'<img src="'+FANTASY_LOGOS[n]+'" style="width:18px;height:18px;object-fit:contain;flex-shrink:0">':'';return'<div class="tbtn'+(a?' active':'')+'" onclick="selectTeam(this,\''+n+'\')" style="padding:8px 4px;border-radius:8px;cursor:pointer;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:5px">'+_fl+'<span>'+label+'</span></div>';}).join('');}
+function buildTeamsGrid(){var g=document.getElementById('rose-teams-grid');if(!g)return;var list=Object.keys(TEAMS_ROSE).sort().concat(['INFERMERIA']);g.innerHTML=list.map(function(n){var a=n===currentTeam;var label=_teamCase(n);var _fl=(typeof FANTASY_LOGOS!=='undefined'&&FANTASY_LOGOS[n])?'<img src="'+FANTASY_LOGOS[n]+'" style="width:18px;height:18px;object-fit:contain;flex-shrink:0" onerror="this.style.display=\'none\'">':'';return'<div class="tbtn'+(a?' active':'')+'" onclick="selectTeam(this,\''+n+'\')" style="padding:8px 4px;border-radius:8px;cursor:pointer;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:5px">'+_fl+'<span>'+label+'</span></div>';}).join('');}
 function selectTeam(el,name){currentTeam=name;currentFilter='ALL';buildTeamsGrid();updateHeader();buildFilters();renderTable();}
 function updateHeader(){
   if(currentTeam==='INFERMERIA'){
@@ -10482,6 +10501,8 @@ function enterTSM() {
     var _lv = localStorage.getItem('adm_logo_tsm_it_'+team) || localStorage.getItem('adm_logo_tsm_it_'+team.toUpperCase());
     if (_lv) FANTASY_LOGOS[team] = typeof _normalizeImgUrl==='function' ? _normalizeImgUrl(_lv) : _lv;
   });
+  var _infLvT=localStorage.getItem('adm_logo_tsm_it_INFERMERIA');
+  if(_infLvT) FANTASY_LOGOS['INFERMERIA']=typeof _normalizeImgUrl==='function'?_normalizeImgUrl(_infLvT):_infLvT;
   window._currentLeagueCalKey = 'tsm_calendar_it';
   window._currentLeagueStaKey = 'tsm_stadio_it';
   window.currentLeagueKey = 'tsm_it';
@@ -10549,7 +10570,7 @@ function tsmBuildTeamsGrid() {
   if (!tsmCurrentTeam || list.indexOf(tsmCurrentTeam) < 0) tsmCurrentTeam = list[0];
   g.innerHTML = list.map(function(n) {
     var a = n === tsmCurrentTeam;
-    var _fl = (n!=='INFERMERIA' && typeof FANTASY_LOGOS!=='undefined' && FANTASY_LOGOS[n]) ? '<img src="'+FANTASY_LOGOS[n]+'" style="width:18px;height:18px;object-fit:contain;flex-shrink:0" onerror="this.style.display=\'none\'">' : '';
+    var _fl = (typeof FANTASY_LOGOS!=='undefined' && FANTASY_LOGOS[n]) ? '<img src="'+FANTASY_LOGOS[n]+'" style="width:18px;height:18px;object-fit:contain;flex-shrink:0" onerror="this.style.display=\'none\'">' : '';
     return '<div class="tbtn'+(a?' active':'')+'" onclick="tsmSelectTeam(this,\''+n+'\')" style="padding:8px 4px;border-radius:8px;cursor:pointer;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:5px">'+_fl+'<span>'+_teamCase(n)+'</span></div>';
   }).join('');
 }
@@ -13266,6 +13287,15 @@ function admCsLoadSquadre() {
       +'<button id="adm-cs-logo-btn-'+ki+'" onclick="admCsEditLogo(\''+ki+'\')" style="background:rgba(139,92,246,.1);border:1px solid rgba(139,92,246,.2);color:#8b5cf6;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer;width:100%">🖼 Logo</button></div>'
       +'</div>';
   });
+  // Riga speciale INFERMERIA (solo logo, no rinomina)
+  var _infLogo=localStorage.getItem('adm_logo_'+torneoKey+'_'+legaKey+'_INFERMERIA')||'';
+  h+='<div style="display:flex;align-items:center;gap:10px;padding:8px 14px;border-top:2px dashed var(--border);background:rgba(239,68,68,.04)">'
+    +'<img src="'+_infLogo+'" onerror="this.style.opacity=0.15" style="width:32px;height:32px;object-fit:contain;border-radius:4px;flex-shrink:0">'
+    +'<div style="flex:1;min-width:0"><div style="font-size:9px;color:#ef4444;font-weight:700;text-transform:uppercase;margin-bottom:3px">Speciale</div><div style="font-size:12px;font-weight:800;color:#ef4444">INFERMERIA</div></div>'
+    +'<div style="flex:2;min-width:0"><div style="font-size:9px;color:var(--text3);font-weight:700;text-transform:uppercase;margin-bottom:3px">Logo</div>'
+    +'<input type="hidden" id="adm-cs-logo-INFERMERIA" value="">'
+    +'<button id="adm-cs-logo-btn-INFERMERIA" onclick="admCsEditLogo(\'INFERMERIA\')" style="background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);color:#ef4444;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer;width:100%">🖼 Logo</button></div>'
+    +'</div>';
   h+='</div></div>'
     +'<div style="display:flex;gap:10px">'
     +'<button onclick="admCsPreview()" style="padding:8px 20px;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.3);color:#f59e0b;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer">👁 Anteprima Modifiche</button>'
@@ -13277,6 +13307,7 @@ function admCsPreview() {
   var torneoKey=document.getElementById('adm-cs-torneo').value;
   var legaKey=document.getElementById('adm-cs-lega').value;
   var teams=admGetTeams(torneoKey,legaKey);
+  teams.push('INFERMERIA');
   var changes=[];
   teams.forEach(function(team){
     var ki=team.replace(/\s+/g,'_');
@@ -13319,6 +13350,7 @@ function admCsConfirm() {
   var torneoKey=document.getElementById('adm-cs-torneo').value;
   var legaKey=document.getElementById('adm-cs-lega').value;
   var teams=admGetTeams(torneoKey,legaKey);
+  teams.push('INFERMERIA');
   var changes=[];
   teams.forEach(function(team){
     var ki=team.replace(/\s+/g,'_');
@@ -14392,6 +14424,8 @@ function enterLeague(tournament, leagueKey) {
       var _lv=localStorage.getItem('adm_logo_'+tournament+'_'+currentLeagueKey+'_'+team)||localStorage.getItem('adm_logo_'+tournament+'_'+currentLeagueKey+'_'+team.toUpperCase());
       if(_lv) FANTASY_LOGOS[team]=typeof _normalizeImgUrl==='function'?_normalizeImgUrl(_lv):_lv;
     });
+    var _infLv=localStorage.getItem('adm_logo_'+tournament+'_'+currentLeagueKey+'_INFERMERIA');
+    if(_infLv) FANTASY_LOGOS['INFERMERIA']=typeof _normalizeImgUrl==='function'?_normalizeImgUrl(_infLv):_infLv;
     // Reset coppe per isolamento dal torneo precedente
     if (typeof COPPA_DATA !== 'undefined') { ['cl','el','conf','sc'].forEach(function(k){ COPPA_DATA[k]={}; }); }
     if (typeof COPPA_TROPHIES !== 'undefined') { ['cl','el','conf','sc'].forEach(function(k){ COPPA_TROPHIES[k]=''; }); }
@@ -14447,6 +14481,8 @@ function enterLeague(tournament, leagueKey) {
       var _lv=localStorage.getItem('adm_logo_slim_'+leagueKey+'_'+team)||localStorage.getItem('adm_logo_slim_'+leagueKey+'_'+team.toUpperCase());
       if(_lv) FANTASY_LOGOS[team]=typeof _normalizeImgUrl==='function'?_normalizeImgUrl(_lv):_lv;
     });
+    var _infLvD=localStorage.getItem('adm_logo_slim_'+leagueKey+'_INFERMERIA');
+    if(_infLvD) FANTASY_LOGOS['INFERMERIA']=typeof _normalizeImgUrl==='function'?_normalizeImgUrl(_infLvD):_infLvD;
     showPage('lega');
     setTimeout(function(){
       _updateLegaDashboard('slim_'+leagueKey);
@@ -14479,6 +14515,8 @@ function enterLeague(tournament, leagueKey) {
       var _lv=localStorage.getItem('adm_logo_slim_'+leagueKey+'_'+team)||localStorage.getItem('adm_logo_slim_'+leagueKey+'_'+team.toUpperCase());
       if(_lv) FANTASY_LOGOS[team]=typeof _normalizeImgUrl==='function'?_normalizeImgUrl(_lv):_lv;
     });
+    var _infLvS=localStorage.getItem('adm_logo_slim_'+leagueKey+'_INFERMERIA');
+    if(_infLvS) FANTASY_LOGOS['INFERMERIA']=typeof _normalizeImgUrl==='function'?_normalizeImgUrl(_infLvS):_infLvS;
     var teamList = Object.keys(TEAMS_ROSE).sort();
     currentTeam = teamList.length > 0 ? teamList[0] : 'INFERMERIA';
     // Carica dati stagione (calendario, stadio)
@@ -14662,7 +14700,7 @@ function showSection(id,el){
 }
 var currentTeam='SALERNITANA',currentFilter='ALL';
 function roleBadge(r){var roles=r.split(';').map(function(x){return x.trim();}).filter(function(x){return x;});return roles.map(function(x){var c=ROLE_COLORS[x]||['rgba(107,114,128,.15)','#6b7280'];return'<span style="display:inline-block;font-size:8px;font-weight:800;padding:2px 5px;border-radius:3px;background:'+c[0]+';color:'+c[1]+';margin:1px">'+x+'</span>';}).join('');}
-function buildTeamsGrid(){var g=document.getElementById('rose-teams-grid');if(!g)return;var list=Object.keys(TEAMS_ROSE).sort().concat(['INFERMERIA']);g.innerHTML=list.map(function(n){var a=n===currentTeam;var label=_teamCase(n);var _fl=(n!=='INFERMERIA'&&typeof FANTASY_LOGOS!=='undefined'&&FANTASY_LOGOS[n])?'<img src="'+FANTASY_LOGOS[n]+'" style="width:18px;height:18px;object-fit:contain;flex-shrink:0">':'';return'<div class="tbtn'+(a?' active':'')+'" onclick="selectTeam(this,\''+n+'\')" style="padding:8px 4px;border-radius:8px;cursor:pointer;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:5px">'+_fl+'<span>'+label+'</span></div>';}).join('');}
+function buildTeamsGrid(){var g=document.getElementById('rose-teams-grid');if(!g)return;var list=Object.keys(TEAMS_ROSE).sort().concat(['INFERMERIA']);g.innerHTML=list.map(function(n){var a=n===currentTeam;var label=_teamCase(n);var _fl=(typeof FANTASY_LOGOS!=='undefined'&&FANTASY_LOGOS[n])?'<img src="'+FANTASY_LOGOS[n]+'" style="width:18px;height:18px;object-fit:contain;flex-shrink:0" onerror="this.style.display=\'none\'">':'';return'<div class="tbtn'+(a?' active':'')+'" onclick="selectTeam(this,\''+n+'\')" style="padding:8px 4px;border-radius:8px;cursor:pointer;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:5px">'+_fl+'<span>'+label+'</span></div>';}).join('');}
 function selectTeam(el,name){currentTeam=name;currentFilter='ALL';buildTeamsGrid();updateHeader();buildFilters();renderTable();}
 function updateHeader(){
   if(currentTeam==='INFERMERIA'){
