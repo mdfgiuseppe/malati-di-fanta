@@ -1,4 +1,4 @@
-<!-- build:20260516_2203 -->
+<!-- build:20260516_2211 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260516_2203';
+  var BUILD='20260516_2211';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -9835,13 +9835,23 @@ function initCoppaLogos() {
   var _hubEl = document.getElementById('coppe-hub');
   var _noConfigEl = document.getElementById('coppe-no-config');
   if (_cTk !== 'slim' && _cTk !== 'tsm') {
+    // Carica config coppe da GSheets se mancante (per utenti su dispositivo diverso dall'admin)
+    if (!localStorage.getItem('adm_coppe_config_'+_cTk) && typeof gsLoadKey === 'function') {
+      gsLoadKey('adm_coppe_config_'+_cTk, function(v) {
+        if (v) { localStorage.setItem('adm_coppe_config_'+_cTk, typeof v==='string'?v:JSON.stringify(v)); if (typeof initCoppaLogos==='function') initCoppaLogos(); }
+      });
+    }
+    var _cConfigArr = [];
+    var _cConfigRaw = localStorage.getItem('adm_coppe_config_'+_cTk);
+    if (_cConfigRaw) { try { _cConfigArr = JSON.parse(_cConfigRaw); } catch(e){} }
     var _anyConfigured = false;
     ['cl','el','conf','sc'].forEach(function(k) {
       var hasLogo = !!localStorage.getItem('adm_img_coppa_'+_cTk+'_'+k);
       var hasData = false;
       var v = localStorage.getItem('adm_coppa_data_'+_cTk+'_'+k);
       if (v) { try { var p=JSON.parse(v); hasData=p&&typeof p==='object'&&Object.keys(p).length>0&&['ottavi','quarti','semifinali','finale'].some(function(r){return Array.isArray(p[r])&&p[r].some(function(m){return m&&(m.h||m.a);});}); } catch(e){} }
-      var configured = hasLogo || hasData;
+      var hasConfig = _cConfigArr.some(function(c){return c.key===k;});
+      var configured = hasLogo || hasData || hasConfig;
       if (configured) _anyConfigured = true;
       var cardEl = document.getElementById(_cardMap[k]);
       if (cardEl) cardEl.style.display = configured ? '' : 'none';
@@ -15281,13 +15291,23 @@ function initCoppaLogos() {
   var _hubEl = document.getElementById('coppe-hub');
   var _noConfigEl = document.getElementById('coppe-no-config');
   if (_cTk !== 'slim' && _cTk !== 'tsm') {
+    // Carica config coppe da GSheets se mancante (per utenti su dispositivo diverso dall'admin)
+    if (!localStorage.getItem('adm_coppe_config_'+_cTk) && typeof gsLoadKey === 'function') {
+      gsLoadKey('adm_coppe_config_'+_cTk, function(v) {
+        if (v) { localStorage.setItem('adm_coppe_config_'+_cTk, typeof v==='string'?v:JSON.stringify(v)); if (typeof initCoppaLogos==='function') initCoppaLogos(); }
+      });
+    }
+    var _cConfigArr = [];
+    var _cConfigRaw = localStorage.getItem('adm_coppe_config_'+_cTk);
+    if (_cConfigRaw) { try { _cConfigArr = JSON.parse(_cConfigRaw); } catch(e){} }
     var _anyConfigured = false;
     ['cl','el','conf','sc'].forEach(function(k) {
       var hasLogo = !!localStorage.getItem('adm_img_coppa_'+_cTk+'_'+k);
       var hasData = false;
       var v = localStorage.getItem('adm_coppa_data_'+_cTk+'_'+k);
       if (v) { try { var p=JSON.parse(v); hasData=p&&typeof p==='object'&&Object.keys(p).length>0&&['ottavi','quarti','semifinali','finale'].some(function(r){return Array.isArray(p[r])&&p[r].some(function(m){return m&&(m.h||m.a);});}); } catch(e){} }
-      var configured = hasLogo || hasData;
+      var hasConfig = _cConfigArr.some(function(c){return c.key===k;});
+      var configured = hasLogo || hasData || hasConfig;
       if (configured) _anyConfigured = true;
       var cardEl = document.getElementById(_cardMap[k]);
       if (cardEl) cardEl.style.display = configured ? '' : 'none';
