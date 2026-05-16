@@ -1,4 +1,4 @@
-﻿<!-- build:20260516_1545 -->
+﻿<!-- build:20260516_1552 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260516_1545';
+  var BUILD='20260516_1552';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -4017,7 +4017,11 @@ function enterTSM() {
   INFERMERIA = TSM_INFERMERIA_IT || [];
   CREDITS = TSM_CREDITS_IT || {};
   SLIM_TEAMS = TSM_TEAMS_IT || [];
-  FANTASY_LOGOS = TSM_FANTASY_LOGOS || {};
+  FANTASY_LOGOS = {};
+  Object.keys(TEAMS_ROSE).forEach(function(team) {
+    var _lv = localStorage.getItem('adm_logo_tsm_it_'+team) || localStorage.getItem('adm_logo_tsm_it_'+team.toUpperCase());
+    if (_lv) FANTASY_LOGOS[team] = typeof _normalizeImgUrl==='function' ? _normalizeImgUrl(_lv) : _lv;
+  });
   window._currentLeagueCalKey = 'tsm_calendar_it';
   window._currentLeagueStaKey = 'tsm_stadio_it';
   window.currentLeagueKey = 'tsm_it';
@@ -4085,7 +4089,8 @@ function tsmBuildTeamsGrid() {
   if (!tsmCurrentTeam || list.indexOf(tsmCurrentTeam) < 0) tsmCurrentTeam = list[0];
   g.innerHTML = list.map(function(n) {
     var a = n === tsmCurrentTeam;
-    return '<div onclick="tsmSelectTeam(this,\'' + n + '\')" style="padding:8px 4px;background:' + (a?'rgba(16,185,129,.12)':'var(--card)') + ';border:1px solid ' + (a?'rgba(16,185,129,.4)':'var(--border)') + ';border-radius:8px;text-align:center;cursor:pointer;font-size:11px;font-weight:700;color:' + (a?'#10b981':'var(--text2)') + ';transition:all .2s">' + _teamCase(n) + '</div>';
+    var _fl = (n!=='INFERMERIA' && typeof FANTASY_LOGOS!=='undefined' && FANTASY_LOGOS[n]) ? '<img src="'+FANTASY_LOGOS[n]+'" style="width:24px;height:24px;object-fit:contain;display:block;margin:0 auto 3px" onerror="this.style.display=\'none\'">' : '';
+    return '<div onclick="tsmSelectTeam(this,\'' + n + '\')" style="padding:8px 4px;background:' + (a?'rgba(16,185,129,.12)':'var(--card)') + ';border:1px solid ' + (a?'rgba(16,185,129,.4)':'var(--border)') + ';border-radius:8px;text-align:center;cursor:pointer;font-size:11px;font-weight:700;color:' + (a?'#10b981':'var(--text2)') + ';transition:all .2s">' + _fl + _teamCase(n) + '</div>';
   }).join('');
 }
 
@@ -10315,7 +10320,11 @@ function enterTSM() {
   INFERMERIA = TSM_INFERMERIA_IT || [];
   CREDITS = TSM_CREDITS_IT || {};
   SLIM_TEAMS = TSM_TEAMS_IT || [];
-  FANTASY_LOGOS = TSM_FANTASY_LOGOS || {};
+  FANTASY_LOGOS = {};
+  Object.keys(TEAMS_ROSE).forEach(function(team) {
+    var _lv = localStorage.getItem('adm_logo_tsm_it_'+team) || localStorage.getItem('adm_logo_tsm_it_'+team.toUpperCase());
+    if (_lv) FANTASY_LOGOS[team] = typeof _normalizeImgUrl==='function' ? _normalizeImgUrl(_lv) : _lv;
+  });
   window._currentLeagueCalKey = 'tsm_calendar_it';
   window._currentLeagueStaKey = 'tsm_stadio_it';
   window.currentLeagueKey = 'tsm_it';
@@ -10383,7 +10392,8 @@ function tsmBuildTeamsGrid() {
   if (!tsmCurrentTeam || list.indexOf(tsmCurrentTeam) < 0) tsmCurrentTeam = list[0];
   g.innerHTML = list.map(function(n) {
     var a = n === tsmCurrentTeam;
-    return '<div onclick="tsmSelectTeam(this,\'' + n + '\')" style="padding:8px 4px;background:' + (a?'rgba(16,185,129,.12)':'var(--card)') + ';border:1px solid ' + (a?'rgba(16,185,129,.4)':'var(--border)') + ';border-radius:8px;text-align:center;cursor:pointer;font-size:11px;font-weight:700;color:' + (a?'#10b981':'var(--text2)') + ';transition:all .2s">' + _teamCase(n) + '</div>';
+    var _fl = (n!=='INFERMERIA' && typeof FANTASY_LOGOS!=='undefined' && FANTASY_LOGOS[n]) ? '<img src="'+FANTASY_LOGOS[n]+'" style="width:24px;height:24px;object-fit:contain;display:block;margin:0 auto 3px" onerror="this.style.display=\'none\'">' : '';
+    return '<div onclick="tsmSelectTeam(this,\'' + n + '\')" style="padding:8px 4px;background:' + (a?'rgba(16,185,129,.12)':'var(--card)') + ';border:1px solid ' + (a?'rgba(16,185,129,.4)':'var(--border)') + ';border-radius:8px;text-align:center;cursor:pointer;font-size:11px;font-weight:700;color:' + (a?'#10b981':'var(--text2)') + ';transition:all .2s">' + _fl + _teamCase(n) + '</div>';
   }).join('');
 }
 
