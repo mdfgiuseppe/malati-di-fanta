@@ -1,4 +1,4 @@
-﻿<!-- build:20260516_1528 -->
+﻿<!-- build:20260516_1539 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260516_1528';
+  var BUILD='20260516_1539';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -6485,6 +6485,7 @@ function showAdminSection(id, el) {
   });
   var _cw=document.getElementById('adm-sp-catalog-wrap'); if(_cw) _cw.style.display='none';
   window._admCatalogActiveTorneo='';
+  var _nsw=document.getElementById('adm-rose-new-sq-wrap'); if(_nsw) _nsw.style.display='none';
   if (id==='tornei') admRenderTornei();
   if (id==='utenti') {
     // Carica utenti da GSheets prima di renderizzare
@@ -7900,16 +7901,19 @@ function admRenderRosaEditor(players, torneoKey, legaKey, squadra) {
   var crSponsor = admCalcCreditiSponsor(torneoKey, legaKey, squadra);
   var crGestione = admGetCreditiGestione(torneoKey, legaKey, squadra);
   // Crediti Attuali = CREDITS_base + (costi_rosa_originale - costi_rosa_attuale) - multe_cr
-  var _crBase = typeof CREDITS!=='undefined' ? (CREDITS[squadra]||CREDITS[squadra.toUpperCase()]||0) : 0;
-  // Snapshot da localStorage (fonte di verità per tutti i tornei)
+  // Crediti base: solo da localStorage per il torneo/lega corrente (mai da CREDITS globale di Slim)
+  var _crBase = 0;
   var _crBaseStored = localStorage.getItem('adm_crediti_base_'+torneoKey+'_'+legaKey);
-  if (_crBaseStored) { try { var _crObj=JSON.parse(_crBaseStored); if(_crObj[squadra]!==undefined) _crBase=_crObj[squadra]; } catch(e){} }
-  // Rosa originale embedded (window._TEAMS_ROSE_IT) per calcolo differenza
-  // Rosa originale: usa la variabile giusta per torneo
+  if (_crBaseStored) { try { var _crObj=JSON.parse(_crBaseStored); if(_crObj[squadra]!==undefined) _crBase=_crObj[squadra]; else if(_crObj[squadra.toUpperCase()]!==undefined) _crBase=_crObj[squadra.toUpperCase()]; } catch(e){} }
+  // Se slim_it e ancora niente in localStorage, usa CREDITS embedded come fallback
+  if (_crBase===0 && torneoKey==='slim' && legaKey==='it' && typeof CREDITS!=='undefined') {
+    _crBase = CREDITS[squadra]||CREDITS[squadra.toUpperCase()]||0;
+  }
+  // Rosa originale: solo per slim e tsm, mai cross-torneo
   var _rosaOrigBase = null;
   if (torneoKey==='tsm' && typeof TSM_ROSE_IT!=='undefined') {
     _rosaOrigBase = TSM_ROSE_IT[squadra] || TSM_ROSE_IT[squadra.toUpperCase()] || null;
-  } else if (window._TEAMS_ROSE_IT) {
+  } else if (torneoKey==='slim' && window._TEAMS_ROSE_IT) {
     _rosaOrigBase = window._TEAMS_ROSE_IT[squadra] || window._TEAMS_ROSE_IT[squadra.toUpperCase()] || null;
   }
   var _rosaOrig = _rosaOrigBase;
