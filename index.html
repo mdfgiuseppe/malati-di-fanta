@@ -1,4 +1,4 @@
-﻿<!-- build:20260516_1717 -->
+﻿<!-- build:20260516_1731 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260516_1717';
+  var BUILD='20260516_1731';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -5104,6 +5104,12 @@ function _teamCase(name) {
 function _findTeamLogo(name) {
   if (!name || name === '—') return '';
   if (typeof FANTASY_LOGOS !== 'undefined' && FANTASY_LOGOS[name]) return FANTASY_LOGOS[name];
+  var _tk = window._currentTourneyKey || 'slim';
+  var _lk = window.currentLeagueKey || 'it';
+  if (_tk !== 'slim' && _tk !== 'tsm') {
+    var _vt = localStorage.getItem('adm_logo_'+_tk+'_'+_lk+'_'+name) || localStorage.getItem('adm_logo_'+_tk+'_'+_lk+'_'+name.toUpperCase());
+    return _vt ? (typeof _normalizeImgUrl === 'function' ? _normalizeImgUrl(_vt) : _vt) : '';
+  }
   var _leghe = ['it','en','de','es','fr','pt','nl','tr'];
   for (var _i = 0; _i < _leghe.length; _i++) {
     var _v = localStorage.getItem('adm_logo_slim_'+_leghe[_i]+'_'+name) || localStorage.getItem('adm_logo_slim_'+_leghe[_i]+'_'+name.toUpperCase());
@@ -10852,6 +10858,12 @@ function gsLogin(username, password, callback) {
 function _findTeamLogo(name) {
   if (!name || name === '—') return '';
   if (typeof FANTASY_LOGOS !== 'undefined' && FANTASY_LOGOS[name]) return FANTASY_LOGOS[name];
+  var _tk = window._currentTourneyKey || 'slim';
+  var _lk = window.currentLeagueKey || 'it';
+  if (_tk !== 'slim' && _tk !== 'tsm') {
+    var _vt = localStorage.getItem('adm_logo_'+_tk+'_'+_lk+'_'+name) || localStorage.getItem('adm_logo_'+_tk+'_'+_lk+'_'+name.toUpperCase());
+    return _vt ? (typeof _normalizeImgUrl === 'function' ? _normalizeImgUrl(_vt) : _vt) : '';
+  }
   var _leghe = ['it','en','de','es','fr','pt','nl','tr'];
   for (var _i = 0; _i < _leghe.length; _i++) {
     var _v = localStorage.getItem('adm_logo_slim_'+_leghe[_i]+'_'+name) || localStorage.getItem('adm_logo_slim_'+_leghe[_i]+'_'+name.toUpperCase());
