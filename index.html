@@ -1,4 +1,4 @@
-<!-- build:20260516_2034 -->
+<!-- build:20260516_2044 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260516_2034';
+  var BUILD='20260516_2044';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -9406,8 +9406,8 @@ function slimRenderClassifica(){
   var res=slimCalcStandings();var s=res.standings;var sorted=res.sorted;var giocate=res.giocate;
   // Costruisce mappa loghi case-insensitive
   var logosRaw={};
-  if(typeof FANTASY_LOGOS!=='undefined') logosRaw=Object.assign(logosRaw,FANTASY_LOGOS);
   if(typeof FANTASY_LOGOS_ALL!=='undefined') logosRaw=Object.assign(logosRaw,FANTASY_LOGOS_ALL);
+  if(typeof FANTASY_LOGOS!=='undefined') logosRaw=Object.assign(logosRaw,FANTASY_LOGOS);
   var logos={};
   Object.keys(logosRaw).forEach(function(k){ logos[k.toUpperCase()]=logosRaw[k]; });
   el.innerHTML=sorted.map(function(team,i){
@@ -14811,8 +14811,8 @@ function slimRenderClassifica(){
   var res=slimCalcStandings();var s=res.standings;var sorted=res.sorted;var giocate=res.giocate;
   // Costruisce mappa loghi case-insensitive
   var logosRaw={};
-  if(typeof FANTASY_LOGOS!=='undefined') logosRaw=Object.assign(logosRaw,FANTASY_LOGOS);
   if(typeof FANTASY_LOGOS_ALL!=='undefined') logosRaw=Object.assign(logosRaw,FANTASY_LOGOS_ALL);
+  if(typeof FANTASY_LOGOS!=='undefined') logosRaw=Object.assign(logosRaw,FANTASY_LOGOS);
   var logos={};
   Object.keys(logosRaw).forEach(function(k){ logos[k.toUpperCase()]=logosRaw[k]; });
   el.innerHTML=sorted.map(function(team,i){
