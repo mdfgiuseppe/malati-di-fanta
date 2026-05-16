@@ -1,4 +1,4 @@
-<!-- build:20260516_2158 -->
+<!-- build:20260516_2203 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260516_2158';
+  var BUILD='20260516_2203';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -9218,7 +9218,14 @@ function enterLeague(tournament, leagueKey) {
     window._currentLeagueStaKey = 'slim_stadio';
     var teamList = Object.keys(TEAMS_ROSE).sort();
     currentTeam = teamList.length > 0 ? teamList[0] : 'SALERNITANA';
-    FANTASY_LOGOS = window._FANTASY_LOGOS_IT || {};
+    FANTASY_LOGOS = window._FANTASY_LOGOS_IT ? Object.assign({}, window._FANTASY_LOGOS_IT) : {};
+    var _lver=localStorage.getItem('adm_logo_ver_slim_it')||'1';
+    Object.keys(TEAMS_ROSE).forEach(function(team) {
+      var _lv=localStorage.getItem('adm_logo_slim_it_'+team)||localStorage.getItem('adm_logo_slim_it_'+team.toUpperCase());
+      if(_lv){var _n=typeof _normalizeImgUrl==='function'?_normalizeImgUrl(_lv):_lv;FANTASY_LOGOS[team]=_n+(_n.indexOf('?')>=0?'&':'?')+'_v='+_lver;}
+    });
+    var _infLvIT=localStorage.getItem('adm_logo_slim_it_INFERMERIA');
+    if(_infLvIT){var _nIT=typeof _normalizeImgUrl==='function'?_normalizeImgUrl(_infLvIT):_infLvIT;FANTASY_LOGOS['INFERMERIA']=_nIT+(_nIT.indexOf('?')>=0?'&':'?')+'_v='+_lver;}
   }
   
   showPage('lega');
@@ -14657,7 +14664,14 @@ function enterLeague(tournament, leagueKey) {
     window._currentLeagueStaKey = 'slim_stadio';
     var teamList = Object.keys(TEAMS_ROSE).sort();
     currentTeam = teamList.length > 0 ? teamList[0] : 'SALERNITANA';
-    FANTASY_LOGOS = window._FANTASY_LOGOS_IT || {};
+    FANTASY_LOGOS = window._FANTASY_LOGOS_IT ? Object.assign({}, window._FANTASY_LOGOS_IT) : {};
+    var _lver=localStorage.getItem('adm_logo_ver_slim_it')||'1';
+    Object.keys(TEAMS_ROSE).forEach(function(team) {
+      var _lv=localStorage.getItem('adm_logo_slim_it_'+team)||localStorage.getItem('adm_logo_slim_it_'+team.toUpperCase());
+      if(_lv){var _n=typeof _normalizeImgUrl==='function'?_normalizeImgUrl(_lv):_lv;FANTASY_LOGOS[team]=_n+(_n.indexOf('?')>=0?'&':'?')+'_v='+_lver;}
+    });
+    var _infLvIT=localStorage.getItem('adm_logo_slim_it_INFERMERIA');
+    if(_infLvIT){var _nIT=typeof _normalizeImgUrl==='function'?_normalizeImgUrl(_infLvIT):_infLvIT;FANTASY_LOGOS['INFERMERIA']=_nIT+(_nIT.indexOf('?')>=0?'&':'?')+'_v='+_lver;}
   }
   
   showPage('lega');
