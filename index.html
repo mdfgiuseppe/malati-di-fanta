@@ -1,4 +1,4 @@
-﻿<!-- build:20260516_1120 -->
+﻿<!-- build:20260516_1130 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260516_1120';
+  var BUILD='20260516_1130';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -3408,7 +3408,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
       <div style="font-family:'Bebas Neue';font-size:20px;letter-spacing:2px;margin:24px 0 10px">Catalogo <span style="color:#ef4444">Sponsor</span></div>
       <div style="font-size:11px;color:var(--text2);margin-bottom:14px">Modifica il catalogo degli sponsor disponibili per l'assegnazione alle squadre</div>
       <div style="display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap;align-items:center">
-        <select id="adm-cat-torneo" style="padding:8px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;outline:none">
+        <select id="adm-cat-torneo" onchange="admCatTorneoChange()" style="padding:8px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;outline:none">
           <option value="">-- Seleziona Torneo --</option>
         </select>
         <button onclick="admRenderSponsorCatalog('maglia')" style="padding:6px 14px;background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.2);color:#3b82f6;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer">👕 Maglia</button>
@@ -5560,8 +5560,19 @@ function admGetCatalogForTorneo(torneoKey) {
   var key = 'admin_sponsor_catalog_'+torneoKey;
   var stored = localStorage.getItem(key);
   if (stored) return JSON.parse(stored);
-  // Clona il catalogo base come punto di partenza
   return JSON.parse(JSON.stringify(SPONSOR_CATALOG));
+}
+
+function admCatTorneoChange() {
+  var sel = document.getElementById('adm-cat-torneo');
+  var torneoKey = sel ? sel.value : '';
+  var body = document.getElementById('adm-sponsor-catalog-body');
+  if (!torneoKey) { if(body) body.innerHTML=''; return; }
+  var cat = admGetCatalogForTorneo(torneoKey);
+  SPONSOR_CATALOG.maglia = cat.maglia || [];
+  SPONSOR_CATALOG.social = cat.social || [];
+  SPONSOR_CATALOG.stadio = cat.stadio || [];
+  if(body) body.innerHTML='<div style="padding:16px;color:var(--text2);font-size:12px">Torneo caricato. Seleziona una categoria.</div>';
 }
 
 function admRenderSponsorCatalog(tipo) {
@@ -5569,8 +5580,7 @@ function admRenderSponsorCatalog(tipo) {
   var sel = document.getElementById('adm-cat-torneo');
   var torneoKey = sel ? sel.value : '';
   if (!torneoKey) { el.innerHTML='<div style="padding:16px;color:var(--text2);font-size:12px">Seleziona prima un torneo.</div>'; return; }
-  var catalog = admGetCatalogForTorneo(torneoKey);
-  var items = catalog[tipo] || [];
+  var items = SPONSOR_CATALOG[tipo] || [];
   var colore = tipo==='maglia'?'#3b82f6':tipo==='social'?'#8b5cf6':'#f59e0b';
   var h = '<div class="card" style="padding:0;overflow:hidden">'
     +'<div style="padding:10px 14px;background:var(--bg2);border-bottom:1px solid var(--border);font-size:11px;font-weight:800;text-transform:uppercase;color:'+colore+'">'
@@ -5654,16 +5664,10 @@ function admAddCatalogItem(el) {
 function admSaveCatalogEl(el) {
   var sel = document.getElementById('adm-cat-torneo');
   var torneoKey = sel ? sel.value : '';
-  if (torneoKey) {
-    var cat = admGetCatalogForTorneo(torneoKey);
-    var tipo = el.dataset.tipo;
-    // Raccoglie valori aggiornati dal DOM (già aggiornati da admUpdateCatalogEl)
-    localStorage.setItem('admin_sponsor_catalog_'+torneoKey, JSON.stringify(cat));
-  gsSaveKey('admin_sponsor_catalog_'+torneoKey, JSON.stringify(cat));
-  }
-  localStorage.setItem('admin_sponsor_catalog', JSON.stringify(SPONSOR_CATALOG));
-  gsSaveKey('admin_sponsor_catalog', JSON.stringify(SPONSOR_CATALOG));
-  gsSaveKey('admin_sponsor_catalog', localStorage.getItem('admin_sponsor_catalog'));
+  if (!torneoKey) return;
+  var data = JSON.stringify(SPONSOR_CATALOG);
+  localStorage.setItem('admin_sponsor_catalog_'+torneoKey, data);
+  gsSaveKey('admin_sponsor_catalog_'+torneoKey, data);
   var msg=document.createElement('div');msg.textContent='✅ Catalogo sponsor salvato';msg.style.cssText='position:fixed;top:70px;right:20px;background:#10b981;color:#fff;padding:8px 16px;border-radius:8px;font-weight:700;font-size:12px;z-index:9999';document.body.appendChild(msg);setTimeout(function(){msg.remove();},2000);
 }
 
@@ -11196,8 +11200,19 @@ function admGetCatalogForTorneo(torneoKey) {
   var key = 'admin_sponsor_catalog_'+torneoKey;
   var stored = localStorage.getItem(key);
   if (stored) return JSON.parse(stored);
-  // Clona il catalogo base come punto di partenza
   return JSON.parse(JSON.stringify(SPONSOR_CATALOG));
+}
+
+function admCatTorneoChange() {
+  var sel = document.getElementById('adm-cat-torneo');
+  var torneoKey = sel ? sel.value : '';
+  var body = document.getElementById('adm-sponsor-catalog-body');
+  if (!torneoKey) { if(body) body.innerHTML=''; return; }
+  var cat = admGetCatalogForTorneo(torneoKey);
+  SPONSOR_CATALOG.maglia = cat.maglia || [];
+  SPONSOR_CATALOG.social = cat.social || [];
+  SPONSOR_CATALOG.stadio = cat.stadio || [];
+  if(body) body.innerHTML='<div style="padding:16px;color:var(--text2);font-size:12px">Torneo caricato. Seleziona una categoria.</div>';
 }
 
 function admRenderSponsorCatalog(tipo) {
@@ -11205,8 +11220,7 @@ function admRenderSponsorCatalog(tipo) {
   var sel = document.getElementById('adm-cat-torneo');
   var torneoKey = sel ? sel.value : '';
   if (!torneoKey) { el.innerHTML='<div style="padding:16px;color:var(--text2);font-size:12px">Seleziona prima un torneo.</div>'; return; }
-  var catalog = admGetCatalogForTorneo(torneoKey);
-  var items = catalog[tipo] || [];
+  var items = SPONSOR_CATALOG[tipo] || [];
   var colore = tipo==='maglia'?'#3b82f6':tipo==='social'?'#8b5cf6':'#f59e0b';
   var h = '<div class="card" style="padding:0;overflow:hidden">'
     +'<div style="padding:10px 14px;background:var(--bg2);border-bottom:1px solid var(--border);font-size:11px;font-weight:800;text-transform:uppercase;color:'+colore+'">'
@@ -11290,16 +11304,10 @@ function admAddCatalogItem(el) {
 function admSaveCatalogEl(el) {
   var sel = document.getElementById('adm-cat-torneo');
   var torneoKey = sel ? sel.value : '';
-  if (torneoKey) {
-    var cat = admGetCatalogForTorneo(torneoKey);
-    var tipo = el.dataset.tipo;
-    // Raccoglie valori aggiornati dal DOM (già aggiornati da admUpdateCatalogEl)
-    localStorage.setItem('admin_sponsor_catalog_'+torneoKey, JSON.stringify(cat));
-  gsSaveKey('admin_sponsor_catalog_'+torneoKey, JSON.stringify(cat));
-  }
-  localStorage.setItem('admin_sponsor_catalog', JSON.stringify(SPONSOR_CATALOG));
-  gsSaveKey('admin_sponsor_catalog', JSON.stringify(SPONSOR_CATALOG));
-  gsSaveKey('admin_sponsor_catalog', localStorage.getItem('admin_sponsor_catalog'));
+  if (!torneoKey) return;
+  var data = JSON.stringify(SPONSOR_CATALOG);
+  localStorage.setItem('admin_sponsor_catalog_'+torneoKey, data);
+  gsSaveKey('admin_sponsor_catalog_'+torneoKey, data);
   var msg=document.createElement('div');msg.textContent='✅ Catalogo sponsor salvato';msg.style.cssText='position:fixed;top:70px;right:20px;background:#10b981;color:#fff;padding:8px 16px;border-radius:8px;font-weight:700;font-size:12px;z-index:9999';document.body.appendChild(msg);setTimeout(function(){msg.remove();},2000);
 }
 
