@@ -1,4 +1,4 @@
-<!-- build:20260516_2231 -->
+<!-- build:20260516_2237 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260516_2231';
+  var BUILD='20260516_2237';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -5799,7 +5799,6 @@ function admGetCoppeConfig(torneoKey) {
     {key:'conf', label:'Conference League',   color:'#10b981', rounds:['Ottavi','Quarti','Semifinali','Finale'], teams:16},
     {key:'sc',   label:'European Supercup',   color:'#8b5cf6', rounds:['Finale'], teams:2}
   ];
-  if (torneoKey === 'tsm') return [];
   var stored = localStorage.getItem('adm_coppe_config_'+torneoKey);
   if (!stored) return torneoKey==='slim' ? _default4 : [];
   try { return JSON.parse(stored); } catch(e) { return torneoKey==='slim' ? _default4 : []; }
@@ -9805,78 +9804,52 @@ function initCoppaLogos() {
   var _cardMap = {cl:'coppa-card-cl', el:'coppa-card-el', conf:'coppa-card-conf', sc:'coppa-card-sc'};
   var _hubEl = document.getElementById('coppe-hub');
   var _noConfigEl = document.getElementById('coppe-no-config');
-
-  if (_cTk === 'slim') {
-    // SLIM: 4 card statiche con logo hardcoded
-    var _map = {cl:'logo-cl', el:'logo-el', conf:'logo-conf', sc:'logo-sc'};
-    Object.keys(_map).forEach(function(k) {
-      var img = document.getElementById(_map[k]); if(!img) return;
-      var c = localStorage.getItem('adm_img_coppa_'+k)||localStorage.getItem('adm_img_'+k)||'';
-      if(c) img.src=typeof _normalizeImgUrl==='function'?_normalizeImgUrl(c):c;
-      else if(hubLogos[k]) img.src=hubLogos[k]; else img.src='';
-    });
-    ['cl','el','conf','sc'].forEach(function(k) {
-      var s=localStorage.getItem('adm_coppa_data_slim_'+k)||localStorage.getItem('adm_coppa_data_slim_'+k);
-      if(s){try{var p=JSON.parse(s);if(typeof COPPA_DATA!=='undefined')COPPA_DATA[k]=p;}catch(e){}}
-      else{if(typeof COPPA_DATA!=='undefined')COPPA_DATA[k]={};}
-      if(typeof COPPA_TROPHIES!=='undefined'){var r=localStorage.getItem('adm_coppa_trofeo_slim_'+k)||'';COPPA_TROPHIES[k]=(r&&typeof _normalizeImgUrl==='function')?_normalizeImgUrl(r):r;}
-    });
-    ['cl','el','conf','sc'].forEach(function(k){var c=document.getElementById(_cardMap[k]);if(c)c.style.display='';});
-    if(_hubEl){_hubEl.style.display='grid';}
-    if(_noConfigEl)_noConfigEl.style.display='none';
-    if(typeof gsCall==='function'&&typeof GS_URL!=='undefined'&&GS_URL){
-      ['cl','el','conf','sc'].forEach(function(k){(function(_k){var _s='adm_coppa_trofeo_slim_'+_k;if(!localStorage.getItem(_s)){gsCall({action:'getKey',key:_s},function(e,r){if(!e&&r&&r.ok&&r.data){var v=typeof _normalizeImgUrl==='function'?_normalizeImgUrl(r.data):r.data;localStorage.setItem(_s,v);if(typeof COPPA_TROPHIES!=='undefined')COPPA_TROPHIES[_k]=v;}});};})(k);});
-    }
-
-  } else if (_cTk === 'tsm') {
-    // TSM: nessuna coppa
-    ['cl','el','conf','sc'].forEach(function(k){var c=document.getElementById(_cardMap[k]);if(c)c.style.display='none';});
+  var _isSlimLike = (_cTk === 'slim' || _cTk === 'tsm');
+  // Nascondi le 4 card statiche — usiamo rendering dinamico per tutti i tornei
+  ['cl','el','conf','sc'].forEach(function(k){var c=document.getElementById(_cardMap[k]);if(c)c.style.display='none';});
+  var _cfg = typeof admGetCoppeConfig==='function' ? admGetCoppeConfig(_cTk) : [];
+  // Popola COPPA_CONFIG, COPPA_DATA, COPPA_TROPHIES
+  _cfg.forEach(function(c) {
+    if(typeof COPPA_CONFIG!=='undefined') COPPA_CONFIG[c.key]={label:c.label,color:c.color||'#6b7280',rounds:c.rounds||['Ottavi','Quarti','Semifinali','Finale'],teams:c.teams||16};
+    var s=localStorage.getItem('adm_coppa_data_'+_cTk+'_'+c.key);
+    if(s){try{var p=JSON.parse(s);if(typeof COPPA_DATA!=='undefined')COPPA_DATA[c.key]=p;}catch(e){}}
+    else{if(typeof COPPA_DATA!=='undefined')COPPA_DATA[c.key]={};}
+    if(typeof COPPA_TROPHIES!=='undefined'){var r=localStorage.getItem('adm_coppa_trofeo_'+_cTk+'_'+c.key)||'';COPPA_TROPHIES[c.key]=(r&&typeof _normalizeImgUrl==='function')?_normalizeImgUrl(r):r;}
+  });
+  if(!_cfg.length){
     if(_hubEl)_hubEl.style.display='none';
     if(_noConfigEl)_noConfigEl.style.display='block';
-
   } else {
-    // ALTRI TORNEI (ILM, ecc.): card dinamiche basate su adm_coppe_config_{_cTk}
-    ['cl','el','conf','sc'].forEach(function(k){var c=document.getElementById(_cardMap[k]);if(c)c.style.display='none';});
-    var _cfg = typeof admGetCoppeConfig==='function' ? admGetCoppeConfig(_cTk) : [];
-    // Popola COPPA_CONFIG, COPPA_DATA, COPPA_TROPHIES per le coppe dinamiche
-    _cfg.forEach(function(c) {
-      if(typeof COPPA_CONFIG!=='undefined') COPPA_CONFIG[c.key]={label:c.label,color:c.color||'#6b7280',rounds:c.rounds||['Ottavi','Quarti','Semifinali','Finale'],teams:c.teams||16};
-      var s=localStorage.getItem('adm_coppa_data_'+_cTk+'_'+c.key);
-      if(s){try{var p=JSON.parse(s);if(typeof COPPA_DATA!=='undefined')COPPA_DATA[c.key]=p;}catch(e){}}
-      else{if(typeof COPPA_DATA!=='undefined')COPPA_DATA[c.key]={};}
-      if(typeof COPPA_TROPHIES!=='undefined'){var r=localStorage.getItem('adm_coppa_trofeo_'+_cTk+'_'+c.key)||'';COPPA_TROPHIES[c.key]=(r&&typeof _normalizeImgUrl==='function')?_normalizeImgUrl(r):r;}
+    var _h='';
+    _cfg.forEach(function(c){
+      var _logoKey=_isSlimLike?('adm_img_coppa_'+c.key):('adm_img_coppa_'+_cTk+'_'+c.key);
+      var _logo=localStorage.getItem(_logoKey)||localStorage.getItem('adm_img_'+c.key)||'';
+      if(!_logo&&hubLogos[c.key])_logo=hubLogos[c.key];
+      if(_logo&&typeof _normalizeImgUrl==='function')_logo=_normalizeImgUrl(_logo);
+      var _col=c.color||'#6b7280';
+      _h+='<div onclick="openCoppa(\''+c.key+'\')" style="background:var(--card);border:2px solid var(--border);border-radius:18px;padding:24px 16px;text-align:center;cursor:pointer;transition:all .25s" '
+        +'onmouseover="this.style.borderColor=\''+_col+'\';this.style.transform=\'translateY(-4px)\';this.style.boxShadow=\'0 8px 30px '+_col+'33\'" '
+        +'onmouseout="this.style.borderColor=\'\';this.style.transform=\'\';this.style.boxShadow=\'\'">'
+        +'<img src="'+_logo+'" onerror="this.style.display=\'none\'" style="width:64px;height:64px;object-fit:contain;margin-bottom:8px" id="logo-dyn-'+c.key+'">'
+        +'<div style="font-family:\'Bebas Neue\',sans-serif;font-size:18px;letter-spacing:1px;color:'+_col+';margin-bottom:4px">'+c.label+'</div>'
+        +'<div style="font-size:9px;font-weight:700;color:'+_col+';letter-spacing:1px;text-transform:uppercase">Vedi tabellone →</div>'
+        +'</div>';
     });
-    if(!_cfg.length){
-      if(_hubEl)_hubEl.style.display='none';
-      if(_noConfigEl)_noConfigEl.style.display='block';
-    } else {
-      var _h='';
-      _cfg.forEach(function(c){
-        var _logo=localStorage.getItem('adm_img_coppa_'+_cTk+'_'+c.key)||'';
-        if(_logo&&typeof _normalizeImgUrl==='function')_logo=_normalizeImgUrl(_logo);
-        var _col=c.color||'#6b7280';
-        _h+='<div onclick="openCoppa(\''+c.key+'\')" style="background:var(--card);border:2px solid var(--border);border-radius:18px;padding:24px 16px;text-align:center;cursor:pointer;transition:all .25s" '
-          +'onmouseover="this.style.borderColor=\''+_col+'\';this.style.transform=\'translateY(-4px)\';this.style.boxShadow=\'0 8px 30px '+_col+'33\'" '
-          +'onmouseout="this.style.borderColor=\'\';this.style.transform=\'\';this.style.boxShadow=\'\'">'
-          +'<img src="'+_logo+'" onerror="this.style.display=\'none\'" style="width:64px;height:64px;object-fit:contain;margin-bottom:8px" id="logo-dyn-'+c.key+'">'
-          +'<div style="font-family:\'Bebas Neue\',sans-serif;font-size:18px;letter-spacing:1px;color:'+_col+';margin-bottom:4px">'+c.label+'</div>'
-          +'<div style="font-size:9px;font-weight:700;color:'+_col+';letter-spacing:1px;text-transform:uppercase">Vedi tabellone →</div>'
-          +'</div>';
-      });
-      if(_hubEl){_hubEl.innerHTML=_h;_hubEl.style.display='grid';}
-      if(_noConfigEl)_noConfigEl.style.display='none';
-    }
-    // GSheets loading
-    if(typeof gsLoadKey==='function'&&!window['_coppaGsLoaded_'+_cTk]){
-      window['_coppaGsLoaded_'+_cTk]=true;
-      var _ck='adm_coppe_config_'+_cTk;
-      if(!localStorage.getItem(_ck))gsLoadKey(_ck,function(v){if(v){localStorage.setItem(_ck,typeof v==='string'?v:JSON.stringify(v));if(typeof initCoppaLogos==='function')initCoppaLogos();}});
-      _cfg.forEach(function(c){(function(_k){
-        var _dk='adm_coppa_data_'+_cTk+'_'+_k,_lk='adm_img_coppa_'+_cTk+'_'+_k;
-        if(!localStorage.getItem(_dk))gsLoadKey(_dk,function(v){if(v)localStorage.setItem(_dk,typeof v==='string'?v:JSON.stringify(v));});
-        if(!localStorage.getItem(_lk))gsLoadKey(_lk,function(v){if(v)localStorage.setItem(_lk,v);});
-      })(c.key);});
-    }
+    if(_hubEl){_hubEl.innerHTML=_h;_hubEl.style.display='grid';}
+    if(_noConfigEl)_noConfigEl.style.display='none';
+  }
+  // GSheets: slim usa legacy trofei; altri caricano config e dati se mancanti
+  if(_cTk==='slim'&&typeof gsCall==='function'&&typeof GS_URL!=='undefined'&&GS_URL){
+    ['cl','el','conf','sc'].forEach(function(k){(function(_k){var _s='adm_coppa_trofeo_slim_'+_k;if(!localStorage.getItem(_s)){gsCall({action:'getKey',key:_s},function(e,r){if(!e&&r&&r.ok&&r.data){var v=typeof _normalizeImgUrl==='function'?_normalizeImgUrl(r.data):r.data;localStorage.setItem(_s,v);if(typeof COPPA_TROPHIES!=='undefined')COPPA_TROPHIES[_k]=v;}});};})(k);});
+  } else if(!_isSlimLike&&typeof gsLoadKey==='function'&&!window['_coppaGsLoaded_'+_cTk]){
+    window['_coppaGsLoaded_'+_cTk]=true;
+    var _ck='adm_coppe_config_'+_cTk;
+    if(!localStorage.getItem(_ck))gsLoadKey(_ck,function(v){if(v){localStorage.setItem(_ck,typeof v==='string'?v:JSON.stringify(v));if(typeof initCoppaLogos==='function')initCoppaLogos();}});
+    _cfg.forEach(function(c){(function(_k){
+      var _dk='adm_coppa_data_'+_cTk+'_'+_k,_lk='adm_img_coppa_'+_cTk+'_'+_k;
+      if(!localStorage.getItem(_dk))gsLoadKey(_dk,function(v){if(v)localStorage.setItem(_dk,typeof v==='string'?v:JSON.stringify(v));});
+      if(!localStorage.getItem(_lk))gsLoadKey(_lk,function(v){if(v)localStorage.setItem(_lk,v);});
+    })(c.key);});
   }
 }
 function openCoppa(key) {
@@ -9887,8 +9860,9 @@ function openCoppa(key) {
   if (!hub || !panel || !title || !content) return;
   hub.style.display = 'none';
   panel.style.display = 'block';
-  var color = COPPA_COLORS[key];
-  title.textContent = COPPA_LABELS[key];
+  var _cfg=(typeof COPPA_CONFIG!=='undefined'&&COPPA_CONFIG[key])?COPPA_CONFIG[key]:{};
+  var color=_cfg.color||(typeof COPPA_COLORS!=='undefined'?COPPA_COLORS[key]:'')||'#f59e0b';
+  title.textContent=_cfg.label||(typeof COPPA_LABELS!=='undefined'?COPPA_LABELS[key]:'')||key;
   title.style.color = color;
   content.innerHTML = buildBracket(key);
 }
@@ -11649,7 +11623,6 @@ function admGetCoppeConfig(torneoKey) {
     {key:'conf', label:'Conference League',   color:'#10b981', rounds:['Ottavi','Quarti','Semifinali','Finale'], teams:16},
     {key:'sc',   label:'European Supercup',   color:'#8b5cf6', rounds:['Finale'], teams:2}
   ];
-  if (torneoKey === 'tsm') return [];
   var stored = localStorage.getItem('adm_coppe_config_'+torneoKey);
   if (!stored) return torneoKey==='slim' ? _default4 : [];
   try { return JSON.parse(stored); } catch(e) { return torneoKey==='slim' ? _default4 : []; }
@@ -15259,78 +15232,52 @@ function initCoppaLogos() {
   var _cardMap = {cl:'coppa-card-cl', el:'coppa-card-el', conf:'coppa-card-conf', sc:'coppa-card-sc'};
   var _hubEl = document.getElementById('coppe-hub');
   var _noConfigEl = document.getElementById('coppe-no-config');
-
-  if (_cTk === 'slim') {
-    // SLIM: 4 card statiche con logo hardcoded
-    var _map = {cl:'logo-cl', el:'logo-el', conf:'logo-conf', sc:'logo-sc'};
-    Object.keys(_map).forEach(function(k) {
-      var img = document.getElementById(_map[k]); if(!img) return;
-      var c = localStorage.getItem('adm_img_coppa_'+k)||localStorage.getItem('adm_img_'+k)||'';
-      if(c) img.src=typeof _normalizeImgUrl==='function'?_normalizeImgUrl(c):c;
-      else if(hubLogos[k]) img.src=hubLogos[k]; else img.src='';
-    });
-    ['cl','el','conf','sc'].forEach(function(k) {
-      var s=localStorage.getItem('adm_coppa_data_slim_'+k)||localStorage.getItem('adm_coppa_data_slim_'+k);
-      if(s){try{var p=JSON.parse(s);if(typeof COPPA_DATA!=='undefined')COPPA_DATA[k]=p;}catch(e){}}
-      else{if(typeof COPPA_DATA!=='undefined')COPPA_DATA[k]={};}
-      if(typeof COPPA_TROPHIES!=='undefined'){var r=localStorage.getItem('adm_coppa_trofeo_slim_'+k)||'';COPPA_TROPHIES[k]=(r&&typeof _normalizeImgUrl==='function')?_normalizeImgUrl(r):r;}
-    });
-    ['cl','el','conf','sc'].forEach(function(k){var c=document.getElementById(_cardMap[k]);if(c)c.style.display='';});
-    if(_hubEl){_hubEl.style.display='grid';}
-    if(_noConfigEl)_noConfigEl.style.display='none';
-    if(typeof gsCall==='function'&&typeof GS_URL!=='undefined'&&GS_URL){
-      ['cl','el','conf','sc'].forEach(function(k){(function(_k){var _s='adm_coppa_trofeo_slim_'+_k;if(!localStorage.getItem(_s)){gsCall({action:'getKey',key:_s},function(e,r){if(!e&&r&&r.ok&&r.data){var v=typeof _normalizeImgUrl==='function'?_normalizeImgUrl(r.data):r.data;localStorage.setItem(_s,v);if(typeof COPPA_TROPHIES!=='undefined')COPPA_TROPHIES[_k]=v;}});};})(k);});
-    }
-
-  } else if (_cTk === 'tsm') {
-    // TSM: nessuna coppa
-    ['cl','el','conf','sc'].forEach(function(k){var c=document.getElementById(_cardMap[k]);if(c)c.style.display='none';});
+  var _isSlimLike = (_cTk === 'slim' || _cTk === 'tsm');
+  // Nascondi le 4 card statiche — usiamo rendering dinamico per tutti i tornei
+  ['cl','el','conf','sc'].forEach(function(k){var c=document.getElementById(_cardMap[k]);if(c)c.style.display='none';});
+  var _cfg = typeof admGetCoppeConfig==='function' ? admGetCoppeConfig(_cTk) : [];
+  // Popola COPPA_CONFIG, COPPA_DATA, COPPA_TROPHIES
+  _cfg.forEach(function(c) {
+    if(typeof COPPA_CONFIG!=='undefined') COPPA_CONFIG[c.key]={label:c.label,color:c.color||'#6b7280',rounds:c.rounds||['Ottavi','Quarti','Semifinali','Finale'],teams:c.teams||16};
+    var s=localStorage.getItem('adm_coppa_data_'+_cTk+'_'+c.key);
+    if(s){try{var p=JSON.parse(s);if(typeof COPPA_DATA!=='undefined')COPPA_DATA[c.key]=p;}catch(e){}}
+    else{if(typeof COPPA_DATA!=='undefined')COPPA_DATA[c.key]={};}
+    if(typeof COPPA_TROPHIES!=='undefined'){var r=localStorage.getItem('adm_coppa_trofeo_'+_cTk+'_'+c.key)||'';COPPA_TROPHIES[c.key]=(r&&typeof _normalizeImgUrl==='function')?_normalizeImgUrl(r):r;}
+  });
+  if(!_cfg.length){
     if(_hubEl)_hubEl.style.display='none';
     if(_noConfigEl)_noConfigEl.style.display='block';
-
   } else {
-    // ALTRI TORNEI (ILM, ecc.): card dinamiche basate su adm_coppe_config_{_cTk}
-    ['cl','el','conf','sc'].forEach(function(k){var c=document.getElementById(_cardMap[k]);if(c)c.style.display='none';});
-    var _cfg = typeof admGetCoppeConfig==='function' ? admGetCoppeConfig(_cTk) : [];
-    // Popola COPPA_CONFIG, COPPA_DATA, COPPA_TROPHIES per le coppe dinamiche
-    _cfg.forEach(function(c) {
-      if(typeof COPPA_CONFIG!=='undefined') COPPA_CONFIG[c.key]={label:c.label,color:c.color||'#6b7280',rounds:c.rounds||['Ottavi','Quarti','Semifinali','Finale'],teams:c.teams||16};
-      var s=localStorage.getItem('adm_coppa_data_'+_cTk+'_'+c.key);
-      if(s){try{var p=JSON.parse(s);if(typeof COPPA_DATA!=='undefined')COPPA_DATA[c.key]=p;}catch(e){}}
-      else{if(typeof COPPA_DATA!=='undefined')COPPA_DATA[c.key]={};}
-      if(typeof COPPA_TROPHIES!=='undefined'){var r=localStorage.getItem('adm_coppa_trofeo_'+_cTk+'_'+c.key)||'';COPPA_TROPHIES[c.key]=(r&&typeof _normalizeImgUrl==='function')?_normalizeImgUrl(r):r;}
+    var _h='';
+    _cfg.forEach(function(c){
+      var _logoKey=_isSlimLike?('adm_img_coppa_'+c.key):('adm_img_coppa_'+_cTk+'_'+c.key);
+      var _logo=localStorage.getItem(_logoKey)||localStorage.getItem('adm_img_'+c.key)||'';
+      if(!_logo&&hubLogos[c.key])_logo=hubLogos[c.key];
+      if(_logo&&typeof _normalizeImgUrl==='function')_logo=_normalizeImgUrl(_logo);
+      var _col=c.color||'#6b7280';
+      _h+='<div onclick="openCoppa(\''+c.key+'\')" style="background:var(--card);border:2px solid var(--border);border-radius:18px;padding:24px 16px;text-align:center;cursor:pointer;transition:all .25s" '
+        +'onmouseover="this.style.borderColor=\''+_col+'\';this.style.transform=\'translateY(-4px)\';this.style.boxShadow=\'0 8px 30px '+_col+'33\'" '
+        +'onmouseout="this.style.borderColor=\'\';this.style.transform=\'\';this.style.boxShadow=\'\'">'
+        +'<img src="'+_logo+'" onerror="this.style.display=\'none\'" style="width:64px;height:64px;object-fit:contain;margin-bottom:8px" id="logo-dyn-'+c.key+'">'
+        +'<div style="font-family:\'Bebas Neue\',sans-serif;font-size:18px;letter-spacing:1px;color:'+_col+';margin-bottom:4px">'+c.label+'</div>'
+        +'<div style="font-size:9px;font-weight:700;color:'+_col+';letter-spacing:1px;text-transform:uppercase">Vedi tabellone →</div>'
+        +'</div>';
     });
-    if(!_cfg.length){
-      if(_hubEl)_hubEl.style.display='none';
-      if(_noConfigEl)_noConfigEl.style.display='block';
-    } else {
-      var _h='';
-      _cfg.forEach(function(c){
-        var _logo=localStorage.getItem('adm_img_coppa_'+_cTk+'_'+c.key)||'';
-        if(_logo&&typeof _normalizeImgUrl==='function')_logo=_normalizeImgUrl(_logo);
-        var _col=c.color||'#6b7280';
-        _h+='<div onclick="openCoppa(\''+c.key+'\')" style="background:var(--card);border:2px solid var(--border);border-radius:18px;padding:24px 16px;text-align:center;cursor:pointer;transition:all .25s" '
-          +'onmouseover="this.style.borderColor=\''+_col+'\';this.style.transform=\'translateY(-4px)\';this.style.boxShadow=\'0 8px 30px '+_col+'33\'" '
-          +'onmouseout="this.style.borderColor=\'\';this.style.transform=\'\';this.style.boxShadow=\'\'">'
-          +'<img src="'+_logo+'" onerror="this.style.display=\'none\'" style="width:64px;height:64px;object-fit:contain;margin-bottom:8px" id="logo-dyn-'+c.key+'">'
-          +'<div style="font-family:\'Bebas Neue\',sans-serif;font-size:18px;letter-spacing:1px;color:'+_col+';margin-bottom:4px">'+c.label+'</div>'
-          +'<div style="font-size:9px;font-weight:700;color:'+_col+';letter-spacing:1px;text-transform:uppercase">Vedi tabellone →</div>'
-          +'</div>';
-      });
-      if(_hubEl){_hubEl.innerHTML=_h;_hubEl.style.display='grid';}
-      if(_noConfigEl)_noConfigEl.style.display='none';
-    }
-    // GSheets loading
-    if(typeof gsLoadKey==='function'&&!window['_coppaGsLoaded_'+_cTk]){
-      window['_coppaGsLoaded_'+_cTk]=true;
-      var _ck='adm_coppe_config_'+_cTk;
-      if(!localStorage.getItem(_ck))gsLoadKey(_ck,function(v){if(v){localStorage.setItem(_ck,typeof v==='string'?v:JSON.stringify(v));if(typeof initCoppaLogos==='function')initCoppaLogos();}});
-      _cfg.forEach(function(c){(function(_k){
-        var _dk='adm_coppa_data_'+_cTk+'_'+_k,_lk='adm_img_coppa_'+_cTk+'_'+_k;
-        if(!localStorage.getItem(_dk))gsLoadKey(_dk,function(v){if(v)localStorage.setItem(_dk,typeof v==='string'?v:JSON.stringify(v));});
-        if(!localStorage.getItem(_lk))gsLoadKey(_lk,function(v){if(v)localStorage.setItem(_lk,v);});
-      })(c.key);});
-    }
+    if(_hubEl){_hubEl.innerHTML=_h;_hubEl.style.display='grid';}
+    if(_noConfigEl)_noConfigEl.style.display='none';
+  }
+  // GSheets: slim usa legacy trofei; altri caricano config e dati se mancanti
+  if(_cTk==='slim'&&typeof gsCall==='function'&&typeof GS_URL!=='undefined'&&GS_URL){
+    ['cl','el','conf','sc'].forEach(function(k){(function(_k){var _s='adm_coppa_trofeo_slim_'+_k;if(!localStorage.getItem(_s)){gsCall({action:'getKey',key:_s},function(e,r){if(!e&&r&&r.ok&&r.data){var v=typeof _normalizeImgUrl==='function'?_normalizeImgUrl(r.data):r.data;localStorage.setItem(_s,v);if(typeof COPPA_TROPHIES!=='undefined')COPPA_TROPHIES[_k]=v;}});};})(k);});
+  } else if(!_isSlimLike&&typeof gsLoadKey==='function'&&!window['_coppaGsLoaded_'+_cTk]){
+    window['_coppaGsLoaded_'+_cTk]=true;
+    var _ck='adm_coppe_config_'+_cTk;
+    if(!localStorage.getItem(_ck))gsLoadKey(_ck,function(v){if(v){localStorage.setItem(_ck,typeof v==='string'?v:JSON.stringify(v));if(typeof initCoppaLogos==='function')initCoppaLogos();}});
+    _cfg.forEach(function(c){(function(_k){
+      var _dk='adm_coppa_data_'+_cTk+'_'+_k,_lk='adm_img_coppa_'+_cTk+'_'+_k;
+      if(!localStorage.getItem(_dk))gsLoadKey(_dk,function(v){if(v)localStorage.setItem(_dk,typeof v==='string'?v:JSON.stringify(v));});
+      if(!localStorage.getItem(_lk))gsLoadKey(_lk,function(v){if(v)localStorage.setItem(_lk,v);});
+    })(c.key);});
   }
 }
 function openCoppa(key) {
@@ -15341,8 +15288,9 @@ function openCoppa(key) {
   if (!hub || !panel || !title || !content) return;
   hub.style.display = 'none';
   panel.style.display = 'block';
-  var color = COPPA_COLORS[key];
-  title.textContent = COPPA_LABELS[key];
+  var _cfg=(typeof COPPA_CONFIG!=='undefined'&&COPPA_CONFIG[key])?COPPA_CONFIG[key]:{};
+  var color=_cfg.color||(typeof COPPA_COLORS!=='undefined'?COPPA_COLORS[key]:'')||'#f59e0b';
+  title.textContent=_cfg.label||(typeof COPPA_LABELS!=='undefined'?COPPA_LABELS[key]:'')||key;
   title.style.color = color;
   content.innerHTML = buildBracket(key);
 }
