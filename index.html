@@ -1,4 +1,4 @@
-﻿<!-- build:20260516_1130 -->
+﻿<!-- build:20260516_1225 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260516_1130';
+  var BUILD='20260516_1225';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -3394,10 +3394,10 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
         <select id="adm-sp-torneo" onchange="admLoadSpLeghe()" style="padding:8px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;outline:none">
           <option value="">-- Seleziona Torneo --</option>
         </select>
-        <select id="adm-sp-lega" onchange="admLoadSpSquadre()" style="padding:8px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;outline:none">
+        <select id="adm-sp-lega" onchange="admLoadSpSquadre()" style="display:none;padding:8px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;outline:none">
           <option value="">-- Seleziona Lega --</option>
         </select>
-        <select id="adm-sp-squadra" onchange="admLoadSpBody()" style="padding:8px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;outline:none">
+        <select id="adm-sp-squadra" onchange="admLoadSpBody()" style="display:none;padding:8px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;outline:none">
           <option value="">-- Seleziona Squadra --</option>
         </select>
       </div>
@@ -6474,6 +6474,10 @@ function showAdminSection(id, el) {
     var s = document.getElementById(sid);
     if(s) { s.innerHTML='<option value="">-- Seleziona --</option>'; s.selectedIndex=0; }
   });
+  // Nasconde i select dipendenti di sponsor (visibili solo dopo selezione)
+  ['adm-sp-lega','adm-sp-squadra'].forEach(function(sid){
+    var s=document.getElementById(sid); if(s) s.style.display='none';
+  });
   if (id==='tornei') admRenderTornei();
   if (id==='utenti') {
     // Carica utenti da GSheets prima di renderizzare
@@ -8399,20 +8403,26 @@ function admSaveModulistica() {
 function admLoadSpLeghe() {
   var torneoKey = document.getElementById('adm-sp-torneo').value;
   var sel = document.getElementById('adm-sp-lega');
+  var selSq = document.getElementById('adm-sp-squadra');
   sel.innerHTML = '<option value="">-- Seleziona Lega --</option>';
+  selSq.innerHTML = '<option value="">-- Seleziona Squadra --</option>';
+  selSq.style.display = 'none';
+  document.getElementById('adm-sp-body').innerHTML = '';
+  if (!torneoKey) { sel.style.display='none'; return; }
   var t = ADMIN_TORNEI.find(function(x){ return x.key===torneoKey; });
   if (t) t.leghe.slice().sort(function(a,b){return a.label.localeCompare(b.label);}).forEach(function(l){ var o=document.createElement('option');o.value=l.key;o.textContent=l.label;sel.appendChild(o); });
-  document.getElementById('adm-sp-squadra').innerHTML='<option value="">-- Seleziona Squadra --</option>';
-  document.getElementById('adm-sp-body').innerHTML='';
+  sel.style.display = 'inline-block';
 }
 function admLoadSpSquadre() {
   var torneoKey = document.getElementById('adm-sp-torneo').value;
   var legaKey = document.getElementById('adm-sp-lega').value;
   var sel = document.getElementById('adm-sp-squadra');
   sel.innerHTML = '<option value="">-- Seleziona Squadra --</option>';
+  document.getElementById('adm-sp-body').innerHTML = '';
+  if (!legaKey) { sel.style.display='none'; return; }
   var teams = admGetTeams(torneoKey, legaKey).slice().sort(function(a,b){return a.localeCompare(b);});
   teams.forEach(function(t){ var o=document.createElement('option');o.value=t;o.textContent=t;sel.appendChild(o); });
-  document.getElementById('adm-sp-body').innerHTML='';
+  sel.style.display = 'inline-block';
 }
 function admLoadSpBody() {
   var torneoKey = document.getElementById('adm-sp-torneo').value;
@@ -13429,20 +13439,26 @@ function admSaveCalGiornata(t,l,g) {
 function admLoadSpLeghe() {
   var torneoKey = document.getElementById('adm-sp-torneo').value;
   var sel = document.getElementById('adm-sp-lega');
+  var selSq = document.getElementById('adm-sp-squadra');
   sel.innerHTML = '<option value="">-- Seleziona Lega --</option>';
+  selSq.innerHTML = '<option value="">-- Seleziona Squadra --</option>';
+  selSq.style.display = 'none';
+  document.getElementById('adm-sp-body').innerHTML = '';
+  if (!torneoKey) { sel.style.display='none'; return; }
   var t = ADMIN_TORNEI.find(function(x){ return x.key===torneoKey; });
   if (t) t.leghe.slice().sort(function(a,b){return a.label.localeCompare(b.label);}).forEach(function(l){ var o=document.createElement('option');o.value=l.key;o.textContent=l.label;sel.appendChild(o); });
-  document.getElementById('adm-sp-squadra').innerHTML='<option value="">-- Seleziona Squadra --</option>';
-  document.getElementById('adm-sp-body').innerHTML='';
+  sel.style.display = 'inline-block';
 }
 function admLoadSpSquadre() {
   var torneoKey = document.getElementById('adm-sp-torneo').value;
   var legaKey = document.getElementById('adm-sp-lega').value;
   var sel = document.getElementById('adm-sp-squadra');
   sel.innerHTML = '<option value="">-- Seleziona Squadra --</option>';
+  document.getElementById('adm-sp-body').innerHTML = '';
+  if (!legaKey) { sel.style.display='none'; return; }
   var teams = admGetTeams(torneoKey, legaKey).slice().sort(function(a,b){return a.localeCompare(b);});
   teams.forEach(function(t){ var o=document.createElement('option');o.value=t;o.textContent=t;sel.appendChild(o); });
-  document.getElementById('adm-sp-body').innerHTML='';
+  sel.style.display = 'inline-block';
 }
 function admLoadSpBody() {
   var torneoKey = document.getElementById('adm-sp-torneo').value;
