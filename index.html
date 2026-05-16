@@ -1,4 +1,4 @@
-<!-- build:20260516_1941 -->
+<!-- build:20260516_1947 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260516_1941';
+  var BUILD='20260516_1947';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -5882,12 +5882,13 @@ function admSaveCoppaTrofeo(el) {
 }
 
 function admEditCoppaLogo(torneoKey, coppaKey) {
-  var current = localStorage.getItem('adm_img_coppa_'+coppaKey) || '';
+  var _isSlimLike = (torneoKey === 'slim' || torneoKey === 'tsm');
+  var storeKey = _isSlimLike ? 'adm_img_coppa_'+coppaKey : 'adm_img_coppa_'+torneoKey+'_'+coppaKey;
+  var current = localStorage.getItem(storeKey) || '';
   var url = prompt('URL Logo Coppa:', current);
   if (url === null) return;
   url = url.trim();
   if (typeof _normalizeImgUrl === 'function') url = _normalizeImgUrl(url);
-  var storeKey = 'adm_img_coppa_'+coppaKey;
   if (url) { localStorage.setItem(storeKey, url); gsSaveKey(storeKey, url); }
   else { localStorage.removeItem(storeKey); gsSaveKey(storeKey, ''); }
   if (typeof initCoppaLogos === 'function') initCoppaLogos();
@@ -5985,11 +5986,11 @@ function admLoadCoppaEditor() {
     return Math.pow(2, cfg.rounds.length-1-ri);
   });
 
-  // Cerca logo coppa: prima custom Admin, poi COPPA_HUB_LOGOS
-  var coppaLogoSrc = localStorage.getItem('adm_img_coppa_'+coppaKey)
-    || localStorage.getItem('adm_img_'+coppaKey)
-    || ((typeof COPPA_HUB_LOGOS!=='undefined') ? COPPA_HUB_LOGOS[coppaKey] : null)
-    || '';
+  // Cerca logo coppa: prima chiave torneo-specifica, poi slim fallback, poi COPPA_HUB_LOGOS
+  var _bbTk = window._currentTourneyKey || 'slim';
+  var coppaLogoSrc = (_bbTk !== 'slim' && _bbTk !== 'tsm'
+    ? localStorage.getItem('adm_img_coppa_'+_bbTk+'_'+coppaKey) || ''
+    : localStorage.getItem('adm_img_coppa_'+coppaKey) || localStorage.getItem('adm_img_'+coppaKey) || ((typeof COPPA_HUB_LOGOS!=='undefined') ? COPPA_HUB_LOGOS[coppaKey] : null) || '');
 
   var h = '<div class="card" style="padding:0;overflow:hidden">'
     +'<div style="padding:12px 16px;background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px">'
@@ -11675,12 +11676,13 @@ function admSaveCoppaTrofeo(el) {
 }
 
 function admEditCoppaLogo(torneoKey, coppaKey) {
-  var current = localStorage.getItem('adm_img_coppa_'+coppaKey) || '';
+  var _isSlimLike = (torneoKey === 'slim' || torneoKey === 'tsm');
+  var storeKey = _isSlimLike ? 'adm_img_coppa_'+coppaKey : 'adm_img_coppa_'+torneoKey+'_'+coppaKey;
+  var current = localStorage.getItem(storeKey) || '';
   var url = prompt('URL Logo Coppa:', current);
   if (url === null) return;
   url = url.trim();
   if (typeof _normalizeImgUrl === 'function') url = _normalizeImgUrl(url);
-  var storeKey = 'adm_img_coppa_'+coppaKey;
   if (url) { localStorage.setItem(storeKey, url); gsSaveKey(storeKey, url); }
   else { localStorage.removeItem(storeKey); gsSaveKey(storeKey, ''); }
   if (typeof initCoppaLogos === 'function') initCoppaLogos();
@@ -11778,11 +11780,11 @@ function admLoadCoppaEditor() {
     return Math.pow(2, cfg.rounds.length-1-ri);
   });
 
-  // Cerca logo coppa: prima custom Admin, poi COPPA_HUB_LOGOS
-  var coppaLogoSrc = localStorage.getItem('adm_img_coppa_'+coppaKey)
-    || localStorage.getItem('adm_img_'+coppaKey)
-    || ((typeof COPPA_HUB_LOGOS!=='undefined') ? COPPA_HUB_LOGOS[coppaKey] : null)
-    || '';
+  // Cerca logo coppa: prima chiave torneo-specifica, poi slim fallback, poi COPPA_HUB_LOGOS
+  var _bbTk = window._currentTourneyKey || 'slim';
+  var coppaLogoSrc = (_bbTk !== 'slim' && _bbTk !== 'tsm'
+    ? localStorage.getItem('adm_img_coppa_'+_bbTk+'_'+coppaKey) || ''
+    : localStorage.getItem('adm_img_coppa_'+coppaKey) || localStorage.getItem('adm_img_'+coppaKey) || ((typeof COPPA_HUB_LOGOS!=='undefined') ? COPPA_HUB_LOGOS[coppaKey] : null) || '');
 
   var h = '<div class="card" style="padding:0;overflow:hidden">'
     +'<div style="padding:12px 16px;background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px">'
