@@ -1,4 +1,4 @@
-﻿<!-- build:20260516_1659 -->
+﻿<!-- build:20260516_1717 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260516_1659';
+  var BUILD='20260516_1717';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -3651,42 +3651,49 @@ var SLIM_INITIAL_CALENDAR ={"1":{"BARI":"VC","COMO":"VC","JUVENTUS":"PF","MILAN"
 var SLIM_INITIAL_STADIO   = {"BARI": 3, "COMO": 2, "JUVENTUS": 1, "MILAN": 4, "NAPOLI": 5, "PALERMO": 2, "ROMA": 1, "SALERNITANA": 4, "SASSUOLO": 5, "TORINO": 6};
 
 function slimGetCalendar() {
-  // Sincronizza key con currentLeagueKey
+  var _tk = window._currentTourneyKey || 'slim';
+  // Tornei non-slim: usa la chiave impostata da enterLeague, non sovrascrivere
+  if (_tk !== 'slim') {
+    var key = window._currentLeagueCalKey;
+    if (key) { var r = localStorage.getItem(key); if (r) { try { return JSON.parse(r); } catch(e){} } }
+    return {};
+  }
+  // Slim: logica originale
   var lkCur = (typeof currentLeagueKey !== 'undefined' ? currentLeagueKey : 'it');
   window._currentLeagueCalKey = (lkCur === 'it') ? 'slim_calendar' : 'slim_calendar_' + lkCur;
   var key = window._currentLeagueCalKey;
   var lk = key.replace('slim_calendar_','');
   var torneo = 'slim';
-  // Prima cerca la chiave app aggiornata
   var raw = localStorage.getItem(key);
   if (raw) return JSON.parse(raw);
-  // Fallback: cerca in adm_cal_slim_* (dati salvati dall'Admin)
   var admKey = 'adm_cal_'+torneo+'_'+(lk==='slim_calendar'?'it':lk);
   var admRaw = localStorage.getItem(admKey);
   if (admRaw) {
     try {
       var parsed = JSON.parse(admRaw);
       var hasData = Object.values(parsed).some(function(g){ return Object.values(g).some(function(v){return v;}); });
-      if (hasData) {
-        // Copia nella chiave app per uso futuro
-        localStorage.setItem(key, admRaw);
-        return parsed;
-      }
+      if (hasData) { localStorage.setItem(key, admRaw); return parsed; }
     } catch(e) {}
   }
-  // Fallback: dati iniziali dal JSON
   if (key !== 'slim_calendar' && typeof ALL_SEASON_DATA !== 'undefined') {
     if (ALL_SEASON_DATA[lk]) return ALL_SEASON_DATA[lk].calendario || {};
   }
   return SLIM_INITIAL_CALENDAR;
 }
 function slimGetStadio() {
+  var _tk = window._currentTourneyKey || 'slim';
+  // Tornei non-slim: usa la chiave impostata da enterLeague
+  if (_tk !== 'slim') {
+    var key = window._currentLeagueStaKey;
+    if (key) { var r = localStorage.getItem(key); if (r) { try { return JSON.parse(r); } catch(e){} } }
+    return {};
+  }
+  // Slim: logica originale
   var lkCur = (typeof currentLeagueKey !== 'undefined' ? currentLeagueKey : 'it');
   window._currentLeagueStaKey = (lkCur === 'it') ? 'slim_stadio' : 'slim_stadio_' + lkCur;
   var key = window._currentLeagueStaKey;
   var raw = localStorage.getItem(key);
   if (raw) return JSON.parse(raw);
-  // Fallback: dati iniziali dal JSON
   if (key !== 'slim_stadio' && typeof ALL_SEASON_DATA !== 'undefined') {
     var lk = key.replace('slim_stadio_','');
     if (ALL_SEASON_DATA[lk]) return ALL_SEASON_DATA[lk].stadio || {};
@@ -3696,7 +3703,8 @@ function slimGetStadio() {
 function slimCalcStandings() {
   var cal = slimGetCalendar();
   var stadio = slimGetStadio();
-  var multeKey = 'slim_multe_' + (typeof currentLeagueKey !== 'undefined' ? currentLeagueKey : 'it');
+  var _tk = window._currentTourneyKey || 'slim';
+  var multeKey = _tk + '_multe_' + (typeof currentLeagueKey !== 'undefined' ? currentLeagueKey : 'it');
   var multeRaw = localStorage.getItem(multeKey);
   var multeData = multeRaw ? JSON.parse(multeRaw) : {};
   var s = {};
@@ -9175,7 +9183,7 @@ function renderMulte(){
   var el=document.getElementById('slim-multe-body');
   if(!el)return;
   var teams=(typeof SLIM_TEAMS!=='undefined')?SLIM_TEAMS:[];
-  var multeKey='slim_multe_'+(window.currentLeagueKey||'it');
+  var multeKey=(window._currentTourneyKey||'slim')+'_multe_'+(window.currentLeagueKey||'it');
   var stored=localStorage.getItem(multeKey);
   var data=stored?JSON.parse(stored):{};
   var h='';
@@ -9206,8 +9214,14 @@ function showSection(id,el){
   else if(id==='stadio')slimRenderStadio();
   else if(id==='multe')renderMulte();
   else if(id==='coppe'){initCoppaLogos();closeBracket();}
-  else if(id==='modulistica'){ renderModulistica('slim', 'slim-modulistica-body'); }
-  else if(id==='sponsor') {}
+  else if(id==='modulistica'){ renderModulistica(window._currentTourneyKey||'slim', 'slim-modulistica-body'); }
+  else if(id==='sponsor') {
+    var _spTk = window._currentTourneyKey||'slim';
+    if (_spTk !== 'slim' && _spTk !== 'tsm') {
+      var _spEl = document.getElementById('s-sponsor');
+      if (_spEl) _renderSponsorUserBody(_spEl, _spTk, window.currentLeagueKey||'it', SLIM_TEAMS.slice().sort());
+    }
+  }
 }
 var currentTeam='SALERNITANA',currentFilter='ALL';
 function roleBadge(r){var roles=r.split(';').map(function(x){return x.trim();}).filter(function(x){return x;});return roles.map(function(x){var c=ROLE_COLORS[x]||['rgba(107,114,128,.15)','#6b7280'];return'<span style="display:inline-block;font-size:8px;font-weight:800;padding:2px 5px;border-radius:3px;background:'+c[0]+';color:'+c[1]+';margin:1px">'+x+'</span>';}).join('');}
@@ -9392,7 +9406,7 @@ function slimRenderClassifica(){
   }
   if(penNote.length&&el){penNote.forEach(function(t){el.querySelectorAll('tr').forEach(function(row){var nc=row.querySelector('td:nth-child(3) span');if(nc&&nc.textContent===_teamCase(t)){nc.textContent=_teamCase(t)+' *';nc.style.color='#ef4444';}});});}
 }
-function slimRenderCalendario(){var el=document.getElementById('slim-calendario-body');if(!el)return;var cal=slimGetCalendar();var RC={VC:'rgba(16,185,129,.15);color:#10b981',VF:'rgba(16,185,129,.1);color:#34d399',PC:'rgba(59,130,246,.12);color:#3b82f6',PF:'rgba(59,130,246,.08);color:#60a5fa',SC:'rgba(239,68,68,.12);color:#ef4444',SF:'rgba(239,68,68,.08);color:#f87171'};var h='';for(var g=1;g<=SLIM_TOTAL_GIORNATE;g++){var gio=cal[String(g)]||{};var hasData=Object.values(gio).some(function(v){return v;});h+='<div style="margin-bottom:10px"><div style="font-family:\'Bebas Neue\';font-size:13px;letter-spacing:1px;color:var(--text2);padding:6px 10px;background:var(--bg2);border-radius:8px 8px 0 0;border:1px solid var(--border);border-bottom:none;display:flex;justify-content:space-between"><span>Giornata '+g+'</span>'+(hasData?'<span style="color:var(--green);font-size:10px">Completata</span>':'<span style="color:var(--text3);font-size:10px">Da giocare</span>')+'</div><div style="background:var(--card);border:1px solid var(--border);border-radius:0 0 8px 8px;padding:8px 10px;display:grid;grid-template-columns:repeat(2,1fr);gap:4px">';SLIM_TEAMS.forEach(function(team){var res=gio[team]||gio[team.toUpperCase()]||gio[team.toLowerCase()]||'';var st=RC[res]?'background:'+RC[res]:'background:var(--bg2);color:var(--text3)';var _flC=(typeof FANTASY_LOGOS!=='undefined'&&FANTASY_LOGOS[team])?'<img src="'+FANTASY_LOGOS[team]+'" style="width:14px;height:14px;object-fit:contain;margin-right:4px;vertical-align:middle">':'';h+='<div style="display:flex;align-items:center;justify-content:space-between;padding:3px 6px;border-radius:4px"><span style="display:flex;align-items:center;font-size:11px;font-weight:700">'+_flC+_teamCase(team)+'</span><span style="font-size:10px;font-weight:800;padding:1px 6px;border-radius:3px;'+st+'">'+(res||'--')+'</span></div>';});h+='</div></div>';}el.innerHTML=h;}
+function slimRenderCalendario(){var el=document.getElementById('slim-calendario-body');if(!el)return;var cal=slimGetCalendar();var RC={VC:'rgba(16,185,129,.15);color:#10b981',VF:'rgba(16,185,129,.1);color:#34d399',PC:'rgba(59,130,246,.12);color:#3b82f6',PF:'rgba(59,130,246,.08);color:#60a5fa',SC:'rgba(239,68,68,.12);color:#ef4444',SF:'rgba(239,68,68,.08);color:#f87171'};var _tk_rc=window._currentTourneyKey||'slim';var _calNums_rc=Object.keys(cal).map(Number).filter(function(n){return n>0;});var _tgMax=(_tk_rc!=='slim')?(_calNums_rc.length>0?Math.max.apply(null,_calNums_rc):SLIM_TEAMS.length>0?SLIM_TEAMS.length*2-2:30):SLIM_TOTAL_GIORNATE;var h='';for(var g=1;g<=_tgMax;g++){var gio=cal[String(g)]||{};var hasData=Object.values(gio).some(function(v){return v;});h+='<div style="margin-bottom:10px"><div style="font-family:\'Bebas Neue\';font-size:13px;letter-spacing:1px;color:var(--text2);padding:6px 10px;background:var(--bg2);border-radius:8px 8px 0 0;border:1px solid var(--border);border-bottom:none;display:flex;justify-content:space-between"><span>Giornata '+g+'</span>'+(hasData?'<span style="color:var(--green);font-size:10px">Completata</span>':'<span style="color:var(--text3);font-size:10px">Da giocare</span>')+'</div><div style="background:var(--card);border:1px solid var(--border);border-radius:0 0 8px 8px;padding:8px 10px;display:grid;grid-template-columns:repeat(2,1fr);gap:4px">';SLIM_TEAMS.forEach(function(team){var res=gio[team]||gio[team.toUpperCase()]||gio[team.toLowerCase()]||'';var st=RC[res]?'background:'+RC[res]:'background:var(--bg2);color:var(--text3)';var _flC=(typeof FANTASY_LOGOS!=='undefined'&&FANTASY_LOGOS[team])?'<img src="'+FANTASY_LOGOS[team]+'" style="width:14px;height:14px;object-fit:contain;margin-right:4px;vertical-align:middle">':'';h+='<div style="display:flex;align-items:center;justify-content:space-between;padding:3px 6px;border-radius:4px"><span style="display:flex;align-items:center;font-size:11px;font-weight:700">'+_flC+_teamCase(team)+'</span><span style="font-size:10px;font-weight:800;padding:1px 6px;border-radius:3px;'+st+'">'+(res||'--')+'</span></div>';});h+='</div></div>';}el.innerHTML=h;}
 function slimRenderStadio(){var el=document.getElementById('slim-stadio-body');if(!el)return;var stadio=slimGetStadio();
   // Usa tabella globale aggiornata se disponibile
   var _stGlobal=localStorage.getItem('adm_stadio_table_global');
@@ -9694,25 +9708,29 @@ function initCoppaLogos() {
     if (custom) { img.src = custom; return; }
     if (hubLogos[key]) img.src = hubLogos[key];
   });
-  // Carica dati coppe dal localStorage in COPPA_DATA
+  // Carica dati coppe dal localStorage in COPPA_DATA (torneo-specifico)
+  var _cTk = window._currentTourneyKey || 'slim';
   ['cl','el','conf','sc'].forEach(function(key) {
-    var stored = localStorage.getItem('adm_coppa_data_slim_'+key);
+    var stored = localStorage.getItem('adm_coppa_data_'+_cTk+'_'+key);
+    if (!stored && _cTk === 'slim') stored = localStorage.getItem('adm_coppa_data_slim_'+key);
     if (stored) {
       try {
         var parsed = JSON.parse(stored);
         if (typeof COPPA_DATA !== 'undefined') COPPA_DATA[key] = parsed;
       } catch(e) {}
+    } else {
+      if (typeof COPPA_DATA !== 'undefined') COPPA_DATA[key] = {};
     }
   });
-  // Carica URL trofei coppe in COPPA_TROPHIES (sempre, anche vuoto, per evitare contaminazione da altri tornei)
+  // Carica URL trofei coppe (torneo-specifico, svuota se non trovato)
   ['cl','el','conf','sc'].forEach(function(key) {
     if (typeof COPPA_TROPHIES !== 'undefined') {
-      var _raw = localStorage.getItem('adm_coppa_trofeo_slim_'+key) || '';
+      var _raw = localStorage.getItem('adm_coppa_trofeo_'+_cTk+'_'+key) || '';
       COPPA_TROPHIES[key] = (_raw && typeof _normalizeImgUrl === 'function') ? _normalizeImgUrl(_raw) : _raw;
     }
   });
-  // Carica da GSheets se mancante in localStorage
-  if (typeof gsCall === 'function' && typeof GS_URL !== 'undefined' && GS_URL) {
+  // Carica da GSheets se mancante (solo per Slim che usa la chiave legacy)
+  if (_cTk === 'slim' && typeof gsCall === 'function' && typeof GS_URL !== 'undefined' && GS_URL) {
     ['cl','el','conf','sc'].forEach(function(key) {
       (function(_k) {
         var _stk = 'adm_coppa_trofeo_slim_'+_k;
@@ -9969,42 +9987,49 @@ function doLogin(){
 }
 
 function slimGetCalendar() {
-  // Sincronizza key con currentLeagueKey
+  var _tk = window._currentTourneyKey || 'slim';
+  // Tornei non-slim: usa la chiave impostata da enterLeague, non sovrascrivere
+  if (_tk !== 'slim') {
+    var key = window._currentLeagueCalKey;
+    if (key) { var r = localStorage.getItem(key); if (r) { try { return JSON.parse(r); } catch(e){} } }
+    return {};
+  }
+  // Slim: logica originale
   var lkCur = (typeof currentLeagueKey !== 'undefined' ? currentLeagueKey : 'it');
   window._currentLeagueCalKey = (lkCur === 'it') ? 'slim_calendar' : 'slim_calendar_' + lkCur;
   var key = window._currentLeagueCalKey;
   var lk = key.replace('slim_calendar_','');
   var torneo = 'slim';
-  // Prima cerca la chiave app aggiornata
   var raw = localStorage.getItem(key);
   if (raw) return JSON.parse(raw);
-  // Fallback: cerca in adm_cal_slim_* (dati salvati dall'Admin)
   var admKey = 'adm_cal_'+torneo+'_'+(lk==='slim_calendar'?'it':lk);
   var admRaw = localStorage.getItem(admKey);
   if (admRaw) {
     try {
       var parsed = JSON.parse(admRaw);
       var hasData = Object.values(parsed).some(function(g){ return Object.values(g).some(function(v){return v;}); });
-      if (hasData) {
-        // Copia nella chiave app per uso futuro
-        localStorage.setItem(key, admRaw);
-        return parsed;
-      }
+      if (hasData) { localStorage.setItem(key, admRaw); return parsed; }
     } catch(e) {}
   }
-  // Fallback: dati iniziali dal JSON
   if (key !== 'slim_calendar' && typeof ALL_SEASON_DATA !== 'undefined') {
     if (ALL_SEASON_DATA[lk]) return ALL_SEASON_DATA[lk].calendario || {};
   }
   return SLIM_INITIAL_CALENDAR;
 }
 function slimGetStadio() {
+  var _tk = window._currentTourneyKey || 'slim';
+  // Tornei non-slim: usa la chiave impostata da enterLeague
+  if (_tk !== 'slim') {
+    var key = window._currentLeagueStaKey;
+    if (key) { var r = localStorage.getItem(key); if (r) { try { return JSON.parse(r); } catch(e){} } }
+    return {};
+  }
+  // Slim: logica originale
   var lkCur = (typeof currentLeagueKey !== 'undefined' ? currentLeagueKey : 'it');
   window._currentLeagueStaKey = (lkCur === 'it') ? 'slim_stadio' : 'slim_stadio_' + lkCur;
   var key = window._currentLeagueStaKey;
   var raw = localStorage.getItem(key);
   if (raw) return JSON.parse(raw);
-  // Fallback: dati iniziali dal JSON
   if (key !== 'slim_stadio' && typeof ALL_SEASON_DATA !== 'undefined') {
     var lk = key.replace('slim_stadio_','');
     if (ALL_SEASON_DATA[lk]) return ALL_SEASON_DATA[lk].stadio || {};
@@ -10014,7 +10039,8 @@ function slimGetStadio() {
 function slimCalcStandings() {
   var cal = slimGetCalendar();
   var stadio = slimGetStadio();
-  var multeKey = 'slim_multe_' + (typeof currentLeagueKey !== 'undefined' ? currentLeagueKey : 'it');
+  var _tk = window._currentTourneyKey || 'slim';
+  var multeKey = _tk + '_multe_' + (typeof currentLeagueKey !== 'undefined' ? currentLeagueKey : 'it');
   var multeRaw = localStorage.getItem(multeKey);
   var multeData = multeRaw ? JSON.parse(multeRaw) : {};
   var s = {};
@@ -14508,7 +14534,7 @@ function renderMulte(){
   var el=document.getElementById('slim-multe-body');
   if(!el)return;
   var teams=(typeof SLIM_TEAMS!=='undefined')?SLIM_TEAMS:[];
-  var multeKey='slim_multe_'+(window.currentLeagueKey||'it');
+  var multeKey=(window._currentTourneyKey||'slim')+'_multe_'+(window.currentLeagueKey||'it');
   var stored=localStorage.getItem(multeKey);
   var data=stored?JSON.parse(stored):{};
   var h='';
@@ -14539,8 +14565,14 @@ function showSection(id,el){
   else if(id==='stadio')slimRenderStadio();
   else if(id==='multe')renderMulte();
   else if(id==='coppe'){initCoppaLogos();closeBracket();}
-  else if(id==='modulistica'){ renderModulistica('slim', 'slim-modulistica-body'); }
-  else if(id==='sponsor') {}
+  else if(id==='modulistica'){ renderModulistica(window._currentTourneyKey||'slim', 'slim-modulistica-body'); }
+  else if(id==='sponsor') {
+    var _spTk = window._currentTourneyKey||'slim';
+    if (_spTk !== 'slim' && _spTk !== 'tsm') {
+      var _spEl = document.getElementById('s-sponsor');
+      if (_spEl) _renderSponsorUserBody(_spEl, _spTk, window.currentLeagueKey||'it', SLIM_TEAMS.slice().sort());
+    }
+  }
 }
 var currentTeam='SALERNITANA',currentFilter='ALL';
 function roleBadge(r){var roles=r.split(';').map(function(x){return x.trim();}).filter(function(x){return x;});return roles.map(function(x){var c=ROLE_COLORS[x]||['rgba(107,114,128,.15)','#6b7280'];return'<span style="display:inline-block;font-size:8px;font-weight:800;padding:2px 5px;border-radius:3px;background:'+c[0]+';color:'+c[1]+';margin:1px">'+x+'</span>';}).join('');}
@@ -14725,7 +14757,7 @@ function slimRenderClassifica(){
   }
   if(penNote.length&&el){penNote.forEach(function(t){el.querySelectorAll('tr').forEach(function(row){var nc=row.querySelector('td:nth-child(3) span');if(nc&&nc.textContent===_teamCase(t)){nc.textContent=_teamCase(t)+' *';nc.style.color='#ef4444';}});});}
 }
-function slimRenderCalendario(){var el=document.getElementById('slim-calendario-body');if(!el)return;var cal=slimGetCalendar();var RC={VC:'rgba(16,185,129,.15);color:#10b981',VF:'rgba(16,185,129,.1);color:#34d399',PC:'rgba(59,130,246,.12);color:#3b82f6',PF:'rgba(59,130,246,.08);color:#60a5fa',SC:'rgba(239,68,68,.12);color:#ef4444',SF:'rgba(239,68,68,.08);color:#f87171'};var h='';for(var g=1;g<=SLIM_TOTAL_GIORNATE;g++){var gio=cal[String(g)]||{};var hasData=Object.values(gio).some(function(v){return v;});h+='<div style="margin-bottom:10px"><div style="font-family:\'Bebas Neue\';font-size:13px;letter-spacing:1px;color:var(--text2);padding:6px 10px;background:var(--bg2);border-radius:8px 8px 0 0;border:1px solid var(--border);border-bottom:none;display:flex;justify-content:space-between"><span>Giornata '+g+'</span>'+(hasData?'<span style="color:var(--green);font-size:10px">Completata</span>':'<span style="color:var(--text3);font-size:10px">Da giocare</span>')+'</div><div style="background:var(--card);border:1px solid var(--border);border-radius:0 0 8px 8px;padding:8px 10px;display:grid;grid-template-columns:repeat(2,1fr);gap:4px">';SLIM_TEAMS.forEach(function(team){var res=gio[team]||gio[team.toUpperCase()]||gio[team.toLowerCase()]||'';var st=RC[res]?'background:'+RC[res]:'background:var(--bg2);color:var(--text3)';var _flC=(typeof FANTASY_LOGOS!=='undefined'&&FANTASY_LOGOS[team])?'<img src="'+FANTASY_LOGOS[team]+'" style="width:14px;height:14px;object-fit:contain;margin-right:4px;vertical-align:middle">':'';h+='<div style="display:flex;align-items:center;justify-content:space-between;padding:3px 6px;border-radius:4px"><span style="display:flex;align-items:center;font-size:11px;font-weight:700">'+_flC+_teamCase(team)+'</span><span style="font-size:10px;font-weight:800;padding:1px 6px;border-radius:3px;'+st+'">'+(res||'--')+'</span></div>';});h+='</div></div>';}el.innerHTML=h;}
+function slimRenderCalendario(){var el=document.getElementById('slim-calendario-body');if(!el)return;var cal=slimGetCalendar();var RC={VC:'rgba(16,185,129,.15);color:#10b981',VF:'rgba(16,185,129,.1);color:#34d399',PC:'rgba(59,130,246,.12);color:#3b82f6',PF:'rgba(59,130,246,.08);color:#60a5fa',SC:'rgba(239,68,68,.12);color:#ef4444',SF:'rgba(239,68,68,.08);color:#f87171'};var _tk_rc=window._currentTourneyKey||'slim';var _calNums_rc=Object.keys(cal).map(Number).filter(function(n){return n>0;});var _tgMax=(_tk_rc!=='slim')?(_calNums_rc.length>0?Math.max.apply(null,_calNums_rc):SLIM_TEAMS.length>0?SLIM_TEAMS.length*2-2:30):SLIM_TOTAL_GIORNATE;var h='';for(var g=1;g<=_tgMax;g++){var gio=cal[String(g)]||{};var hasData=Object.values(gio).some(function(v){return v;});h+='<div style="margin-bottom:10px"><div style="font-family:\'Bebas Neue\';font-size:13px;letter-spacing:1px;color:var(--text2);padding:6px 10px;background:var(--bg2);border-radius:8px 8px 0 0;border:1px solid var(--border);border-bottom:none;display:flex;justify-content:space-between"><span>Giornata '+g+'</span>'+(hasData?'<span style="color:var(--green);font-size:10px">Completata</span>':'<span style="color:var(--text3);font-size:10px">Da giocare</span>')+'</div><div style="background:var(--card);border:1px solid var(--border);border-radius:0 0 8px 8px;padding:8px 10px;display:grid;grid-template-columns:repeat(2,1fr);gap:4px">';SLIM_TEAMS.forEach(function(team){var res=gio[team]||gio[team.toUpperCase()]||gio[team.toLowerCase()]||'';var st=RC[res]?'background:'+RC[res]:'background:var(--bg2);color:var(--text3)';var _flC=(typeof FANTASY_LOGOS!=='undefined'&&FANTASY_LOGOS[team])?'<img src="'+FANTASY_LOGOS[team]+'" style="width:14px;height:14px;object-fit:contain;margin-right:4px;vertical-align:middle">':'';h+='<div style="display:flex;align-items:center;justify-content:space-between;padding:3px 6px;border-radius:4px"><span style="display:flex;align-items:center;font-size:11px;font-weight:700">'+_flC+_teamCase(team)+'</span><span style="font-size:10px;font-weight:800;padding:1px 6px;border-radius:3px;'+st+'">'+(res||'--')+'</span></div>';});h+='</div></div>';}el.innerHTML=h;}
 function slimRenderStadio(){var el=document.getElementById('slim-stadio-body');if(!el)return;var stadio=slimGetStadio();
   // Usa tabella globale aggiornata se disponibile
   var _stGlobal=localStorage.getItem('adm_stadio_table_global');
@@ -15027,25 +15059,29 @@ function initCoppaLogos() {
     if (custom) { img.src = custom; return; }
     if (hubLogos[key]) img.src = hubLogos[key];
   });
-  // Carica dati coppe dal localStorage in COPPA_DATA
+  // Carica dati coppe dal localStorage in COPPA_DATA (torneo-specifico)
+  var _cTk = window._currentTourneyKey || 'slim';
   ['cl','el','conf','sc'].forEach(function(key) {
-    var stored = localStorage.getItem('adm_coppa_data_slim_'+key);
+    var stored = localStorage.getItem('adm_coppa_data_'+_cTk+'_'+key);
+    if (!stored && _cTk === 'slim') stored = localStorage.getItem('adm_coppa_data_slim_'+key);
     if (stored) {
       try {
         var parsed = JSON.parse(stored);
         if (typeof COPPA_DATA !== 'undefined') COPPA_DATA[key] = parsed;
       } catch(e) {}
+    } else {
+      if (typeof COPPA_DATA !== 'undefined') COPPA_DATA[key] = {};
     }
   });
-  // Carica URL trofei coppe in COPPA_TROPHIES (sempre, anche vuoto, per evitare contaminazione da altri tornei)
+  // Carica URL trofei coppe (torneo-specifico, svuota se non trovato)
   ['cl','el','conf','sc'].forEach(function(key) {
     if (typeof COPPA_TROPHIES !== 'undefined') {
-      var _raw = localStorage.getItem('adm_coppa_trofeo_slim_'+key) || '';
+      var _raw = localStorage.getItem('adm_coppa_trofeo_'+_cTk+'_'+key) || '';
       COPPA_TROPHIES[key] = (_raw && typeof _normalizeImgUrl === 'function') ? _normalizeImgUrl(_raw) : _raw;
     }
   });
-  // Carica da GSheets se mancante in localStorage
-  if (typeof gsCall === 'function' && typeof GS_URL !== 'undefined' && GS_URL) {
+  // Carica da GSheets se mancante (solo per Slim che usa la chiave legacy)
+  if (_cTk === 'slim' && typeof gsCall === 'function' && typeof GS_URL !== 'undefined' && GS_URL) {
     ['cl','el','conf','sc'].forEach(function(key) {
       (function(_k) {
         var _stk = 'adm_coppa_trofeo_slim_'+_k;
