@@ -1,4 +1,4 @@
-﻿<!-- build:20260516_1539 -->
+﻿<!-- build:20260516_1542 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260516_1539';
+  var BUILD='20260516_1542';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -7768,6 +7768,7 @@ function admLoadRoseLeghe() {
   if (t) t.leghe.slice().sort(function(a,b){return a.label.localeCompare(b.label);}).forEach(function(l){ var o=document.createElement('option');o.value=l.key;o.textContent=l.label;sel.appendChild(o); });
   document.getElementById('adm-rose-squadra').innerHTML='<option value="">-- Seleziona Squadra --</option>';
   document.getElementById('adm-rose-body').innerHTML='';
+  var _w=document.getElementById('adm-rose-new-sq-wrap'); if(_w) _w.style.display='none';
 }
 function admLoadRoseSquadre() {
   var torneoKey = document.getElementById('adm-rose-torneo').value;
