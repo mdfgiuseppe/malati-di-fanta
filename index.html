@@ -1,4 +1,4 @@
-<!-- build:20260516_2237 -->
+<!-- build:20260516_2252 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260516_2237';
+  var BUILD='20260516_2252';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -9874,61 +9874,53 @@ function closeBracket() {
 }
 
 function buildBracket(key) {
-  var color = COPPA_COLORS[key];
-  var data = COPPA_DATA[key];
-  var isSC = (key === 'sc');
+  var _cfgData=(typeof COPPA_CONFIG!=='undefined'&&COPPA_CONFIG[key])?COPPA_CONFIG[key]:{};
+  var color=_cfgData.color||(typeof COPPA_COLORS!=='undefined'?COPPA_COLORS[key]:'')||'#f59e0b';
+  var data = (typeof COPPA_DATA!=='undefined'&&COPPA_DATA[key])?COPPA_DATA[key]:{};
+  var numTeams=_cfgData.teams||16;
 
-  var rounds = isSC
-    ? [{key:'finale', label:'FINALE', size:1}]
-    : [
-        {key:'ottavi',     label:'OTTAVI DI FINALE',   size:8},
-        {key:'quarti',     label:'QUARTI DI FINALE',   size:4},
-        {key:'semifinali', label:'SEMIFINALE',          size:2},
-        {key:'finale',     label:'FINALE',              size:1},
-      ];
+  function _roundKey(lbl){var m={'Ottavi':'ottavi','Quarti':'quarti','Semifinali':'semifinali','Finale':'finale','Sedicesimi':'sedicesimi'};return m[lbl]||lbl.toLowerCase().replace(/[^a-z]/g,'_');}
+  function _roundDisp(lbl){var m={'Ottavi':'OTTAVI DI FINALE','Quarti':'QUARTI DI FINALE','Semifinali':'SEMIFINALE','Finale':'FINALE','Sedicesimi':'SEDICESIMI DI FINALE'};return m[lbl]||lbl.toUpperCase();}
+
+  var _lbls=_cfgData.rounds||['Ottavi','Quarti','Semifinali','Finale'];
+  var rounds=_lbls.map(function(lbl,ri){
+    var sz=numTeams<=2?1:Math.round(Math.pow(2,_lbls.length-1-ri));
+    return {key:_roundKey(lbl),label:_roundDisp(lbl),size:sz};
+  });
+
+  var isSingle=(rounds.length===1&&rounds[0].size===1);
+  var minW=isSingle?'max-width:320px;margin:0 auto':'min-width:'+Math.max(360,rounds.length*210)+'px';
 
   var html = '<div style="overflow-x:auto;padding-bottom:16px">'
-           + '<div style="display:flex;align-items:stretch;gap:0;'+(isSC?'max-width:320px;margin:0 auto':'min-width:'+(isSC?'220':'820')+'px')+'">';
+           + '<div style="display:flex;align-items:stretch;gap:0;'+minW+'">';
 
   rounds.forEach(function(round, ri) {
     var matches = data[round.key] || [];
-    var colW = isSC ? 'width:260px' : 'flex:1';
+    var colW = isSingle ? 'width:260px' : 'flex:1';
+    var isLastRound = (ri === rounds.length - 1);
 
     html += '<div style="'+colW+';display:flex;flex-direction:column">';
-    // Header round
     html += '<div style="text-align:center;padding:10px 6px 8px;font-size:9px;font-weight:800;letter-spacing:1.5px;color:'+color+';border-bottom:2px solid '+color+'33;margin-bottom:10px">'+round.label+'</div>';
-    // Matches
     html += '<div style="flex:1;display:flex;flex-direction:column;justify-content:space-around;gap:8px;padding:0 6px">';
     for (var i = 0; i < round.size; i++) {
       var m = matches[i] || {};
-      var isFinaleRound = (round.key === 'finale');
-      if (isFinaleRound || isSC) {
-        html += buildMatchCard(m.h||'', m.a||'', m.rh||'', m.ra||'', color, isSC);
+      if (isLastRound || isSingle) {
+        html += buildMatchCard(m.h||'', m.a||'', m.rh||'', m.ra||'', color, isSingle);
       } else {
         html += buildMatchCardDouble(m, color);
       }
     }
     html += '</div>';
 
-    // Colonna CAMPIONE dopo Finale
-    if (ri === rounds.length - 1) {
+    if (isLastRound) {
       html += '</div>';
-      // Connettore →
       html += '<div style="width:28px;display:flex;align-items:center;justify-content:center">'
             + '<svg width="28" height="40" viewBox="0 0 28 40"><line x1="0" y1="20" x2="28" y2="20" stroke="'+color+'" stroke-width="2" stroke-dasharray="4,3"/></svg>'
             + '</div>';
-      // Card campione
-      html += '<div style="'+(isSC?'width:200px':'flex:0 0 180px')+';display:flex;flex-direction:column">';
+      html += '<div style="'+(isSingle?'width:200px':'flex:0 0 180px')+';display:flex;flex-direction:column">';
       html += '<div style="text-align:center;padding:10px 6px 8px;font-size:9px;font-weight:800;letter-spacing:1.5px;color:'+color+';border-bottom:2px solid '+color+'33;margin-bottom:10px">SQUADRA CAMPIONE</div>';
       html += '<div style="flex:1;display:flex;align-items:center;justify-content:center;padding:0 6px">';
-      var finalMatch = data['finale'] && data['finale'][0];
-      var champion = '';
-      // Vincitore solo manuale
-      if (data.vincitore) {
-        champion = data.vincitore;
-      } else if (false) { // calcolo automatico disabilitato
-        champion = parseInt(finalMatch.rh) > parseInt(finalMatch.ra) ? (finalMatch.h||'') : (finalMatch.a||'');
-      }
+      var champion = data.vincitore || '';
       var trophyImg = (typeof COPPA_TROPHIES!=='undefined' && COPPA_TROPHIES[key])
         ? '<img src="'+COPPA_TROPHIES[key]+'" style="width:100px;height:100px;object-fit:contain;display:block;margin:0 auto 10px;filter:drop-shadow(0 6px 20px '+color+'99)">'
         : '<div style="font-size:40px;margin-bottom:10px">🏆</div>';
@@ -9941,9 +9933,7 @@ function buildBracket(key) {
       html += '</div>';
     } else {
       html += '</div>';
-      // Connettori SVG tra round
       var nextSize = rounds[ri+1].size;
-      var pairs = round.size / 2;
       html += '<div style="width:24px;display:flex;flex-direction:column;justify-content:space-around;padding:28px 0">';
       for (var j = 0; j < nextSize; j++) {
         html += '<div style="flex:1;position:relative">'
@@ -15302,61 +15292,53 @@ function closeBracket() {
 }
 
 function buildBracket(key) {
-  var color = COPPA_COLORS[key];
-  var data = COPPA_DATA[key];
-  var isSC = (key === 'sc');
+  var _cfgData=(typeof COPPA_CONFIG!=='undefined'&&COPPA_CONFIG[key])?COPPA_CONFIG[key]:{};
+  var color=_cfgData.color||(typeof COPPA_COLORS!=='undefined'?COPPA_COLORS[key]:'')||'#f59e0b';
+  var data = (typeof COPPA_DATA!=='undefined'&&COPPA_DATA[key])?COPPA_DATA[key]:{};
+  var numTeams=_cfgData.teams||16;
 
-  var rounds = isSC
-    ? [{key:'finale', label:'FINALE', size:1}]
-    : [
-        {key:'ottavi',     label:'OTTAVI DI FINALE',   size:8},
-        {key:'quarti',     label:'QUARTI DI FINALE',   size:4},
-        {key:'semifinali', label:'SEMIFINALE',          size:2},
-        {key:'finale',     label:'FINALE',              size:1},
-      ];
+  function _roundKey(lbl){var m={'Ottavi':'ottavi','Quarti':'quarti','Semifinali':'semifinali','Finale':'finale','Sedicesimi':'sedicesimi'};return m[lbl]||lbl.toLowerCase().replace(/[^a-z]/g,'_');}
+  function _roundDisp(lbl){var m={'Ottavi':'OTTAVI DI FINALE','Quarti':'QUARTI DI FINALE','Semifinali':'SEMIFINALE','Finale':'FINALE','Sedicesimi':'SEDICESIMI DI FINALE'};return m[lbl]||lbl.toUpperCase();}
+
+  var _lbls=_cfgData.rounds||['Ottavi','Quarti','Semifinali','Finale'];
+  var rounds=_lbls.map(function(lbl,ri){
+    var sz=numTeams<=2?1:Math.round(Math.pow(2,_lbls.length-1-ri));
+    return {key:_roundKey(lbl),label:_roundDisp(lbl),size:sz};
+  });
+
+  var isSingle=(rounds.length===1&&rounds[0].size===1);
+  var minW=isSingle?'max-width:320px;margin:0 auto':'min-width:'+Math.max(360,rounds.length*210)+'px';
 
   var html = '<div style="overflow-x:auto;padding-bottom:16px">'
-           + '<div style="display:flex;align-items:stretch;gap:0;'+(isSC?'max-width:320px;margin:0 auto':'min-width:'+(isSC?'220':'820')+'px')+'">';
+           + '<div style="display:flex;align-items:stretch;gap:0;'+minW+'">';
 
   rounds.forEach(function(round, ri) {
     var matches = data[round.key] || [];
-    var colW = isSC ? 'width:260px' : 'flex:1';
+    var colW = isSingle ? 'width:260px' : 'flex:1';
+    var isLastRound = (ri === rounds.length - 1);
 
     html += '<div style="'+colW+';display:flex;flex-direction:column">';
-    // Header round
     html += '<div style="text-align:center;padding:10px 6px 8px;font-size:9px;font-weight:800;letter-spacing:1.5px;color:'+color+';border-bottom:2px solid '+color+'33;margin-bottom:10px">'+round.label+'</div>';
-    // Matches
     html += '<div style="flex:1;display:flex;flex-direction:column;justify-content:space-around;gap:8px;padding:0 6px">';
     for (var i = 0; i < round.size; i++) {
       var m = matches[i] || {};
-      var isFinaleRound = (round.key === 'finale');
-      if (isFinaleRound || isSC) {
-        html += buildMatchCard(m.h||'', m.a||'', m.rh||'', m.ra||'', color, isSC);
+      if (isLastRound || isSingle) {
+        html += buildMatchCard(m.h||'', m.a||'', m.rh||'', m.ra||'', color, isSingle);
       } else {
         html += buildMatchCardDouble(m, color);
       }
     }
     html += '</div>';
 
-    // Colonna CAMPIONE dopo Finale
-    if (ri === rounds.length - 1) {
+    if (isLastRound) {
       html += '</div>';
-      // Connettore →
       html += '<div style="width:28px;display:flex;align-items:center;justify-content:center">'
             + '<svg width="28" height="40" viewBox="0 0 28 40"><line x1="0" y1="20" x2="28" y2="20" stroke="'+color+'" stroke-width="2" stroke-dasharray="4,3"/></svg>'
             + '</div>';
-      // Card campione
-      html += '<div style="'+(isSC?'width:200px':'flex:0 0 180px')+';display:flex;flex-direction:column">';
+      html += '<div style="'+(isSingle?'width:200px':'flex:0 0 180px')+';display:flex;flex-direction:column">';
       html += '<div style="text-align:center;padding:10px 6px 8px;font-size:9px;font-weight:800;letter-spacing:1.5px;color:'+color+';border-bottom:2px solid '+color+'33;margin-bottom:10px">SQUADRA CAMPIONE</div>';
       html += '<div style="flex:1;display:flex;align-items:center;justify-content:center;padding:0 6px">';
-      var finalMatch = data['finale'] && data['finale'][0];
-      var champion = '';
-      // Vincitore solo manuale
-      if (data.vincitore) {
-        champion = data.vincitore;
-      } else if (false) { // calcolo automatico disabilitato
-        champion = parseInt(finalMatch.rh) > parseInt(finalMatch.ra) ? (finalMatch.h||'') : (finalMatch.a||'');
-      }
+      var champion = data.vincitore || '';
       var trophyImg = (typeof COPPA_TROPHIES!=='undefined' && COPPA_TROPHIES[key])
         ? '<img src="'+COPPA_TROPHIES[key]+'" style="width:100px;height:100px;object-fit:contain;display:block;margin:0 auto 10px;filter:drop-shadow(0 6px 20px '+color+'99)">'
         : '<div style="font-size:40px;margin-bottom:10px">🏆</div>';
@@ -15369,9 +15351,7 @@ function buildBracket(key) {
       html += '</div>';
     } else {
       html += '</div>';
-      // Connettori SVG tra round
       var nextSize = rounds[ri+1].size;
-      var pairs = round.size / 2;
       html += '<div style="width:24px;display:flex;flex-direction:column;justify-content:space-around;padding:28px 0">';
       for (var j = 0; j < nextSize; j++) {
         html += '<div style="flex:1;position:relative">'
