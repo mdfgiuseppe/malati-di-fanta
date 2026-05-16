@@ -1,4 +1,4 @@
-﻿<!-- build:20260516_1654 -->
+﻿<!-- build:20260516_1659 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260516_1654';
+  var BUILD='20260516_1659';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -8934,10 +8934,8 @@ function enterLeague(tournament, leagueKey) {
     if (nm) nm.textContent = u.ruolo==='admin' ? 'Admin' : (u.nome||'').split(' ')[0];
   } catch(e) {}
   if (leagueKey === 'tsm_it') { enterTSM(); return; }
-  // ILM e ILC non ancora disponibili lato utente
-  if (tournament === 'ilm' || tournament === 'ilc') return;
-  // Tornei non-slim/non-tsm (es. TDM): usano page-lega con chiavi proprie
-  if (tournament && tournament !== 'slim' && tournament !== 'tsm' && tournament !== 'ilm' && tournament !== 'ilc') {
+  // Tornei non-slim/non-tsm (TDM, ILM, ILC, ...): usano page-lega con chiavi proprie
+  if (tournament && tournament !== 'slim' && tournament !== 'tsm') {
     // Normalizza: LEAGUES_DATA usa chiavi full (es. 'tdm_en'), ma lo storage usa chiavi short (es. 'en')
     currentLeagueKey = (leagueKey && leagueKey.indexOf(tournament+'_') === 0) ? leagueKey.slice(tournament.length+1) : (leagueKey || 'it');
     var _dynRoseRaw = localStorage.getItem('adm_rose_'+tournament+'_'+currentLeagueKey);
@@ -14269,10 +14267,8 @@ function enterLeague(tournament, leagueKey) {
     if (nm) nm.textContent = u.ruolo==='admin' ? 'Admin' : (u.nome||'').split(' ')[0];
   } catch(e) {}
   if (leagueKey === 'tsm_it') { enterTSM(); return; }
-  // ILM e ILC non ancora disponibili lato utente
-  if (tournament === 'ilm' || tournament === 'ilc') return;
-  // Tornei non-slim/non-tsm (es. TDM): usano page-lega con chiavi proprie
-  if (tournament && tournament !== 'slim' && tournament !== 'tsm' && tournament !== 'ilm' && tournament !== 'ilc') {
+  // Tornei non-slim/non-tsm (TDM, ILM, ILC, ...): usano page-lega con chiavi proprie
+  if (tournament && tournament !== 'slim' && tournament !== 'tsm') {
     // Normalizza: LEAGUES_DATA usa chiavi full (es. 'tdm_en'), ma lo storage usa chiavi short (es. 'en')
     currentLeagueKey = (leagueKey && leagueKey.indexOf(tournament+'_') === 0) ? leagueKey.slice(tournament.length+1) : (leagueKey || 'it');
     var _dynRoseRaw = localStorage.getItem('adm_rose_'+tournament+'_'+currentLeagueKey);
