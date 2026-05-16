@@ -1,4 +1,4 @@
-<!-- build:20260516_2134 -->
+<!-- build:20260516_2140 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260516_2134';
+  var BUILD='20260516_2140';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -7764,7 +7764,7 @@ function admCsLoadSquadre() {
   var legaKey=document.getElementById('adm-cs-lega').value;
   var el=document.getElementById('adm-cs-body');
   if(!torneoKey||!legaKey||!el) return;
-  var teams=admGetTeams(torneoKey,legaKey).slice().sort(function(a,b){return a.localeCompare(b);});
+  var teams=admGetTeams(torneoKey,legaKey).filter(function(t){return t!=='INFERMERIA';}).slice().sort(function(a,b){return a.localeCompare(b);});
   if(!teams.length){el.innerHTML='<div style="color:var(--text3);font-size:12px">Nessuna squadra trovata.</div>';return;}
   var baseUrl='https://raw.githubusercontent.com/mdfgiuseppe/malati-di-fanta/main/logos/';
   var h='<div class="card" style="padding:0;overflow:hidden;margin-bottom:16px">'
@@ -7804,7 +7804,7 @@ function admCsLoadSquadre() {
 function admCsPreview() {
   var torneoKey=document.getElementById('adm-cs-torneo').value;
   var legaKey=document.getElementById('adm-cs-lega').value;
-  var teams=admGetTeams(torneoKey,legaKey);
+  var teams=admGetTeams(torneoKey,legaKey).filter(function(t){return t!=='INFERMERIA';});
   teams.push('INFERMERIA');
   var changes=[];
   teams.forEach(function(team){
@@ -7847,7 +7847,7 @@ function admCsRenameKey(obj,oldKey,newKey){
 function admCsConfirm() {
   var torneoKey=document.getElementById('adm-cs-torneo').value;
   var legaKey=document.getElementById('adm-cs-lega').value;
-  var teams=admGetTeams(torneoKey,legaKey);
+  var teams=admGetTeams(torneoKey,legaKey).filter(function(t){return t!=='INFERMERIA';});
   teams.push('INFERMERIA');
   var changes=[];
   teams.forEach(function(team){
@@ -13296,7 +13296,7 @@ function admCsLoadSquadre() {
   var legaKey=document.getElementById('adm-cs-lega').value;
   var el=document.getElementById('adm-cs-body');
   if(!torneoKey||!legaKey||!el) return;
-  var teams=admGetTeams(torneoKey,legaKey).slice().sort(function(a,b){return a.localeCompare(b);});
+  var teams=admGetTeams(torneoKey,legaKey).filter(function(t){return t!=='INFERMERIA';}).slice().sort(function(a,b){return a.localeCompare(b);});
   if(!teams.length){el.innerHTML='<div style="color:var(--text3);font-size:12px">Nessuna squadra trovata.</div>';return;}
   var baseUrl='https://raw.githubusercontent.com/mdfgiuseppe/malati-di-fanta/main/logos/';
   var h='<div class="card" style="padding:0;overflow:hidden;margin-bottom:16px">'
@@ -13336,7 +13336,7 @@ function admCsLoadSquadre() {
 function admCsPreview() {
   var torneoKey=document.getElementById('adm-cs-torneo').value;
   var legaKey=document.getElementById('adm-cs-lega').value;
-  var teams=admGetTeams(torneoKey,legaKey);
+  var teams=admGetTeams(torneoKey,legaKey).filter(function(t){return t!=='INFERMERIA';});
   teams.push('INFERMERIA');
   var changes=[];
   teams.forEach(function(team){
@@ -13379,7 +13379,7 @@ function admCsRenameKey(obj,oldKey,newKey){
 function admCsConfirm() {
   var torneoKey=document.getElementById('adm-cs-torneo').value;
   var legaKey=document.getElementById('adm-cs-lega').value;
-  var teams=admGetTeams(torneoKey,legaKey);
+  var teams=admGetTeams(torneoKey,legaKey).filter(function(t){return t!=='INFERMERIA';});
   teams.push('INFERMERIA');
   var changes=[];
   teams.forEach(function(team){
