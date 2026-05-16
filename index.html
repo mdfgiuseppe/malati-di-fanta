@@ -1,4 +1,4 @@
-﻿<!-- build:20260512_1930 -->
+﻿<!-- build:20260516_1109 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260512_1930';
+  var BUILD='20260516_1109';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -6332,8 +6332,7 @@ function admLoadMulteLeghe() {
 }
 
 function admGetMulteKey(torneoKey, legaKey) {
-  if (torneoKey==='tsm' && legaKey==='it') return 'tsm_multe_it';
-  return 'slim_multe_'+legaKey;
+  return torneoKey + '_multe_' + legaKey;
 }
 
 function admLoadMulteBody() {
@@ -7890,8 +7889,8 @@ function admRenderRosaEditor(players, torneoKey, legaKey, squadra) {
   var crGestione = admGetCreditiGestione(torneoKey, legaKey, squadra);
   // Crediti Attuali = CREDITS_base + (costi_rosa_originale - costi_rosa_attuale) - multe_cr
   var _crBase = typeof CREDITS!=='undefined' ? (CREDITS[squadra]||CREDITS[squadra.toUpperCase()]||0) : 0;
-  // Snapshot import da localStorage se disponibile (solo per Slim)
-  var _crBaseStored = torneoKey!=='tsm' ? localStorage.getItem('adm_crediti_base_'+torneoKey+'_'+legaKey) : null;
+  // Snapshot da localStorage (fonte di verità per tutti i tornei)
+  var _crBaseStored = localStorage.getItem('adm_crediti_base_'+torneoKey+'_'+legaKey);
   if (_crBaseStored) { try { var _crObj=JSON.parse(_crBaseStored); if(_crObj[squadra]!==undefined) _crBase=_crObj[squadra]; } catch(e){} }
   // Rosa originale embedded (window._TEAMS_ROSE_IT) per calcolo differenza
   // Rosa originale: usa la variabile giusta per torneo
@@ -7946,10 +7945,10 @@ function admRenderRosaEditor(players, torneoKey, legaKey, squadra) {
     +'</div>'
     // Crediti Gestione (manuale - visibile utente)
     +'<div style="background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.2);border-radius:10px;padding:12px;text-align:center">'
-    +'<div style="font-size:9px;font-weight:700;color:#10b981;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Modifica Crediti Manuali</div>'
-    +'<input type="number" id="adm-cr-gest-'+squadra+'" value="'+crGestione+'" step="0.5" '
+    +'<div style="font-size:9px;font-weight:700;color:#10b981;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Imposta Crediti Netti</div>'
+    +'<input type="number" id="adm-cr-gest-'+squadra+'" value="'+crAttuali+'" step="0.5" '
     +'style="width:100%;background:transparent;border:none;border-bottom:2px solid #10b981;color:#10b981;font-family:Bebas Neue,sans-serif;font-size:26px;text-align:center;outline:none">'
-    +'<div style="font-size:9px;color:#10b981;margin-top:4px">visibile lato utente</div>'
+    +'<div style="font-size:9px;color:#10b981;margin-top:4px">il valore che vedi (netto multe)</div>'
     +'</div>'
     +'</div>'
     +'<div style="margin-top:10px;display:flex;justify-content:flex-end">'
@@ -8008,15 +8007,17 @@ function admGetCreditiGestione(torneoKey, legaKey, squadra) {
 }
 
 function admSaveCreditiGestione(torneoKey, legaKey, squadra, val) {
-  // Aggiorna direttamente adm_crediti_base (fonte di verità unica)
+  // val = crediti netti desiderati; salviamo val+multe come base per non scalare due volte
   var baseKey = 'adm_crediti_base_'+torneoKey+'_'+legaKey;
   var cr = {};
   try { cr = JSON.parse(localStorage.getItem(baseKey)||'{}'); } catch(e) {}
-  cr[squadra] = val;
-  cr[squadra.toUpperCase()] = val;
+  var _mKey = typeof admGetMulteKey==='function' ? admGetMulteKey(torneoKey, legaKey) : 'slim_multe_'+legaKey;
+  var _crM = 0;
+  try { var _md=JSON.parse(localStorage.getItem(_mKey)||'{}'); var _mq=_md[squadra]||_md[squadra.toUpperCase()]||{}; _crM=parseFloat(_mq.multe)||0; } catch(e) {}
+  cr[squadra] = val + _crM;
+  cr[squadra.toUpperCase()] = val + _crM;
   localStorage.setItem(baseKey, JSON.stringify(cr));
   gsSaveKey(baseKey, JSON.stringify(cr));
-  // Sincronizza anche user_crediti
   syncCreditiToUser(torneoKey, legaKey, cr);
 }
 
@@ -11967,8 +11968,7 @@ function admLoadMulteLeghe() {
 }
 
 function admGetMulteKey(torneoKey, legaKey) {
-  if (torneoKey==='tsm' && legaKey==='it') return 'tsm_multe_it';
-  return 'slim_multe_'+legaKey;
+  return torneoKey + '_multe_' + legaKey;
 }
 
 function admLoadMulteBody() {
@@ -12935,20 +12935,31 @@ function admConfirmImport(){
   var sk=p.savedKeys,inf=p.infermeria,tk=p.torneoKey,lk=p.legaKey;
   // Smart import: recupera scadenze esistenti per nome (anche da altre squadre)
   var _scadenzeMap={};
-  var _existingRaw=null;
-  if(tk==='slim'&&lk==='it') _existingRaw=localStorage.getItem('adm_rose_slim_it');
-  else if(tk==='tsm'&&lk==='it') _existingRaw=localStorage.getItem('adm_rose_tsm_it');
-  else _existingRaw=localStorage.getItem('adm_rose_'+tk+'_'+lk);
+  var _existingRaw=localStorage.getItem('adm_rose_'+tk+'_'+lk);
   if(_existingRaw){try{var _exRose=JSON.parse(_existingRaw);Object.values(_exRose).forEach(function(pl){if(!Array.isArray(pl))return;pl.forEach(function(g){if(g.nome&&g.scadenza)_scadenzeMap[g.nome]=g.scadenza;});});}catch(e){}}
   if(Object.keys(_scadenzeMap).length){Object.values(sk).forEach(function(pl){pl.forEach(function(g){if(g.nome&&!g.scadenza&&_scadenzeMap[g.nome])g.scadenza=_scadenzeMap[g.nome];});});}
-  // Salva crediti base da import
+  // Giocatori nuovi (non trovati in nessuna rosa): contratto default 30/06 di anno+3
+  var _impNow=new Date(); var _defScad='06/'+String(_impNow.getFullYear()+3).slice(-2);
+  Object.values(sk).forEach(function(pl){pl.forEach(function(g){if(g.nome&&!g.scadenza)g.scadenza=_defScad;});});
+  // Salva crediti base da import: aggiungi le multe per non scalare due volte
   var _crBase = window._admImportPending && window._admImportPending.crediti ? window._admImportPending.crediti : {};
-  if(Object.keys(_crBase).length) { localStorage.setItem('adm_crediti_base_'+tk+'_'+lk, JSON.stringify(_crBase)); syncCreditiToUser(tk, lk, _crBase); gsSaveKey('adm_crediti_base_'+tk+'_'+lk, JSON.stringify(_crBase)); }
-  gsSaveKey('adm_crediti_base_'+tk+'_'+lk, JSON.stringify(_crBase));
-  if(tk==='slim'&&lk==='it'){Object.keys(sk).forEach(function(s){TEAMS_ROSE[s]=sk[s];});localStorage.setItem('adm_rose_slim_it',JSON.stringify(sk));
-  localStorage.setItem('adm_rose_import_slim_it',JSON.stringify(sk));}
-  else if(tk==='tsm'&&lk==='it'){Object.keys(sk).forEach(function(s){if(typeof TSM_ROSE_IT!=='undefined')TSM_ROSE_IT[s]=sk[s];});localStorage.setItem('adm_rose_tsm_it',JSON.stringify(sk));}
-  else{localStorage.setItem('adm_rose_'+tk+'_'+lk,JSON.stringify(sk)); gsSaveKey('adm_rose_'+tk+'_'+lk,JSON.stringify(sk));}
+  var _multeKeyImp = typeof admGetMulteKey==='function' ? admGetMulteKey(tk, lk) : tk+'_multe_'+lk;
+  var _multeDataImp = {};
+  try { _multeDataImp = JSON.parse(localStorage.getItem(_multeKeyImp)||'{}'); } catch(e) {}
+  var _crBaseAdj = {};
+  Object.keys(_crBase).forEach(function(sq) {
+    var _mq = _multeDataImp[sq]||_multeDataImp[sq.toUpperCase()]||{};
+    _crBaseAdj[sq] = (parseFloat(_crBase[sq])||0) + (parseFloat(_mq.multe)||0);
+  });
+  if(Object.keys(_crBaseAdj).length) { localStorage.setItem('adm_crediti_base_'+tk+'_'+lk, JSON.stringify(_crBaseAdj)); syncCreditiToUser(tk, lk, _crBaseAdj); gsSaveKey('adm_crediti_base_'+tk+'_'+lk, JSON.stringify(_crBaseAdj)); }
+  // Salva rose: localStorage + GSheets + snapshot import — uguale per tutti i tornei
+  var _roseKey='adm_rose_'+tk+'_'+lk;
+  localStorage.setItem(_roseKey, JSON.stringify(sk));
+  localStorage.setItem('adm_rose_import_'+tk+'_'+lk, JSON.stringify(sk));
+  gsSaveKey(_roseKey, JSON.stringify(sk));
+  // Aggiorna variabili runtime in-memoria per refresh UI immediato
+  if(tk==='slim'&&lk==='it'){Object.keys(sk).forEach(function(s){TEAMS_ROSE[s]=sk[s];});}
+  else if(tk==='tsm'&&lk==='it'){Object.keys(sk).forEach(function(s){if(typeof TSM_ROSE_IT!=='undefined')TSM_ROSE_IT[s]=sk[s];});}
   if(inf&&inf.length>0) localStorage.setItem('adm_infermeria_'+tk+'_'+lk,JSON.stringify(inf));
   gsSaveKey('adm_infermeria_'+tk+'_'+lk, JSON.stringify(inf));
   var n=Object.values(sk).reduce(function(a,b){return a+b.length;},0);
