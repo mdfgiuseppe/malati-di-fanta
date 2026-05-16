@@ -1,4 +1,4 @@
-﻿<!-- build:20260516_1542 -->
+﻿<!-- build:20260516_1545 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260516_1542';
+  var BUILD='20260516_1545';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -7532,6 +7532,13 @@ function admInitSelettori(prefix, resetAll) {
     if (legaR) legaR.innerHTML='<option value="">-- Seleziona Lega --</option>';
     var sqR = document.getElementById('adm-'+prefix+'-squadra');
     if (sqR) sqR.innerHTML='<option value="">-- Seleziona Squadra --</option>';
+  }
+  // Nascondi crea-squadra e assicura che il handler onchange del torneo select nasconda il wrap
+  if (prefix === 'rose') {
+    var _nsw = document.getElementById('adm-rose-new-sq-wrap'); if (_nsw) _nsw.style.display='none';
+    newSel.addEventListener('change', function() {
+      var _w = document.getElementById('adm-rose-new-sq-wrap'); if (_w) _w.style.display='none';
+    });
   }
   // Ripristina selezione precedente
   if (prevVal) {
