@@ -1,4 +1,4 @@
-<!-- build:20260516_1848 -->
+<!-- build:20260516_1908 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260516_1848';
+  var BUILD='20260516_1908';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -8975,6 +8975,10 @@ function enterLeague(tournament, leagueKey) {
       var _lv=localStorage.getItem('adm_logo_'+tournament+'_'+currentLeagueKey+'_'+team)||localStorage.getItem('adm_logo_'+tournament+'_'+currentLeagueKey+'_'+team.toUpperCase());
       if(_lv) FANTASY_LOGOS[team]=typeof _normalizeImgUrl==='function'?_normalizeImgUrl(_lv):_lv;
     });
+    // Reset coppe per isolamento dal torneo precedente
+    if (typeof COPPA_DATA !== 'undefined') { ['cl','el','conf','sc'].forEach(function(k){ COPPA_DATA[k]={}; }); }
+    if (typeof COPPA_TROPHIES !== 'undefined') { ['cl','el','conf','sc'].forEach(function(k){ COPPA_TROPHIES[k]=''; }); }
+    ['logo-cl','logo-el','logo-conf','logo-sc'].forEach(function(id){ var img=document.getElementById(id); if(img) img.src=''; });
     showPage('lega');
     setTimeout(function(){
       _updateLegaDashboard(tournament+'_'+currentLeagueKey);
@@ -9718,9 +9722,16 @@ function initCoppaLogos() {
   Object.keys(map).forEach(function(key) {
     var img = document.getElementById(map[key]);
     if (!img) return;
-    var custom = localStorage.getItem('adm_img_coppa_'+key) || localStorage.getItem('adm_img_'+key);
-    if (custom) { img.src = custom; return; }
-    if (hubLogos[key]) img.src = hubLogos[key];
+    var custom;
+    if (_cTk !== 'slim' && _cTk !== 'tsm') {
+      // Torneo dinamico: usa solo chiave specifica del torneo; non fare fallback su slim
+      custom = localStorage.getItem('adm_img_coppa_'+_cTk+'_'+key) || '';
+    } else {
+      custom = localStorage.getItem('adm_img_coppa_'+key) || localStorage.getItem('adm_img_'+key) || '';
+    }
+    if (custom) { img.src = (typeof _normalizeImgUrl==='function' ? _normalizeImgUrl(custom) : custom); }
+    else if (_cTk === 'slim' || _cTk === 'tsm') { if (hubLogos[key]) img.src = hubLogos[key]; }
+    else { img.src = ''; }
   });
   // Carica dati coppe dal localStorage in COPPA_DATA (torneo-specifico)
   var _cTk = window._currentTourneyKey || 'slim';
@@ -14340,6 +14351,10 @@ function enterLeague(tournament, leagueKey) {
       var _lv=localStorage.getItem('adm_logo_'+tournament+'_'+currentLeagueKey+'_'+team)||localStorage.getItem('adm_logo_'+tournament+'_'+currentLeagueKey+'_'+team.toUpperCase());
       if(_lv) FANTASY_LOGOS[team]=typeof _normalizeImgUrl==='function'?_normalizeImgUrl(_lv):_lv;
     });
+    // Reset coppe per isolamento dal torneo precedente
+    if (typeof COPPA_DATA !== 'undefined') { ['cl','el','conf','sc'].forEach(function(k){ COPPA_DATA[k]={}; }); }
+    if (typeof COPPA_TROPHIES !== 'undefined') { ['cl','el','conf','sc'].forEach(function(k){ COPPA_TROPHIES[k]=''; }); }
+    ['logo-cl','logo-el','logo-conf','logo-sc'].forEach(function(id){ var img=document.getElementById(id); if(img) img.src=''; });
     showPage('lega');
     setTimeout(function(){
       _updateLegaDashboard(tournament+'_'+currentLeagueKey);
@@ -15083,9 +15098,16 @@ function initCoppaLogos() {
   Object.keys(map).forEach(function(key) {
     var img = document.getElementById(map[key]);
     if (!img) return;
-    var custom = localStorage.getItem('adm_img_coppa_'+key) || localStorage.getItem('adm_img_'+key);
-    if (custom) { img.src = custom; return; }
-    if (hubLogos[key]) img.src = hubLogos[key];
+    var custom;
+    if (_cTk !== 'slim' && _cTk !== 'tsm') {
+      // Torneo dinamico: usa solo chiave specifica del torneo; non fare fallback su slim
+      custom = localStorage.getItem('adm_img_coppa_'+_cTk+'_'+key) || '';
+    } else {
+      custom = localStorage.getItem('adm_img_coppa_'+key) || localStorage.getItem('adm_img_'+key) || '';
+    }
+    if (custom) { img.src = (typeof _normalizeImgUrl==='function' ? _normalizeImgUrl(custom) : custom); }
+    else if (_cTk === 'slim' || _cTk === 'tsm') { if (hubLogos[key]) img.src = hubLogos[key]; }
+    else { img.src = ''; }
   });
   // Carica dati coppe dal localStorage in COPPA_DATA (torneo-specifico)
   var _cTk = window._currentTourneyKey || 'slim';
