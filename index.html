@@ -1,4 +1,4 @@
-﻿<!-- build:20260516_1648 -->
+﻿<!-- build:20260516_1654 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260516_1648';
+  var BUILD='20260516_1654';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -8023,9 +8023,9 @@ function admRenderRosaEditor(players, torneoKey, legaKey, squadra) {
     // Crediti Gestione (manuale - visibile utente)
     +'<div style="background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.2);border-radius:10px;padding:12px;text-align:center">'
     +'<div style="font-size:9px;font-weight:700;color:#10b981;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Imposta Crediti Netti</div>'
-    +'<input type="number" id="adm-cr-gest-'+squadra+'" value="'+crGestione+'" step="0.5" placeholder="0" '
+    +'<input type="number" id="adm-cr-gest-'+squadra+'" value="0" step="0.5" placeholder="0" '
     +'style="width:100%;background:transparent;border:none;border-bottom:2px solid #10b981;color:#10b981;font-family:Bebas Neue,sans-serif;font-size:26px;text-align:center;outline:none">'
-    +'<div style="font-size:9px;color:#10b981;margin-top:4px">'+(crGestione ? 'override manuale — calcolato: '+crAttuali : '0 = usa valore calcolato ('+crAttuali+')')+'</div>'
+    +'<div style="font-size:9px;color:#10b981;margin-top:4px">'+(crGestione ? 'attivo: '+crGestione+' cr — inserisci nuovo valore e salva' : 'inserisci il valore netto da impostare')+'</div>'
     +'</div>'
     +'</div>'
     +'<div style="margin-top:10px;display:flex;justify-content:flex-end">'
