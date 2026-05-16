@@ -1,4 +1,4 @@
-<!-- build:20260516_2056 -->
+<!-- build:20260516_2116 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260516_2056';
+  var BUILD='20260516_2116';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -4182,7 +4182,7 @@ function tsmUpdateHeader() {
   var st=document.getElementById('tsm-th-stats');
   var lo=document.getElementById('tsm-th-logo');
   if (tsmCurrentTeam==='INFERMERIA') {
-    if(lo) lo.style.display='none';
+    if(lo){var _ifl=typeof FANTASY_LOGOS!=='undefined'&&FANTASY_LOGOS['INFERMERIA']?FANTASY_LOGOS['INFERMERIA']:'';if(_ifl){lo.src=_ifl;lo.style.display='block';}else{lo.style.display='none';}}
     if(nm) nm.textContent='Infermeria';
     if(cb) cb.style.display='none';
     if(st) st.innerHTML=''; return;
@@ -9301,7 +9301,8 @@ function buildTeamsGrid(){var g=document.getElementById('rose-teams-grid');if(!g
 function selectTeam(el,name){currentTeam=name;currentFilter='ALL';buildTeamsGrid();updateHeader();buildFilters();renderTable();}
 function updateHeader(){
   if(currentTeam==='INFERMERIA'){
-    var l=document.getElementById('th-logo');if(l)l.style.display='none';
+    var l=document.getElementById('th-logo');
+    if(l){var _ifl=typeof FANTASY_LOGOS!=='undefined'&&FANTASY_LOGOS['INFERMERIA']?FANTASY_LOGOS['INFERMERIA']:'';if(_ifl){l.src=_ifl;l.style.display='block';}else{l.style.display='none';}}
     var nm=document.getElementById('th-name');if(nm)nm.textContent='Infermeria';
     var c=document.getElementById('th-credits-box');if(c)c.style.display='none';
     var st=document.getElementById('th-stats');if(st)st.innerHTML='';
@@ -10612,7 +10613,7 @@ function tsmUpdateHeader() {
   var st=document.getElementById('tsm-th-stats');
   var lo=document.getElementById('tsm-th-logo');
   if (tsmCurrentTeam==='INFERMERIA') {
-    if(lo) lo.style.display='none';
+    if(lo){var _ifl=typeof FANTASY_LOGOS!=='undefined'&&FANTASY_LOGOS['INFERMERIA']?FANTASY_LOGOS['INFERMERIA']:'';if(_ifl){lo.src=_ifl;lo.style.display='block';}else{lo.style.display='none';}}
     if(nm) nm.textContent='Infermeria';
     if(cb) cb.style.display='none';
     if(st) st.innerHTML=''; return;
@@ -14725,7 +14726,8 @@ function buildTeamsGrid(){var g=document.getElementById('rose-teams-grid');if(!g
 function selectTeam(el,name){currentTeam=name;currentFilter='ALL';buildTeamsGrid();updateHeader();buildFilters();renderTable();}
 function updateHeader(){
   if(currentTeam==='INFERMERIA'){
-    var l=document.getElementById('th-logo');if(l)l.style.display='none';
+    var l=document.getElementById('th-logo');
+    if(l){var _ifl=typeof FANTASY_LOGOS!=='undefined'&&FANTASY_LOGOS['INFERMERIA']?FANTASY_LOGOS['INFERMERIA']:'';if(_ifl){l.src=_ifl;l.style.display='block';}else{l.style.display='none';}}
     var nm=document.getElementById('th-name');if(nm)nm.textContent='Infermeria';
     var c=document.getElementById('th-credits-box');if(c)c.style.display='none';
     var st=document.getElementById('th-stats');if(st)st.innerHTML='';
