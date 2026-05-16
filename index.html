@@ -1,4 +1,4 @@
-<!-- build:20260516_2252 -->
+<!-- build:20260516_2310 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260516_2252';
+  var BUILD='20260516_2310';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -5877,7 +5877,10 @@ function admRenderCoppeList(torneoKey) {
       +'<input type="text" value="'+c.label+'" data-t="'+torneoKey+'" data-ci="'+ci+'" data-f="label" onchange="admUpdateCoppaConfig(this)" style="background:transparent;border:none;border-bottom:1px solid var(--border);color:var(--text);font-size:13px;font-weight:700;outline:none;width:200px">'
       +'</div>'
       +'<input type="color" value="'+c.color+'" data-t="'+torneoKey+'" data-ci="'+ci+'" data-f="color" onchange="admUpdateCoppaConfig(this)" style="width:32px;height:28px;border:none;background:none;cursor:pointer">'
-      +'<span style="font-size:11px;color:var(--text3)">'+c.rounds.length+' turni · '+c.teams+' squadre</span>'
+      +'<div style="display:flex;align-items:center;gap:5px;flex-shrink:0">'
+      +'<label style="font-size:10px;color:var(--text3);white-space:nowrap">Numero Squadre partecipanti</label>'
+      +'<input type="number" value="'+c.teams+'" min="2" step="1" data-t="'+torneoKey+'" data-ci="'+ci+'" onchange="admUpdateCoppaTeams(this)" style="width:52px;padding:3px 6px;background:var(--bg2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:12px;text-align:center;outline:none">'
+      +'</div>'
       +'<button data-t="'+torneoKey+'" data-ci="'+ci+'" onclick="admDeleteCoppa(this)" style="background:none;border:none;color:#ef4444;cursor:pointer;font-size:14px">✕</button>'
       +'</div>';
     h += '<div style="padding:4px 14px 10px;display:flex;align-items:center;gap:8px">'
@@ -5895,6 +5898,18 @@ function admUpdateCoppaConfig(el) {
   var config = admGetCoppeConfig(torneoKey);
   if(config[ci]) config[ci][f] = el.value;
   admSaveCoppeConfig(torneoKey, config);
+}
+
+function admUpdateCoppaTeams(el) {
+  var torneoKey=el.dataset.t, ci=+el.dataset.ci;
+  var teams=parseInt(el.value);
+  if(isNaN(teams)||teams<2) return;
+  var _rnames={32:'Sedicesimi',16:'Ottavi',8:'Quarti',4:'Semifinali',2:'Finale'};
+  var rounds=[]; var n=teams; while(n>1){rounds.push(_rnames[n]||('Turno '+n));n=Math.floor(n/2);}
+  var config=admGetCoppeConfig(torneoKey);
+  if(config[ci]){config[ci].teams=teams;config[ci].rounds=rounds;}
+  admSaveCoppeConfig(torneoKey,config);
+  admRenderCoppeList(torneoKey);
 }
 
 function admSaveCoppaTrofeo(el) {
@@ -11691,7 +11706,10 @@ function admRenderCoppeList(torneoKey) {
       +'<input type="text" value="'+c.label+'" data-t="'+torneoKey+'" data-ci="'+ci+'" data-f="label" onchange="admUpdateCoppaConfig(this)" style="background:transparent;border:none;border-bottom:1px solid var(--border);color:var(--text);font-size:13px;font-weight:700;outline:none;width:200px">'
       +'</div>'
       +'<input type="color" value="'+c.color+'" data-t="'+torneoKey+'" data-ci="'+ci+'" data-f="color" onchange="admUpdateCoppaConfig(this)" style="width:32px;height:28px;border:none;background:none;cursor:pointer">'
-      +'<span style="font-size:11px;color:var(--text3)">'+c.rounds.length+' turni · '+c.teams+' squadre</span>'
+      +'<div style="display:flex;align-items:center;gap:5px;flex-shrink:0">'
+      +'<label style="font-size:10px;color:var(--text3);white-space:nowrap">Numero Squadre partecipanti</label>'
+      +'<input type="number" value="'+c.teams+'" min="2" step="1" data-t="'+torneoKey+'" data-ci="'+ci+'" onchange="admUpdateCoppaTeams(this)" style="width:52px;padding:3px 6px;background:var(--bg2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:12px;text-align:center;outline:none">'
+      +'</div>'
       +'<button data-t="'+torneoKey+'" data-ci="'+ci+'" onclick="admDeleteCoppa(this)" style="background:none;border:none;color:#ef4444;cursor:pointer;font-size:14px">✕</button>'
       +'</div>';
     h += '<div style="padding:4px 14px 10px;display:flex;align-items:center;gap:8px">'
@@ -11709,6 +11727,18 @@ function admUpdateCoppaConfig(el) {
   var config = admGetCoppeConfig(torneoKey);
   if(config[ci]) config[ci][f] = el.value;
   admSaveCoppeConfig(torneoKey, config);
+}
+
+function admUpdateCoppaTeams(el) {
+  var torneoKey=el.dataset.t, ci=+el.dataset.ci;
+  var teams=parseInt(el.value);
+  if(isNaN(teams)||teams<2) return;
+  var _rnames={32:'Sedicesimi',16:'Ottavi',8:'Quarti',4:'Semifinali',2:'Finale'};
+  var rounds=[]; var n=teams; while(n>1){rounds.push(_rnames[n]||('Turno '+n));n=Math.floor(n/2);}
+  var config=admGetCoppeConfig(torneoKey);
+  if(config[ci]){config[ci].teams=teams;config[ci].rounds=rounds;}
+  admSaveCoppeConfig(torneoKey,config);
+  admRenderCoppeList(torneoKey);
 }
 
 function admSaveCoppaTrofeo(el) {
