@@ -1,4 +1,4 @@
-<!-- build:20260516_2027 -->
+<!-- build:20260516_2034 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260516_2027';
+  var BUILD='20260516_2034';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -1016,7 +1016,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   </div>
   <div class="nav-item" onclick="showSection('coppe',this)">
     <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 9H4.5a2.5 2.5 0 010-5H6"/><path d="M18 9h1.5a2.5 2.5 0 000-5H18"/><path d="M18 2H6v7a6 6 0 0012 0V2z"/><path d="M12 15v6M8 21h8"/></svg>
-    Coppe Europee
+    <span id="nav-coppe-label">Coppe Europee</span>
   </div>
   <div class="nav-section">Gestione</div>
   <div class="nav-item" onclick="showSection('stadio',this)">
@@ -1145,11 +1145,11 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   <!-- ===== COPPE EUROPEE ===== -->
   <div id="s-coppe" class="section">
     <!-- HEADER -->
-    <div style="font-family:'Bebas Neue';font-size:28px;letter-spacing:2px;margin-bottom:6px"><span style="color:#f59e0b">Coppe Europee</span></div>
+    <div style="font-family:'Bebas Neue';font-size:28px;letter-spacing:2px;margin-bottom:6px"><span id="coppe-section-title" style="color:#f59e0b">Coppe Europee</span></div>
     <div id="coppe-torneo-subtitle" style="font-size:11px;color:var(--text2);margin-bottom:24px">Scudetto Slim · Clicca su una competizione per vedere il tabellone</div>
 
     <!-- PANNELLO PRINCIPALE: 4 LOGHI -->
-    <div id="coppe-hub" style="display:grid;grid-template-columns:repeat(2,1fr);gap:16px;max-width:500px;margin:0 auto 24px">
+    <div id="coppe-hub" style="display:none;grid-template-columns:repeat(2,1fr);gap:16px;max-width:500px;margin:0 auto 24px">
       <div onclick="openCoppa('cl')" id="coppa-card-cl"
            style="background:var(--card);border:2px solid var(--border);border-radius:18px;padding:24px 16px;text-align:center;cursor:pointer;transition:all .25s"
            onmouseover="this.style.borderColor='#f59e0b';this.style.transform='translateY(-4px)';this.style.boxShadow='0 8px 30px #f59e0b33'"
@@ -4009,6 +4009,11 @@ function _updateLegaDashboard(leagueKey) {
   if (bcTorneoEl) bcTorneoEl.textContent = _torneoLabel;
   var coppeSub = document.getElementById('coppe-torneo-subtitle');
   if (coppeSub) coppeSub.textContent = _torneoLabel + ' · Clicca su una competizione per vedere il tabellone';
+  var _coppeLabel = (_admTK === 'tdm') ? 'Coppe' : 'Coppe Europee';
+  var _navCoppeEl = document.getElementById('nav-coppe-label');
+  if (_navCoppeEl) _navCoppeEl.textContent = _coppeLabel;
+  var _coppeTitleEl = document.getElementById('coppe-section-title');
+  if (_coppeTitleEl) _coppeTitleEl.textContent = _coppeLabel;
   var bcEl = document.getElementById('breadcrumb-league');
   if (bcEl) bcEl.textContent = _dynLegaLabel || breadcrumbNames[_realLK] || _realLK.toUpperCase();
   var nameEl = document.querySelector('.league-info-name');
@@ -10394,6 +10399,11 @@ function _updateLegaDashboard(leagueKey) {
   if (bcTorneoEl) bcTorneoEl.textContent = _torneoLabel;
   var coppeSub = document.getElementById('coppe-torneo-subtitle');
   if (coppeSub) coppeSub.textContent = _torneoLabel + ' · Clicca su una competizione per vedere il tabellone';
+  var _coppeLabel = (_admTK === 'tdm') ? 'Coppe' : 'Coppe Europee';
+  var _navCoppeEl = document.getElementById('nav-coppe-label');
+  if (_navCoppeEl) _navCoppeEl.textContent = _coppeLabel;
+  var _coppeTitleEl = document.getElementById('coppe-section-title');
+  if (_coppeTitleEl) _coppeTitleEl.textContent = _coppeLabel;
   var bcEl = document.getElementById('breadcrumb-league');
   if (bcEl) bcEl.textContent = _dynLegaLabel || breadcrumbNames[_realLK] || _realLK.toUpperCase();
   var nameEl = document.querySelector('.league-info-name');
