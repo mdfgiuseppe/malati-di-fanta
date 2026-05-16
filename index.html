@@ -1,4 +1,4 @@
-﻿<!-- build:20260516_1232 -->
+﻿<!-- build:20260516_1528 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260516_1232';
+  var BUILD='20260516_1528';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -1201,29 +1201,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 
   <!-- ===== SPONSOR ===== -->
   <div id="s-sponsor" class="section">
-    <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:420px;padding:40px 20px;text-align:center">
-      <div style="position:relative;margin-bottom:36px">
-        <div style="position:absolute;inset:-40px;background:radial-gradient(ellipse at center,rgba(16,185,129,.15),transparent 70%);border-radius:50%;pointer-events:none"></div>
-        <img src="" id="sponsor-slim-logo" style="width:160px;height:160px;object-fit:contain;filter:drop-shadow(0 8px 40px rgba(16,185,129,.4));position:relative;z-index:1">
-      </div>
-      <div style="display:inline-flex;align-items:center;gap:10px;padding:10px 24px;background:rgba(239,68,68,.08);border:1.5px solid rgba(239,68,68,.25);border-radius:50px;margin-bottom:24px">
-        <svg width="16" height="16" fill="none" stroke="#ef4444" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M4.93 4.93l14.14 14.14"/></svg>
-        <span style="font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:#ef4444">Non disponibile</span>
-      </div>
-      <div style="font-family:'Bebas Neue',sans-serif;font-size:clamp(22px,5vw,38px);letter-spacing:3px;color:var(--text);line-height:1.1;margin-bottom:12px">
-        SPONSOR NON PREVISTI<br><span style="color:#10b981">PER QUESTO FORMAT</span>
-      </div>
-      <div style="font-size:13px;color:var(--text2);max-width:380px;line-height:1.6;margin-bottom:32px">
-        Il format <strong style="color:var(--text)">Scudetto Slim</strong> non prevede accordi commerciali con sponsor.<br>
-        Questa sezione è disponibile negli altri tornei della piattaforma.
-      </div>
-      <div style="display:flex;align-items:center;gap:12px;width:100%;max-width:300px;margin-bottom:28px">
-        <div style="flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--border))"></div>
-        <div style="font-size:9px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--text3)">Scudetto Slim</div>
-        <div style="flex:1;height:1px;background:linear-gradient(90deg,var(--border),transparent)"></div>
-      </div>
-      
-    </div>
+    <div id="slim-sponsor-user-body"></div>
   </div><!-- /s-sponsor -->
 
   <div id="s-multe" class="section">
@@ -1684,29 +1662,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
     </div>
   </div><!-- /s-multe -->
   <div id="tsm-s-sponsor" class="section">
-    <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:420px;padding:40px 20px;text-align:center;width:100%">
-      <div style="position:relative;margin-bottom:36px">
-        <div style="position:absolute;inset:-40px;background:radial-gradient(ellipse at center,rgba(16,185,129,.15),transparent 70%);border-radius:50%;pointer-events:none"></div>
-        <img src="" id="sponsor-tsm-logo" style="width:160px;height:160px;object-fit:contain;filter:drop-shadow(0 8px 40px rgba(16,185,129,.4));position:relative;z-index:1">
-      </div>
-      <div style="display:inline-flex;align-items:center;gap:10px;padding:10px 24px;background:rgba(239,68,68,.08);border:1.5px solid rgba(239,68,68,.25);border-radius:50px;margin-bottom:24px">
-        <svg width="16" height="16" fill="none" stroke="#ef4444" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M4.93 4.93l14.14 14.14"/></svg>
-        <span style="font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:#ef4444">Non disponibile</span>
-      </div>
-      <div style="font-family:'Bebas Neue',sans-serif;font-size:clamp(22px,5vw,38px);letter-spacing:3px;color:var(--text);line-height:1.1;margin-bottom:12px">
-        SPONSOR NON PREVISTI<br><span style="color:#10b981">PER QUESTO FORMAT</span>
-      </div>
-      <div style="font-size:13px;color:var(--text2);max-width:380px;line-height:1.6;margin-bottom:32px">
-        Il format <strong style="color:var(--text)">TSM</strong> non prevede accordi commerciali con sponsor.<br>
-        Questa sezione è disponibile negli altri tornei della piattaforma.
-      </div>
-      <div style="display:flex;align-items:center;gap:12px;width:100%;max-width:300px;margin-bottom:28px">
-        <div style="flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--border))"></div>
-        <div style="font-size:9px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--text3)">TSM</div>
-        <div style="flex:1;height:1px;background:linear-gradient(90deg,var(--border),transparent)"></div>
-      </div>
-      
-    </div>
+    <div id="tsm-sponsor-user-body"></div>
   </div><!-- /s-sponsor -->
 <!-- ===== MODULISTICA ===== -->
   <div id="tsm-s-modulistica" class="section">
@@ -3306,7 +3262,10 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
         <select id="adm-rose-squadra" onchange="admLoadRosaGiocatori()" style="padding:8px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;outline:none">
           <option value="">-- Seleziona Squadra --</option>
         </select>
-        
+      </div>
+      <div id="adm-rose-new-sq-wrap" style="display:none;align-items:center;gap:8px;margin-bottom:16px;flex-wrap:wrap">
+        <input id="adm-rose-new-sq-inp" type="text" placeholder="Nome nuova squadra..." style="padding:8px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;outline:none;min-width:200px">
+        <button onclick="admCreateSquadra()" style="padding:8px 16px;background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.3);color:#10b981;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer">+ Crea Squadra</button>
       </div>
 
       <div id="adm-rose-body"></div>
@@ -7818,6 +7777,10 @@ function admLoadRoseSquadre() {
   teams.forEach(function(t){ var o=document.createElement('option');o.value=t;o.textContent=t;sel.appendChild(o); });
   var oI=document.createElement('option');oI.value='INFERMERIA';oI.textContent='🏥 Infermeria';sel.appendChild(oI);
   document.getElementById('adm-rose-body').innerHTML='';
+  var wrap = document.getElementById('adm-rose-new-sq-wrap');
+  if (wrap) wrap.style.display = (torneoKey && legaKey) ? 'flex' : 'none';
+  var inp = document.getElementById('adm-rose-new-sq-inp');
+  if (inp) inp.value = '';
 }
 function admGetTeams(torneoKey, legaKey) {
   if (torneoKey==='slim') {
@@ -8596,12 +8559,22 @@ function admRenderSponsorEditor(d, t, l, s) {
       'padding:6px 8px;background:var(--bg2);border:1px solid var(--border);border-radius:6px;font-size:12px;outline:none;color:'+(dtype==='number'?'#10b981':'var(--text)')+'">';
   }
   function flagChk(checked, tipo, field, i) {
-    var extra = i!==undefined ? 'data-i="'+i+'" onchange="admSpUpdateObEl(this)"' : 'onchange="admSpUpdateEl(this)"';
-    return '<label style="display:flex;align-items:center;gap:6px;cursor:pointer">'
+    var call = i !== undefined
+      ? 'admSpUpdateObiettivo("'+t+'","'+l+'","'+s+'","'+tipo+'",'+i+',"'+field+'",this.checked)'
+      : 'admSpToggle("'+t+'","'+l+'","'+s+'","'+tipo+'","'+field+'",this.checked)';
+    var bg = checked ? '#10b981' : 'rgba(255,255,255,.15)';
+    var knobL = checked ? '21' : '3';
+    return '<label style="display:inline-flex;align-items:center;gap:8px;cursor:pointer;user-select:none">'
+      +'<div style="position:relative;width:40px;height:22px;flex-shrink:0">'
       +'<input type="checkbox"'+(checked?' checked':'')+' '
-      +'data-t="'+t+'" data-l="'+l+'" data-s="'+s+'" data-tipo="'+tipo+'" data-field="'+field+'" '+extra+' '
-      +'style="width:16px;height:16px;cursor:pointer">'
-      +'<span style="font-size:10px;font-weight:700;color:'+(checked?'#10b981':'var(--text3)')+'">'+( checked?'RAGGIUNTO':'In corso')+'</span></label>';
+      +'data-t="'+t+'" data-l="'+l+'" data-s="'+s+'" data-tipo="'+tipo+'" data-field="'+field+'"'+(i!==undefined?' data-i="'+i+'"':'')+' '
+      +'onchange="'+call+'" '
+      +'style="opacity:0;position:absolute;inset:0;width:100%;height:100%;margin:0;cursor:pointer;z-index:1">'
+      +'<div style="position:absolute;inset:0;background:'+bg+';border-radius:22px;pointer-events:none"></div>'
+      +'<div style="position:absolute;top:3px;left:'+knobL+'px;width:16px;height:16px;background:#fff;border-radius:50%;box-shadow:0 1px 3px rgba(0,0,0,.3);pointer-events:none"></div>'
+      +'</div>'
+      +'<span style="font-size:10px;font-weight:700;color:'+(checked?'#10b981':'var(--text3)')+'">'+( checked?'RAGGIUNTO':'In corso')+'</span>'
+      +'</label>';
   }
 
   // Selettori a cascata dal catalogo
@@ -8866,6 +8839,7 @@ function showTSMSection(id, el) {
   else if (id === 'stadio') tsmRenderStadio();
   else if (id === 'multe') tsmRenderMulte();
   else if (id === 'modulistica') renderModulistica('tsm_it', 'tsm-modulistica-body');
+  else if (id === 'sponsor') tsmRenderSponsorUser();
 }
 
 function enterLeague(tournament, leagueKey) {
@@ -9159,6 +9133,7 @@ function showSection(id,el){
   else if(id==='multe')renderMulte();
   else if(id==='coppe'){initCoppaLogos();closeBracket();}
   else if(id==='modulistica'){ renderModulistica('slim', 'slim-modulistica-body'); }
+  else if(id==='sponsor') slimRenderSponsorUser();
 }
 var currentTeam='SALERNITANA',currentFilter='ALL';
 function roleBadge(r){var roles=r.split(';').map(function(x){return x.trim();}).filter(function(x){return x;});return roles.map(function(x){var c=ROLE_COLORS[x]||['rgba(107,114,128,.15)','#6b7280'];return'<span style="display:inline-block;font-size:8px;font-weight:800;padding:2px 5px;border-radius:3px;background:'+c[0]+';color:'+c[1]+';margin:1px">'+x+'</span>';}).join('');}
@@ -13662,12 +13637,22 @@ function admRenderSponsorEditor(d, t, l, s) {
       'padding:6px 8px;background:var(--bg2);border:1px solid var(--border);border-radius:6px;font-size:12px;outline:none;color:'+(dtype==='number'?'#10b981':'var(--text)')+'">';
   }
   function flagChk(checked, tipo, field, i) {
-    var extra = i!==undefined ? 'data-i="'+i+'" onchange="admSpUpdateObEl(this)"' : 'onchange="admSpUpdateEl(this)"';
-    return '<label style="display:flex;align-items:center;gap:6px;cursor:pointer">'
+    var call = i !== undefined
+      ? 'admSpUpdateObiettivo("'+t+'","'+l+'","'+s+'","'+tipo+'",'+i+',"'+field+'",this.checked)'
+      : 'admSpToggle("'+t+'","'+l+'","'+s+'","'+tipo+'","'+field+'",this.checked)';
+    var bg = checked ? '#10b981' : 'rgba(255,255,255,.15)';
+    var knobL = checked ? '21' : '3';
+    return '<label style="display:inline-flex;align-items:center;gap:8px;cursor:pointer;user-select:none">'
+      +'<div style="position:relative;width:40px;height:22px;flex-shrink:0">'
       +'<input type="checkbox"'+(checked?' checked':'')+' '
-      +'data-t="'+t+'" data-l="'+l+'" data-s="'+s+'" data-tipo="'+tipo+'" data-field="'+field+'" '+extra+' '
-      +'style="width:16px;height:16px;cursor:pointer">'
-      +'<span style="font-size:10px;font-weight:700;color:'+(checked?'#10b981':'var(--text3)')+'">'+( checked?'RAGGIUNTO':'In corso')+'</span></label>';
+      +'data-t="'+t+'" data-l="'+l+'" data-s="'+s+'" data-tipo="'+tipo+'" data-field="'+field+'"'+(i!==undefined?' data-i="'+i+'"':'')+' '
+      +'onchange="'+call+'" '
+      +'style="opacity:0;position:absolute;inset:0;width:100%;height:100%;margin:0;cursor:pointer;z-index:1">'
+      +'<div style="position:absolute;inset:0;background:'+bg+';border-radius:22px;pointer-events:none"></div>'
+      +'<div style="position:absolute;top:3px;left:'+knobL+'px;width:16px;height:16px;background:#fff;border-radius:50%;box-shadow:0 1px 3px rgba(0,0,0,.3);pointer-events:none"></div>'
+      +'</div>'
+      +'<span style="font-size:10px;font-weight:700;color:'+(checked?'#10b981':'var(--text3)')+'">'+( checked?'RAGGIUNTO':'In corso')+'</span>'
+      +'</label>';
   }
 
   // Selettori a cascata dal catalogo
@@ -13932,6 +13917,7 @@ function showTSMSection(id, el) {
   else if (id === 'stadio') tsmRenderStadio();
   else if (id === 'multe') tsmRenderMulte();
   else if (id === 'modulistica') renderModulistica('tsm_it', 'tsm-modulistica-body');
+  else if (id === 'sponsor') tsmRenderSponsorUser();
 }
 
 
@@ -14470,6 +14456,7 @@ function showSection(id,el){
   else if(id==='multe')renderMulte();
   else if(id==='coppe'){initCoppaLogos();closeBracket();}
   else if(id==='modulistica'){ renderModulistica('slim', 'slim-modulistica-body'); }
+  else if(id==='sponsor') slimRenderSponsorUser();
 }
 var currentTeam='SALERNITANA',currentFilter='ALL';
 function roleBadge(r){var roles=r.split(';').map(function(x){return x.trim();}).filter(function(x){return x;});return roles.map(function(x){var c=ROLE_COLORS[x]||['rgba(107,114,128,.15)','#6b7280'];return'<span style="display:inline-block;font-size:8px;font-weight:800;padding:2px 5px;border-radius:3px;background:'+c[0]+';color:'+c[1]+';margin:1px">'+x+'</span>';}).join('');}
@@ -15228,6 +15215,109 @@ function doLogin(){
       onLoginResult(false, 'Credenziali non valide. Contatta lo staff.');
     }
   }
+}
+
+// ═══════════════════════════════════════════════════════
+// SPONSOR — Visualizzazione utente
+// ═══════════════════════════════════════════════════════
+function _sponsorBadge(raggiunto) {
+  if (raggiunto) return '<span style="display:inline-flex;align-items:center;gap:3px;padding:2px 8px;background:rgba(16,185,129,.15);border:1px solid rgba(16,185,129,.3);border-radius:12px;font-size:9px;font-weight:700;color:#10b981;white-space:nowrap">✓ RAGGIUNTO</span>';
+  return '<span style="display:inline-flex;align-items:center;gap:3px;padding:2px 8px;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:12px;font-size:9px;font-weight:700;color:var(--text3);white-space:nowrap">⧖ In corso</span>';
+}
+function _renderSponsorUserBody(el, torneoKey, legaKey, teams) {
+  if (!el) return;
+  var hasAny = false;
+  var html = '<div style="font-family:\'Bebas Neue\',sans-serif;font-size:28px;letter-spacing:2px;margin-bottom:6px">🤝 <span style="color:#10b981">Sponsor</span></div>'
+    +'<div style="font-size:11px;color:var(--text2);margin-bottom:20px">Accordi commerciali delle squadre</div>';
+  teams.forEach(function(sq) {
+    var raw = localStorage.getItem('adm_sponsor_'+torneoKey+'_'+legaKey+'_'+sq);
+    if (!raw) return;
+    var d; try { d = JSON.parse(raw); } catch(e) { return; }
+    if (!d || (!d.maglia.nome && !d.social.nome && !d.stadio.nome)) return;
+    hasAny = true;
+    var logo = (typeof FANTASY_LOGOS !== 'undefined' && FANTASY_LOGOS[sq]) ? '<img src="'+FANTASY_LOGOS[sq]+'" style="width:28px;height:28px;object-fit:contain;flex-shrink:0">' : '';
+    html += '<div class="card" style="padding:14px 16px;margin-bottom:10px">';
+    html += '<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">'+logo
+      +'<div style="font-family:\'Bebas Neue\',sans-serif;font-size:17px">'+_teamCase(sq)+'</div></div>';
+    if (d.maglia.nome) {
+      html += '<div style="margin-bottom:8px">'
+        +'<div style="font-size:9px;font-weight:700;color:#3b82f6;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px">👕 '+d.maglia.nome+'</div>'
+        +'<div style="display:flex;align-items:center;gap:8px">'
+        +'<span style="font-size:10px;color:var(--text2);flex:1">'+d.maglia.obiettivo+'</span>'
+        +_sponsorBadge(d.maglia.raggiunto)+'</div></div>';
+    }
+    if (d.social.nome) {
+      html += '<div style="margin-bottom:8px">'
+        +'<div style="font-size:9px;font-weight:700;color:#8b5cf6;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px">📱 '+d.social.nome+(d.social.difficolta?' — '+d.social.difficolta:'')+'</div>';
+      d.social.obiettivi.forEach(function(o) {
+        if (!o.desc) return;
+        html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:3px">'
+          +'<span style="font-size:10px;color:var(--text2);flex:1">'+o.desc+'</span>'
+          +_sponsorBadge(o.raggiunto)+'</div>';
+      });
+      html += '</div>';
+    }
+    if (d.stadio.nome) {
+      html += '<div>'
+        +'<div style="font-size:9px;font-weight:700;color:#f59e0b;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px">🏟️ '+d.stadio.nome+'</div>';
+      d.stadio.clausole.forEach(function(c) {
+        if (!c.desc) return;
+        html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:3px">'
+          +'<span style="font-size:10px;color:var(--text2);flex:1">'+c.desc+'</span>'
+          +_sponsorBadge(c.raggiunto)+'</div>';
+      });
+      html += '</div>';
+    }
+    html += '</div>';
+  });
+  if (!hasAny) {
+    el.innerHTML = '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:300px;padding:40px 20px;text-align:center">'
+      +'<div style="font-family:\'Bebas Neue\',sans-serif;font-size:clamp(22px,5vw,36px);letter-spacing:3px;color:var(--text);margin-bottom:12px">NESSUNO SPONSOR<br><span style="color:var(--text3)">CONFIGURATO</span></div>'
+      +'<div style="font-size:13px;color:var(--text2);max-width:380px">Gli sponsor non sono ancora stati configurati per questa lega.</div>'
+      +'</div>';
+    return;
+  }
+  el.innerHTML = html;
+}
+function slimRenderSponsorUser() {
+  var el = document.getElementById('slim-sponsor-user-body');
+  var tk = window._currentTourneyKey || 'slim';
+  var lk = window.currentLeagueKey || 'it';
+  var teams = Object.keys(TEAMS_ROSE).sort();
+  _renderSponsorUserBody(el, tk, lk, teams);
+}
+function tsmRenderSponsorUser() {
+  var el = document.getElementById('tsm-sponsor-user-body');
+  var teams = (typeof TSM_TEAMS_IT !== 'undefined' && TSM_TEAMS_IT.length) ? TSM_TEAMS_IT.slice().sort() : Object.keys(TEAMS_ROSE).sort();
+  _renderSponsorUserBody(el, 'tsm', 'it', teams);
+}
+
+// ═══════════════════════════════════════════════════════
+// ADMIN — Crea Squadra manuale
+// ═══════════════════════════════════════════════════════
+function admCreateSquadra() {
+  var torneoKey = document.getElementById('adm-rose-torneo').value;
+  var legaKey = document.getElementById('adm-rose-lega').value;
+  var inp = document.getElementById('adm-rose-new-sq-inp');
+  var nome = inp ? inp.value.trim() : '';
+  if (!torneoKey || !legaKey) { alert('Seleziona prima torneo e lega.'); return; }
+  if (!nome) { alert('Inserisci il nome della squadra.'); return; }
+  var roseKey = 'adm_rose_'+torneoKey+'_'+legaKey;
+  var rose = {};
+  try { rose = JSON.parse(localStorage.getItem(roseKey)||'{}'); } catch(e) {}
+  if (rose[nome]) { alert('La squadra "'+nome+'" esiste già.'); return; }
+  rose[nome] = [];
+  var roseStr = JSON.stringify(rose);
+  localStorage.setItem(roseKey, roseStr);
+  gsSaveKey(roseKey, roseStr);
+  if (inp) inp.value = '';
+  admLoadRoseSquadre();
+  var sel = document.getElementById('adm-rose-squadra');
+  if (sel) { sel.value = nome; admLoadRosaGiocatori(); }
+  var msg = document.createElement('div');
+  msg.textContent = '✅ Squadra "'+nome+'" creata'+(GS_ONLINE ? ' · Sincronizzata' : '');
+  msg.style.cssText = 'position:fixed;top:70px;right:20px;background:#10b981;color:#fff;padding:8px 16px;border-radius:8px;font-weight:700;font-size:12px;z-index:9999';
+  document.body.appendChild(msg); setTimeout(function(){ msg.remove(); }, 2500);
 }
 
 </script>
