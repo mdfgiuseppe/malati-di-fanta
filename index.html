@@ -1,4 +1,4 @@
-<!-- build:20260516_1908 -->
+<!-- build:20260516_1912 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260516_1908';
+  var BUILD='20260516_1912';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -1182,6 +1182,13 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
         <div style="font-size:12px;font-weight:800;color:var(--text);margin-bottom:4px">European Supercup</div>
         <div style="font-size:9px;font-weight:700;color:#8b5cf6;letter-spacing:1px;text-transform:uppercase">Vedi tabellone →</div>
       </div>
+    </div>
+
+    <!-- Placeholder: nessuna coppa configurata per questo torneo -->
+    <div id="coppe-no-config" style="display:none;text-align:center;padding:60px 20px">
+      <div style="font-size:48px;margin-bottom:16px">🏆</div>
+      <div style="font-family:'Bebas Neue';font-size:22px;letter-spacing:2px;color:var(--text2);margin-bottom:8px">Nessuna Coppa Configurata</div>
+      <div style="font-size:12px;color:var(--text3);max-width:300px;margin:0 auto;line-height:1.6">Le coppe europee per questo torneo non sono ancora state impostate dall'admin.</div>
     </div>
 
     <!-- BRACKET PANEL (nascosto inizialmente) -->
@@ -9754,6 +9761,19 @@ function initCoppaLogos() {
       COPPA_TROPHIES[key] = (_raw && typeof _normalizeImgUrl === 'function') ? _normalizeImgUrl(_raw) : _raw;
     }
   });
+  // Mostra hub o placeholder in base a se le coppe sono configurate per questo torneo
+  var _hubEl = document.getElementById('coppe-hub');
+  var _noConfigEl = document.getElementById('coppe-no-config');
+  if (_cTk !== 'slim' && _cTk !== 'tsm') {
+    var _hasCoppaConfig = ['cl','el','conf','sc'].some(function(k){
+      return !!localStorage.getItem('adm_coppa_data_'+_cTk+'_'+k);
+    });
+    if (_hubEl) _hubEl.style.display = _hasCoppaConfig ? 'grid' : 'none';
+    if (_noConfigEl) _noConfigEl.style.display = _hasCoppaConfig ? 'none' : 'block';
+  } else {
+    if (_hubEl) _hubEl.style.display = 'grid';
+    if (_noConfigEl) _noConfigEl.style.display = 'none';
+  }
   // Carica da GSheets se mancante (solo per Slim che usa la chiave legacy)
   if (_cTk === 'slim' && typeof gsCall === 'function' && typeof GS_URL !== 'undefined' && GS_URL) {
     ['cl','el','conf','sc'].forEach(function(key) {
@@ -15130,6 +15150,19 @@ function initCoppaLogos() {
       COPPA_TROPHIES[key] = (_raw && typeof _normalizeImgUrl === 'function') ? _normalizeImgUrl(_raw) : _raw;
     }
   });
+  // Mostra hub o placeholder in base a se le coppe sono configurate per questo torneo
+  var _hubEl = document.getElementById('coppe-hub');
+  var _noConfigEl = document.getElementById('coppe-no-config');
+  if (_cTk !== 'slim' && _cTk !== 'tsm') {
+    var _hasCoppaConfig = ['cl','el','conf','sc'].some(function(k){
+      return !!localStorage.getItem('adm_coppa_data_'+_cTk+'_'+k);
+    });
+    if (_hubEl) _hubEl.style.display = _hasCoppaConfig ? 'grid' : 'none';
+    if (_noConfigEl) _noConfigEl.style.display = _hasCoppaConfig ? 'none' : 'block';
+  } else {
+    if (_hubEl) _hubEl.style.display = 'grid';
+    if (_noConfigEl) _noConfigEl.style.display = 'none';
+  }
   // Carica da GSheets se mancante (solo per Slim che usa la chiave legacy)
   if (_cTk === 'slim' && typeof gsCall === 'function' && typeof GS_URL !== 'undefined' && GS_URL) {
     ['cl','el','conf','sc'].forEach(function(key) {
