@@ -1,4 +1,4 @@
-<!-- build:20260516_1947 -->
+<!-- build:20260516_2027 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260516_1947';
+  var BUILD='20260516_2027';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -8986,6 +8986,8 @@ function enterLeague(tournament, leagueKey) {
     if (typeof COPPA_DATA !== 'undefined') { ['cl','el','conf','sc'].forEach(function(k){ COPPA_DATA[k]={}; }); }
     if (typeof COPPA_TROPHIES !== 'undefined') { ['cl','el','conf','sc'].forEach(function(k){ COPPA_TROPHIES[k]=''; }); }
     ['logo-cl','logo-el','logo-conf','logo-sc'].forEach(function(id){ var img=document.getElementById(id); if(img) img.src=''; });
+    // Forza stato iniziale corretto per coppe: hub nascosto, placeholder visibile
+    (function(){ var h=document.getElementById('coppe-hub'),n=document.getElementById('coppe-no-config'); if(h)h.style.display='none'; if(n)n.style.display='block'; ['cl','el','conf','sc'].forEach(function(k){var c=document.getElementById('coppa-card-'+k);if(c)c.style.display='';}); })();
     showPage('lega');
     setTimeout(function(){
       _updateLegaDashboard(tournament+'_'+currentLeagueKey);
@@ -14384,6 +14386,8 @@ function enterLeague(tournament, leagueKey) {
     if (typeof COPPA_DATA !== 'undefined') { ['cl','el','conf','sc'].forEach(function(k){ COPPA_DATA[k]={}; }); }
     if (typeof COPPA_TROPHIES !== 'undefined') { ['cl','el','conf','sc'].forEach(function(k){ COPPA_TROPHIES[k]=''; }); }
     ['logo-cl','logo-el','logo-conf','logo-sc'].forEach(function(id){ var img=document.getElementById(id); if(img) img.src=''; });
+    // Forza stato iniziale corretto per coppe: hub nascosto, placeholder visibile
+    (function(){ var h=document.getElementById('coppe-hub'),n=document.getElementById('coppe-no-config'); if(h)h.style.display='none'; if(n)n.style.display='block'; ['cl','el','conf','sc'].forEach(function(k){var c=document.getElementById('coppa-card-'+k);if(c)c.style.display='';}); })();
     showPage('lega');
     setTimeout(function(){
       _updateLegaDashboard(tournament+'_'+currentLeagueKey);
