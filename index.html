@@ -1,4 +1,4 @@
-<!-- build:20260516_2129 -->
+<!-- build:20260516_2134 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260516_2129';
+  var BUILD='20260516_2134';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -7133,6 +7133,8 @@ function _normalizeImgUrl(url) {
   // Già URL diretto non-Drive
   return url;
 }
+// Aggiunge cache-buster per forzare ricarico nel pannello admin (non viene salvato)
+function _ncUrl(url) { if(!url) return ''; return url+(url.indexOf('?')>=0?'&':'?')+'_nc='+Date.now(); }
 function admEditTrofeoUrl(ti) {
   var t = ADMIN_TORNEI[ti]; if(!t) return;
   var current = localStorage.getItem('adm_trofeo_url_'+t.key) || '';
@@ -7774,7 +7776,7 @@ function admCsLoadSquadre() {
     var _storedLogo=localStorage.getItem('adm_logo_'+torneoKey+'_'+legaKey+'_'+team)||localStorage.getItem('adm_logo_'+torneoKey+'_'+legaKey+'_'+team.toUpperCase())||(typeof FANTASY_LOGOS!=='undefined'?FANTASY_LOGOS[team]||FANTASY_LOGOS[team.toUpperCase()]||'':'');
     var logoUrl=_storedLogo||(baseUrl+k+'.png');
     h+='<div style="display:flex;align-items:center;gap:10px;padding:8px 14px;border-bottom:1px solid var(--border)">'
-      +'<img src="'+logoUrl+'" onerror="this.style.opacity=0.2" style="width:32px;height:32px;object-fit:contain;border-radius:4px;flex-shrink:0">'
+      +'<img src="'+_ncUrl(logoUrl)+'" onerror="this.style.opacity=0.2" style="width:32px;height:32px;object-fit:contain;border-radius:4px;flex-shrink:0">'
       +'<div style="flex:1;min-width:0"><div style="font-size:9px;color:var(--text3);font-weight:700;text-transform:uppercase;margin-bottom:3px">Nome attuale</div><div style="font-size:12px;font-weight:800">'+team+'</div></div>'
       +'<div style="flex:1;min-width:0"><div style="font-size:9px;color:var(--text3);font-weight:700;text-transform:uppercase;margin-bottom:3px">Nuovo nome</div>'
       +'<input type="text" id="adm-cs-new-'+ki+'" placeholder="'+team+'" style="width:100%;padding:5px 8px;background:var(--bg2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:12px;font-weight:700;outline:none"></div>'
@@ -7786,7 +7788,7 @@ function admCsLoadSquadre() {
   // Riga speciale INFERMERIA (solo logo, no rinomina)
   var _infLogo=localStorage.getItem('adm_logo_'+torneoKey+'_'+legaKey+'_INFERMERIA')||'';
   h+='<div style="display:flex;align-items:center;gap:10px;padding:8px 14px;border-top:2px dashed var(--border);background:rgba(239,68,68,.04)">'
-    +'<img src="'+_infLogo+'" onerror="this.style.opacity=0.15" style="width:32px;height:32px;object-fit:contain;border-radius:4px;flex-shrink:0">'
+    +'<img src="'+_ncUrl(_infLogo)+'" onerror="this.style.opacity=0.15" style="width:32px;height:32px;object-fit:contain;border-radius:4px;flex-shrink:0">'
     +'<div style="flex:1;min-width:0"><div style="font-size:9px;color:#ef4444;font-weight:700;text-transform:uppercase;margin-bottom:3px">Speciale</div><div style="font-size:12px;font-weight:800;color:#ef4444">Infermeria</div></div>'
     +'<div style="flex:2;min-width:0"><div style="font-size:9px;color:var(--text3);font-weight:700;text-transform:uppercase;margin-bottom:3px">Logo</div>'
     +'<input type="hidden" id="adm-cs-logo-INFERMERIA" value="">'
@@ -7819,7 +7821,7 @@ function admCsPreview() {
     +'<div style="margin-bottom:12px">';
   changes.forEach(function(c){
     h+='<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border)">'
-      +(c.newLogo?'<img src="'+c.newLogo+'" style="width:28px;height:28px;object-fit:contain">':'<div style="width:28px"></div>')
+      +(c.newLogo?'<img src="'+_ncUrl(c.newLogo)+'" style="width:28px;height:28px;object-fit:contain">':'<div style="width:28px"></div>')
       +'<span style="font-size:12px;color:var(--text2)">'+c.old+'</span>'
       +'<span style="color:#f59e0b;font-size:14px">→</span>'
       +'<span style="font-size:12px;font-weight:800">'+c.newName+'</span>'
@@ -12675,6 +12677,8 @@ function _normalizeImgUrl(url) {
   // Già URL diretto non-Drive
   return url;
 }
+// Aggiunge cache-buster per forzare ricarico nel pannello admin (non viene salvato)
+function _ncUrl(url) { if(!url) return ''; return url+(url.indexOf('?')>=0?'&':'?')+'_nc='+Date.now(); }
 function admEditTrofeoUrl(ti) {
   var t = ADMIN_TORNEI[ti]; if(!t) return;
   var current = localStorage.getItem('adm_trofeo_url_'+t.key) || '';
@@ -13304,7 +13308,7 @@ function admCsLoadSquadre() {
     var _storedLogo=localStorage.getItem('adm_logo_'+torneoKey+'_'+legaKey+'_'+team)||localStorage.getItem('adm_logo_'+torneoKey+'_'+legaKey+'_'+team.toUpperCase())||(typeof FANTASY_LOGOS!=='undefined'?FANTASY_LOGOS[team]||FANTASY_LOGOS[team.toUpperCase()]||'':'');
     var logoUrl=_storedLogo||(baseUrl+k+'.png');
     h+='<div style="display:flex;align-items:center;gap:10px;padding:8px 14px;border-bottom:1px solid var(--border)">'
-      +'<img src="'+logoUrl+'" onerror="this.style.opacity=0.2" style="width:32px;height:32px;object-fit:contain;border-radius:4px;flex-shrink:0">'
+      +'<img src="'+_ncUrl(logoUrl)+'" onerror="this.style.opacity=0.2" style="width:32px;height:32px;object-fit:contain;border-radius:4px;flex-shrink:0">'
       +'<div style="flex:1;min-width:0"><div style="font-size:9px;color:var(--text3);font-weight:700;text-transform:uppercase;margin-bottom:3px">Nome attuale</div><div style="font-size:12px;font-weight:800">'+team+'</div></div>'
       +'<div style="flex:1;min-width:0"><div style="font-size:9px;color:var(--text3);font-weight:700;text-transform:uppercase;margin-bottom:3px">Nuovo nome</div>'
       +'<input type="text" id="adm-cs-new-'+ki+'" placeholder="'+team+'" style="width:100%;padding:5px 8px;background:var(--bg2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:12px;font-weight:700;outline:none"></div>'
@@ -13316,7 +13320,7 @@ function admCsLoadSquadre() {
   // Riga speciale INFERMERIA (solo logo, no rinomina)
   var _infLogo=localStorage.getItem('adm_logo_'+torneoKey+'_'+legaKey+'_INFERMERIA')||'';
   h+='<div style="display:flex;align-items:center;gap:10px;padding:8px 14px;border-top:2px dashed var(--border);background:rgba(239,68,68,.04)">'
-    +'<img src="'+_infLogo+'" onerror="this.style.opacity=0.15" style="width:32px;height:32px;object-fit:contain;border-radius:4px;flex-shrink:0">'
+    +'<img src="'+_ncUrl(_infLogo)+'" onerror="this.style.opacity=0.15" style="width:32px;height:32px;object-fit:contain;border-radius:4px;flex-shrink:0">'
     +'<div style="flex:1;min-width:0"><div style="font-size:9px;color:#ef4444;font-weight:700;text-transform:uppercase;margin-bottom:3px">Speciale</div><div style="font-size:12px;font-weight:800;color:#ef4444">Infermeria</div></div>'
     +'<div style="flex:2;min-width:0"><div style="font-size:9px;color:var(--text3);font-weight:700;text-transform:uppercase;margin-bottom:3px">Logo</div>'
     +'<input type="hidden" id="adm-cs-logo-INFERMERIA" value="">'
@@ -13349,7 +13353,7 @@ function admCsPreview() {
     +'<div style="margin-bottom:12px">';
   changes.forEach(function(c){
     h+='<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border)">'
-      +(c.newLogo?'<img src="'+c.newLogo+'" style="width:28px;height:28px;object-fit:contain">':'<div style="width:28px"></div>')
+      +(c.newLogo?'<img src="'+_ncUrl(c.newLogo)+'" style="width:28px;height:28px;object-fit:contain">':'<div style="width:28px"></div>')
       +'<span style="font-size:12px;color:var(--text2)">'+c.old+'</span>'
       +'<span style="color:#f59e0b;font-size:14px">→</span>'
       +'<span style="font-size:12px;font-weight:800">'+c.newName+'</span>'
