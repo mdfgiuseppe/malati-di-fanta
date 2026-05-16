@@ -1,4 +1,4 @@
-<!-- build:20260516_1931 -->
+<!-- build:20260516_1941 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260516_1931';
+  var BUILD='20260516_1941';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -9724,6 +9724,7 @@ var COPPA_DATA = {
 
 
 function initCoppaLogos() {
+  var _cTk = window._currentTourneyKey || 'slim';
   var hubLogos = (typeof COPPA_HUB_LOGOS !== 'undefined') ? COPPA_HUB_LOGOS : {};
   var map = {cl:'logo-cl', el:'logo-el', conf:'logo-conf', sc:'logo-sc'};
   Object.keys(map).forEach(function(key) {
@@ -9731,7 +9732,6 @@ function initCoppaLogos() {
     if (!img) return;
     var custom;
     if (_cTk !== 'slim' && _cTk !== 'tsm') {
-      // Torneo dinamico: usa solo chiave specifica del torneo; non fare fallback su slim
       custom = localStorage.getItem('adm_img_coppa_'+_cTk+'_'+key) || '';
     } else {
       custom = localStorage.getItem('adm_img_coppa_'+key) || localStorage.getItem('adm_img_'+key) || '';
@@ -9741,7 +9741,6 @@ function initCoppaLogos() {
     else { img.src = ''; }
   });
   // Carica dati coppe dal localStorage in COPPA_DATA (torneo-specifico)
-  var _cTk = window._currentTourneyKey || 'slim';
   ['cl','el','conf','sc'].forEach(function(key) {
     var stored = localStorage.getItem('adm_coppa_data_'+_cTk+'_'+key);
     if (!stored && _cTk === 'slim') stored = localStorage.getItem('adm_coppa_data_slim_'+key);
@@ -9761,18 +9760,26 @@ function initCoppaLogos() {
       COPPA_TROPHIES[key] = (_raw && typeof _normalizeImgUrl === 'function') ? _normalizeImgUrl(_raw) : _raw;
     }
   });
-  // Mostra hub o placeholder in base a se le coppe sono configurate per questo torneo
+  // Mostra/nascondi singole card — solo quelle configurate per il torneo corrente
+  var _cardMap = {cl:'coppa-card-cl', el:'coppa-card-el', conf:'coppa-card-conf', sc:'coppa-card-sc'};
   var _hubEl = document.getElementById('coppe-hub');
   var _noConfigEl = document.getElementById('coppe-no-config');
   if (_cTk !== 'slim' && _cTk !== 'tsm') {
-    var _hasCoppaConfig = ['cl','el','conf','sc'].some(function(k){
+    var _anyConfigured = false;
+    ['cl','el','conf','sc'].forEach(function(k) {
+      var hasLogo = !!localStorage.getItem('adm_img_coppa_'+_cTk+'_'+k);
+      var hasData = false;
       var v = localStorage.getItem('adm_coppa_data_'+_cTk+'_'+k);
-      if (!v) return false;
-      try { var p=JSON.parse(v); return p&&typeof p==='object'&&Object.keys(p).length>0&&['ottavi','quarti','semifinali','finale'].some(function(r){return Array.isArray(p[r])&&p[r].some(function(m){return m&&(m.h||m.a);});}); } catch(e){return false;}
+      if (v) { try { var p=JSON.parse(v); hasData=p&&typeof p==='object'&&Object.keys(p).length>0&&['ottavi','quarti','semifinali','finale'].some(function(r){return Array.isArray(p[r])&&p[r].some(function(m){return m&&(m.h||m.a);});}); } catch(e){} }
+      var configured = hasLogo || hasData;
+      if (configured) _anyConfigured = true;
+      var cardEl = document.getElementById(_cardMap[k]);
+      if (cardEl) cardEl.style.display = configured ? '' : 'none';
     });
-    if (_hubEl) _hubEl.style.display = _hasCoppaConfig ? 'grid' : 'none';
-    if (_noConfigEl) _noConfigEl.style.display = _hasCoppaConfig ? 'none' : 'block';
+    if (_hubEl) _hubEl.style.display = _anyConfigured ? 'grid' : 'none';
+    if (_noConfigEl) _noConfigEl.style.display = _anyConfigured ? 'none' : 'block';
   } else {
+    ['cl','el','conf','sc'].forEach(function(k){ var c=document.getElementById(_cardMap[k]); if(c) c.style.display=''; });
     if (_hubEl) _hubEl.style.display = 'grid';
     if (_noConfigEl) _noConfigEl.style.display = 'none';
   }
@@ -9809,10 +9816,9 @@ function openCoppa(key) {
 }
 
 function closeBracket() {
-  var hub = document.getElementById('coppe-hub');
   var panel = document.getElementById('bracket-panel');
-  if (hub) hub.style.display = 'grid';
   if (panel) panel.style.display = 'none';
+  if (typeof initCoppaLogos === 'function') initCoppaLogos();
 }
 
 function buildBracket(key) {
@@ -15115,6 +15121,7 @@ var COPPA_DATA = {
 
 
 function initCoppaLogos() {
+  var _cTk = window._currentTourneyKey || 'slim';
   var hubLogos = (typeof COPPA_HUB_LOGOS !== 'undefined') ? COPPA_HUB_LOGOS : {};
   var map = {cl:'logo-cl', el:'logo-el', conf:'logo-conf', sc:'logo-sc'};
   Object.keys(map).forEach(function(key) {
@@ -15122,7 +15129,6 @@ function initCoppaLogos() {
     if (!img) return;
     var custom;
     if (_cTk !== 'slim' && _cTk !== 'tsm') {
-      // Torneo dinamico: usa solo chiave specifica del torneo; non fare fallback su slim
       custom = localStorage.getItem('adm_img_coppa_'+_cTk+'_'+key) || '';
     } else {
       custom = localStorage.getItem('adm_img_coppa_'+key) || localStorage.getItem('adm_img_'+key) || '';
@@ -15132,7 +15138,6 @@ function initCoppaLogos() {
     else { img.src = ''; }
   });
   // Carica dati coppe dal localStorage in COPPA_DATA (torneo-specifico)
-  var _cTk = window._currentTourneyKey || 'slim';
   ['cl','el','conf','sc'].forEach(function(key) {
     var stored = localStorage.getItem('adm_coppa_data_'+_cTk+'_'+key);
     if (!stored && _cTk === 'slim') stored = localStorage.getItem('adm_coppa_data_slim_'+key);
@@ -15152,18 +15157,26 @@ function initCoppaLogos() {
       COPPA_TROPHIES[key] = (_raw && typeof _normalizeImgUrl === 'function') ? _normalizeImgUrl(_raw) : _raw;
     }
   });
-  // Mostra hub o placeholder in base a se le coppe sono configurate per questo torneo
+  // Mostra/nascondi singole card — solo quelle configurate per il torneo corrente
+  var _cardMap = {cl:'coppa-card-cl', el:'coppa-card-el', conf:'coppa-card-conf', sc:'coppa-card-sc'};
   var _hubEl = document.getElementById('coppe-hub');
   var _noConfigEl = document.getElementById('coppe-no-config');
   if (_cTk !== 'slim' && _cTk !== 'tsm') {
-    var _hasCoppaConfig = ['cl','el','conf','sc'].some(function(k){
+    var _anyConfigured = false;
+    ['cl','el','conf','sc'].forEach(function(k) {
+      var hasLogo = !!localStorage.getItem('adm_img_coppa_'+_cTk+'_'+k);
+      var hasData = false;
       var v = localStorage.getItem('adm_coppa_data_'+_cTk+'_'+k);
-      if (!v) return false;
-      try { var p=JSON.parse(v); return p&&typeof p==='object'&&Object.keys(p).length>0&&['ottavi','quarti','semifinali','finale'].some(function(r){return Array.isArray(p[r])&&p[r].some(function(m){return m&&(m.h||m.a);});}); } catch(e){return false;}
+      if (v) { try { var p=JSON.parse(v); hasData=p&&typeof p==='object'&&Object.keys(p).length>0&&['ottavi','quarti','semifinali','finale'].some(function(r){return Array.isArray(p[r])&&p[r].some(function(m){return m&&(m.h||m.a);});}); } catch(e){} }
+      var configured = hasLogo || hasData;
+      if (configured) _anyConfigured = true;
+      var cardEl = document.getElementById(_cardMap[k]);
+      if (cardEl) cardEl.style.display = configured ? '' : 'none';
     });
-    if (_hubEl) _hubEl.style.display = _hasCoppaConfig ? 'grid' : 'none';
-    if (_noConfigEl) _noConfigEl.style.display = _hasCoppaConfig ? 'none' : 'block';
+    if (_hubEl) _hubEl.style.display = _anyConfigured ? 'grid' : 'none';
+    if (_noConfigEl) _noConfigEl.style.display = _anyConfigured ? 'none' : 'block';
   } else {
+    ['cl','el','conf','sc'].forEach(function(k){ var c=document.getElementById(_cardMap[k]); if(c) c.style.display=''; });
     if (_hubEl) _hubEl.style.display = 'grid';
     if (_noConfigEl) _noConfigEl.style.display = 'none';
   }
@@ -15200,10 +15213,9 @@ function openCoppa(key) {
 }
 
 function closeBracket() {
-  var hub = document.getElementById('coppe-hub');
   var panel = document.getElementById('bracket-panel');
-  if (hub) hub.style.display = 'grid';
   if (panel) panel.style.display = 'none';
+  if (typeof initCoppaLogos === 'function') initCoppaLogos();
 }
 
 function buildBracket(key) {
