@@ -1,4 +1,4 @@
-﻿<!-- build:20260516_1619 -->
+﻿<!-- build:20260516_1648 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260516_1619';
+  var BUILD='20260516_1648';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -4796,6 +4796,8 @@ function gsPing() {
         'adm_stadio_saved_tsm_it',
         'adm_crediti_base_slim_it',
         'adm_crediti_base_tsm_it',
+        'adm_cr_gestione_slim_it',
+        'adm_cr_gestione_tsm_it',
         'adm_infermeria_slim_it',
         'storico_stagioni_slim',
         'storico_stagioni_tsm',
@@ -6202,7 +6204,7 @@ function admNuovaStagioneEl(el) {
     var toRemove = [];
     for(var j=0;j<localStorage.length;j++) {
       var kk = localStorage.key(j);
-      if (kk && (kk.startsWith('adm_sponsor_'+torneoKey) || kk.startsWith('adm_crediti_'+torneoKey) || kk.startsWith('adm_coppa_data_'+torneoKey) || kk.startsWith('user_crediti_'+torneoKey))) {
+      if (kk && (kk.startsWith('adm_sponsor_'+torneoKey) || kk.startsWith('adm_crediti_'+torneoKey) || kk.startsWith('adm_cr_gestione_'+torneoKey) || kk.startsWith('adm_coppa_data_'+torneoKey) || kk.startsWith('user_crediti_'+torneoKey))) {
         toRemove.push(kk);
       }
     }
@@ -8021,9 +8023,9 @@ function admRenderRosaEditor(players, torneoKey, legaKey, squadra) {
     // Crediti Gestione (manuale - visibile utente)
     +'<div style="background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.2);border-radius:10px;padding:12px;text-align:center">'
     +'<div style="font-size:9px;font-weight:700;color:#10b981;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Imposta Crediti Netti</div>'
-    +'<input type="number" id="adm-cr-gest-'+squadra+'" value="'+crAttuali+'" step="0.5" '
+    +'<input type="number" id="adm-cr-gest-'+squadra+'" value="'+crGestione+'" step="0.5" placeholder="0" '
     +'style="width:100%;background:transparent;border:none;border-bottom:2px solid #10b981;color:#10b981;font-family:Bebas Neue,sans-serif;font-size:26px;text-align:center;outline:none">'
-    +'<div style="font-size:9px;color:#10b981;margin-top:4px">il valore che vedi (netto multe)</div>'
+    +'<div style="font-size:9px;color:#10b981;margin-top:4px">'+(crGestione ? 'override manuale — calcolato: '+crAttuali : '0 = usa valore calcolato ('+crAttuali+')')+'</div>'
     +'</div>'
     +'</div>'
     +'<div style="margin-top:10px;display:flex;justify-content:flex-end">'
@@ -8078,7 +8080,10 @@ function admCalcCreditiSponsor(torneoKey, legaKey, squadra) {
 }
 
 function admGetCreditiGestione(torneoKey, legaKey, squadra) {
-  return 0; // campo input per aggiustamenti; la base è visibile nel breakdown "Crediti Attuali"
+  try {
+    var g = JSON.parse(localStorage.getItem('adm_cr_gestione_'+torneoKey+'_'+legaKey)||'{}');
+    return (g[squadra] !== undefined) ? g[squadra] : ((g[squadra.toUpperCase()] !== undefined) ? g[squadra.toUpperCase()] : 0);
+  } catch(e) { return 0; }
 }
 
 function admSaveCreditiGestione(torneoKey, legaKey, squadra, val) {
@@ -8094,6 +8099,14 @@ function admSaveCreditiGestione(torneoKey, legaKey, squadra, val) {
   localStorage.setItem(baseKey, JSON.stringify(cr));
   gsSaveKey(baseKey, JSON.stringify(cr));
   syncCreditiToUser(torneoKey, legaKey, cr);
+  // Salva anche il valore manuale nella chiave separata (per mostrarlo nel campo admin)
+  var gestKey = 'adm_cr_gestione_'+torneoKey+'_'+legaKey;
+  var gest = {};
+  try { gest = JSON.parse(localStorage.getItem(gestKey)||'{}'); } catch(e) {}
+  gest[squadra] = val;
+  gest[squadra.toUpperCase()] = val;
+  localStorage.setItem(gestKey, JSON.stringify(gest));
+  gsSaveKey(gestKey, JSON.stringify(gest));
 }
 
 function admSaveCreditiGestioneEl(el) {
@@ -11922,7 +11935,7 @@ function admNuovaStagioneEl(el) {
     var toRemove = [];
     for(var j=0;j<localStorage.length;j++) {
       var kk = localStorage.key(j);
-      if (kk && (kk.startsWith('adm_sponsor_'+torneoKey) || kk.startsWith('adm_crediti_'+torneoKey) || kk.startsWith('adm_coppa_data_'+torneoKey) || kk.startsWith('user_crediti_'+torneoKey))) {
+      if (kk && (kk.startsWith('adm_sponsor_'+torneoKey) || kk.startsWith('adm_crediti_'+torneoKey) || kk.startsWith('adm_cr_gestione_'+torneoKey) || kk.startsWith('adm_coppa_data_'+torneoKey) || kk.startsWith('user_crediti_'+torneoKey))) {
         toRemove.push(kk);
       }
     }
@@ -13316,7 +13329,10 @@ function admCalcCreditiSponsor(torneoKey, legaKey, squadra) {
 }
 
 function admGetCreditiGestione(torneoKey, legaKey, squadra) {
-  return 0; // campo input per aggiustamenti; la base è visibile nel breakdown "Crediti Attuali"
+  try {
+    var g = JSON.parse(localStorage.getItem('adm_cr_gestione_'+torneoKey+'_'+legaKey)||'{}');
+    return (g[squadra] !== undefined) ? g[squadra] : ((g[squadra.toUpperCase()] !== undefined) ? g[squadra.toUpperCase()] : 0);
+  } catch(e) { return 0; }
 }
 
 
