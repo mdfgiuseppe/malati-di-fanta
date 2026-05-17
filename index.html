@@ -1,4 +1,4 @@
-<!-- build:20260517_0854 -->
+<!-- build:20260517_0900 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260517_0854';
+  var BUILD='20260517_0900';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -5851,6 +5851,17 @@ function admLoadCoppeTorneo() {
   document.getElementById('adm-cop-editor-body').innerHTML='';
   if (!torneoKey) return;
 
+  var _ck = 'adm_coppe_config_'+torneoKey;
+  // Se non c'è in localStorage (es. su mobile diverso dal PC), carica da GSheets
+  if (!localStorage.getItem(_ck) && torneoKey !== 'slim' && typeof gsLoadKey === 'function') {
+    document.getElementById('adm-cop-config-body').innerHTML='<div style="color:var(--text3);font-size:12px;padding:10px">Caricamento in corso...</div>';
+    gsLoadKey(_ck, function(v) {
+      if (v) { localStorage.setItem(_ck, typeof v==='string'?v:JSON.stringify(v)); }
+      admLoadCoppeTorneo();
+    });
+    return;
+  }
+
   var config = admGetCoppeConfig(torneoKey);
   config.forEach(function(c) {
     var o=document.createElement('option'); o.value=c.key; o.textContent=c.label; selCoppa.appendChild(o);
@@ -5858,7 +5869,6 @@ function admLoadCoppeTorneo() {
   var addBtn = document.getElementById('adm-cop-add-btn');
   if(addBtn) addBtn.style.display='flex';
 
-  // Mostra lista coppe configurate con opzione modifica/elimina
   admRenderCoppeList(torneoKey);
 }
 
@@ -11680,6 +11690,17 @@ function admLoadCoppeTorneo() {
   document.getElementById('adm-cop-editor-body').innerHTML='';
   if (!torneoKey) return;
 
+  var _ck = 'adm_coppe_config_'+torneoKey;
+  // Se non c'è in localStorage (es. su mobile diverso dal PC), carica da GSheets
+  if (!localStorage.getItem(_ck) && torneoKey !== 'slim' && typeof gsLoadKey === 'function') {
+    document.getElementById('adm-cop-config-body').innerHTML='<div style="color:var(--text3);font-size:12px;padding:10px">Caricamento in corso...</div>';
+    gsLoadKey(_ck, function(v) {
+      if (v) { localStorage.setItem(_ck, typeof v==='string'?v:JSON.stringify(v)); }
+      admLoadCoppeTorneo();
+    });
+    return;
+  }
+
   var config = admGetCoppeConfig(torneoKey);
   config.forEach(function(c) {
     var o=document.createElement('option'); o.value=c.key; o.textContent=c.label; selCoppa.appendChild(o);
@@ -11687,7 +11708,6 @@ function admLoadCoppeTorneo() {
   var addBtn = document.getElementById('adm-cop-add-btn');
   if(addBtn) addBtn.style.display='flex';
 
-  // Mostra lista coppe configurate con opzione modifica/elimina
   admRenderCoppeList(torneoKey);
 }
 
