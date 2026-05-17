@@ -1,4 +1,4 @@
-<!-- build:20260517_1515 -->
+<!-- build:20260517_1517 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260517_1515';
+  var BUILD='20260517_1517';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -10281,6 +10281,8 @@ function initCoppaLogos() {
   var _cardMap = {cl:'coppa-card-cl', el:'coppa-card-el', conf:'coppa-card-conf', sc:'coppa-card-sc'};
   var _hubEl = document.getElementById(_idPfx+'coppe-hub');
   var _noConfigEl = document.getElementById(_idPfx+'coppe-no-config');
+  var _panelEl = document.getElementById(_idPfx+'bracket-panel');
+  if(_panelEl)_panelEl.style.display='none';
   var _isSlimLike = (_cTk === 'slim' || _cTk === 'tsm');
   // Nascondi le 4 card statiche — usiamo rendering dinamico per tutti i tornei
   ['cl','el','conf','sc'].forEach(function(k){var c=document.getElementById(_cardMap[k]);if(c)c.style.display='none';});
@@ -16162,6 +16164,8 @@ function initCoppaLogos() {
   var _cardMap = {cl:'coppa-card-cl', el:'coppa-card-el', conf:'coppa-card-conf', sc:'coppa-card-sc'};
   var _hubEl = document.getElementById(_idPfx+'coppe-hub');
   var _noConfigEl = document.getElementById(_idPfx+'coppe-no-config');
+  var _panelEl = document.getElementById(_idPfx+'bracket-panel');
+  if(_panelEl)_panelEl.style.display='none';
   var _isSlimLike = (_cTk === 'slim' || _cTk === 'tsm');
   // Nascondi le 4 card statiche — usiamo rendering dinamico per tutti i tornei
   ['cl','el','conf','sc'].forEach(function(k){var c=document.getElementById(_cardMap[k]);if(c)c.style.display='none';});
