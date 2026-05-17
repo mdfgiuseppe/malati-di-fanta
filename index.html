@@ -1,4 +1,4 @@
-﻿<!-- build:20260517_1616 -->
+﻿<!-- build:20260517_1618 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260517_1616';
+  var BUILD='20260517_1618';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -5970,6 +5970,8 @@ function admProcessCoppaXlsx(torneoKey,coppaKey,file){
       });
       var found=Object.keys(phaseMatches);
       if(!found.length){alert('Nessun risultato trovato. Verifica che il file sia nel formato corretto (Quarti/Semifinali/Finale con risultati A-B).');return;}
+      var alreadyPresent=found.filter(function(ph){return data[ph]&&data[ph].length;});
+      if(alreadyPresent.length&&!confirm('I seguenti turni sono già presenti e verranno sovrascritti:\n'+alreadyPresent.join(', ')+'\n\nContinuare?'))return;
       Object.keys(phaseMatches).forEach(function(ph){data[ph]=phaseMatches[ph];});
       admSaveCoppaData(torneoKey,coppaKey,data);
       if(typeof COPPA_DATA!=='undefined')COPPA_DATA[coppaKey]=data;
