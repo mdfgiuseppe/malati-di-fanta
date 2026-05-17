@@ -1,4 +1,4 @@
-<!-- build:20260517_1159 -->
+<!-- build:20260517_1210 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260517_1159';
+  var BUILD='20260517_1210';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -2874,7 +2874,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 
   <div class="tournaments">
 
-    <div class="t-card" style="--tc:#3b82f6" onclick="selectTournament('tdm',this)">
+    <div class="t-card" id="tc-tdm" style="--tc:#3b82f6" onclick="selectTournament('tdm',this)">
       <div class="t-logo-area"><img src="" alt="TDM"></div>
       <div class="t-body">
         <div class="t-name">Tana dei Mister</div>
@@ -2888,7 +2888,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
       </div>
     </div>
 
-    <div class="t-card" style="--tc:#10b981" onclick="selectTournament('slim',this)">
+    <div class="t-card" id="tc-slim" style="--tc:#10b981" onclick="selectTournament('slim',this)">
       <div class="t-logo-area"><img src="" alt="Scudetto Slim"></div>
       <div class="t-body">
         <div class="t-name">Scudetto Slim</div>
@@ -2902,7 +2902,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
       </div>
     </div>
 
-    <div class="t-card" style="--tc:#f59e0b" onclick="selectTournament('tsm',this)">
+    <div class="t-card" id="tc-tsm" style="--tc:#f59e0b" onclick="selectTournament('tsm',this)">
       <div class="t-logo-area"><img src="" alt="TSM"></div>
       <div class="t-body">
         <div class="t-name">Torneo Semi Manageriale</div>
@@ -2916,7 +2916,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
       </div>
     </div>
 
-    <div class="t-card" style="--tc:#8b5cf6" onclick="selectTournament('ilm',this)">
+    <div class="t-card" id="tc-ilm" style="--tc:#8b5cf6" onclick="selectTournament('ilm',this)">
       <div class="t-logo-area"><img src="" alt="ILM"></div>
       <div class="t-body">
         <div class="t-name">International League Mantra</div>
@@ -2930,7 +2930,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
       </div>
     </div>
 
-    <div class="t-card" style="--tc:#ec4899" onclick="selectTournament('ilc',this)">
+    <div class="t-card" id="tc-ilc" style="--tc:#ec4899" onclick="selectTournament('ilc',this)">
       <div class="t-logo-area"><img src="" alt="ILC"></div>
       <div class="t-body">
         <div class="t-name">International League Classic</div>
@@ -6729,6 +6729,8 @@ function admSelectTorneoDetail(val) {
   if (val === '' || val === undefined) { det.innerHTML = ''; return; }
   var ti = parseInt(val);
   var t = ADMIN_TORNEI[ti]; if (!t) { det.innerHTML = ''; return; }
+  var _tcDefs={tdm:'#3b82f6',slim:'#10b981',tsm:'#f59e0b',ilm:'#8b5cf6',ilc:'#ec4899'};
+  var _curColor=localStorage.getItem('adm_torneo_color_'+t.key)||_tcDefs[t.key]||'#3b82f6';
   var badge = t.formato==='mantra'
     ? '<span style="background:rgba(139,92,246,.15);color:#8b5cf6;font-size:9px;font-weight:800;padding:2px 8px;border-radius:20px;text-transform:uppercase">Mantra</span>'
     : '<span style="background:rgba(16,185,129,.15);color:#10b981;font-size:9px;font-weight:800;padding:2px 8px;border-radius:20px;text-transform:uppercase">Classic</span>';
@@ -6746,6 +6748,8 @@ function admSelectTorneoDetail(val) {
     +'<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">'
     +'<div style="font-family:\'Bebas Neue\';font-size:18px;flex:1">'+t.label+'</div>'
     +badge
+    +'<label style="font-size:10px;color:var(--text3);white-space:nowrap">Colore card</label>'
+    +'<input type="color" value="'+_curColor+'" onchange="admSaveTorneoColor(\''+t.key+'\',this.value)" style="width:32px;height:28px;border:none;background:none;cursor:pointer;flex-shrink:0">'
     +'<button onclick="admEditLogoTorneo('+ti+')" style="background:rgba(139,92,246,.1);border:1px solid rgba(139,92,246,.2);color:#8b5cf6;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer">🖼 Logo</button>'
     +'<button onclick="admConfirmRemoveTorneo('+ti+')" style="background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);color:#ef4444;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer">🗑 Elimina</button>'
     +'</div>'
@@ -6758,6 +6762,23 @@ function admSelectTorneoDetail(val) {
     +'</div>';
 }
 
+function admSaveTorneoColor(key, color) {
+  localStorage.setItem('adm_torneo_color_'+key, color);
+  gsSaveKey('adm_torneo_color_'+key, color);
+  var card = document.getElementById('tc-'+key);
+  if (card) card.style.setProperty('--tc', color);
+}
+
+function applyTorneoColors() {
+  var _tcDefs={tdm:'#3b82f6',slim:'#10b981',tsm:'#f59e0b',ilm:'#8b5cf6',ilc:'#ec4899'};
+  Object.keys(_tcDefs).forEach(function(key) {
+    var color = localStorage.getItem('adm_torneo_color_'+key);
+    if (color) {
+      var card = document.getElementById('tc-'+key);
+      if (card) card.style.setProperty('--tc', color);
+    }
+  });
+}
 
 // ═══════════════════════════════════════════════════════
 // ADMIN — Wizard Creazione Torneo
@@ -9648,6 +9669,7 @@ document.addEventListener('DOMContentLoaded',function(){
     if (_u) { var _p=document.getElementById('adm-logo-torneo-'+k+'-prev'); if(_p) _p.src=_u; }
   });
   updateLogosTornei();
+  if (typeof applyTorneoColors === 'function') applyTorneoColors();
   if (typeof gsLoadKey === 'function') {
     gsLoadKey('adm_logo_main', function(val) {
       if (val) { localStorage.setItem('adm_logo_main', val); _applyLogoMain(val); var p=document.getElementById('adm-logo-main-preview'); if(p) p.src=val; }
@@ -9657,6 +9679,15 @@ document.addEventListener('DOMContentLoaded',function(){
         gsLoadKey('adm_logo_torneo_'+_k, function(val) {
           if (val) { localStorage.setItem('adm_logo_torneo_'+_k, val); updateLogosTornei(); var p=document.getElementById('adm-logo-torneo-'+_k+'-prev'); if(p) p.src=val; }
         });
+      })(k);
+    });
+    ['tdm','slim','tsm','ilm','ilc'].forEach(function(k) {
+      (function(_k) {
+        if (!localStorage.getItem('adm_torneo_color_'+_k)) {
+          gsLoadKey('adm_torneo_color_'+_k, function(val) {
+            if (val) { localStorage.setItem('adm_torneo_color_'+_k, val); if(typeof applyTorneoColors==='function') applyTorneoColors(); }
+          });
+        }
       })(k);
     });
   }
@@ -12488,6 +12519,8 @@ function admSelectTorneoDetail(val) {
   if (val === '' || val === undefined) { det.innerHTML = ''; return; }
   var ti = parseInt(val);
   var t = ADMIN_TORNEI[ti]; if (!t) { det.innerHTML = ''; return; }
+  var _tcDefs={tdm:'#3b82f6',slim:'#10b981',tsm:'#f59e0b',ilm:'#8b5cf6',ilc:'#ec4899'};
+  var _curColor=localStorage.getItem('adm_torneo_color_'+t.key)||_tcDefs[t.key]||'#3b82f6';
   var badge = t.formato==='mantra'
     ? '<span style="background:rgba(139,92,246,.15);color:#8b5cf6;font-size:9px;font-weight:800;padding:2px 8px;border-radius:20px;text-transform:uppercase">Mantra</span>'
     : '<span style="background:rgba(16,185,129,.15);color:#10b981;font-size:9px;font-weight:800;padding:2px 8px;border-radius:20px;text-transform:uppercase">Classic</span>';
@@ -12505,6 +12538,8 @@ function admSelectTorneoDetail(val) {
     +'<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">'
     +'<div style="font-family:\'Bebas Neue\';font-size:18px;flex:1">'+t.label+'</div>'
     +badge
+    +'<label style="font-size:10px;color:var(--text3);white-space:nowrap">Colore card</label>'
+    +'<input type="color" value="'+_curColor+'" onchange="admSaveTorneoColor(\''+t.key+'\',this.value)" style="width:32px;height:28px;border:none;background:none;cursor:pointer;flex-shrink:0">'
     +'<button onclick="admEditLogoTorneo('+ti+')" style="background:rgba(139,92,246,.1);border:1px solid rgba(139,92,246,.2);color:#8b5cf6;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer">🖼 Logo</button>'
     +'<button onclick="admConfirmRemoveTorneo('+ti+')" style="background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);color:#ef4444;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer">🗑 Elimina</button>'
     +'</div>'
@@ -12517,6 +12552,23 @@ function admSelectTorneoDetail(val) {
     +'</div>';
 }
 
+function admSaveTorneoColor(key, color) {
+  localStorage.setItem('adm_torneo_color_'+key, color);
+  gsSaveKey('adm_torneo_color_'+key, color);
+  var card = document.getElementById('tc-'+key);
+  if (card) card.style.setProperty('--tc', color);
+}
+
+function applyTorneoColors() {
+  var _tcDefs={tdm:'#3b82f6',slim:'#10b981',tsm:'#f59e0b',ilm:'#8b5cf6',ilc:'#ec4899'};
+  Object.keys(_tcDefs).forEach(function(key) {
+    var color = localStorage.getItem('adm_torneo_color_'+key);
+    if (color) {
+      var card = document.getElementById('tc-'+key);
+      if (card) card.style.setProperty('--tc', color);
+    }
+  });
+}
 
 // ═══════════════════════════════════════════════════════
 // ADMIN — Wizard Creazione Torneo
@@ -15105,6 +15157,7 @@ document.addEventListener('DOMContentLoaded',function(){
     if (_u) { var _p=document.getElementById('adm-logo-torneo-'+k+'-prev'); if(_p) _p.src=_u; }
   });
   updateLogosTornei();
+  if (typeof applyTorneoColors === 'function') applyTorneoColors();
   if (typeof gsLoadKey === 'function') {
     gsLoadKey('adm_logo_main', function(val) {
       if (val) { localStorage.setItem('adm_logo_main', val); _applyLogoMain(val); var p=document.getElementById('adm-logo-main-preview'); if(p) p.src=val; }
@@ -15114,6 +15167,15 @@ document.addEventListener('DOMContentLoaded',function(){
         gsLoadKey('adm_logo_torneo_'+_k, function(val) {
           if (val) { localStorage.setItem('adm_logo_torneo_'+_k, val); updateLogosTornei(); var p=document.getElementById('adm-logo-torneo-'+_k+'-prev'); if(p) p.src=val; }
         });
+      })(k);
+    });
+    ['tdm','slim','tsm','ilm','ilc'].forEach(function(k) {
+      (function(_k) {
+        if (!localStorage.getItem('adm_torneo_color_'+_k)) {
+          gsLoadKey('adm_torneo_color_'+_k, function(val) {
+            if (val) { localStorage.setItem('adm_torneo_color_'+_k, val); if(typeof applyTorneoColors==='function') applyTorneoColors(); }
+          });
+        }
       })(k);
     });
   }
