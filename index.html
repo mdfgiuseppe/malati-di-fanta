@@ -1,4 +1,4 @@
-<!-- build:20260517_1346 -->
+<!-- build:20260517_1409 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260517_1346';
+  var BUILD='20260517_1409';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -5927,6 +5927,8 @@ function admRenderQualifList(torneoKey){
   configs.forEach(function(q,qi){
     var _data=_getQualifData(torneoKey,qi);
     var _loadedGs=Object.keys(_data).map(Number).sort(function(a,b){return a-b;});
+    var _mData=(q.tipo==='f1')?_getQualifManual(torneoKey,qi):{};
+    var _mGs=Object.keys(_mData).map(Number).sort(function(a,b){return a-b;});
     h+='<div style="border-bottom:1px solid var(--border)">';
     h+='<div style="display:flex;align-items:center;gap:10px;padding:10px 14px;flex-wrap:wrap">'
       +'<input type="text" value="'+q.name+'" data-t="'+torneoKey+'" data-qi="'+qi+'" onchange="admUpdateQualifName(this)" style="background:transparent;border:none;border-bottom:1px solid var(--border);color:var(--text);font-size:13px;font-weight:700;outline:none;min-width:160px;flex:1">'
@@ -5968,10 +5970,28 @@ function admRenderQualifList(torneoKey){
         +'<button onclick="admRemoveF1Position(\''+torneoKey+'\','+qi+')" style="background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);color:#ef4444;border-radius:4px;padding:1px 8px;font-size:14px;cursor:pointer;line-height:1.4">−</button>'
         +'</div></div>';
     }
-    h+='<div style="padding:4px 14px 10px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">'
-      +'<button onclick="admTriggerQualifImport(\''+torneoKey+'\','+qi+')" style="background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.2);color:#f59e0b;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer">📥 Importa xlsx</button>'
-      +(_loadedGs.length?'<span style="font-size:11px;color:var(--text3)">Giornate: '+_loadedGs.join(', ')+' / '+(q.giornate_totali||12)+'</span>':'<span style="font-size:11px;color:var(--text3)">Nessuna giornata importata</span>')
-      +'</div></div>';
+    if(q.tipo==='f1'){
+      h+='<div style="padding:4px 14px 10px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">'
+        +'<button onclick="admTriggerQualifImport(\''+torneoKey+'\','+qi+')" style="background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.2);color:#f59e0b;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer">📥 Formazioni xlsx</button>'
+        +'<button onclick="admToggleQualifManual(\''+torneoKey+'\','+qi+')" style="background:rgba(99,102,241,.1);border:1px solid rgba(99,102,241,.2);color:#818cf8;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer">📝 Manuale</button>'
+        +(_mGs.length?'<span style="font-size:11px;color:var(--text3)">Giornate: '+_mGs.join(', ')+' / '+(q.giornate_totali||12)+'</span>':'<span style="font-size:11px;color:var(--text3)">Nessuna giornata inserita</span>')
+        +'</div>'
+        +'<div id="qmf-'+torneoKey+'-'+qi+'" style="display:none;padding:6px 14px 10px;border-top:1px solid var(--border)">'
+        +'<div style="display:flex;gap:8px;align-items:center;margin-bottom:6px">'
+        +'<span style="font-size:10px;color:var(--text3);font-weight:700">Giornata n°</span>'
+        +'<input type="number" id="qmfg-'+torneoKey+'-'+qi+'" min="1" step="1" placeholder="1" style="width:52px;padding:3px 6px;background:var(--bg2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:12px;text-align:center;outline:none">'
+        +'</div>'
+        +'<textarea id="qmft-'+torneoKey+'-'+qi+'" placeholder="Squadra 1 (1°)&#10;Squadra 2 (2°)&#10;Squadra 3 (3°)&#10;..." rows="6" style="width:100%;box-sizing:border-box;padding:6px 8px;background:var(--bg2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:12px;outline:none;resize:vertical"></textarea>'
+        +'<div style="display:flex;gap:8px;margin-top:6px">'
+        +'<button onclick="admSaveQualifManual(\''+torneoKey+'\','+qi+')" style="background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.2);color:#10b981;border-radius:6px;padding:4px 12px;font-size:11px;font-weight:700;cursor:pointer">✅ Salva</button>'
+        +'<button onclick="admToggleQualifManual(\''+torneoKey+'\','+qi+')" style="background:rgba(107,114,128,.1);border:1px solid rgba(107,114,128,.2);color:var(--text3);border-radius:6px;padding:4px 12px;font-size:11px;font-weight:700;cursor:pointer">Annulla</button>'
+        +'</div></div></div>';
+    } else {
+      h+='<div style="padding:4px 14px 10px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">'
+        +'<button onclick="admTriggerQualifImport(\''+torneoKey+'\','+qi+')" style="background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.2);color:#f59e0b;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer">📥 Importa xlsx</button>'
+        +(_loadedGs.length?'<span style="font-size:11px;color:var(--text3)">Giornate: '+_loadedGs.join(', ')+' / '+(q.giornate_totali||12)+'</span>':'<span style="font-size:11px;color:var(--text3)">Nessuna giornata importata</span>')
+        +'</div></div>';
+    }
   });
   h+='</div>';
   el.innerHTML=h;
@@ -6002,8 +6022,8 @@ function admDeleteQualif(torneoKey,qi){
   var c=admGetQualifConfig(torneoKey);c.splice(qi,1);admSaveQualifConfig(torneoKey,c);
   localStorage.removeItem('adm_qualif_data_'+torneoKey+'_'+qi);admRenderQualifList(torneoKey);
 }
-function admTriggerQualifImport(torneoKey,qi){var inp=document.getElementById('adm-qualif-file-input');if(!inp)return;inp.dataset.t=torneoKey;inp.dataset.qi=qi;inp.value='';inp.click();}
-function admOnQualifFileChange(inp){var t=inp.dataset.t,qi=+inp.dataset.qi,file=inp.files[0];if(!file)return;admProcessQualifXlsx(t,qi,file);}
+function admTriggerQualifImport(torneoKey,qi){var inp=document.getElementById('adm-qualif-file-input');if(!inp)return;var c=admGetQualifConfig(torneoKey);inp.dataset.t=torneoKey;inp.dataset.qi=qi;inp.dataset.tipo=(c[qi]&&c[qi].tipo==='f1')?'f1':'totale';inp.value='';inp.click();}
+function admOnQualifFileChange(inp){var t=inp.dataset.t,qi=+inp.dataset.qi,file=inp.files[0];if(!file)return;if(inp.dataset.tipo==='f1')admProcessF1FormationsXlsx(t,qi,file);else admProcessQualifXlsx(t,qi,file);}
 function admProcessQualifXlsx(torneoKey,qi,file){
   function _doProcess(){
     var reader=new FileReader();
@@ -6037,6 +6057,68 @@ function admProcessQualifXlsx(torneoKey,qi,file){
   var s=document.createElement('script');s.src='https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
   s.onload=_doProcess;s.onerror=function(){alert('Errore caricamento libreria xlsx.');};document.head.appendChild(s);
 }
+function _getQualifManual(torneoKey,qi){var s=localStorage.getItem('adm_qualif_manual_'+torneoKey+'_'+qi);if(!s)return{};try{return JSON.parse(s);}catch(e){return{};}}
+function _saveQualifManual(torneoKey,qi,data){var s=JSON.stringify(data);localStorage.setItem('adm_qualif_manual_'+torneoKey+'_'+qi,s);gsSaveKey('adm_qualif_manual_'+torneoKey+'_'+qi,s);}
+function admToggleQualifManual(torneoKey,qi){var el=document.getElementById('qmf-'+torneoKey+'-'+qi);if(!el)return;el.style.display=el.style.display==='none'?'block':'none';}
+function admSaveQualifManual(torneoKey,qi){
+  var gEl=document.getElementById('qmfg-'+torneoKey+'-'+qi);
+  var tEl=document.getElementById('qmft-'+torneoKey+'-'+qi);
+  if(!gEl||!tEl)return;
+  var giornata=parseInt(gEl.value);if(!giornata||giornata<1){alert('Inserire numero giornata valido');return;}
+  var lines=tEl.value.split('\n').map(function(l){return l.trim();}).filter(function(l){return l.length>0;});
+  if(!lines.length){alert('Inserire almeno una squadra');return;}
+  var existing=_getQualifManual(torneoKey,qi);
+  if(existing[giornata]&&!confirm('Giornata '+giornata+' già presente. Sovrascrivere?'))return;
+  existing[giornata]=lines;_saveQualifManual(torneoKey,qi,existing);
+  admRenderQualifList(torneoKey);alert('✅ Giornata '+giornata+' salvata ('+lines.length+' squadre)');
+}
+function admProcessF1FormationsXlsx(torneoKey,qi,file){
+  function _doProcess(){
+    var reader=new FileReader();
+    reader.onload=function(e){
+      try{
+        var wb=XLSX.read(new Uint8Array(e.target.result),{type:'array'});
+        var giornata=null,allTeams=[];
+        wb.SheetNames.forEach(function(sn){
+          var rows=XLSX.utils.sheet_to_json(wb.Sheets[sn],{header:1,defval:''});
+          if(!rows.length)return;
+          if(giornata===null){var tt=rows[0].join(' ');var gm=tt.match(/[Gg]iornata\s*(\d+)/);if(gm)giornata=parseInt(gm[1]);}
+          var leftTeam=null,rightTeam=null,leftTotal=null,rightTotal=null;
+          function _isTeamName(s){s=s.trim();return s.length>=4&&/^[A-ZÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜÝ\s\.\-]+$/.test(s)&&!/TOTALE|PANCHINA|FORMAZION|MODIF|INSERIT/i.test(s)&&!/^\d/.test(s);}
+          rows.forEach(function(row){
+            var c0=String(row[0]||'').trim();
+            if(_isTeamName(c0)&&!leftTeam)leftTeam=c0;
+            for(var ci=6;ci<=8;ci++){var cx=String(row[ci]||'').trim();if(_isTeamName(cx)&&!rightTeam){rightTeam=cx;break;}}
+            row.forEach(function(cell,colIdx){
+              var cs=String(cell||'').trim();
+              if(/TOTALE/i.test(cs)){
+                var nm=cs.match(/([\d]+[,.][\d]+|[\d]+)/);
+                var val=nm?parseFloat(nm[1].replace(',','.')):null;
+                if(val===null&&colIdx+1<row.length){var nc=String(row[colIdx+1]||'').trim();var nm2=nc.match(/([\d]+[,.][\d]+|[\d]+)/);if(nm2)val=parseFloat(nm2[1].replace(',','.'));}
+                if(val!==null){if(colIdx<6){if(leftTeam&&leftTotal===null)leftTotal=val;}else{if(rightTeam&&rightTotal===null)rightTotal=val;}}
+              }
+            });
+          });
+          if(leftTeam&&leftTotal!==null)allTeams.push({squadra:leftTeam,pt:leftTotal});
+          if(rightTeam&&rightTotal!==null)allTeams.push({squadra:rightTeam,pt:rightTotal});
+        });
+        if(!giornata){alert('Giornata non trovata nel titolo del file');return;}
+        if(!allTeams.length){alert('Nessuna squadra/totale trovato nel file');return;}
+        allTeams.sort(function(a,b){return b.pt-a.pt;});
+        var existing=_getQualifManual(torneoKey,qi);
+        if(existing[giornata]&&!confirm('Giornata '+giornata+' già presente. Sovrascrivere?'))return;
+        existing[giornata]=allTeams.map(function(t){return t.squadra;});
+        _saveQualifManual(torneoKey,qi,existing);
+        admRenderQualifList(torneoKey);
+        alert('✅ Giornata '+giornata+': '+allTeams.length+' squadre ('+allTeams.map(function(t){return t.squadra+' '+t.pt;}).join(', ')+')');
+      }catch(err){alert('Errore: '+err.message);}
+    };
+    reader.readAsArrayBuffer(file);
+  }
+  if(typeof XLSX!=='undefined'){_doProcess();return;}
+  var s=document.createElement('script');s.src='https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+  s.onload=_doProcess;s.onerror=function(){alert('Errore caricamento libreria xlsx.');};document.head.appendChild(s);
+}
 function openQualif(torneoKey,qi){
   var _idPfx=(window._currentTourneyKey==='tsm')?'tsm-':'';
   var hub=document.getElementById(_idPfx+'coppe-hub');
@@ -6051,16 +6133,18 @@ function openQualif(torneoKey,qi){
   var lastG=sortedGs.length?sortedGs[sortedGs.length-1]:0;
   if(hub)hub.style.display='none';
   panel.style.display='block';title.textContent=q.name+(q.tipo==='f1'?' · F1':'');title.style.color='#f59e0b';
-  if(!lastG){content.innerHTML='<div style="text-align:center;padding:60px 20px;color:var(--text3);font-size:13px">Nessuna giornata ancora importata</div>';return;}
+  var mData=(q.tipo==='f1')?_getQualifManual(torneoKey,qi):{};
+  var mSortedGs=Object.keys(mData).map(Number).sort(function(a,b){return a-b;});
+  var lastMG=mSortedGs.length?mSortedGs[mSortedGs.length-1]:0;
+  var effectiveLastG=(q.tipo==='f1')?lastMG:lastG;
+  if(!effectiveLastG){content.innerHTML='<div style="text-align:center;padding:60px 20px;color:var(--text3);font-size:13px">Nessuna giornata ancora '+(q.tipo==='f1'?'inserita':'importata')+'</div>';return;}
   var ranking;
   if(q.tipo==='f1'){
     var f1Table=q.f1_table||[25,18,15,12,10,8,6,4,2,1];
     var f1Acc={};
-    sortedGs.forEach(function(g,gIdx){
-      var cur=data[g],prev=gIdx>0?data[sortedGs[gIdx-1]]:null;
-      var roundScores=cur.map(function(r){var prevPt=0;if(prev){var pe=prev.find(function(p){return p.squadra===r.squadra;});if(pe)prevPt=pe.pt;}return{squadra:r.squadra,roundPt:r.pt-prevPt};});
-      roundScores.sort(function(a,b){return b.roundPt-a.roundPt;});
-      roundScores.forEach(function(rs,idx){f1Acc[rs.squadra]=(f1Acc[rs.squadra]||0)+(f1Table[idx]||0);});
+    mSortedGs.forEach(function(g){
+      var orderedTeams=mData[g];
+      orderedTeams.forEach(function(squadra,idx){f1Acc[squadra]=(f1Acc[squadra]||0)+(f1Table[idx]||0);});
     });
     ranking=Object.keys(f1Acc).map(function(sq){return{squadra:sq,pt:f1Acc[sq]};}).sort(function(a,b){return b.pt-a.pt;});
   } else {
@@ -6070,7 +6154,7 @@ function openQualif(torneoKey,qi){
   zones.forEach(function(z){var c=coppeConfig.find(function(cc){return cc.key===z.coppaKey;});if(c&&z.posti>0){zoneMap[z.coppaKey]={from:pos,to:pos+z.posti-1,color:c.color,label:c.label};pos+=z.posti;}});
   function _getZone(p){for(var k in zoneMap){if(p>=zoneMap[k].from&&p<=zoneMap[k].to)return zoneMap[k];}return null;}
   var html='<div style="margin-bottom:12px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">'
-    +'<span style="font-size:12px;color:var(--text2)">Giornata <strong>'+lastG+'</strong> / '+(q.giornate_totali||12)+'</span>'
+    +'<span style="font-size:12px;color:var(--text2)">Giornata <strong>'+effectiveLastG+'</strong> / '+(q.giornate_totali||12)+'</span>'
     +'<span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;background:'+(q.tipo==='f1'?'rgba(245,158,11,.15)':'rgba(99,102,241,.15)')+';color:'+(q.tipo==='f1'?'#f59e0b':'#818cf8')+'">'+(q.tipo==='f1'?'Formula 1':'Pt. Totale')+'</span>';
   zones.forEach(function(z){var zm=zoneMap[z.coppaKey];if(!zm)return;
     html+='<span style="display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:700;color:'+zm.color+'">'
@@ -12019,6 +12103,8 @@ function admRenderQualifList(torneoKey){
   configs.forEach(function(q,qi){
     var _data=_getQualifData(torneoKey,qi);
     var _loadedGs=Object.keys(_data).map(Number).sort(function(a,b){return a-b;});
+    var _mData=(q.tipo==='f1')?_getQualifManual(torneoKey,qi):{};
+    var _mGs=Object.keys(_mData).map(Number).sort(function(a,b){return a-b;});
     h+='<div style="border-bottom:1px solid var(--border)">';
     h+='<div style="display:flex;align-items:center;gap:10px;padding:10px 14px;flex-wrap:wrap">'
       +'<input type="text" value="'+q.name+'" data-t="'+torneoKey+'" data-qi="'+qi+'" onchange="admUpdateQualifName(this)" style="background:transparent;border:none;border-bottom:1px solid var(--border);color:var(--text);font-size:13px;font-weight:700;outline:none;min-width:160px;flex:1">'
@@ -12060,10 +12146,28 @@ function admRenderQualifList(torneoKey){
         +'<button onclick="admRemoveF1Position(\''+torneoKey+'\','+qi+')" style="background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);color:#ef4444;border-radius:4px;padding:1px 8px;font-size:14px;cursor:pointer;line-height:1.4">−</button>'
         +'</div></div>';
     }
-    h+='<div style="padding:4px 14px 10px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">'
-      +'<button onclick="admTriggerQualifImport(\''+torneoKey+'\','+qi+')" style="background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.2);color:#f59e0b;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer">📥 Importa xlsx</button>'
-      +(_loadedGs.length?'<span style="font-size:11px;color:var(--text3)">Giornate: '+_loadedGs.join(', ')+' / '+(q.giornate_totali||12)+'</span>':'<span style="font-size:11px;color:var(--text3)">Nessuna giornata importata</span>')
-      +'</div></div>';
+    if(q.tipo==='f1'){
+      h+='<div style="padding:4px 14px 10px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">'
+        +'<button onclick="admTriggerQualifImport(\''+torneoKey+'\','+qi+')" style="background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.2);color:#f59e0b;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer">📥 Formazioni xlsx</button>'
+        +'<button onclick="admToggleQualifManual(\''+torneoKey+'\','+qi+')" style="background:rgba(99,102,241,.1);border:1px solid rgba(99,102,241,.2);color:#818cf8;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer">📝 Manuale</button>'
+        +(_mGs.length?'<span style="font-size:11px;color:var(--text3)">Giornate: '+_mGs.join(', ')+' / '+(q.giornate_totali||12)+'</span>':'<span style="font-size:11px;color:var(--text3)">Nessuna giornata inserita</span>')
+        +'</div>'
+        +'<div id="qmf-'+torneoKey+'-'+qi+'" style="display:none;padding:6px 14px 10px;border-top:1px solid var(--border)">'
+        +'<div style="display:flex;gap:8px;align-items:center;margin-bottom:6px">'
+        +'<span style="font-size:10px;color:var(--text3);font-weight:700">Giornata n°</span>'
+        +'<input type="number" id="qmfg-'+torneoKey+'-'+qi+'" min="1" step="1" placeholder="1" style="width:52px;padding:3px 6px;background:var(--bg2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:12px;text-align:center;outline:none">'
+        +'</div>'
+        +'<textarea id="qmft-'+torneoKey+'-'+qi+'" placeholder="Squadra 1 (1°)&#10;Squadra 2 (2°)&#10;Squadra 3 (3°)&#10;..." rows="6" style="width:100%;box-sizing:border-box;padding:6px 8px;background:var(--bg2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:12px;outline:none;resize:vertical"></textarea>'
+        +'<div style="display:flex;gap:8px;margin-top:6px">'
+        +'<button onclick="admSaveQualifManual(\''+torneoKey+'\','+qi+')" style="background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.2);color:#10b981;border-radius:6px;padding:4px 12px;font-size:11px;font-weight:700;cursor:pointer">✅ Salva</button>'
+        +'<button onclick="admToggleQualifManual(\''+torneoKey+'\','+qi+')" style="background:rgba(107,114,128,.1);border:1px solid rgba(107,114,128,.2);color:var(--text3);border-radius:6px;padding:4px 12px;font-size:11px;font-weight:700;cursor:pointer">Annulla</button>'
+        +'</div></div></div>';
+    } else {
+      h+='<div style="padding:4px 14px 10px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">'
+        +'<button onclick="admTriggerQualifImport(\''+torneoKey+'\','+qi+')" style="background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.2);color:#f59e0b;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer">📥 Importa xlsx</button>'
+        +(_loadedGs.length?'<span style="font-size:11px;color:var(--text3)">Giornate: '+_loadedGs.join(', ')+' / '+(q.giornate_totali||12)+'</span>':'<span style="font-size:11px;color:var(--text3)">Nessuna giornata importata</span>')
+        +'</div></div>';
+    }
   });
   h+='</div>';
   el.innerHTML=h;
@@ -12094,8 +12198,8 @@ function admDeleteQualif(torneoKey,qi){
   var c=admGetQualifConfig(torneoKey);c.splice(qi,1);admSaveQualifConfig(torneoKey,c);
   localStorage.removeItem('adm_qualif_data_'+torneoKey+'_'+qi);admRenderQualifList(torneoKey);
 }
-function admTriggerQualifImport(torneoKey,qi){var inp=document.getElementById('adm-qualif-file-input');if(!inp)return;inp.dataset.t=torneoKey;inp.dataset.qi=qi;inp.value='';inp.click();}
-function admOnQualifFileChange(inp){var t=inp.dataset.t,qi=+inp.dataset.qi,file=inp.files[0];if(!file)return;admProcessQualifXlsx(t,qi,file);}
+function admTriggerQualifImport(torneoKey,qi){var inp=document.getElementById('adm-qualif-file-input');if(!inp)return;var c=admGetQualifConfig(torneoKey);inp.dataset.t=torneoKey;inp.dataset.qi=qi;inp.dataset.tipo=(c[qi]&&c[qi].tipo==='f1')?'f1':'totale';inp.value='';inp.click();}
+function admOnQualifFileChange(inp){var t=inp.dataset.t,qi=+inp.dataset.qi,file=inp.files[0];if(!file)return;if(inp.dataset.tipo==='f1')admProcessF1FormationsXlsx(t,qi,file);else admProcessQualifXlsx(t,qi,file);}
 function admProcessQualifXlsx(torneoKey,qi,file){
   function _doProcess(){
     var reader=new FileReader();
@@ -12129,6 +12233,68 @@ function admProcessQualifXlsx(torneoKey,qi,file){
   var s=document.createElement('script');s.src='https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
   s.onload=_doProcess;s.onerror=function(){alert('Errore caricamento libreria xlsx.');};document.head.appendChild(s);
 }
+function _getQualifManual(torneoKey,qi){var s=localStorage.getItem('adm_qualif_manual_'+torneoKey+'_'+qi);if(!s)return{};try{return JSON.parse(s);}catch(e){return{};}}
+function _saveQualifManual(torneoKey,qi,data){var s=JSON.stringify(data);localStorage.setItem('adm_qualif_manual_'+torneoKey+'_'+qi,s);gsSaveKey('adm_qualif_manual_'+torneoKey+'_'+qi,s);}
+function admToggleQualifManual(torneoKey,qi){var el=document.getElementById('qmf-'+torneoKey+'-'+qi);if(!el)return;el.style.display=el.style.display==='none'?'block':'none';}
+function admSaveQualifManual(torneoKey,qi){
+  var gEl=document.getElementById('qmfg-'+torneoKey+'-'+qi);
+  var tEl=document.getElementById('qmft-'+torneoKey+'-'+qi);
+  if(!gEl||!tEl)return;
+  var giornata=parseInt(gEl.value);if(!giornata||giornata<1){alert('Inserire numero giornata valido');return;}
+  var lines=tEl.value.split('\n').map(function(l){return l.trim();}).filter(function(l){return l.length>0;});
+  if(!lines.length){alert('Inserire almeno una squadra');return;}
+  var existing=_getQualifManual(torneoKey,qi);
+  if(existing[giornata]&&!confirm('Giornata '+giornata+' già presente. Sovrascrivere?'))return;
+  existing[giornata]=lines;_saveQualifManual(torneoKey,qi,existing);
+  admRenderQualifList(torneoKey);alert('✅ Giornata '+giornata+' salvata ('+lines.length+' squadre)');
+}
+function admProcessF1FormationsXlsx(torneoKey,qi,file){
+  function _doProcess(){
+    var reader=new FileReader();
+    reader.onload=function(e){
+      try{
+        var wb=XLSX.read(new Uint8Array(e.target.result),{type:'array'});
+        var giornata=null,allTeams=[];
+        wb.SheetNames.forEach(function(sn){
+          var rows=XLSX.utils.sheet_to_json(wb.Sheets[sn],{header:1,defval:''});
+          if(!rows.length)return;
+          if(giornata===null){var tt=rows[0].join(' ');var gm=tt.match(/[Gg]iornata\s*(\d+)/);if(gm)giornata=parseInt(gm[1]);}
+          var leftTeam=null,rightTeam=null,leftTotal=null,rightTotal=null;
+          function _isTeamName(s){s=s.trim();return s.length>=4&&/^[A-ZÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜÝ\s\.\-]+$/.test(s)&&!/TOTALE|PANCHINA|FORMAZION|MODIF|INSERIT/i.test(s)&&!/^\d/.test(s);}
+          rows.forEach(function(row){
+            var c0=String(row[0]||'').trim();
+            if(_isTeamName(c0)&&!leftTeam)leftTeam=c0;
+            for(var ci=6;ci<=8;ci++){var cx=String(row[ci]||'').trim();if(_isTeamName(cx)&&!rightTeam){rightTeam=cx;break;}}
+            row.forEach(function(cell,colIdx){
+              var cs=String(cell||'').trim();
+              if(/TOTALE/i.test(cs)){
+                var nm=cs.match(/([\d]+[,.][\d]+|[\d]+)/);
+                var val=nm?parseFloat(nm[1].replace(',','.')):null;
+                if(val===null&&colIdx+1<row.length){var nc=String(row[colIdx+1]||'').trim();var nm2=nc.match(/([\d]+[,.][\d]+|[\d]+)/);if(nm2)val=parseFloat(nm2[1].replace(',','.'));}
+                if(val!==null){if(colIdx<6){if(leftTeam&&leftTotal===null)leftTotal=val;}else{if(rightTeam&&rightTotal===null)rightTotal=val;}}
+              }
+            });
+          });
+          if(leftTeam&&leftTotal!==null)allTeams.push({squadra:leftTeam,pt:leftTotal});
+          if(rightTeam&&rightTotal!==null)allTeams.push({squadra:rightTeam,pt:rightTotal});
+        });
+        if(!giornata){alert('Giornata non trovata nel titolo del file');return;}
+        if(!allTeams.length){alert('Nessuna squadra/totale trovato nel file');return;}
+        allTeams.sort(function(a,b){return b.pt-a.pt;});
+        var existing=_getQualifManual(torneoKey,qi);
+        if(existing[giornata]&&!confirm('Giornata '+giornata+' già presente. Sovrascrivere?'))return;
+        existing[giornata]=allTeams.map(function(t){return t.squadra;});
+        _saveQualifManual(torneoKey,qi,existing);
+        admRenderQualifList(torneoKey);
+        alert('✅ Giornata '+giornata+': '+allTeams.length+' squadre ('+allTeams.map(function(t){return t.squadra+' '+t.pt;}).join(', ')+')');
+      }catch(err){alert('Errore: '+err.message);}
+    };
+    reader.readAsArrayBuffer(file);
+  }
+  if(typeof XLSX!=='undefined'){_doProcess();return;}
+  var s=document.createElement('script');s.src='https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+  s.onload=_doProcess;s.onerror=function(){alert('Errore caricamento libreria xlsx.');};document.head.appendChild(s);
+}
 function openQualif(torneoKey,qi){
   var _idPfx=(window._currentTourneyKey==='tsm')?'tsm-':'';
   var hub=document.getElementById(_idPfx+'coppe-hub');
@@ -12143,16 +12309,18 @@ function openQualif(torneoKey,qi){
   var lastG=sortedGs.length?sortedGs[sortedGs.length-1]:0;
   if(hub)hub.style.display='none';
   panel.style.display='block';title.textContent=q.name+(q.tipo==='f1'?' · F1':'');title.style.color='#f59e0b';
-  if(!lastG){content.innerHTML='<div style="text-align:center;padding:60px 20px;color:var(--text3);font-size:13px">Nessuna giornata ancora importata</div>';return;}
+  var mData=(q.tipo==='f1')?_getQualifManual(torneoKey,qi):{};
+  var mSortedGs=Object.keys(mData).map(Number).sort(function(a,b){return a-b;});
+  var lastMG=mSortedGs.length?mSortedGs[mSortedGs.length-1]:0;
+  var effectiveLastG=(q.tipo==='f1')?lastMG:lastG;
+  if(!effectiveLastG){content.innerHTML='<div style="text-align:center;padding:60px 20px;color:var(--text3);font-size:13px">Nessuna giornata ancora '+(q.tipo==='f1'?'inserita':'importata')+'</div>';return;}
   var ranking;
   if(q.tipo==='f1'){
     var f1Table=q.f1_table||[25,18,15,12,10,8,6,4,2,1];
     var f1Acc={};
-    sortedGs.forEach(function(g,gIdx){
-      var cur=data[g],prev=gIdx>0?data[sortedGs[gIdx-1]]:null;
-      var roundScores=cur.map(function(r){var prevPt=0;if(prev){var pe=prev.find(function(p){return p.squadra===r.squadra;});if(pe)prevPt=pe.pt;}return{squadra:r.squadra,roundPt:r.pt-prevPt};});
-      roundScores.sort(function(a,b){return b.roundPt-a.roundPt;});
-      roundScores.forEach(function(rs,idx){f1Acc[rs.squadra]=(f1Acc[rs.squadra]||0)+(f1Table[idx]||0);});
+    mSortedGs.forEach(function(g){
+      var orderedTeams=mData[g];
+      orderedTeams.forEach(function(squadra,idx){f1Acc[squadra]=(f1Acc[squadra]||0)+(f1Table[idx]||0);});
     });
     ranking=Object.keys(f1Acc).map(function(sq){return{squadra:sq,pt:f1Acc[sq]};}).sort(function(a,b){return b.pt-a.pt;});
   } else {
@@ -12162,7 +12330,7 @@ function openQualif(torneoKey,qi){
   zones.forEach(function(z){var c=coppeConfig.find(function(cc){return cc.key===z.coppaKey;});if(c&&z.posti>0){zoneMap[z.coppaKey]={from:pos,to:pos+z.posti-1,color:c.color,label:c.label};pos+=z.posti;}});
   function _getZone(p){for(var k in zoneMap){if(p>=zoneMap[k].from&&p<=zoneMap[k].to)return zoneMap[k];}return null;}
   var html='<div style="margin-bottom:12px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">'
-    +'<span style="font-size:12px;color:var(--text2)">Giornata <strong>'+lastG+'</strong> / '+(q.giornate_totali||12)+'</span>'
+    +'<span style="font-size:12px;color:var(--text2)">Giornata <strong>'+effectiveLastG+'</strong> / '+(q.giornate_totali||12)+'</span>'
     +'<span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;background:'+(q.tipo==='f1'?'rgba(245,158,11,.15)':'rgba(99,102,241,.15)')+';color:'+(q.tipo==='f1'?'#f59e0b':'#818cf8')+'">'+(q.tipo==='f1'?'Formula 1':'Pt. Totale')+'</span>';
   zones.forEach(function(z){var zm=zoneMap[z.coppaKey];if(!zm)return;
     html+='<span style="display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:700;color:'+zm.color+'">'
