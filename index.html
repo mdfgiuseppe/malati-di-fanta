@@ -1,4 +1,4 @@
-<!-- build:20260517_1523 -->
+<!-- build:20260517_1529 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260517_1523';
+  var BUILD='20260517_1529';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -5944,6 +5944,10 @@ function admRenderQualifList(torneoKey){
       +'<div style="position:absolute;top:2px;left:'+(q.visible===false?'2px':'14px')+';width:12px;height:12px;border-radius:50%;background:#fff;transition:left .2s"></div></div>'
       +'<span style="font-size:10px;font-weight:700;color:'+(q.visible===false?'var(--text3)':'#10b981')+'">'+(q.visible===false?'OFF':'ON')+'</span></div>'
       +'<button onclick="admDeleteQualif(\''+torneoKey+'\','+qi+')" style="background:none;border:none;color:#ef4444;cursor:pointer;font-size:14px">✕</button></div>';
+    h+='<div style="padding:4px 14px 8px;display:flex;align-items:center;gap:8px">'
+      +'<span style="font-size:10px;color:var(--text3);flex-shrink:0">URL logo</span>'
+      +'<input type="text" value="'+(q.logo||'')+'" placeholder="https://..." data-t="'+torneoKey+'" data-qi="'+qi+'" onchange="admUpdateQualifLogo(this)" style="flex:1;padding:3px 8px;background:var(--bg2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:11px;outline:none">'
+      +'</div>';
     if(coppeConfig.length){
       h+='<div style="padding:6px 14px 4px;display:flex;gap:10px;flex-wrap:wrap;align-items:center"><span style="font-size:10px;color:var(--text3);font-weight:700">Prime N posizioni qualificate:</span>';
       coppeConfig.forEach(function(c){
@@ -6010,6 +6014,7 @@ function admRenderQualifList(torneoKey){
 }
 function admUpdateQualifName(el){var t=el.dataset.t,qi=+el.dataset.qi,c=admGetQualifConfig(t);if(c[qi])c[qi].name=el.value;admSaveQualifConfig(t,c);}
 function admUpdateQualifColor(el){var t=el.dataset.t,qi=+el.dataset.qi,c=admGetQualifConfig(t);if(c[qi])c[qi].color=el.value;admSaveQualifConfig(t,c);}
+function admUpdateQualifLogo(el){var t=el.dataset.t,qi=+el.dataset.qi,c=admGetQualifConfig(t);if(c[qi])c[qi].logo=el.value.trim();admSaveQualifConfig(t,c);}
 function admUpdateQualifGiornate(el){var t=el.dataset.t,qi=+el.dataset.qi,n=parseInt(el.value);if(isNaN(n)||n<1)return;var c=admGetQualifConfig(t);if(c[qi])c[qi].giornate_totali=n;admSaveQualifConfig(t,c);}
 function admUpdateQualifPosti(el){
   var t=el.dataset.t,qi=+el.dataset.qi,ck=el.dataset.ck,posti=parseInt(el.value)||0;
@@ -6187,6 +6192,7 @@ function _toggleQualifNav(type,torneoKey,qi){
   var tBtn=type==='cal'?calBtn:clsBtn,oBtn=type==='cal'?clsBtn:calBtn;
   var isOpen=tEl.style.display==='flex';
   tEl.style.display=isOpen?'none':'flex';oEl.style.display='none';
+  if(!isOpen){var _bs=tEl.querySelectorAll('button');if(_bs.length)_bs[_bs.length-1].click();}
   function _sb(b,on){if(!b)return;b.style.background=on?'rgba(245,158,11,.15)':'var(--bg2)';b.style.borderColor=on?'#f59e0b':'var(--border)';b.style.color=on?'#f59e0b':'var(--text2)';}
   _sb(tBtn,!isOpen);_sb(oBtn,false);
 }
@@ -10317,7 +10323,7 @@ function initCoppaLogos() {
       _h+='<div onclick="openQualif(\''+_cTk+'\','+qi+')" style="background:var(--card);border:2px solid '+_qc+'4d;border-radius:18px;padding:24px 16px;text-align:center;cursor:pointer;transition:all .25s" '
         +'onmouseover="this.style.borderColor=\''+_qc+'\';this.style.transform=\'translateY(-4px)\';this.style.boxShadow=\'0 8px 30px '+_qc+'33\'" '
         +'onmouseout="this.style.borderColor=\''+_qc+'4d\';this.style.transform=\'\';this.style.boxShadow=\'\'">'
-        +'<div style="font-size:32px;margin-bottom:8px">🏅</div>'
+        +(q.logo?'<img src="'+q.logo+'" style="width:64px;height:64px;object-fit:contain;margin-bottom:8px" onerror="this.style.display=\'none\'">':'<div style="font-size:32px;margin-bottom:8px">🏅</div>')
         +'<div style="font-family:\'Bebas Neue\',sans-serif;font-size:18px;letter-spacing:1px;color:'+_qc+';margin-bottom:4px">'+q.name+'</div>'
         +'<div style="font-size:9px;font-weight:700;color:'+_qc+';letter-spacing:1px;text-transform:uppercase">'+(_qCount?'Giornate: '+_qCount+' / '+(q.giornate_totali||12):'In attesa dei risultati')+'</div>'
         +'</div>';
@@ -12231,6 +12237,10 @@ function admRenderQualifList(torneoKey){
       +'<div style="position:absolute;top:2px;left:'+(q.visible===false?'2px':'14px')+';width:12px;height:12px;border-radius:50%;background:#fff;transition:left .2s"></div></div>'
       +'<span style="font-size:10px;font-weight:700;color:'+(q.visible===false?'var(--text3)':'#10b981')+'">'+(q.visible===false?'OFF':'ON')+'</span></div>'
       +'<button onclick="admDeleteQualif(\''+torneoKey+'\','+qi+')" style="background:none;border:none;color:#ef4444;cursor:pointer;font-size:14px">✕</button></div>';
+    h+='<div style="padding:4px 14px 8px;display:flex;align-items:center;gap:8px">'
+      +'<span style="font-size:10px;color:var(--text3);flex-shrink:0">URL logo</span>'
+      +'<input type="text" value="'+(q.logo||'')+'" placeholder="https://..." data-t="'+torneoKey+'" data-qi="'+qi+'" onchange="admUpdateQualifLogo(this)" style="flex:1;padding:3px 8px;background:var(--bg2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:11px;outline:none">'
+      +'</div>';
     if(coppeConfig.length){
       h+='<div style="padding:6px 14px 4px;display:flex;gap:10px;flex-wrap:wrap;align-items:center"><span style="font-size:10px;color:var(--text3);font-weight:700">Prime N posizioni qualificate:</span>';
       coppeConfig.forEach(function(c){
@@ -12297,6 +12307,7 @@ function admRenderQualifList(torneoKey){
 }
 function admUpdateQualifName(el){var t=el.dataset.t,qi=+el.dataset.qi,c=admGetQualifConfig(t);if(c[qi])c[qi].name=el.value;admSaveQualifConfig(t,c);}
 function admUpdateQualifColor(el){var t=el.dataset.t,qi=+el.dataset.qi,c=admGetQualifConfig(t);if(c[qi])c[qi].color=el.value;admSaveQualifConfig(t,c);}
+function admUpdateQualifLogo(el){var t=el.dataset.t,qi=+el.dataset.qi,c=admGetQualifConfig(t);if(c[qi])c[qi].logo=el.value.trim();admSaveQualifConfig(t,c);}
 function admUpdateQualifGiornate(el){var t=el.dataset.t,qi=+el.dataset.qi,n=parseInt(el.value);if(isNaN(n)||n<1)return;var c=admGetQualifConfig(t);if(c[qi])c[qi].giornate_totali=n;admSaveQualifConfig(t,c);}
 function admUpdateQualifPosti(el){
   var t=el.dataset.t,qi=+el.dataset.qi,ck=el.dataset.ck,posti=parseInt(el.value)||0;
@@ -12474,6 +12485,7 @@ function _toggleQualifNav(type,torneoKey,qi){
   var tBtn=type==='cal'?calBtn:clsBtn,oBtn=type==='cal'?clsBtn:calBtn;
   var isOpen=tEl.style.display==='flex';
   tEl.style.display=isOpen?'none':'flex';oEl.style.display='none';
+  if(!isOpen){var _bs=tEl.querySelectorAll('button');if(_bs.length)_bs[_bs.length-1].click();}
   function _sb(b,on){if(!b)return;b.style.background=on?'rgba(245,158,11,.15)':'var(--bg2)';b.style.borderColor=on?'#f59e0b':'var(--border)';b.style.color=on?'#f59e0b':'var(--text2)';}
   _sb(tBtn,!isOpen);_sb(oBtn,false);
 }
@@ -16208,7 +16220,7 @@ function initCoppaLogos() {
       _h+='<div onclick="openQualif(\''+_cTk+'\','+qi+')" style="background:var(--card);border:2px solid '+_qc+'4d;border-radius:18px;padding:24px 16px;text-align:center;cursor:pointer;transition:all .25s" '
         +'onmouseover="this.style.borderColor=\''+_qc+'\';this.style.transform=\'translateY(-4px)\';this.style.boxShadow=\'0 8px 30px '+_qc+'33\'" '
         +'onmouseout="this.style.borderColor=\''+_qc+'4d\';this.style.transform=\'\';this.style.boxShadow=\'\'">'
-        +'<div style="font-size:32px;margin-bottom:8px">🏅</div>'
+        +(q.logo?'<img src="'+q.logo+'" style="width:64px;height:64px;object-fit:contain;margin-bottom:8px" onerror="this.style.display=\'none\'">':'<div style="font-size:32px;margin-bottom:8px">🏅</div>')
         +'<div style="font-family:\'Bebas Neue\',sans-serif;font-size:18px;letter-spacing:1px;color:'+_qc+';margin-bottom:4px">'+q.name+'</div>'
         +'<div style="font-size:9px;font-weight:700;color:'+_qc+';letter-spacing:1px;text-transform:uppercase">'+(_qCount?'Giornate: '+_qCount+' / '+(q.giornate_totali||12):'In attesa dei risultati')+'</div>'
         +'</div>';
