@@ -1,4 +1,4 @@
-<!-- build:20260517_1423 -->
+<!-- build:20260517_1436 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260517_1423';
+  var BUILD='20260517_1436';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -6098,8 +6098,8 @@ function admProcessFormationsXlsx(torneoKey,qi,file){
         wb.SheetNames.forEach(function(sn){
           var rows=XLSX.utils.sheet_to_json(wb.Sheets[sn],{header:1,defval:''});
           if(!rows.length)return;
-          if(giornata===null){var tt=rows[0].join(' ');var gm=tt.match(/[Gg]iornata\s*(\d+)/);if(gm)giornata=parseInt(gm[1]);}
-          var leftTeam=null,rightTeam=null,leftTotal=null,rightTotal=null;
+          if(giornata===null){var tt=rows[0].join(' ');var gm=tt.match(/[Gg]iornat[ae][^\d]*(\d+)/);if(gm)giornata=parseInt(gm[1]);}
+          var leftTeam=null,rightTeam=null;
           function _isTeamName(s){s=s.trim();return s.length>=4&&/^[A-ZÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜÝ\s\.\-]+$/.test(s)&&!/TOTALE|PANCHINA|FORMAZION|MODIF|INSERIT/i.test(s)&&!/^\d/.test(s);}
           rows.forEach(function(row){
             var c0=String(row[0]||'').trim();
@@ -6111,12 +6111,13 @@ function admProcessFormationsXlsx(torneoKey,qi,file){
                 var nm=cs.match(/([\d]+[,.][\d]+|[\d]+)/);
                 var val=nm?parseFloat(nm[1].replace(',','.')):null;
                 if(val===null&&colIdx+1<row.length){var nc=String(row[colIdx+1]||'').trim();var nm2=nc.match(/([\d]+[,.][\d]+|[\d]+)/);if(nm2)val=parseFloat(nm2[1].replace(',','.'));}
-                if(val!==null){if(colIdx<6){if(leftTeam&&leftTotal===null)leftTotal=val;}else{if(rightTeam&&rightTotal===null)rightTotal=val;}}
+                if(val!==null){
+                  if(colIdx<6){if(leftTeam){allTeams.push({squadra:leftTeam,pt:val});leftTeam=null;}}
+                  else{if(rightTeam){allTeams.push({squadra:rightTeam,pt:val});rightTeam=null;}}
+                }
               }
             });
           });
-          if(leftTeam&&leftTotal!==null)allTeams.push({squadra:leftTeam,pt:leftTotal});
-          if(rightTeam&&rightTotal!==null)allTeams.push({squadra:rightTeam,pt:rightTotal});
         });
         if(!giornata){alert('Giornata non trovata nel titolo del file');return;}
         if(!allTeams.length){alert('Nessuna squadra/totale trovato nel file');return;}
@@ -12296,8 +12297,8 @@ function admProcessFormationsXlsx(torneoKey,qi,file){
         wb.SheetNames.forEach(function(sn){
           var rows=XLSX.utils.sheet_to_json(wb.Sheets[sn],{header:1,defval:''});
           if(!rows.length)return;
-          if(giornata===null){var tt=rows[0].join(' ');var gm=tt.match(/[Gg]iornata\s*(\d+)/);if(gm)giornata=parseInt(gm[1]);}
-          var leftTeam=null,rightTeam=null,leftTotal=null,rightTotal=null;
+          if(giornata===null){var tt=rows[0].join(' ');var gm=tt.match(/[Gg]iornat[ae][^\d]*(\d+)/);if(gm)giornata=parseInt(gm[1]);}
+          var leftTeam=null,rightTeam=null;
           function _isTeamName(s){s=s.trim();return s.length>=4&&/^[A-ZÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜÝ\s\.\-]+$/.test(s)&&!/TOTALE|PANCHINA|FORMAZION|MODIF|INSERIT/i.test(s)&&!/^\d/.test(s);}
           rows.forEach(function(row){
             var c0=String(row[0]||'').trim();
@@ -12309,12 +12310,13 @@ function admProcessFormationsXlsx(torneoKey,qi,file){
                 var nm=cs.match(/([\d]+[,.][\d]+|[\d]+)/);
                 var val=nm?parseFloat(nm[1].replace(',','.')):null;
                 if(val===null&&colIdx+1<row.length){var nc=String(row[colIdx+1]||'').trim();var nm2=nc.match(/([\d]+[,.][\d]+|[\d]+)/);if(nm2)val=parseFloat(nm2[1].replace(',','.'));}
-                if(val!==null){if(colIdx<6){if(leftTeam&&leftTotal===null)leftTotal=val;}else{if(rightTeam&&rightTotal===null)rightTotal=val;}}
+                if(val!==null){
+                  if(colIdx<6){if(leftTeam){allTeams.push({squadra:leftTeam,pt:val});leftTeam=null;}}
+                  else{if(rightTeam){allTeams.push({squadra:rightTeam,pt:val});rightTeam=null;}}
+                }
               }
             });
           });
-          if(leftTeam&&leftTotal!==null)allTeams.push({squadra:leftTeam,pt:leftTotal});
-          if(rightTeam&&rightTotal!==null)allTeams.push({squadra:rightTeam,pt:rightTotal});
         });
         if(!giornata){alert('Giornata non trovata nel titolo del file');return;}
         if(!allTeams.length){alert('Nessuna squadra/totale trovato nel file');return;}
