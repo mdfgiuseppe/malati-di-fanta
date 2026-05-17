@@ -1,4 +1,4 @@
-<!-- build:20260517_1507 -->
+<!-- build:20260517_1513 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260517_1507';
+  var BUILD='20260517_1513';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -5949,7 +5949,7 @@ function admRenderQualifList(torneoKey){
       coppeConfig.forEach(function(c){
         var _z=(q.zones||[]).find(function(z){return z.coppaKey===c.key;})||{posti:0};
         h+='<div style="display:flex;align-items:center;gap:4px">'
-          +'<div style="width:8px;height:8px;border-radius:50%;background:'+c.color+'"></div>'
+          +'<input type="color" value="'+(_z.color||c.color)+'" data-t="'+torneoKey+'" data-qi="'+qi+'" data-ck="'+c.key+'" onchange="admUpdateQualifZoneColor(this)" style="width:22px;height:22px;border:none;background:none;cursor:pointer;padding:0;flex-shrink:0">'
           +'<span style="font-size:11px;color:var(--text2)">'+c.label+'</span>'
           +'<input type="number" value="'+(_z.posti||0)+'" min="0" step="1" data-t="'+torneoKey+'" data-qi="'+qi+'" data-ck="'+c.key+'" onchange="admUpdateQualifPosti(this)" style="width:44px;padding:2px 4px;background:var(--bg2);border:1px solid var(--border);border-radius:4px;color:var(--text);font-size:11px;text-align:center;outline:none">'
           +'<span style="font-size:10px;color:var(--text3)">pos.</span></div>';
@@ -6017,6 +6017,14 @@ function admUpdateQualifPosti(el){
   var zones=c[qi].zones||[];
   var zi=zones.findIndex(function(z){return z.coppaKey===ck;});
   if(zi>=0)zones[zi].posti=posti;else zones.push({coppaKey:ck,posti:posti});
+  c[qi].zones=zones;admSaveQualifConfig(t,c);
+}
+function admUpdateQualifZoneColor(el){
+  var t=el.dataset.t,qi=+el.dataset.qi,ck=el.dataset.ck;
+  var c=admGetQualifConfig(t);if(!c[qi])return;
+  var zones=c[qi].zones||[];
+  var zi=zones.findIndex(function(z){return z.coppaKey===ck;});
+  if(zi>=0)zones[zi].color=el.value;else zones.push({coppaKey:ck,posti:0,color:el.value});
   c[qi].zones=zones;admSaveQualifConfig(t,c);
 }
 function admUpdateQualifTipo(el){
@@ -6219,7 +6227,7 @@ function _openQualifClassGiornata(torneoKey,qi,g){
   });
   var ranking=_qualifComputeRankingUpTo(torneoKey,qi,g);
   var coppeConfig=admGetCoppeConfig(torneoKey),zones=q.zones||[],zoneMap={},pos=1;
-  zones.forEach(function(z){var cc=coppeConfig.find(function(x){return x.key===z.coppaKey;});if(cc&&z.posti>0){zoneMap[z.coppaKey]={from:pos,to:pos+z.posti-1,color:cc.color,label:cc.label};pos+=z.posti;}});
+  zones.forEach(function(z){var cc=coppeConfig.find(function(x){return x.key===z.coppaKey;});if(cc&&z.posti>0){zoneMap[z.coppaKey]={from:pos,to:pos+z.posti-1,color:z.color||cc.color,label:cc.label};pos+=z.posti;}});
   var zoneLegend='';
   zones.forEach(function(z){var zm=zoneMap[z.coppaKey];if(!zm)return;
     zoneLegend+='<span style="display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:700;color:'+zm.color+'">'
@@ -12218,7 +12226,7 @@ function admRenderQualifList(torneoKey){
       coppeConfig.forEach(function(c){
         var _z=(q.zones||[]).find(function(z){return z.coppaKey===c.key;})||{posti:0};
         h+='<div style="display:flex;align-items:center;gap:4px">'
-          +'<div style="width:8px;height:8px;border-radius:50%;background:'+c.color+'"></div>'
+          +'<input type="color" value="'+(_z.color||c.color)+'" data-t="'+torneoKey+'" data-qi="'+qi+'" data-ck="'+c.key+'" onchange="admUpdateQualifZoneColor(this)" style="width:22px;height:22px;border:none;background:none;cursor:pointer;padding:0;flex-shrink:0">'
           +'<span style="font-size:11px;color:var(--text2)">'+c.label+'</span>'
           +'<input type="number" value="'+(_z.posti||0)+'" min="0" step="1" data-t="'+torneoKey+'" data-qi="'+qi+'" data-ck="'+c.key+'" onchange="admUpdateQualifPosti(this)" style="width:44px;padding:2px 4px;background:var(--bg2);border:1px solid var(--border);border-radius:4px;color:var(--text);font-size:11px;text-align:center;outline:none">'
           +'<span style="font-size:10px;color:var(--text3)">pos.</span></div>';
@@ -12286,6 +12294,14 @@ function admUpdateQualifPosti(el){
   var zones=c[qi].zones||[];
   var zi=zones.findIndex(function(z){return z.coppaKey===ck;});
   if(zi>=0)zones[zi].posti=posti;else zones.push({coppaKey:ck,posti:posti});
+  c[qi].zones=zones;admSaveQualifConfig(t,c);
+}
+function admUpdateQualifZoneColor(el){
+  var t=el.dataset.t,qi=+el.dataset.qi,ck=el.dataset.ck;
+  var c=admGetQualifConfig(t);if(!c[qi])return;
+  var zones=c[qi].zones||[];
+  var zi=zones.findIndex(function(z){return z.coppaKey===ck;});
+  if(zi>=0)zones[zi].color=el.value;else zones.push({coppaKey:ck,posti:0,color:el.value});
   c[qi].zones=zones;admSaveQualifConfig(t,c);
 }
 function admUpdateQualifTipo(el){
@@ -12488,7 +12504,7 @@ function _openQualifClassGiornata(torneoKey,qi,g){
   });
   var ranking=_qualifComputeRankingUpTo(torneoKey,qi,g);
   var coppeConfig=admGetCoppeConfig(torneoKey),zones=q.zones||[],zoneMap={},pos=1;
-  zones.forEach(function(z){var cc=coppeConfig.find(function(x){return x.key===z.coppaKey;});if(cc&&z.posti>0){zoneMap[z.coppaKey]={from:pos,to:pos+z.posti-1,color:cc.color,label:cc.label};pos+=z.posti;}});
+  zones.forEach(function(z){var cc=coppeConfig.find(function(x){return x.key===z.coppaKey;});if(cc&&z.posti>0){zoneMap[z.coppaKey]={from:pos,to:pos+z.posti-1,color:z.color||cc.color,label:cc.label};pos+=z.posti;}});
   var zoneLegend='';
   zones.forEach(function(z){var zm=zoneMap[z.coppaKey];if(!zm)return;
     zoneLegend+='<span style="display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:700;color:'+zm.color+'">'
