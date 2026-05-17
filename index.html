@@ -1,4 +1,4 @@
-<!-- build:20260517_1504 -->
+<!-- build:20260517_1507 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260517_1504';
+  var BUILD='20260517_1507';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -5945,14 +5945,14 @@ function admRenderQualifList(torneoKey){
       +'<span style="font-size:10px;font-weight:700;color:'+(q.visible===false?'var(--text3)':'#10b981')+'">'+(q.visible===false?'OFF':'ON')+'</span></div>'
       +'<button onclick="admDeleteQualif(\''+torneoKey+'\','+qi+')" style="background:none;border:none;color:#ef4444;cursor:pointer;font-size:14px">✕</button></div>';
     if(coppeConfig.length){
-      h+='<div style="padding:6px 14px 4px;display:flex;gap:10px;flex-wrap:wrap;align-items:center"><span style="font-size:10px;color:var(--text3);font-weight:700">Zone:</span>';
+      h+='<div style="padding:6px 14px 4px;display:flex;gap:10px;flex-wrap:wrap;align-items:center"><span style="font-size:10px;color:var(--text3);font-weight:700">Prime N posizioni qualificate:</span>';
       coppeConfig.forEach(function(c){
         var _z=(q.zones||[]).find(function(z){return z.coppaKey===c.key;})||{posti:0};
         h+='<div style="display:flex;align-items:center;gap:4px">'
           +'<div style="width:8px;height:8px;border-radius:50%;background:'+c.color+'"></div>'
           +'<span style="font-size:11px;color:var(--text2)">'+c.label+'</span>'
           +'<input type="number" value="'+(_z.posti||0)+'" min="0" step="1" data-t="'+torneoKey+'" data-qi="'+qi+'" data-ck="'+c.key+'" onchange="admUpdateQualifPosti(this)" style="width:44px;padding:2px 4px;background:var(--bg2);border:1px solid var(--border);border-radius:4px;color:var(--text);font-size:11px;text-align:center;outline:none">'
-          +'<span style="font-size:10px;color:var(--text3)">posti</span></div>';
+          +'<span style="font-size:10px;color:var(--text3)">pos.</span></div>';
       });
       h+='</div>';
     }
@@ -12214,14 +12214,14 @@ function admRenderQualifList(torneoKey){
       +'<span style="font-size:10px;font-weight:700;color:'+(q.visible===false?'var(--text3)':'#10b981')+'">'+(q.visible===false?'OFF':'ON')+'</span></div>'
       +'<button onclick="admDeleteQualif(\''+torneoKey+'\','+qi+')" style="background:none;border:none;color:#ef4444;cursor:pointer;font-size:14px">✕</button></div>';
     if(coppeConfig.length){
-      h+='<div style="padding:6px 14px 4px;display:flex;gap:10px;flex-wrap:wrap;align-items:center"><span style="font-size:10px;color:var(--text3);font-weight:700">Zone:</span>';
+      h+='<div style="padding:6px 14px 4px;display:flex;gap:10px;flex-wrap:wrap;align-items:center"><span style="font-size:10px;color:var(--text3);font-weight:700">Prime N posizioni qualificate:</span>';
       coppeConfig.forEach(function(c){
         var _z=(q.zones||[]).find(function(z){return z.coppaKey===c.key;})||{posti:0};
         h+='<div style="display:flex;align-items:center;gap:4px">'
           +'<div style="width:8px;height:8px;border-radius:50%;background:'+c.color+'"></div>'
           +'<span style="font-size:11px;color:var(--text2)">'+c.label+'</span>'
           +'<input type="number" value="'+(_z.posti||0)+'" min="0" step="1" data-t="'+torneoKey+'" data-qi="'+qi+'" data-ck="'+c.key+'" onchange="admUpdateQualifPosti(this)" style="width:44px;padding:2px 4px;background:var(--bg2);border:1px solid var(--border);border-radius:4px;color:var(--text);font-size:11px;text-align:center;outline:none">'
-          +'<span style="font-size:10px;color:var(--text3)">posti</span></div>';
+          +'<span style="font-size:10px;color:var(--text3)">pos.</span></div>';
       });
       h+='</div>';
     }
