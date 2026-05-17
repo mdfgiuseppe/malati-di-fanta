@@ -1,4 +1,4 @@
-<!-- build:20260516_2310 -->
+<!-- build:20260517_0854 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260516_2310';
+  var BUILD='20260517_0854';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -22,7 +22,8 @@
   if('serviceWorker' in navigator){
     window.addEventListener('load',function(){
       navigator.serviceWorker.addEventListener('controllerchange',function(){ location.reload(); });
-      navigator.serviceWorker.register('/malati-di-fanta/sw.js',{scope:'/malati-di-fanta/',updateViaCache:'none'});
+      navigator.serviceWorker.register('/malati-di-fanta/sw.js',{scope:'/malati-di-fanta/',updateViaCache:'none'})
+        .then(function(reg){ setInterval(function(){ reg.update(); }, 120000); });
     });
   }
 })();
@@ -1081,7 +1082,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 
   <div id="s-rose" class="section">
     <div style="font-family:'Bebas Neue';font-size:28px;letter-spacing:2px;margin-bottom:14px">Rose <span style="color:var(--green)">Squadre</span></div>
-    <div id="rose-teams-grid" style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:16px"></div>
+    <div id="rose-teams-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(88px,1fr));gap:8px;margin-bottom:16px"></div>
     <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;align-items:center" id="filters-row"></div>
     <div class="card" style="padding:0;overflow:hidden">
       <div style="display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid var(--border)">
@@ -1476,7 +1477,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 
   <div id="s-rose" class="section">
     <div style="font-family:'Bebas Neue';font-size:28px;letter-spacing:2px;margin-bottom:14px">Rose <span style="color:var(--green)">Squadre</span></div>
-    <div id="rose-teams-grid" style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:16px"></div>
+    <div id="rose-teams-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(88px,1fr));gap:8px;margin-bottom:16px"></div>
     <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;align-items:center" id="filters-row"></div>
     <div class="card" style="padding:0;overflow:hidden">
       <div style="display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid var(--border)">
@@ -1510,7 +1511,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   
   <div id="tsm-s-rose" class="section" style="width:100%">
     <div style="font-family:'Bebas Neue';font-size:28px;letter-spacing:2px;margin-bottom:14px">Rose <span style="color:var(--green)">Squadre</span></div>
-    <div id="tsm-rose-teams-grid" style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:16px"></div>
+    <div id="tsm-rose-teams-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(88px,1fr));gap:8px;margin-bottom:16px"></div>
     <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;align-items:center" id="tsm-filters-row"></div>
     <div class="card" style="padding:0;overflow:hidden">
       <div style="display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid var(--border)">
