@@ -1,4 +1,4 @@
-<!-- build:20260517_1245 -->
+<!-- build:20260517_1248 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260517_1245';
+  var BUILD='20260517_1248';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -1388,11 +1388,11 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   <div class="mnav-btn" onclick="showTSMSection('rose',this)">👥 Rose</div>
   <div class="mnav-btn" onclick="showTSMSection('calendario',this)">📅 Calendario</div>
   <div class="mnav-btn" onclick="showTSMSection('classifica',this)">🏆 Classifica</div>
+  <div class="mnav-btn" onclick="showTSMSection('coppe',this)">🏆 Coppe</div>
   <div class="mnav-btn" onclick="showTSMSection('stadio',this)">🏟️ Stadio</div>
   <div class="mnav-btn" onclick="showTSMSection('sponsor',this)">🤝 Sponsor</div>
   <div class="mnav-btn" onclick="showTSMSection('multe',this)">⚠️ Multe</div>
   <div class="mnav-btn" onclick="showTSMSection('modulistica',this)">📑 Moduli</div>
-  <div class="mnav-btn" onclick="showTSMSection('coppe',this)">🏆 Coppe</div>
 </div>
 <div class="layout">
 <nav class="sidenav">
@@ -1423,6 +1423,10 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
     <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 9H4.5a2.5 2.5 0 010-5H6"/><path d="M18 9h1.5a2.5 2.5 0 000-5H18"/><path d="M18 2H6v7a6 6 0 0012 0V2z"/></svg>
     Classifica
   </div>
+  <div class="nav-item" onclick="showTSMSection('coppe',this)">
+    <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 9H4.5a2.5 2.5 0 010-5H6"/><path d="M18 9h1.5a2.5 2.5 0 000-5H18"/><path d="M18 2H6v7a6 6 0 0012 0V2z"/></svg>
+    Coppe
+  </div>
   <div class="nav-section">Gestione</div>
   <div class="nav-item" onclick="showTSMSection('stadio',this)">
     <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 21h18M3 10h18M5 6l7-3 7 3M4 10v11M20 10v11"/></svg>
@@ -1439,10 +1443,6 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   <div class="nav-item" onclick="showTSMSection('modulistica',this)">
     <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
     Modulistica
-  </div>
-  <div class="nav-item" onclick="showTSMSection('coppe',this)">
-    <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 9H4.5a2.5 2.5 0 010-5H6"/><path d="M18 9h1.5a2.5 2.5 0 000-5H18"/><path d="M18 2H6v7a6 6 0 0012 0V2z"/></svg>
-    Coppe
   </div>
 </nav>
 <div class="main tsm-main">
