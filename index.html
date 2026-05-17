@@ -1,4 +1,4 @@
-﻿<!-- build:20260517_1621 -->
+<!-- build:20260517_1640 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260517_1621';
+  var BUILD='20260517_1640';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -3515,6 +3515,9 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
         <select id="adm-cop-coppa" onchange="admLoadCoppaEditor()" style="padding:8px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;outline:none">
           <option value="">-- Seleziona Coppa --</option>
         </select>
+        <select id="adm-qualif-select" onchange="admLoadQualifPanel()" style="padding:8px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;outline:none">
+          <option value="">-- Seleziona Qualificazione --</option>
+        </select>
         <button id="adm-cop-add-btn" onclick="admAddCoppa()" style="display:none;padding:8px 14px;background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.2);color:#10b981;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer">+ Nuova Coppa</button>
         <button id="adm-qualif-add-btn" onclick="admAddQualif()" style="display:none;padding:8px 14px;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.2);color:#f59e0b;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer">+ Crea Qualificazione</button>
         <input type="file" id="adm-qualif-file-input" accept=".xlsx,.xls" style="display:none" onchange="admOnQualifFileChange(this)">
@@ -5996,6 +5999,8 @@ function admInitCoppeSection() {
     var o=document.createElement('option'); o.value=t.key; o.textContent=t.label; sel.appendChild(o);
   });
   document.getElementById('adm-cop-coppa').innerHTML='<option value="">-- Seleziona Coppa --</option>';
+  var _sqf=document.getElementById('adm-qualif-select');
+  if(_sqf)_sqf.innerHTML='<option value="">-- Seleziona Qualificazione --</option>';
   var addBtn = document.getElementById('adm-cop-add-btn');
   if(addBtn) addBtn.style.display='none';
   var qualifBtn = document.getElementById('adm-qualif-add-btn');
@@ -6029,8 +6034,12 @@ function admLoadCoppeTorneo() {
   if(addBtn) addBtn.style.display='flex';
   var qualifBtn = document.getElementById('adm-qualif-add-btn');
   if(qualifBtn) qualifBtn.style.display='flex';
-  admRenderQualifList(torneoKey);
-  admRenderCoppeList(torneoKey);
+  document.getElementById('adm-qualif-config-body').innerHTML='';
+  var _selQF=document.getElementById('adm-qualif-select');
+  if(_selQF){
+    _selQF.innerHTML='<option value="">-- Seleziona Qualificazione --</option>';
+    admGetQualifConfig(torneoKey).forEach(function(q,qi){_selQF.innerHTML+='<option value="'+qi+'">'+q.name+'</option>';});
+  }
 }
 
 function admGetQualifConfig(torneoKey){var s=localStorage.getItem('adm_qualif_config_'+torneoKey);if(!s)return[];try{return JSON.parse(s);}catch(e){return[];}}
@@ -6042,9 +6051,9 @@ function admAddQualif(){
   var name=prompt('Nome qualificazione:','Qualificazione');if(!name)return;
   var config=admGetQualifConfig(torneoKey);
   config.push({name:name,visible:true,giornate_totali:12,zones:[]});
-  admSaveQualifConfig(torneoKey,config);admRenderQualifList(torneoKey);
+  admSaveQualifConfig(torneoKey,config);admLoadCoppeTorneo();
 }
-function admRenderQualifList(torneoKey){
+function admRenderQualifList(torneoKey,_onlyQi){
   var el=document.getElementById('adm-qualif-config-body');if(!el)return;
   var configs=admGetQualifConfig(torneoKey);
   if(!configs.length){el.innerHTML='';return;}
@@ -6052,6 +6061,7 @@ function admRenderQualifList(torneoKey){
   var h='<div class="card" style="padding:0;overflow:hidden;margin-bottom:12px">'
     +'<div style="padding:10px 14px;background:rgba(245,158,11,.08);border-bottom:1px solid var(--border);font-size:10px;font-weight:800;text-transform:uppercase;color:#f59e0b">Qualificazione</div>';
   configs.forEach(function(q,qi){
+    if(_onlyQi!==undefined&&qi!==_onlyQi){return;}
     var _data=_getQualifData(torneoKey,qi);
     var _loadedGs=Object.keys(_data).map(Number).sort(function(a,b){return a-b;});
     var _mData=_getQualifManual(torneoKey,qi);
@@ -6178,16 +6188,16 @@ function admUpdateQualifTipo(el){
   if(!c[qi])return;
   c[qi].tipo=el.value;
   if(el.value==='f1'&&!c[qi].f1_table)c[qi].f1_table=[25,18,15,12,10,8,6,4,2,1];
-  admSaveQualifConfig(t,c);admRenderQualifList(t);
+  admSaveQualifConfig(t,c);admLoadQualifPanel();
 }
 function admUpdateF1Points(el){var t=el.dataset.t,qi=+el.dataset.qi,idx=+el.dataset.idx,c=admGetQualifConfig(t);if(!c[qi]||!c[qi].f1_table)return;c[qi].f1_table[idx]=parseInt(el.value)||0;admSaveQualifConfig(t,c);}
-function admAddF1Position(torneoKey,qi){var c=admGetQualifConfig(torneoKey);if(!c[qi])return;if(!c[qi].f1_table)c[qi].f1_table=[25,18,15,12,10,8,6,4,2,1];c[qi].f1_table.push(0);admSaveQualifConfig(torneoKey,c);admRenderQualifList(torneoKey);}
-function admRemoveF1Position(torneoKey,qi){var c=admGetQualifConfig(torneoKey);if(!c[qi]||!c[qi].f1_table||c[qi].f1_table.length<=1)return;c[qi].f1_table.pop();admSaveQualifConfig(torneoKey,c);admRenderQualifList(torneoKey);}
-function admToggleQualif(torneoKey,qi){var c=admGetQualifConfig(torneoKey);if(c[qi])c[qi].visible=(c[qi].visible===false)?true:false;admSaveQualifConfig(torneoKey,c);admRenderQualifList(torneoKey);}
+function admAddF1Position(torneoKey,qi){var c=admGetQualifConfig(torneoKey);if(!c[qi])return;if(!c[qi].f1_table)c[qi].f1_table=[25,18,15,12,10,8,6,4,2,1];c[qi].f1_table.push(0);admSaveQualifConfig(torneoKey,c);admLoadQualifPanel();}
+function admRemoveF1Position(torneoKey,qi){var c=admGetQualifConfig(torneoKey);if(!c[qi]||!c[qi].f1_table||c[qi].f1_table.length<=1)return;c[qi].f1_table.pop();admSaveQualifConfig(torneoKey,c);admLoadQualifPanel();}
+function admToggleQualif(torneoKey,qi){var c=admGetQualifConfig(torneoKey);if(c[qi])c[qi].visible=(c[qi].visible===false)?true:false;admSaveQualifConfig(torneoKey,c);admLoadQualifPanel();}
 function admDeleteQualif(torneoKey,qi){
   if(!confirm('Eliminare questa qualificazione e tutti i dati?'))return;
   var c=admGetQualifConfig(torneoKey);c.splice(qi,1);admSaveQualifConfig(torneoKey,c);
-  localStorage.removeItem('adm_qualif_data_'+torneoKey+'_'+qi);admRenderQualifList(torneoKey);
+  localStorage.removeItem('adm_qualif_data_'+torneoKey+'_'+qi);admLoadCoppeTorneo();
 }
 function admTriggerQualifImport(torneoKey,qi){var inp=document.getElementById('adm-qualif-file-input');if(!inp)return;inp.dataset.t=torneoKey;inp.dataset.qi=qi;inp.value='';inp.click();}
 function admOnQualifFileChange(inp){var t=inp.dataset.t,qi=+inp.dataset.qi,file=inp.files[0];if(!file)return;admProcessFormationsXlsx(t,qi,file);}
@@ -6215,7 +6225,7 @@ function admProcessQualifXlsx(torneoKey,qi,file){
         var existing=_getQualifData(torneoKey,qi);
         if(existing[giornata]&&!confirm('Giornata '+giornata+' già presente. Sovrascrivere?'))return;
         existing[giornata]=ranking;_saveQualifData(torneoKey,qi,existing);
-        admRenderQualifList(torneoKey);alert('✅ Giornata '+giornata+' importata ('+ranking.length+' squadre)');
+        admLoadQualifPanel();alert('✅ Giornata '+giornata+' importata ('+ranking.length+' squadre)');
       }catch(err){alert('Errore: '+err.message);}
     };
     reader.readAsArrayBuffer(file);
@@ -6242,7 +6252,7 @@ function admSaveQualifManual(torneoKey,qi){
   var existing=_getQualifManual(torneoKey,qi);
   if(existing[giornata]&&!confirm('Giornata '+giornata+' già presente. Sovrascrivere?'))return;
   existing[giornata]=items;_saveQualifManual(torneoKey,qi,existing);
-  admRenderQualifList(torneoKey);alert('✅ Giornata '+giornata+' salvata ('+items.length+' squadre)');
+  admLoadQualifPanel();alert('✅ Giornata '+giornata+' salvata ('+items.length+' squadre)');
 }
 function admProcessFormationsXlsx(torneoKey,qi,file){
   function _doProcess(){
@@ -6282,7 +6292,7 @@ function admProcessFormationsXlsx(torneoKey,qi,file){
         if(existing[giornata]&&!confirm('Giornata '+giornata+' già presente. Sovrascrivere?'))return;
         existing[giornata]=allTeams;
         _saveQualifManual(torneoKey,qi,existing);
-        admRenderQualifList(torneoKey);
+        admLoadQualifPanel();
         alert('✅ Giornata '+giornata+': '+allTeams.length+' squadre\n'+allTeams.map(function(t,i){return(i+1)+'° '+t.squadra+' ('+t.pt+')';}).join('\n'));
       }catch(err){alert('Errore: '+err.message);}
     };
@@ -6501,14 +6511,14 @@ function admUpdateCoppaTeams(el) {
   var config=admGetCoppeConfig(torneoKey);
   if(config[ci]){config[ci].teams=teams;config[ci].rounds=rounds;}
   admSaveCoppeConfig(torneoKey,config);
-  admRenderCoppeList(torneoKey);
+  admLoadCoppaEditor();
 }
 
 function admToggleCoppa(torneoKey, ci) {
   var config=admGetCoppeConfig(torneoKey);
   if(config[ci]) config[ci].visible=(config[ci].visible===false)?true:false;
   admSaveCoppeConfig(torneoKey,config);
-  admRenderCoppeList(torneoKey);
+  admLoadCoppaEditor();
 }
 
 function admSaveCoppaTrofeo(el) {
@@ -6532,7 +6542,7 @@ function admEditCoppaLogo(torneoKey, coppaKey) {
   if (url) { localStorage.setItem(storeKey, url); gsSaveKey(storeKey, url); }
   else { localStorage.removeItem(storeKey); gsSaveKey(storeKey, ''); }
   if (typeof initCoppaLogos === 'function') initCoppaLogos();
-  admRenderCoppeList(torneoKey);
+  admLoadCoppaEditor();
   var msg = document.createElement('div');
   msg.textContent = url ? '✅ Logo coppa salvato' : '✅ Logo rimosso';
   msg.style.cssText = 'position:fixed;bottom:20px;right:20px;background:#8b5cf6;color:#fff;padding:10px 18px;border-radius:10px;font-size:12px;font-weight:700;z-index:9999';
@@ -6549,7 +6559,7 @@ function admEditCoppaTrofeo(torneoKey, coppaKey) {
   if (url) { localStorage.setItem(storeKey, url); gsSaveKey(storeKey, url); }
   else { localStorage.removeItem(storeKey); gsSaveKey(storeKey, ''); }
   if (typeof COPPA_TROPHIES !== 'undefined') COPPA_TROPHIES[coppaKey] = url;
-  admRenderCoppeList(torneoKey);
+  admLoadCoppaEditor();
   var msg = document.createElement('div');
   msg.textContent = url ? '✅ Trofeo coppa salvato' : '✅ Trofeo rimosso';
   msg.style.cssText = 'position:fixed;bottom:20px;right:20px;background:#f59e0b;color:#fff;padding:10px 18px;border-radius:10px;font-size:12px;font-weight:700;z-index:9999';
@@ -6586,6 +6596,56 @@ function admAddCoppa() {
 }
 
 function admLoadCoppaEditor() {
+  var torneoKey = document.getElementById('adm-cop-torneo').value;
+  var coppaKey = document.getElementById('adm-cop-coppa').value;
+  var elCfg = document.getElementById('adm-cop-config-body');
+  var elEd = document.getElementById('adm-cop-editor-body');
+  if(elEd) elEd.innerHTML='';
+  if(!elCfg||!torneoKey||!coppaKey){if(elCfg)elCfg.innerHTML='';return;}
+  var config = admGetCoppeConfig(torneoKey);
+  var ci = config.findIndex(function(c){return c.key===coppaKey;});
+  if(ci<0){elCfg.innerHTML='';return;}
+  var cfg = config[ci];
+  var _qualifCfgs = admGetQualifConfig(torneoKey);
+  var _lqQi = (cfg.qualifQi!==undefined&&cfg.qualifQi!==null)?cfg.qualifQi:'';
+  var h='<div class="card" style="padding:0;overflow:hidden">';
+  h+='<div style="display:flex;align-items:center;gap:10px;padding:10px 14px">';
+  h+='<div style="width:12px;height:12px;border-radius:50%;background:'+cfg.color+';flex-shrink:0"></div>';
+  h+='<div style="flex:1"><input type="text" value="'+cfg.label+'" data-t="'+torneoKey+'" data-ci="'+ci+'" data-f="label" onchange="admUpdateCoppaConfig(this)" style="background:transparent;border:none;border-bottom:1px solid var(--border);color:var(--text);font-size:13px;font-weight:700;outline:none;width:200px"></div>';
+  h+='<input type="color" value="'+cfg.color+'" data-t="'+torneoKey+'" data-ci="'+ci+'" data-f="color" onchange="admUpdateCoppaConfig(this)" style="width:32px;height:28px;border:none;background:none;cursor:pointer">';
+  h+='<div style="display:flex;align-items:center;gap:5px;flex-shrink:0"><label style="font-size:10px;color:var(--text3);white-space:nowrap">Squadre</label>';
+  h+='<input type="number" value="'+cfg.teams+'" min="2" step="1" data-t="'+torneoKey+'" data-ci="'+ci+'" onchange="admUpdateCoppaTeams(this)" style="width:52px;padding:3px 6px;background:var(--bg2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:12px;text-align:center;outline:none"></div>';
+  h+='<div onclick="admToggleCoppa(\''+torneoKey+'\','+ci+')" style="cursor:pointer;display:flex;align-items:center;gap:4px;flex-shrink:0;padding:2px 8px;border-radius:12px;border:1px solid var(--border)">';
+  h+='<div style="width:28px;height:16px;border-radius:8px;background:'+(cfg.visible===false?'#6b7280':'#10b981')+';position:relative;transition:background .2s">';
+  h+='<div style="position:absolute;top:2px;left:'+(cfg.visible===false?'2px':'14px')+';width:12px;height:12px;border-radius:50%;background:#fff;transition:left .2s"></div></div>';
+  h+='<span style="font-size:10px;font-weight:700;color:'+(cfg.visible===false?'var(--text3)':'#10b981')+'">'+(cfg.visible===false?'OFF':'ON')+'</span></div>';
+  h+='<button data-t="'+torneoKey+'" data-ci="'+ci+'" onclick="admDeleteCoppa(this)" style="background:none;border:none;color:#ef4444;cursor:pointer;font-size:14px">&#10005;</button>';
+  h+='</div>';
+  h+='<div style="padding:4px 14px 10px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">';
+  h+='<button onclick="admEditCoppaLogo(\''+torneoKey+'\',\''+coppaKey+'\')" style="background:rgba(139,92,246,.1);border:1px solid rgba(139,92,246,.2);color:#8b5cf6;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer">&#128444; Logo</button>';
+  h+='<button onclick="admEditCoppaTrofeo(\''+torneoKey+'\',\''+coppaKey+'\')" style="background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.2);color:#f59e0b;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer">&#127942; Trofeo</button>';
+  if(_qualifCfgs.length){
+    var _qSel='<select data-t="'+torneoKey+'" data-ck="'+coppaKey+'" onchange="admUpdateCoppaQualifLink(this)" style="padding:3px 8px;background:var(--bg2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:11px;outline:none"><option value="">&#8212; Qualificazione &#8212;</option>';
+    _qualifCfgs.forEach(function(q,qi){_qSel+='<option value="'+qi+'"'+(_lqQi!==''&&parseInt(_lqQi)===qi?' selected':'')+'>'+q.name+'</option>';});
+    _qSel+='</select>';
+    h+=_qSel;
+    h+='<button onclick="admGenBracketFromQualif(\''+torneoKey+'\',\''+coppaKey+'\')" style="background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.2);color:#10b981;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer">&#128202; Genera accoppiamenti</button>';
+  }
+  h+='<button onclick="admTriggerCoppaImport(\''+torneoKey+'\',\''+coppaKey+'\')" style="background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.2);color:#3b82f6;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer">&#128229; Importa Risultati</button>';
+  h+='<button onclick="admShowBracketEditor()" style="background:rgba(107,114,128,.15);border:1px solid rgba(107,114,128,.3);color:var(--text);border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer">&#9998; Modifica Bracket</button>';
+  h+='</div></div>';
+  elCfg.innerHTML=h;
+}
+function admLoadQualifPanel() {
+  var torneoKey = document.getElementById('adm-cop-torneo').value;
+  var _selQF = document.getElementById('adm-qualif-select');
+  var qiStr = _selQF ? _selQF.value : '';
+  var el = document.getElementById('adm-qualif-config-body');
+  if(!el) return;
+  if(!torneoKey||qiStr===''){el.innerHTML='';return;}
+  admRenderQualifList(torneoKey,parseInt(qiStr));
+}
+function admShowBracketEditor() {
   var torneoKey = document.getElementById('adm-cop-torneo').value;
   var coppaKey = document.getElementById('adm-cop-coppa').value;
   var el = document.getElementById('adm-cop-editor-body');
@@ -12318,6 +12378,8 @@ function admInitCoppeSection() {
     var o=document.createElement('option'); o.value=t.key; o.textContent=t.label; sel.appendChild(o);
   });
   document.getElementById('adm-cop-coppa').innerHTML='<option value="">-- Seleziona Coppa --</option>';
+  var _sqf=document.getElementById('adm-qualif-select');
+  if(_sqf)_sqf.innerHTML='<option value="">-- Seleziona Qualificazione --</option>';
   var addBtn = document.getElementById('adm-cop-add-btn');
   if(addBtn) addBtn.style.display='none';
   var qualifBtn = document.getElementById('adm-qualif-add-btn');
@@ -12351,8 +12413,12 @@ function admLoadCoppeTorneo() {
   if(addBtn) addBtn.style.display='flex';
   var qualifBtn = document.getElementById('adm-qualif-add-btn');
   if(qualifBtn) qualifBtn.style.display='flex';
-  admRenderQualifList(torneoKey);
-  admRenderCoppeList(torneoKey);
+  document.getElementById('adm-qualif-config-body').innerHTML='';
+  var _selQF=document.getElementById('adm-qualif-select');
+  if(_selQF){
+    _selQF.innerHTML='<option value="">-- Seleziona Qualificazione --</option>';
+    admGetQualifConfig(torneoKey).forEach(function(q,qi){_selQF.innerHTML+='<option value="'+qi+'">'+q.name+'</option>';});
+  }
 }
 
 function admGetQualifConfig(torneoKey){var s=localStorage.getItem('adm_qualif_config_'+torneoKey);if(!s)return[];try{return JSON.parse(s);}catch(e){return[];}}
@@ -12364,9 +12430,9 @@ function admAddQualif(){
   var name=prompt('Nome qualificazione:','Qualificazione');if(!name)return;
   var config=admGetQualifConfig(torneoKey);
   config.push({name:name,visible:true,giornate_totali:12,zones:[]});
-  admSaveQualifConfig(torneoKey,config);admRenderQualifList(torneoKey);
+  admSaveQualifConfig(torneoKey,config);admLoadCoppeTorneo();
 }
-function admRenderQualifList(torneoKey){
+function admRenderQualifList(torneoKey,_onlyQi){
   var el=document.getElementById('adm-qualif-config-body');if(!el)return;
   var configs=admGetQualifConfig(torneoKey);
   if(!configs.length){el.innerHTML='';return;}
@@ -12374,6 +12440,7 @@ function admRenderQualifList(torneoKey){
   var h='<div class="card" style="padding:0;overflow:hidden;margin-bottom:12px">'
     +'<div style="padding:10px 14px;background:rgba(245,158,11,.08);border-bottom:1px solid var(--border);font-size:10px;font-weight:800;text-transform:uppercase;color:#f59e0b">Qualificazione</div>';
   configs.forEach(function(q,qi){
+    if(_onlyQi!==undefined&&qi!==_onlyQi){return;}
     var _data=_getQualifData(torneoKey,qi);
     var _loadedGs=Object.keys(_data).map(Number).sort(function(a,b){return a-b;});
     var _mData=_getQualifManual(torneoKey,qi);
@@ -12500,16 +12567,16 @@ function admUpdateQualifTipo(el){
   if(!c[qi])return;
   c[qi].tipo=el.value;
   if(el.value==='f1'&&!c[qi].f1_table)c[qi].f1_table=[25,18,15,12,10,8,6,4,2,1];
-  admSaveQualifConfig(t,c);admRenderQualifList(t);
+  admSaveQualifConfig(t,c);admLoadQualifPanel();
 }
 function admUpdateF1Points(el){var t=el.dataset.t,qi=+el.dataset.qi,idx=+el.dataset.idx,c=admGetQualifConfig(t);if(!c[qi]||!c[qi].f1_table)return;c[qi].f1_table[idx]=parseInt(el.value)||0;admSaveQualifConfig(t,c);}
-function admAddF1Position(torneoKey,qi){var c=admGetQualifConfig(torneoKey);if(!c[qi])return;if(!c[qi].f1_table)c[qi].f1_table=[25,18,15,12,10,8,6,4,2,1];c[qi].f1_table.push(0);admSaveQualifConfig(torneoKey,c);admRenderQualifList(torneoKey);}
-function admRemoveF1Position(torneoKey,qi){var c=admGetQualifConfig(torneoKey);if(!c[qi]||!c[qi].f1_table||c[qi].f1_table.length<=1)return;c[qi].f1_table.pop();admSaveQualifConfig(torneoKey,c);admRenderQualifList(torneoKey);}
-function admToggleQualif(torneoKey,qi){var c=admGetQualifConfig(torneoKey);if(c[qi])c[qi].visible=(c[qi].visible===false)?true:false;admSaveQualifConfig(torneoKey,c);admRenderQualifList(torneoKey);}
+function admAddF1Position(torneoKey,qi){var c=admGetQualifConfig(torneoKey);if(!c[qi])return;if(!c[qi].f1_table)c[qi].f1_table=[25,18,15,12,10,8,6,4,2,1];c[qi].f1_table.push(0);admSaveQualifConfig(torneoKey,c);admLoadQualifPanel();}
+function admRemoveF1Position(torneoKey,qi){var c=admGetQualifConfig(torneoKey);if(!c[qi]||!c[qi].f1_table||c[qi].f1_table.length<=1)return;c[qi].f1_table.pop();admSaveQualifConfig(torneoKey,c);admLoadQualifPanel();}
+function admToggleQualif(torneoKey,qi){var c=admGetQualifConfig(torneoKey);if(c[qi])c[qi].visible=(c[qi].visible===false)?true:false;admSaveQualifConfig(torneoKey,c);admLoadQualifPanel();}
 function admDeleteQualif(torneoKey,qi){
   if(!confirm('Eliminare questa qualificazione e tutti i dati?'))return;
   var c=admGetQualifConfig(torneoKey);c.splice(qi,1);admSaveQualifConfig(torneoKey,c);
-  localStorage.removeItem('adm_qualif_data_'+torneoKey+'_'+qi);admRenderQualifList(torneoKey);
+  localStorage.removeItem('adm_qualif_data_'+torneoKey+'_'+qi);admLoadCoppeTorneo();
 }
 function admTriggerQualifImport(torneoKey,qi){var inp=document.getElementById('adm-qualif-file-input');if(!inp)return;inp.dataset.t=torneoKey;inp.dataset.qi=qi;inp.value='';inp.click();}
 function admOnQualifFileChange(inp){var t=inp.dataset.t,qi=+inp.dataset.qi,file=inp.files[0];if(!file)return;admProcessFormationsXlsx(t,qi,file);}
@@ -12537,7 +12604,7 @@ function admProcessQualifXlsx(torneoKey,qi,file){
         var existing=_getQualifData(torneoKey,qi);
         if(existing[giornata]&&!confirm('Giornata '+giornata+' già presente. Sovrascrivere?'))return;
         existing[giornata]=ranking;_saveQualifData(torneoKey,qi,existing);
-        admRenderQualifList(torneoKey);alert('✅ Giornata '+giornata+' importata ('+ranking.length+' squadre)');
+        admLoadQualifPanel();alert('✅ Giornata '+giornata+' importata ('+ranking.length+' squadre)');
       }catch(err){alert('Errore: '+err.message);}
     };
     reader.readAsArrayBuffer(file);
@@ -12564,7 +12631,7 @@ function admSaveQualifManual(torneoKey,qi){
   var existing=_getQualifManual(torneoKey,qi);
   if(existing[giornata]&&!confirm('Giornata '+giornata+' già presente. Sovrascrivere?'))return;
   existing[giornata]=items;_saveQualifManual(torneoKey,qi,existing);
-  admRenderQualifList(torneoKey);alert('✅ Giornata '+giornata+' salvata ('+items.length+' squadre)');
+  admLoadQualifPanel();alert('✅ Giornata '+giornata+' salvata ('+items.length+' squadre)');
 }
 function admProcessFormationsXlsx(torneoKey,qi,file){
   function _doProcess(){
@@ -12604,7 +12671,7 @@ function admProcessFormationsXlsx(torneoKey,qi,file){
         if(existing[giornata]&&!confirm('Giornata '+giornata+' già presente. Sovrascrivere?'))return;
         existing[giornata]=allTeams;
         _saveQualifManual(torneoKey,qi,existing);
-        admRenderQualifList(torneoKey);
+        admLoadQualifPanel();
         alert('✅ Giornata '+giornata+': '+allTeams.length+' squadre\n'+allTeams.map(function(t,i){return(i+1)+'° '+t.squadra+' ('+t.pt+')';}).join('\n'));
       }catch(err){alert('Errore: '+err.message);}
     };
@@ -12823,14 +12890,14 @@ function admUpdateCoppaTeams(el) {
   var config=admGetCoppeConfig(torneoKey);
   if(config[ci]){config[ci].teams=teams;config[ci].rounds=rounds;}
   admSaveCoppeConfig(torneoKey,config);
-  admRenderCoppeList(torneoKey);
+  admLoadCoppaEditor();
 }
 
 function admToggleCoppa(torneoKey, ci) {
   var config=admGetCoppeConfig(torneoKey);
   if(config[ci]) config[ci].visible=(config[ci].visible===false)?true:false;
   admSaveCoppeConfig(torneoKey,config);
-  admRenderCoppeList(torneoKey);
+  admLoadCoppaEditor();
 }
 
 function admSaveCoppaTrofeo(el) {
@@ -12854,7 +12921,7 @@ function admEditCoppaLogo(torneoKey, coppaKey) {
   if (url) { localStorage.setItem(storeKey, url); gsSaveKey(storeKey, url); }
   else { localStorage.removeItem(storeKey); gsSaveKey(storeKey, ''); }
   if (typeof initCoppaLogos === 'function') initCoppaLogos();
-  admRenderCoppeList(torneoKey);
+  admLoadCoppaEditor();
   var msg = document.createElement('div');
   msg.textContent = url ? '✅ Logo coppa salvato' : '✅ Logo rimosso';
   msg.style.cssText = 'position:fixed;bottom:20px;right:20px;background:#8b5cf6;color:#fff;padding:10px 18px;border-radius:10px;font-size:12px;font-weight:700;z-index:9999';
@@ -12871,7 +12938,7 @@ function admEditCoppaTrofeo(torneoKey, coppaKey) {
   if (url) { localStorage.setItem(storeKey, url); gsSaveKey(storeKey, url); }
   else { localStorage.removeItem(storeKey); gsSaveKey(storeKey, ''); }
   if (typeof COPPA_TROPHIES !== 'undefined') COPPA_TROPHIES[coppaKey] = url;
-  admRenderCoppeList(torneoKey);
+  admLoadCoppaEditor();
   var msg = document.createElement('div');
   msg.textContent = url ? '✅ Trofeo coppa salvato' : '✅ Trofeo rimosso';
   msg.style.cssText = 'position:fixed;bottom:20px;right:20px;background:#f59e0b;color:#fff;padding:10px 18px;border-radius:10px;font-size:12px;font-weight:700;z-index:9999';
@@ -12907,7 +12974,7 @@ function admAddCoppa() {
   admLoadCoppeTorneo();
 }
 
-function admLoadCoppaEditor() {
+function admShowBracketEditor() {
   var torneoKey = document.getElementById('adm-cop-torneo').value;
   var coppaKey = document.getElementById('adm-cop-coppa').value;
   var el = document.getElementById('adm-cop-editor-body');
