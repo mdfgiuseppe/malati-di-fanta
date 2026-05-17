@@ -1,4 +1,4 @@
-<!-- build:20260517_1517 -->
+<!-- build:20260517_1521 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260517_1517';
+  var BUILD='20260517_1521';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -6163,12 +6163,16 @@ function _qualifComputeRankingUpTo(torneoKey,qi,upToG){
 }
 function _qualifBuildTable(ranking,zoneMap,ptLabel){
   function _gz(p){for(var k in zoneMap){if(p>=zoneMap[k].from&&p<=zoneMap[k].to)return zoneMap[k];}return null;}
+  var _logos={};
+  if(typeof FANTASY_LOGOS!=='undefined')Object.keys(FANTASY_LOGOS).forEach(function(k){_logos[k.toUpperCase()]=FANTASY_LOGOS[k];});
   var _th=function(lbl,align){return'<th style="padding:6px 10px;text-align:'+align+';font-size:10px;font-weight:800;text-transform:uppercase;color:var(--text3);border-bottom:1px solid var(--border)">'+lbl+'</th>';};
   var h='<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:13px"><thead><tr>'+_th('Pos','left')+_th('Squadra','left')+_th(ptLabel||'Punti','right')+'</tr></thead><tbody>';
   ranking.forEach(function(r,idx){
     var p=idx+1,zone=_gz(p),bg=zone?zone.color+'15':'',bl=zone?'3px solid '+zone.color:'3px solid transparent';
+    var _logo=_logos[r.squadra.toUpperCase()]||'';
+    var _li=_logo?'<img src="'+_logo+'" style="width:18px;height:18px;object-fit:contain;border-radius:2px;margin-right:6px;flex-shrink:0" onerror="this.style.display=\'none\'">':'<div style="width:18px;height:18px;margin-right:6px;flex-shrink:0"></div>';
     h+='<tr style="background:'+bg+';border-left:'+bl+'"><td style="padding:6px 10px;font-weight:700;color:var(--text2)">'+p+'</td>'
-      +'<td style="padding:6px 10px;color:var(--text);font-weight:'+(zone?'700':'400')+'">'+r.squadra+'</td>'
+      +'<td style="padding:6px 10px;color:var(--text);font-weight:'+(zone?'700':'400')+'"><div style="display:flex;align-items:center">'+_li+'<span>'+_teamCase(r.squadra)+'</span></div></td>'
       +'<td style="padding:6px 10px;text-align:right;font-weight:700;color:var(--text)">'+r.pt.toLocaleString('it-IT')+'</td></tr>';
   });
   return h+'</tbody></table></div>';
@@ -6199,6 +6203,8 @@ function _openQualifCalGiornata(torneoKey,qi,g){
     if(bs){bs.style.background='var(--bg2)';bs.style.borderColor='var(--border)';bs.style.color='var(--text2)';}
   });
   var hasScore=teams.some(function(item){return item.pt>0;});
+  var _logos={};
+  if(typeof FANTASY_LOGOS!=='undefined')Object.keys(FANTASY_LOGOS).forEach(function(k){_logos[k.toUpperCase()]=FANTASY_LOGOS[k];});
   var _th=function(lbl,align){return'<th style="padding:6px 10px;text-align:'+align+';font-size:10px;font-weight:800;text-transform:uppercase;color:var(--text3);border-bottom:1px solid var(--border)">'+lbl+'</th>';};
   var h='<div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">📅 Giornata '+g+' — Risultati</div>'
     +'<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:13px"><thead><tr>'
@@ -6206,8 +6212,10 @@ function _openQualifCalGiornata(torneoKey,qi,g){
     +'</tr></thead><tbody>';
   teams.forEach(function(item,idx){
     var f1pts=isF1?(f1T[idx]||0):null;
+    var _logo=_logos[item.squadra.toUpperCase()]||'';
+    var _li=_logo?'<img src="'+_logo+'" style="width:18px;height:18px;object-fit:contain;border-radius:2px;margin-right:6px;flex-shrink:0" onerror="this.style.display=\'none\'">':'<div style="width:18px;height:18px;margin-right:6px;flex-shrink:0"></div>';
     h+='<tr><td style="padding:6px 10px;font-weight:700;color:var(--text2)">'+(idx+1)+'</td>'
-      +'<td style="padding:6px 10px;color:var(--text)">'+item.squadra+'</td>'
+      +'<td style="padding:6px 10px;color:var(--text)"><div style="display:flex;align-items:center">'+_li+'<span>'+_teamCase(item.squadra)+'</span></div></td>'
       +(hasScore?'<td style="padding:6px 10px;text-align:right;color:var(--text3);font-size:12px">'+item.pt.toLocaleString('it-IT')+'</td>':'')
       +(isF1?'<td style="padding:6px 10px;text-align:right;font-weight:700;color:#f59e0b">'+f1pts.toLocaleString('it-IT')+'</td>':'')
       +'</tr>';
@@ -12442,12 +12450,16 @@ function _qualifComputeRankingUpTo(torneoKey,qi,upToG){
 }
 function _qualifBuildTable(ranking,zoneMap,ptLabel){
   function _gz(p){for(var k in zoneMap){if(p>=zoneMap[k].from&&p<=zoneMap[k].to)return zoneMap[k];}return null;}
+  var _logos={};
+  if(typeof FANTASY_LOGOS!=='undefined')Object.keys(FANTASY_LOGOS).forEach(function(k){_logos[k.toUpperCase()]=FANTASY_LOGOS[k];});
   var _th=function(lbl,align){return'<th style="padding:6px 10px;text-align:'+align+';font-size:10px;font-weight:800;text-transform:uppercase;color:var(--text3);border-bottom:1px solid var(--border)">'+lbl+'</th>';};
   var h='<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:13px"><thead><tr>'+_th('Pos','left')+_th('Squadra','left')+_th(ptLabel||'Punti','right')+'</tr></thead><tbody>';
   ranking.forEach(function(r,idx){
     var p=idx+1,zone=_gz(p),bg=zone?zone.color+'15':'',bl=zone?'3px solid '+zone.color:'3px solid transparent';
+    var _logo=_logos[r.squadra.toUpperCase()]||'';
+    var _li=_logo?'<img src="'+_logo+'" style="width:18px;height:18px;object-fit:contain;border-radius:2px;margin-right:6px;flex-shrink:0" onerror="this.style.display=\'none\'">':'<div style="width:18px;height:18px;margin-right:6px;flex-shrink:0"></div>';
     h+='<tr style="background:'+bg+';border-left:'+bl+'"><td style="padding:6px 10px;font-weight:700;color:var(--text2)">'+p+'</td>'
-      +'<td style="padding:6px 10px;color:var(--text);font-weight:'+(zone?'700':'400')+'">'+r.squadra+'</td>'
+      +'<td style="padding:6px 10px;color:var(--text);font-weight:'+(zone?'700':'400')+'"><div style="display:flex;align-items:center">'+_li+'<span>'+_teamCase(r.squadra)+'</span></div></td>'
       +'<td style="padding:6px 10px;text-align:right;font-weight:700;color:var(--text)">'+r.pt.toLocaleString('it-IT')+'</td></tr>';
   });
   return h+'</tbody></table></div>';
@@ -12478,6 +12490,8 @@ function _openQualifCalGiornata(torneoKey,qi,g){
     if(bs){bs.style.background='var(--bg2)';bs.style.borderColor='var(--border)';bs.style.color='var(--text2)';}
   });
   var hasScore=teams.some(function(item){return item.pt>0;});
+  var _logos={};
+  if(typeof FANTASY_LOGOS!=='undefined')Object.keys(FANTASY_LOGOS).forEach(function(k){_logos[k.toUpperCase()]=FANTASY_LOGOS[k];});
   var _th=function(lbl,align){return'<th style="padding:6px 10px;text-align:'+align+';font-size:10px;font-weight:800;text-transform:uppercase;color:var(--text3);border-bottom:1px solid var(--border)">'+lbl+'</th>';};
   var h='<div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">📅 Giornata '+g+' — Risultati</div>'
     +'<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:13px"><thead><tr>'
@@ -12485,8 +12499,10 @@ function _openQualifCalGiornata(torneoKey,qi,g){
     +'</tr></thead><tbody>';
   teams.forEach(function(item,idx){
     var f1pts=isF1?(f1T[idx]||0):null;
+    var _logo=_logos[item.squadra.toUpperCase()]||'';
+    var _li=_logo?'<img src="'+_logo+'" style="width:18px;height:18px;object-fit:contain;border-radius:2px;margin-right:6px;flex-shrink:0" onerror="this.style.display=\'none\'">':'<div style="width:18px;height:18px;margin-right:6px;flex-shrink:0"></div>';
     h+='<tr><td style="padding:6px 10px;font-weight:700;color:var(--text2)">'+(idx+1)+'</td>'
-      +'<td style="padding:6px 10px;color:var(--text)">'+item.squadra+'</td>'
+      +'<td style="padding:6px 10px;color:var(--text)"><div style="display:flex;align-items:center">'+_li+'<span>'+_teamCase(item.squadra)+'</span></div></td>'
       +(hasScore?'<td style="padding:6px 10px;text-align:right;color:var(--text3);font-size:12px">'+item.pt.toLocaleString('it-IT')+'</td>':'')
       +(isF1?'<td style="padding:6px 10px;text-align:right;font-weight:700;color:#f59e0b">'+f1pts.toLocaleString('it-IT')+'</td>':'')
       +'</tr>';
