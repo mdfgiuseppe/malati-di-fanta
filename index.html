@@ -1,4 +1,4 @@
-<!-- build:20260517_0900 -->
+<!-- build:20260517_1159 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260517_0900';
+  var BUILD='20260517_1159';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -5795,10 +5795,10 @@ function admSaveCatalogEl(el) {
 
 function admGetCoppeConfig(torneoKey) {
   var _default4 = [
-    {key:'cl',   label:'Champions League',   color:'#f59e0b', rounds:['Ottavi','Quarti','Semifinali','Finale'], teams:16},
-    {key:'el',   label:'Europa League',       color:'#f97316', rounds:['Ottavi','Quarti','Semifinali','Finale'], teams:16},
-    {key:'conf', label:'Conference League',   color:'#10b981', rounds:['Ottavi','Quarti','Semifinali','Finale'], teams:16},
-    {key:'sc',   label:'European Supercup',   color:'#8b5cf6', rounds:['Finale'], teams:2}
+    {key:'cl',   label:'Champions League',   color:'#f59e0b', rounds:['Ottavi','Quarti','Semifinali','Finale'], teams:16, visible:true},
+    {key:'el',   label:'Europa League',       color:'#f97316', rounds:['Ottavi','Quarti','Semifinali','Finale'], teams:16, visible:true},
+    {key:'conf', label:'Conference League',   color:'#10b981', rounds:['Ottavi','Quarti','Semifinali','Finale'], teams:16, visible:true},
+    {key:'sc',   label:'European Supercup',   color:'#8b5cf6', rounds:['Finale'], teams:2, visible:true}
   ];
   var stored = localStorage.getItem('adm_coppe_config_'+torneoKey);
   if (!stored) return torneoKey==='slim' ? _default4 : [];
@@ -5892,6 +5892,12 @@ function admRenderCoppeList(torneoKey) {
       +'<label style="font-size:10px;color:var(--text3);white-space:nowrap">Numero Squadre partecipanti</label>'
       +'<input type="number" value="'+c.teams+'" min="2" step="1" data-t="'+torneoKey+'" data-ci="'+ci+'" onchange="admUpdateCoppaTeams(this)" style="width:52px;padding:3px 6px;background:var(--bg2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:12px;text-align:center;outline:none">'
       +'</div>'
+      +'<div onclick="admToggleCoppa(\''+torneoKey+'\','+ci+')" style="cursor:pointer;display:flex;align-items:center;gap:4px;flex-shrink:0;padding:2px 8px;border-radius:12px;border:1px solid var(--border)">'
+      +'<div style="width:28px;height:16px;border-radius:8px;background:'+(c.visible===false?'#6b7280':'#10b981')+';position:relative;transition:background .2s">'
+      +'<div style="position:absolute;top:2px;left:'+(c.visible===false?'2px':'14px')+';width:12px;height:12px;border-radius:50%;background:#fff;transition:left .2s"></div>'
+      +'</div>'
+      +'<span style="font-size:10px;font-weight:700;color:'+(c.visible===false?'var(--text3)':'#10b981')+'">'+(c.visible===false?'OFF':'ON')+'</span>'
+      +'</div>'
       +'<button data-t="'+torneoKey+'" data-ci="'+ci+'" onclick="admDeleteCoppa(this)" style="background:none;border:none;color:#ef4444;cursor:pointer;font-size:14px">✕</button>'
       +'</div>';
     h += '<div style="padding:4px 14px 10px;display:flex;align-items:center;gap:8px">'
@@ -5919,6 +5925,13 @@ function admUpdateCoppaTeams(el) {
   var rounds=[]; var n=teams; while(n>1){rounds.push(_rnames[n]||('Turno '+n));n=Math.floor(n/2);}
   var config=admGetCoppeConfig(torneoKey);
   if(config[ci]){config[ci].teams=teams;config[ci].rounds=rounds;}
+  admSaveCoppeConfig(torneoKey,config);
+  admRenderCoppeList(torneoKey);
+}
+
+function admToggleCoppa(torneoKey, ci) {
+  var config=admGetCoppeConfig(torneoKey);
+  if(config[ci]) config[ci].visible=(config[ci].visible===false)?true:false;
   admSaveCoppeConfig(torneoKey,config);
   admRenderCoppeList(torneoKey);
 }
@@ -5992,7 +6005,7 @@ function admAddCoppa() {
   var key = label.toLowerCase().replace(/[^a-z0-9]/g,'_').replace(/_+/g,'_').slice(0,12)+'_'+Date.now().toString().slice(-4);
   var _curRaw = localStorage.getItem('adm_coppe_config_'+torneoKey);
   var _cur=[]; if(_curRaw){try{_cur=JSON.parse(_curRaw);}catch(e){}}
-  _cur.push({key:key, label:label, color:'#6b7280', rounds:rounds, teams:teams});
+  _cur.push({key:key, label:label, color:'#6b7280', rounds:rounds, teams:teams, visible:true});
   admSaveCoppeConfig(torneoKey, _cur);
   admLoadCoppeTorneo();
 }
@@ -9842,12 +9855,13 @@ function initCoppaLogos() {
     else{if(typeof COPPA_DATA!=='undefined')COPPA_DATA[c.key]={};}
     if(typeof COPPA_TROPHIES!=='undefined'){var r=localStorage.getItem('adm_coppa_trofeo_'+_cTk+'_'+c.key)||'';COPPA_TROPHIES[c.key]=(r&&typeof _normalizeImgUrl==='function')?_normalizeImgUrl(r):r;}
   });
-  if(!_cfg.length){
+  var _cfgVis=_cfg.filter(function(c){return c.visible!==false;});
+  if(!_cfgVis.length){
     if(_hubEl)_hubEl.style.display='none';
     if(_noConfigEl)_noConfigEl.style.display='block';
   } else {
     var _h='';
-    _cfg.forEach(function(c){
+    _cfgVis.forEach(function(c){
       var _logoKey=_isSlimLike?('adm_img_coppa_'+c.key):('adm_img_coppa_'+_cTk+'_'+c.key);
       var _logo=localStorage.getItem(_logoKey)||localStorage.getItem('adm_img_'+c.key)||'';
       if(!_logo&&hubLogos[c.key])_logo=hubLogos[c.key];
@@ -11634,10 +11648,10 @@ function admSaveCatalogEl(el) {
 
 function admGetCoppeConfig(torneoKey) {
   var _default4 = [
-    {key:'cl',   label:'Champions League',   color:'#f59e0b', rounds:['Ottavi','Quarti','Semifinali','Finale'], teams:16},
-    {key:'el',   label:'Europa League',       color:'#f97316', rounds:['Ottavi','Quarti','Semifinali','Finale'], teams:16},
-    {key:'conf', label:'Conference League',   color:'#10b981', rounds:['Ottavi','Quarti','Semifinali','Finale'], teams:16},
-    {key:'sc',   label:'European Supercup',   color:'#8b5cf6', rounds:['Finale'], teams:2}
+    {key:'cl',   label:'Champions League',   color:'#f59e0b', rounds:['Ottavi','Quarti','Semifinali','Finale'], teams:16, visible:true},
+    {key:'el',   label:'Europa League',       color:'#f97316', rounds:['Ottavi','Quarti','Semifinali','Finale'], teams:16, visible:true},
+    {key:'conf', label:'Conference League',   color:'#10b981', rounds:['Ottavi','Quarti','Semifinali','Finale'], teams:16, visible:true},
+    {key:'sc',   label:'European Supercup',   color:'#8b5cf6', rounds:['Finale'], teams:2, visible:true}
   ];
   var stored = localStorage.getItem('adm_coppe_config_'+torneoKey);
   if (!stored) return torneoKey==='slim' ? _default4 : [];
@@ -11731,6 +11745,12 @@ function admRenderCoppeList(torneoKey) {
       +'<label style="font-size:10px;color:var(--text3);white-space:nowrap">Numero Squadre partecipanti</label>'
       +'<input type="number" value="'+c.teams+'" min="2" step="1" data-t="'+torneoKey+'" data-ci="'+ci+'" onchange="admUpdateCoppaTeams(this)" style="width:52px;padding:3px 6px;background:var(--bg2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:12px;text-align:center;outline:none">'
       +'</div>'
+      +'<div onclick="admToggleCoppa(\''+torneoKey+'\','+ci+')" style="cursor:pointer;display:flex;align-items:center;gap:4px;flex-shrink:0;padding:2px 8px;border-radius:12px;border:1px solid var(--border)">'
+      +'<div style="width:28px;height:16px;border-radius:8px;background:'+(c.visible===false?'#6b7280':'#10b981')+';position:relative;transition:background .2s">'
+      +'<div style="position:absolute;top:2px;left:'+(c.visible===false?'2px':'14px')+';width:12px;height:12px;border-radius:50%;background:#fff;transition:left .2s"></div>'
+      +'</div>'
+      +'<span style="font-size:10px;font-weight:700;color:'+(c.visible===false?'var(--text3)':'#10b981')+'">'+(c.visible===false?'OFF':'ON')+'</span>'
+      +'</div>'
       +'<button data-t="'+torneoKey+'" data-ci="'+ci+'" onclick="admDeleteCoppa(this)" style="background:none;border:none;color:#ef4444;cursor:pointer;font-size:14px">✕</button>'
       +'</div>';
     h += '<div style="padding:4px 14px 10px;display:flex;align-items:center;gap:8px">'
@@ -11758,6 +11778,13 @@ function admUpdateCoppaTeams(el) {
   var rounds=[]; var n=teams; while(n>1){rounds.push(_rnames[n]||('Turno '+n));n=Math.floor(n/2);}
   var config=admGetCoppeConfig(torneoKey);
   if(config[ci]){config[ci].teams=teams;config[ci].rounds=rounds;}
+  admSaveCoppeConfig(torneoKey,config);
+  admRenderCoppeList(torneoKey);
+}
+
+function admToggleCoppa(torneoKey, ci) {
+  var config=admGetCoppeConfig(torneoKey);
+  if(config[ci]) config[ci].visible=(config[ci].visible===false)?true:false;
   admSaveCoppeConfig(torneoKey,config);
   admRenderCoppeList(torneoKey);
 }
@@ -11831,7 +11858,7 @@ function admAddCoppa() {
   var key = label.toLowerCase().replace(/[^a-z0-9]/g,'_').replace(/_+/g,'_').slice(0,12)+'_'+Date.now().toString().slice(-4);
   var _curRaw = localStorage.getItem('adm_coppe_config_'+torneoKey);
   var _cur=[]; if(_curRaw){try{_cur=JSON.parse(_curRaw);}catch(e){}}
-  _cur.push({key:key, label:label, color:'#6b7280', rounds:rounds, teams:teams});
+  _cur.push({key:key, label:label, color:'#6b7280', rounds:rounds, teams:teams, visible:true});
   admSaveCoppeConfig(torneoKey, _cur);
   admLoadCoppeTorneo();
 }
@@ -15285,12 +15312,13 @@ function initCoppaLogos() {
     else{if(typeof COPPA_DATA!=='undefined')COPPA_DATA[c.key]={};}
     if(typeof COPPA_TROPHIES!=='undefined'){var r=localStorage.getItem('adm_coppa_trofeo_'+_cTk+'_'+c.key)||'';COPPA_TROPHIES[c.key]=(r&&typeof _normalizeImgUrl==='function')?_normalizeImgUrl(r):r;}
   });
-  if(!_cfg.length){
+  var _cfgVis=_cfg.filter(function(c){return c.visible!==false;});
+  if(!_cfgVis.length){
     if(_hubEl)_hubEl.style.display='none';
     if(_noConfigEl)_noConfigEl.style.display='block';
   } else {
     var _h='';
-    _cfg.forEach(function(c){
+    _cfgVis.forEach(function(c){
       var _logoKey=_isSlimLike?('adm_img_coppa_'+c.key):('adm_img_coppa_'+_cTk+'_'+c.key);
       var _logo=localStorage.getItem(_logoKey)||localStorage.getItem('adm_img_'+c.key)||'';
       if(!_logo&&hubLogos[c.key])_logo=hubLogos[c.key];
