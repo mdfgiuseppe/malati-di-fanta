@@ -1,4 +1,4 @@
-<!-- build:20260517_1248 -->
+<!-- build:20260517_1249 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260517_1248';
+  var BUILD='20260517_1249';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -5883,7 +5883,7 @@ function admLoadCoppeTorneo() {
   if (!localStorage.getItem(_ck) && torneoKey !== 'slim' && typeof gsLoadKey === 'function') {
     document.getElementById('adm-cop-config-body').innerHTML='<div style="color:var(--text3);font-size:12px;padding:10px">Caricamento in corso...</div>';
     gsLoadKey(_ck, function(v) {
-      if (v) { localStorage.setItem(_ck, typeof v==='string'?v:JSON.stringify(v)); }
+      localStorage.setItem(_ck, v ? (typeof v==='string'?v:JSON.stringify(v)) : '[]');
       admLoadCoppeTorneo();
     });
     return;
@@ -11772,7 +11772,7 @@ function admLoadCoppeTorneo() {
   if (!localStorage.getItem(_ck) && torneoKey !== 'slim' && typeof gsLoadKey === 'function') {
     document.getElementById('adm-cop-config-body').innerHTML='<div style="color:var(--text3);font-size:12px;padding:10px">Caricamento in corso...</div>';
     gsLoadKey(_ck, function(v) {
-      if (v) { localStorage.setItem(_ck, typeof v==='string'?v:JSON.stringify(v)); }
+      localStorage.setItem(_ck, v ? (typeof v==='string'?v:JSON.stringify(v)) : '[]');
       admLoadCoppeTorneo();
     });
     return;
