@@ -1,4 +1,4 @@
-<!-- build:20260517_1210 -->
+<!-- build:20260517_1245 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260517_1210';
+  var BUILD='20260517_1245';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -1392,6 +1392,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   <div class="mnav-btn" onclick="showTSMSection('sponsor',this)">🤝 Sponsor</div>
   <div class="mnav-btn" onclick="showTSMSection('multe',this)">⚠️ Multe</div>
   <div class="mnav-btn" onclick="showTSMSection('modulistica',this)">📑 Moduli</div>
+  <div class="mnav-btn" onclick="showTSMSection('coppe',this)">🏆 Coppe</div>
 </div>
 <div class="layout">
 <nav class="sidenav">
@@ -1438,6 +1439,10 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   <div class="nav-item" onclick="showTSMSection('modulistica',this)">
     <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
     Modulistica
+  </div>
+  <div class="nav-item" onclick="showTSMSection('coppe',this)">
+    <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 9H4.5a2.5 2.5 0 010-5H6"/><path d="M18 9h1.5a2.5 2.5 0 000-5H18"/><path d="M18 2H6v7a6 6 0 0012 0V2z"/></svg>
+    Coppe
   </div>
 </nav>
 <div class="main tsm-main">
@@ -1719,6 +1724,27 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
     <div style="font-family:'Bebas Neue';font-size:28px;letter-spacing:2px;margin-bottom:6px">📋 <span style="color:#10b981">Modulistica</span></div>
     <div style="font-size:11px;color:var(--text2);margin-bottom:24px" id="tsm-mod-subtitle">Moduli ufficiali — clicca per compilare</div>
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px" id="tsm-modulistica-body"></div>
+  </div>
+<!-- ===== COPPE ===== -->
+  <div id="tsm-s-coppe" class="section">
+    <div style="font-family:'Bebas Neue';font-size:28px;letter-spacing:2px;margin-bottom:6px"><span style="color:#f59e0b">Coppe</span></div>
+    <div style="font-size:11px;color:var(--text2);margin-bottom:24px">TSM · Clicca su una competizione per vedere il tabellone</div>
+    <div id="tsm-coppe-hub" style="display:none;grid-template-columns:repeat(2,1fr);gap:16px;max-width:500px;margin:0 auto 24px"></div>
+    <div id="tsm-coppe-no-config" style="display:none;text-align:center;padding:60px 20px">
+      <div style="font-size:48px;margin-bottom:16px">🏆</div>
+      <div style="font-family:'Bebas Neue';font-size:22px;letter-spacing:2px;color:var(--text2);margin-bottom:8px">Nessuna Coppa Configurata</div>
+      <div style="font-size:12px;color:var(--text3);max-width:300px;margin:0 auto;line-height:1.6">Le coppe per questo torneo non sono ancora state impostate dall'admin.</div>
+    </div>
+    <div id="tsm-bracket-panel" style="display:none">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px">
+        <div onclick="closeBracket()" style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;cursor:pointer;font-size:11px;font-weight:700;color:var(--text2);transition:all .15s" onmouseover="this.style.background='var(--bg2)'" onmouseout="this.style.background='var(--bg3)'">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+          Torna alle Coppe
+        </div>
+        <div id="tsm-bracket-title" style="font-family:'Bebas Neue';font-size:22px;letter-spacing:2px;color:var(--text)"></div>
+      </div>
+      <div id="tsm-bracket-content"></div>
+    </div>
   </div>
 
 </div><!-- /main -->
@@ -4084,6 +4110,7 @@ function enterTSM() {
     if (av) av.textContent = u.ruolo==='admin' ? 'AD' : (u.nome||'?').split(' ').map(function(n){return n[0]||'';}).join('').toUpperCase().slice(0,2)||'??';
     if (nm) nm.textContent = u.ruolo==='admin' ? 'Admin' : (u.nome||'').split(' ')[0];
   } catch(e) {}
+  window._currentTourneyKey = 'tsm';
   TEAMS_ROSE = TSM_ROSE_IT || {};
   INFERMERIA = TSM_INFERMERIA_IT || [];
   CREDITS = TSM_CREDITS_IT || {};
@@ -9060,6 +9087,7 @@ function showTSMSection(id, el) {
   else if (id === 'multe') tsmRenderMulte();
   else if (id === 'modulistica') renderModulistica('tsm', 'tsm-modulistica-body');
   else if (id === 'sponsor') {}
+  else if (id === 'coppe') { if(typeof initCoppaLogos==='function') initCoppaLogos(); }
 }
 
 function enterLeague(tournament, leagueKey) {
@@ -9870,10 +9898,11 @@ var COPPA_DATA = {
 
 function initCoppaLogos() {
   var _cTk = window._currentTourneyKey || 'slim';
+  var _idPfx = (_cTk === 'tsm') ? 'tsm-' : '';
   var hubLogos = (typeof COPPA_HUB_LOGOS !== 'undefined') ? COPPA_HUB_LOGOS : {};
   var _cardMap = {cl:'coppa-card-cl', el:'coppa-card-el', conf:'coppa-card-conf', sc:'coppa-card-sc'};
-  var _hubEl = document.getElementById('coppe-hub');
-  var _noConfigEl = document.getElementById('coppe-no-config');
+  var _hubEl = document.getElementById(_idPfx+'coppe-hub');
+  var _noConfigEl = document.getElementById(_idPfx+'coppe-no-config');
   var _isSlimLike = (_cTk === 'slim' || _cTk === 'tsm');
   // Nascondi le 4 card statiche — usiamo rendering dinamico per tutti i tornei
   ['cl','el','conf','sc'].forEach(function(k){var c=document.getElementById(_cardMap[k]);if(c)c.style.display='none';});
@@ -9924,10 +9953,11 @@ function initCoppaLogos() {
   }
 }
 function openCoppa(key) {
-  var hub = document.getElementById('coppe-hub');
-  var panel = document.getElementById('bracket-panel');
-  var title = document.getElementById('bracket-title');
-  var content = document.getElementById('bracket-content');
+  var _idPfx = (window._currentTourneyKey === 'tsm') ? 'tsm-' : '';
+  var hub = document.getElementById(_idPfx+'coppe-hub');
+  var panel = document.getElementById(_idPfx+'bracket-panel');
+  var title = document.getElementById(_idPfx+'bracket-title');
+  var content = document.getElementById(_idPfx+'bracket-content');
   if (!hub || !panel || !title || !content) return;
   hub.style.display = 'none';
   panel.style.display = 'block';
@@ -9939,7 +9969,8 @@ function openCoppa(key) {
 }
 
 function closeBracket() {
-  var panel = document.getElementById('bracket-panel');
+  var _idPfx = (window._currentTourneyKey === 'tsm') ? 'tsm-' : '';
+  var panel = document.getElementById(_idPfx+'bracket-panel');
   if (panel) panel.style.display = 'none';
   if (typeof initCoppaLogos === 'function') initCoppaLogos();
 }
@@ -10578,6 +10609,7 @@ function enterTSM() {
     if (av) av.textContent = u.ruolo==='admin' ? 'AD' : (u.nome||'?').split(' ').map(function(n){return n[0]||'';}).join('').toUpperCase().slice(0,2)||'??';
     if (nm) nm.textContent = u.ruolo==='admin' ? 'Admin' : (u.nome||'').split(' ')[0];
   } catch(e) {}
+  window._currentTourneyKey = 'tsm';
   TEAMS_ROSE = TSM_ROSE_IT || {};
   INFERMERIA = TSM_INFERMERIA_IT || [];
   CREDITS = TSM_CREDITS_IT || {};
@@ -14303,6 +14335,7 @@ function showTSMSection(id, el) {
   else if (id === 'multe') tsmRenderMulte();
   else if (id === 'modulistica') renderModulistica('tsm', 'tsm-modulistica-body');
   else if (id === 'sponsor') {}
+  else if (id === 'coppe') { if(typeof initCoppaLogos==='function') initCoppaLogos(); }
 }
 
 
@@ -15358,10 +15391,11 @@ var COPPA_DATA = {
 
 function initCoppaLogos() {
   var _cTk = window._currentTourneyKey || 'slim';
+  var _idPfx = (_cTk === 'tsm') ? 'tsm-' : '';
   var hubLogos = (typeof COPPA_HUB_LOGOS !== 'undefined') ? COPPA_HUB_LOGOS : {};
   var _cardMap = {cl:'coppa-card-cl', el:'coppa-card-el', conf:'coppa-card-conf', sc:'coppa-card-sc'};
-  var _hubEl = document.getElementById('coppe-hub');
-  var _noConfigEl = document.getElementById('coppe-no-config');
+  var _hubEl = document.getElementById(_idPfx+'coppe-hub');
+  var _noConfigEl = document.getElementById(_idPfx+'coppe-no-config');
   var _isSlimLike = (_cTk === 'slim' || _cTk === 'tsm');
   // Nascondi le 4 card statiche — usiamo rendering dinamico per tutti i tornei
   ['cl','el','conf','sc'].forEach(function(k){var c=document.getElementById(_cardMap[k]);if(c)c.style.display='none';});
@@ -15412,10 +15446,11 @@ function initCoppaLogos() {
   }
 }
 function openCoppa(key) {
-  var hub = document.getElementById('coppe-hub');
-  var panel = document.getElementById('bracket-panel');
-  var title = document.getElementById('bracket-title');
-  var content = document.getElementById('bracket-content');
+  var _idPfx = (window._currentTourneyKey === 'tsm') ? 'tsm-' : '';
+  var hub = document.getElementById(_idPfx+'coppe-hub');
+  var panel = document.getElementById(_idPfx+'bracket-panel');
+  var title = document.getElementById(_idPfx+'bracket-title');
+  var content = document.getElementById(_idPfx+'bracket-content');
   if (!hub || !panel || !title || !content) return;
   hub.style.display = 'none';
   panel.style.display = 'block';
@@ -15427,7 +15462,8 @@ function openCoppa(key) {
 }
 
 function closeBracket() {
-  var panel = document.getElementById('bracket-panel');
+  var _idPfx = (window._currentTourneyKey === 'tsm') ? 'tsm-' : '';
+  var panel = document.getElementById(_idPfx+'bracket-panel');
   if (panel) panel.style.display = 'none';
   if (typeof initCoppaLogos === 'function') initCoppaLogos();
 }
