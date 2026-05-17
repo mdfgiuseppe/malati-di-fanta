@@ -1,4 +1,4 @@
-<!-- build:20260517_1529 -->
+<!-- build:20260517_1538 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260517_1529';
+  var BUILD='20260517_1538';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -5945,8 +5945,7 @@ function admRenderQualifList(torneoKey){
       +'<span style="font-size:10px;font-weight:700;color:'+(q.visible===false?'var(--text3)':'#10b981')+'">'+(q.visible===false?'OFF':'ON')+'</span></div>'
       +'<button onclick="admDeleteQualif(\''+torneoKey+'\','+qi+')" style="background:none;border:none;color:#ef4444;cursor:pointer;font-size:14px">✕</button></div>';
     h+='<div style="padding:4px 14px 8px;display:flex;align-items:center;gap:8px">'
-      +'<span style="font-size:10px;color:var(--text3);flex-shrink:0">URL logo</span>'
-      +'<input type="text" value="'+(q.logo||'')+'" placeholder="https://..." data-t="'+torneoKey+'" data-qi="'+qi+'" onchange="admUpdateQualifLogo(this)" style="flex:1;padding:3px 8px;background:var(--bg2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:11px;outline:none">'
+      +'<button id="adm-qualif-logo-btn-'+torneoKey+'-'+qi+'" onclick="admEditQualifLogo(\''+torneoKey+'\','+qi+')" style="background:'+(q.logo?'rgba(16,185,129,.1)':'rgba(139,92,246,.1)')+';border:1px solid '+(q.logo?'rgba(16,185,129,.3)':'rgba(139,92,246,.2)')+';color:'+(q.logo?'#10b981':'#8b5cf6')+';border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer">'+(q.logo?'✅ Logo impostato':'🖼 Logo')+'</button>'
       +'</div>';
     if(coppeConfig.length){
       h+='<div style="padding:6px 14px 4px;display:flex;gap:10px;flex-wrap:wrap;align-items:center"><span style="font-size:10px;color:var(--text3);font-weight:700">Prime N posizioni qualificate:</span>';
@@ -6015,6 +6014,21 @@ function admRenderQualifList(torneoKey){
 function admUpdateQualifName(el){var t=el.dataset.t,qi=+el.dataset.qi,c=admGetQualifConfig(t);if(c[qi])c[qi].name=el.value;admSaveQualifConfig(t,c);}
 function admUpdateQualifColor(el){var t=el.dataset.t,qi=+el.dataset.qi,c=admGetQualifConfig(t);if(c[qi])c[qi].color=el.value;admSaveQualifConfig(t,c);}
 function admUpdateQualifLogo(el){var t=el.dataset.t,qi=+el.dataset.qi,c=admGetQualifConfig(t);if(c[qi])c[qi].logo=el.value.trim();admSaveQualifConfig(t,c);}
+function admEditQualifLogo(torneoKey,qi){
+  var c=admGetQualifConfig(torneoKey);if(!c[qi])return;
+  var current=c[qi].logo||'';
+  var url=prompt('URL Logo Qualificazione:',current);
+  if(url===null)return;
+  url=url.trim();
+  if(typeof _normalizeImgUrl==='function')url=_normalizeImgUrl(url);
+  c[qi].logo=url;admSaveQualifConfig(torneoKey,c);
+  var btn=document.getElementById('adm-qualif-logo-btn-'+torneoKey+'-'+qi);
+  if(btn){btn.textContent=url?'✅ Logo impostato':'🖼 Logo';btn.style.color=url?'#10b981':'#8b5cf6';btn.style.borderColor=url?'rgba(16,185,129,.3)':'rgba(139,92,246,.2)';btn.style.background=url?'rgba(16,185,129,.1)':'rgba(139,92,246,.1)';}
+  if(typeof initCoppaLogos==='function')initCoppaLogos();
+  var msg=document.createElement('div');msg.textContent=url?'✅ Logo qualificazione salvato':'✅ Logo rimosso';
+  msg.style.cssText='position:fixed;bottom:20px;right:20px;background:#8b5cf6;color:#fff;padding:10px 18px;border-radius:10px;font-size:12px;font-weight:700;z-index:9999';
+  document.body.appendChild(msg);setTimeout(function(){msg.remove();},2200);
+}
 function admUpdateQualifGiornate(el){var t=el.dataset.t,qi=+el.dataset.qi,n=parseInt(el.value);if(isNaN(n)||n<1)return;var c=admGetQualifConfig(t);if(c[qi])c[qi].giornate_totali=n;admSaveQualifConfig(t,c);}
 function admUpdateQualifPosti(el){
   var t=el.dataset.t,qi=+el.dataset.qi,ck=el.dataset.ck,posti=parseInt(el.value)||0;
@@ -12238,8 +12252,7 @@ function admRenderQualifList(torneoKey){
       +'<span style="font-size:10px;font-weight:700;color:'+(q.visible===false?'var(--text3)':'#10b981')+'">'+(q.visible===false?'OFF':'ON')+'</span></div>'
       +'<button onclick="admDeleteQualif(\''+torneoKey+'\','+qi+')" style="background:none;border:none;color:#ef4444;cursor:pointer;font-size:14px">✕</button></div>';
     h+='<div style="padding:4px 14px 8px;display:flex;align-items:center;gap:8px">'
-      +'<span style="font-size:10px;color:var(--text3);flex-shrink:0">URL logo</span>'
-      +'<input type="text" value="'+(q.logo||'')+'" placeholder="https://..." data-t="'+torneoKey+'" data-qi="'+qi+'" onchange="admUpdateQualifLogo(this)" style="flex:1;padding:3px 8px;background:var(--bg2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:11px;outline:none">'
+      +'<button id="adm-qualif-logo-btn-'+torneoKey+'-'+qi+'" onclick="admEditQualifLogo(\''+torneoKey+'\','+qi+')" style="background:'+(q.logo?'rgba(16,185,129,.1)':'rgba(139,92,246,.1)')+';border:1px solid '+(q.logo?'rgba(16,185,129,.3)':'rgba(139,92,246,.2)')+';color:'+(q.logo?'#10b981':'#8b5cf6')+';border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer">'+(q.logo?'✅ Logo impostato':'🖼 Logo')+'</button>'
       +'</div>';
     if(coppeConfig.length){
       h+='<div style="padding:6px 14px 4px;display:flex;gap:10px;flex-wrap:wrap;align-items:center"><span style="font-size:10px;color:var(--text3);font-weight:700">Prime N posizioni qualificate:</span>';
@@ -12308,6 +12321,21 @@ function admRenderQualifList(torneoKey){
 function admUpdateQualifName(el){var t=el.dataset.t,qi=+el.dataset.qi,c=admGetQualifConfig(t);if(c[qi])c[qi].name=el.value;admSaveQualifConfig(t,c);}
 function admUpdateQualifColor(el){var t=el.dataset.t,qi=+el.dataset.qi,c=admGetQualifConfig(t);if(c[qi])c[qi].color=el.value;admSaveQualifConfig(t,c);}
 function admUpdateQualifLogo(el){var t=el.dataset.t,qi=+el.dataset.qi,c=admGetQualifConfig(t);if(c[qi])c[qi].logo=el.value.trim();admSaveQualifConfig(t,c);}
+function admEditQualifLogo(torneoKey,qi){
+  var c=admGetQualifConfig(torneoKey);if(!c[qi])return;
+  var current=c[qi].logo||'';
+  var url=prompt('URL Logo Qualificazione:',current);
+  if(url===null)return;
+  url=url.trim();
+  if(typeof _normalizeImgUrl==='function')url=_normalizeImgUrl(url);
+  c[qi].logo=url;admSaveQualifConfig(torneoKey,c);
+  var btn=document.getElementById('adm-qualif-logo-btn-'+torneoKey+'-'+qi);
+  if(btn){btn.textContent=url?'✅ Logo impostato':'🖼 Logo';btn.style.color=url?'#10b981':'#8b5cf6';btn.style.borderColor=url?'rgba(16,185,129,.3)':'rgba(139,92,246,.2)';btn.style.background=url?'rgba(16,185,129,.1)':'rgba(139,92,246,.1)';}
+  if(typeof initCoppaLogos==='function')initCoppaLogos();
+  var msg=document.createElement('div');msg.textContent=url?'✅ Logo qualificazione salvato':'✅ Logo rimosso';
+  msg.style.cssText='position:fixed;bottom:20px;right:20px;background:#8b5cf6;color:#fff;padding:10px 18px;border-radius:10px;font-size:12px;font-weight:700;z-index:9999';
+  document.body.appendChild(msg);setTimeout(function(){msg.remove();},2200);
+}
 function admUpdateQualifGiornate(el){var t=el.dataset.t,qi=+el.dataset.qi,n=parseInt(el.value);if(isNaN(n)||n<1)return;var c=admGetQualifConfig(t);if(c[qi])c[qi].giornate_totali=n;admSaveQualifConfig(t,c);}
 function admUpdateQualifPosti(el){
   var t=el.dataset.t,qi=+el.dataset.qi,ck=el.dataset.ck,posti=parseInt(el.value)||0;
