@@ -1,4 +1,4 @@
-<!-- build:20260517_1323 -->
+<!-- build:20260517_1346 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260517_1323';
+  var BUILD='20260517_1346';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -5932,6 +5932,10 @@ function admRenderQualifList(torneoKey){
       +'<input type="text" value="'+q.name+'" data-t="'+torneoKey+'" data-qi="'+qi+'" onchange="admUpdateQualifName(this)" style="background:transparent;border:none;border-bottom:1px solid var(--border);color:var(--text);font-size:13px;font-weight:700;outline:none;min-width:160px;flex:1">'
       +'<div style="display:flex;align-items:center;gap:5px;flex-shrink:0"><label style="font-size:10px;color:var(--text3);white-space:nowrap">Giornate totali</label>'
       +'<input type="number" value="'+(q.giornate_totali||12)+'" min="1" step="1" data-t="'+torneoKey+'" data-qi="'+qi+'" onchange="admUpdateQualifGiornate(this)" style="width:52px;padding:3px 6px;background:var(--bg2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:12px;text-align:center;outline:none"></div>'
+      +'<select data-t="'+torneoKey+'" data-qi="'+qi+'" onchange="admUpdateQualifTipo(this)" style="padding:3px 8px;background:var(--bg2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:11px;outline:none;flex-shrink:0">'
+      +'<option value="totale"'+(q.tipo==='f1'?'':' selected')+'>Pt. Totale</option>'
+      +'<option value="f1"'+(q.tipo==='f1'?' selected':'')+'>Formula 1</option>'
+      +'</select>'
       +'<div onclick="admToggleQualif(\''+torneoKey+'\','+qi+')" style="cursor:pointer;display:flex;align-items:center;gap:4px;flex-shrink:0;padding:2px 8px;border-radius:12px;border:1px solid var(--border)">'
       +'<div style="width:28px;height:16px;border-radius:8px;background:'+(q.visible===false?'#6b7280':'#10b981')+';position:relative;transition:background .2s">'
       +'<div style="position:absolute;top:2px;left:'+(q.visible===false?'2px':'14px')+';width:12px;height:12px;border-radius:50%;background:#fff;transition:left .2s"></div></div>'
@@ -5948,6 +5952,21 @@ function admRenderQualifList(torneoKey){
           +'<span style="font-size:10px;color:var(--text3)">posti</span></div>';
       });
       h+='</div>';
+    }
+    if(q.tipo==='f1'){
+      var _ft=q.f1_table||[25,18,15,12,10,8,6,4,2,1];
+      h+='<div style="padding:6px 14px 6px;display:flex;gap:6px;flex-wrap:wrap;align-items:center;border-top:1px solid var(--border)">'
+        +'<span style="font-size:10px;color:#f59e0b;font-weight:700;flex-basis:100%;margin-bottom:4px">Tabella Formula 1:</span>';
+      _ft.forEach(function(pts,idx){
+        h+='<div style="display:flex;flex-direction:column;align-items:center;gap:2px">'
+          +'<span style="font-size:9px;color:var(--text3);font-weight:700">'+(idx+1)+'°</span>'
+          +'<input type="number" value="'+pts+'" min="0" data-t="'+torneoKey+'" data-qi="'+qi+'" data-idx="'+idx+'" onchange="admUpdateF1Points(this)" style="width:38px;padding:2px 4px;background:var(--bg2);border:1px solid var(--border);border-radius:4px;color:var(--text);font-size:12px;font-weight:700;text-align:center;outline:none">'
+          +'</div>';
+      });
+      h+='<div style="display:flex;flex-direction:column;gap:4px;margin-left:4px">'
+        +'<button onclick="admAddF1Position(\''+torneoKey+'\','+qi+')" style="background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.2);color:#f59e0b;border-radius:4px;padding:1px 8px;font-size:14px;cursor:pointer;line-height:1.4">+</button>'
+        +'<button onclick="admRemoveF1Position(\''+torneoKey+'\','+qi+')" style="background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);color:#ef4444;border-radius:4px;padding:1px 8px;font-size:14px;cursor:pointer;line-height:1.4">−</button>'
+        +'</div></div>';
     }
     h+='<div style="padding:4px 14px 10px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">'
       +'<button onclick="admTriggerQualifImport(\''+torneoKey+'\','+qi+')" style="background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.2);color:#f59e0b;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer">📥 Importa xlsx</button>'
@@ -5967,6 +5986,16 @@ function admUpdateQualifPosti(el){
   if(zi>=0)zones[zi].posti=posti;else zones.push({coppaKey:ck,posti:posti});
   c[qi].zones=zones;admSaveQualifConfig(t,c);
 }
+function admUpdateQualifTipo(el){
+  var t=el.dataset.t,qi=+el.dataset.qi,c=admGetQualifConfig(t);
+  if(!c[qi])return;
+  c[qi].tipo=el.value;
+  if(el.value==='f1'&&!c[qi].f1_table)c[qi].f1_table=[25,18,15,12,10,8,6,4,2,1];
+  admSaveQualifConfig(t,c);admRenderQualifList(t);
+}
+function admUpdateF1Points(el){var t=el.dataset.t,qi=+el.dataset.qi,idx=+el.dataset.idx,c=admGetQualifConfig(t);if(!c[qi]||!c[qi].f1_table)return;c[qi].f1_table[idx]=parseInt(el.value)||0;admSaveQualifConfig(t,c);}
+function admAddF1Position(torneoKey,qi){var c=admGetQualifConfig(torneoKey);if(!c[qi])return;if(!c[qi].f1_table)c[qi].f1_table=[25,18,15,12,10,8,6,4,2,1];c[qi].f1_table.push(0);admSaveQualifConfig(torneoKey,c);admRenderQualifList(torneoKey);}
+function admRemoveF1Position(torneoKey,qi){var c=admGetQualifConfig(torneoKey);if(!c[qi]||!c[qi].f1_table||c[qi].f1_table.length<=1)return;c[qi].f1_table.pop();admSaveQualifConfig(torneoKey,c);admRenderQualifList(torneoKey);}
 function admToggleQualif(torneoKey,qi){var c=admGetQualifConfig(torneoKey);if(c[qi])c[qi].visible=(c[qi].visible===false)?true:false;admSaveQualifConfig(torneoKey,c);admRenderQualifList(torneoKey);}
 function admDeleteQualif(torneoKey,qi){
   if(!confirm('Eliminare questa qualificazione e tutti i dati?'))return;
@@ -6018,15 +6047,31 @@ function openQualif(torneoKey,qi){
   var configs=admGetQualifConfig(torneoKey),q=configs[qi];if(!q)return;
   var coppeConfig=admGetCoppeConfig(torneoKey);
   var data=_getQualifData(torneoKey,qi);
-  var lastG=Object.keys(data).map(Number).sort(function(a,b){return b-a;})[0]||0;
+  var sortedGs=Object.keys(data).map(Number).sort(function(a,b){return a-b;});
+  var lastG=sortedGs.length?sortedGs[sortedGs.length-1]:0;
   if(hub)hub.style.display='none';
-  panel.style.display='block';title.textContent=q.name;title.style.color='#f59e0b';
+  panel.style.display='block';title.textContent=q.name+(q.tipo==='f1'?' · F1':'');title.style.color='#f59e0b';
   if(!lastG){content.innerHTML='<div style="text-align:center;padding:60px 20px;color:var(--text3);font-size:13px">Nessuna giornata ancora importata</div>';return;}
-  var ranking=data[lastG],zones=q.zones||[],zoneMap={},pos=1;
+  var ranking;
+  if(q.tipo==='f1'){
+    var f1Table=q.f1_table||[25,18,15,12,10,8,6,4,2,1];
+    var f1Acc={};
+    sortedGs.forEach(function(g,gIdx){
+      var cur=data[g],prev=gIdx>0?data[sortedGs[gIdx-1]]:null;
+      var roundScores=cur.map(function(r){var prevPt=0;if(prev){var pe=prev.find(function(p){return p.squadra===r.squadra;});if(pe)prevPt=pe.pt;}return{squadra:r.squadra,roundPt:r.pt-prevPt};});
+      roundScores.sort(function(a,b){return b.roundPt-a.roundPt;});
+      roundScores.forEach(function(rs,idx){f1Acc[rs.squadra]=(f1Acc[rs.squadra]||0)+(f1Table[idx]||0);});
+    });
+    ranking=Object.keys(f1Acc).map(function(sq){return{squadra:sq,pt:f1Acc[sq]};}).sort(function(a,b){return b.pt-a.pt;});
+  } else {
+    ranking=data[lastG];
+  }
+  var zones=q.zones||[],zoneMap={},pos=1;
   zones.forEach(function(z){var c=coppeConfig.find(function(cc){return cc.key===z.coppaKey;});if(c&&z.posti>0){zoneMap[z.coppaKey]={from:pos,to:pos+z.posti-1,color:c.color,label:c.label};pos+=z.posti;}});
   function _getZone(p){for(var k in zoneMap){if(p>=zoneMap[k].from&&p<=zoneMap[k].to)return zoneMap[k];}return null;}
   var html='<div style="margin-bottom:12px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">'
-    +'<span style="font-size:12px;color:var(--text2)">Giornata <strong>'+lastG+'</strong> / '+(q.giornate_totali||12)+'</span>';
+    +'<span style="font-size:12px;color:var(--text2)">Giornata <strong>'+lastG+'</strong> / '+(q.giornate_totali||12)+'</span>'
+    +'<span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;background:'+(q.tipo==='f1'?'rgba(245,158,11,.15)':'rgba(99,102,241,.15)')+';color:'+(q.tipo==='f1'?'#f59e0b':'#818cf8')+'">'+(q.tipo==='f1'?'Formula 1':'Pt. Totale')+'</span>';
   zones.forEach(function(z){var zm=zoneMap[z.coppaKey];if(!zm)return;
     html+='<span style="display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:700;color:'+zm.color+'">'
       +'<span style="width:8px;height:8px;border-radius:50%;background:'+zm.color+';display:inline-block"></span>'+zm.label+' ('+zm.from+'-'+zm.to+')</span>';
@@ -11979,6 +12024,10 @@ function admRenderQualifList(torneoKey){
       +'<input type="text" value="'+q.name+'" data-t="'+torneoKey+'" data-qi="'+qi+'" onchange="admUpdateQualifName(this)" style="background:transparent;border:none;border-bottom:1px solid var(--border);color:var(--text);font-size:13px;font-weight:700;outline:none;min-width:160px;flex:1">'
       +'<div style="display:flex;align-items:center;gap:5px;flex-shrink:0"><label style="font-size:10px;color:var(--text3);white-space:nowrap">Giornate totali</label>'
       +'<input type="number" value="'+(q.giornate_totali||12)+'" min="1" step="1" data-t="'+torneoKey+'" data-qi="'+qi+'" onchange="admUpdateQualifGiornate(this)" style="width:52px;padding:3px 6px;background:var(--bg2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:12px;text-align:center;outline:none"></div>'
+      +'<select data-t="'+torneoKey+'" data-qi="'+qi+'" onchange="admUpdateQualifTipo(this)" style="padding:3px 8px;background:var(--bg2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:11px;outline:none;flex-shrink:0">'
+      +'<option value="totale"'+(q.tipo==='f1'?'':' selected')+'>Pt. Totale</option>'
+      +'<option value="f1"'+(q.tipo==='f1'?' selected':'')+'>Formula 1</option>'
+      +'</select>'
       +'<div onclick="admToggleQualif(\''+torneoKey+'\','+qi+')" style="cursor:pointer;display:flex;align-items:center;gap:4px;flex-shrink:0;padding:2px 8px;border-radius:12px;border:1px solid var(--border)">'
       +'<div style="width:28px;height:16px;border-radius:8px;background:'+(q.visible===false?'#6b7280':'#10b981')+';position:relative;transition:background .2s">'
       +'<div style="position:absolute;top:2px;left:'+(q.visible===false?'2px':'14px')+';width:12px;height:12px;border-radius:50%;background:#fff;transition:left .2s"></div></div>'
@@ -11995,6 +12044,21 @@ function admRenderQualifList(torneoKey){
           +'<span style="font-size:10px;color:var(--text3)">posti</span></div>';
       });
       h+='</div>';
+    }
+    if(q.tipo==='f1'){
+      var _ft=q.f1_table||[25,18,15,12,10,8,6,4,2,1];
+      h+='<div style="padding:6px 14px 6px;display:flex;gap:6px;flex-wrap:wrap;align-items:center;border-top:1px solid var(--border)">'
+        +'<span style="font-size:10px;color:#f59e0b;font-weight:700;flex-basis:100%;margin-bottom:4px">Tabella Formula 1:</span>';
+      _ft.forEach(function(pts,idx){
+        h+='<div style="display:flex;flex-direction:column;align-items:center;gap:2px">'
+          +'<span style="font-size:9px;color:var(--text3);font-weight:700">'+(idx+1)+'°</span>'
+          +'<input type="number" value="'+pts+'" min="0" data-t="'+torneoKey+'" data-qi="'+qi+'" data-idx="'+idx+'" onchange="admUpdateF1Points(this)" style="width:38px;padding:2px 4px;background:var(--bg2);border:1px solid var(--border);border-radius:4px;color:var(--text);font-size:12px;font-weight:700;text-align:center;outline:none">'
+          +'</div>';
+      });
+      h+='<div style="display:flex;flex-direction:column;gap:4px;margin-left:4px">'
+        +'<button onclick="admAddF1Position(\''+torneoKey+'\','+qi+')" style="background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.2);color:#f59e0b;border-radius:4px;padding:1px 8px;font-size:14px;cursor:pointer;line-height:1.4">+</button>'
+        +'<button onclick="admRemoveF1Position(\''+torneoKey+'\','+qi+')" style="background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);color:#ef4444;border-radius:4px;padding:1px 8px;font-size:14px;cursor:pointer;line-height:1.4">−</button>'
+        +'</div></div>';
     }
     h+='<div style="padding:4px 14px 10px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">'
       +'<button onclick="admTriggerQualifImport(\''+torneoKey+'\','+qi+')" style="background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.2);color:#f59e0b;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer">📥 Importa xlsx</button>'
@@ -12014,6 +12078,16 @@ function admUpdateQualifPosti(el){
   if(zi>=0)zones[zi].posti=posti;else zones.push({coppaKey:ck,posti:posti});
   c[qi].zones=zones;admSaveQualifConfig(t,c);
 }
+function admUpdateQualifTipo(el){
+  var t=el.dataset.t,qi=+el.dataset.qi,c=admGetQualifConfig(t);
+  if(!c[qi])return;
+  c[qi].tipo=el.value;
+  if(el.value==='f1'&&!c[qi].f1_table)c[qi].f1_table=[25,18,15,12,10,8,6,4,2,1];
+  admSaveQualifConfig(t,c);admRenderQualifList(t);
+}
+function admUpdateF1Points(el){var t=el.dataset.t,qi=+el.dataset.qi,idx=+el.dataset.idx,c=admGetQualifConfig(t);if(!c[qi]||!c[qi].f1_table)return;c[qi].f1_table[idx]=parseInt(el.value)||0;admSaveQualifConfig(t,c);}
+function admAddF1Position(torneoKey,qi){var c=admGetQualifConfig(torneoKey);if(!c[qi])return;if(!c[qi].f1_table)c[qi].f1_table=[25,18,15,12,10,8,6,4,2,1];c[qi].f1_table.push(0);admSaveQualifConfig(torneoKey,c);admRenderQualifList(torneoKey);}
+function admRemoveF1Position(torneoKey,qi){var c=admGetQualifConfig(torneoKey);if(!c[qi]||!c[qi].f1_table||c[qi].f1_table.length<=1)return;c[qi].f1_table.pop();admSaveQualifConfig(torneoKey,c);admRenderQualifList(torneoKey);}
 function admToggleQualif(torneoKey,qi){var c=admGetQualifConfig(torneoKey);if(c[qi])c[qi].visible=(c[qi].visible===false)?true:false;admSaveQualifConfig(torneoKey,c);admRenderQualifList(torneoKey);}
 function admDeleteQualif(torneoKey,qi){
   if(!confirm('Eliminare questa qualificazione e tutti i dati?'))return;
@@ -12065,15 +12139,31 @@ function openQualif(torneoKey,qi){
   var configs=admGetQualifConfig(torneoKey),q=configs[qi];if(!q)return;
   var coppeConfig=admGetCoppeConfig(torneoKey);
   var data=_getQualifData(torneoKey,qi);
-  var lastG=Object.keys(data).map(Number).sort(function(a,b){return b-a;})[0]||0;
+  var sortedGs=Object.keys(data).map(Number).sort(function(a,b){return a-b;});
+  var lastG=sortedGs.length?sortedGs[sortedGs.length-1]:0;
   if(hub)hub.style.display='none';
-  panel.style.display='block';title.textContent=q.name;title.style.color='#f59e0b';
+  panel.style.display='block';title.textContent=q.name+(q.tipo==='f1'?' · F1':'');title.style.color='#f59e0b';
   if(!lastG){content.innerHTML='<div style="text-align:center;padding:60px 20px;color:var(--text3);font-size:13px">Nessuna giornata ancora importata</div>';return;}
-  var ranking=data[lastG],zones=q.zones||[],zoneMap={},pos=1;
+  var ranking;
+  if(q.tipo==='f1'){
+    var f1Table=q.f1_table||[25,18,15,12,10,8,6,4,2,1];
+    var f1Acc={};
+    sortedGs.forEach(function(g,gIdx){
+      var cur=data[g],prev=gIdx>0?data[sortedGs[gIdx-1]]:null;
+      var roundScores=cur.map(function(r){var prevPt=0;if(prev){var pe=prev.find(function(p){return p.squadra===r.squadra;});if(pe)prevPt=pe.pt;}return{squadra:r.squadra,roundPt:r.pt-prevPt};});
+      roundScores.sort(function(a,b){return b.roundPt-a.roundPt;});
+      roundScores.forEach(function(rs,idx){f1Acc[rs.squadra]=(f1Acc[rs.squadra]||0)+(f1Table[idx]||0);});
+    });
+    ranking=Object.keys(f1Acc).map(function(sq){return{squadra:sq,pt:f1Acc[sq]};}).sort(function(a,b){return b.pt-a.pt;});
+  } else {
+    ranking=data[lastG];
+  }
+  var zones=q.zones||[],zoneMap={},pos=1;
   zones.forEach(function(z){var c=coppeConfig.find(function(cc){return cc.key===z.coppaKey;});if(c&&z.posti>0){zoneMap[z.coppaKey]={from:pos,to:pos+z.posti-1,color:c.color,label:c.label};pos+=z.posti;}});
   function _getZone(p){for(var k in zoneMap){if(p>=zoneMap[k].from&&p<=zoneMap[k].to)return zoneMap[k];}return null;}
   var html='<div style="margin-bottom:12px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">'
-    +'<span style="font-size:12px;color:var(--text2)">Giornata <strong>'+lastG+'</strong> / '+(q.giornate_totali||12)+'</span>';
+    +'<span style="font-size:12px;color:var(--text2)">Giornata <strong>'+lastG+'</strong> / '+(q.giornate_totali||12)+'</span>'
+    +'<span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;background:'+(q.tipo==='f1'?'rgba(245,158,11,.15)':'rgba(99,102,241,.15)')+';color:'+(q.tipo==='f1'?'#f59e0b':'#818cf8')+'">'+(q.tipo==='f1'?'Formula 1':'Pt. Totale')+'</span>';
   zones.forEach(function(z){var zm=zoneMap[z.coppaKey];if(!zm)return;
     html+='<span style="display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:700;color:'+zm.color+'">'
       +'<span style="width:8px;height:8px;border-radius:50%;background:'+zm.color+';display:inline-block"></span>'+zm.label+' ('+zm.from+'-'+zm.to+')</span>';
