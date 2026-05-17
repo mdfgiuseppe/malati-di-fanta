@@ -1,4 +1,4 @@
-<!-- build:20260517_1459 -->
+<!-- build:20260517_1504 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260517_1459';
+  var BUILD='20260517_1504';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -6190,16 +6190,19 @@ function _openQualifCalGiornata(torneoKey,qi,g){
     if(bc){bc.style.background=gg===g?'rgba(99,102,241,.15)':'var(--bg2)';bc.style.borderColor=gg===g?'#818cf8':'var(--border)';bc.style.color=gg===g?'#818cf8':'var(--text2)';}
     if(bs){bs.style.background='var(--bg2)';bs.style.borderColor='var(--border)';bs.style.color='var(--text2)';}
   });
+  var hasScore=teams.some(function(item){return item.pt>0;});
   var _th=function(lbl,align){return'<th style="padding:6px 10px;text-align:'+align+';font-size:10px;font-weight:800;text-transform:uppercase;color:var(--text3);border-bottom:1px solid var(--border)">'+lbl+'</th>';};
   var h='<div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">📅 Giornata '+g+' — Risultati</div>'
     +'<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:13px"><thead><tr>'
-    +_th('Pos','left')+_th('Squadra','left')+(isF1?_th('Pt F1 giornata','right'):_th('Punteggio','right'))
+    +_th('Pos','left')+_th('Squadra','left')+(hasScore?_th('Punteggio','right'):'')+(isF1?_th('Pt F1','right'):'')
     +'</tr></thead><tbody>';
   teams.forEach(function(item,idx){
-    var pts=isF1?(f1T[idx]||0):item.pt;
+    var f1pts=isF1?(f1T[idx]||0):null;
     h+='<tr><td style="padding:6px 10px;font-weight:700;color:var(--text2)">'+(idx+1)+'</td>'
       +'<td style="padding:6px 10px;color:var(--text)">'+item.squadra+'</td>'
-      +'<td style="padding:6px 10px;text-align:right;font-weight:700;color:'+(isF1?'#f59e0b':'var(--text)')+'">'+pts.toLocaleString('it-IT')+'</td></tr>';
+      +(hasScore?'<td style="padding:6px 10px;text-align:right;color:var(--text3);font-size:12px">'+item.pt.toLocaleString('it-IT')+'</td>':'')
+      +(isF1?'<td style="padding:6px 10px;text-align:right;font-weight:700;color:#f59e0b">'+f1pts.toLocaleString('it-IT')+'</td>':'')
+      +'</tr>';
   });
   det.innerHTML=h+'</tbody></table></div>';
 }
@@ -12456,16 +12459,19 @@ function _openQualifCalGiornata(torneoKey,qi,g){
     if(bc){bc.style.background=gg===g?'rgba(99,102,241,.15)':'var(--bg2)';bc.style.borderColor=gg===g?'#818cf8':'var(--border)';bc.style.color=gg===g?'#818cf8':'var(--text2)';}
     if(bs){bs.style.background='var(--bg2)';bs.style.borderColor='var(--border)';bs.style.color='var(--text2)';}
   });
+  var hasScore=teams.some(function(item){return item.pt>0;});
   var _th=function(lbl,align){return'<th style="padding:6px 10px;text-align:'+align+';font-size:10px;font-weight:800;text-transform:uppercase;color:var(--text3);border-bottom:1px solid var(--border)">'+lbl+'</th>';};
   var h='<div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">📅 Giornata '+g+' — Risultati</div>'
     +'<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:13px"><thead><tr>'
-    +_th('Pos','left')+_th('Squadra','left')+(isF1?_th('Pt F1 giornata','right'):_th('Punteggio','right'))
+    +_th('Pos','left')+_th('Squadra','left')+(hasScore?_th('Punteggio','right'):'')+(isF1?_th('Pt F1','right'):'')
     +'</tr></thead><tbody>';
   teams.forEach(function(item,idx){
-    var pts=isF1?(f1T[idx]||0):item.pt;
+    var f1pts=isF1?(f1T[idx]||0):null;
     h+='<tr><td style="padding:6px 10px;font-weight:700;color:var(--text2)">'+(idx+1)+'</td>'
       +'<td style="padding:6px 10px;color:var(--text)">'+item.squadra+'</td>'
-      +'<td style="padding:6px 10px;text-align:right;font-weight:700;color:'+(isF1?'#f59e0b':'var(--text)')+'">'+pts.toLocaleString('it-IT')+'</td></tr>';
+      +(hasScore?'<td style="padding:6px 10px;text-align:right;color:var(--text3);font-size:12px">'+item.pt.toLocaleString('it-IT')+'</td>':'')
+      +(isF1?'<td style="padding:6px 10px;text-align:right;font-weight:700;color:#f59e0b">'+f1pts.toLocaleString('it-IT')+'</td>':'')
+      +'</tr>';
   });
   det.innerHTML=h+'</tbody></table></div>';
 }
