@@ -1,4 +1,4 @@
-<!-- build:20260517_1513 -->
+<!-- build:20260517_1515 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260517_1513';
+  var BUILD='20260517_1515';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -5974,7 +5974,7 @@ function admRenderQualifList(torneoKey){
     if(q.tipo==='f1'){
       h+='<div style="padding:4px 14px 10px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">'
         +'<button onclick="admTriggerQualifImport(\''+torneoKey+'\','+qi+')" style="background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.2);color:#f59e0b;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer">📥 Importa giornata</button>'
-        +'<button onclick="admToggleQualifManual(\''+torneoKey+'\','+qi+')" style="background:rgba(99,102,241,.1);border:1px solid rgba(99,102,241,.2);color:#818cf8;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer">📝 Manuale</button>'
+        +'<button onclick="admToggleQualifManual(\''+torneoKey+'\','+qi+')" style="background:rgba(99,102,241,.1);border:1px solid rgba(99,102,241,.2);color:#818cf8;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer">📝 Inserimento manuale</button>'
         +(_mGs.length?'<span style="font-size:11px;color:var(--text3)">Giornate: '+_mGs.join(', ')+' / '+(q.giornate_totali||12)+'</span>':'<span style="font-size:11px;color:var(--text3)">Nessuna giornata inserita</span>')
         +'</div>'
         +'<div id="qmf-'+torneoKey+'-'+qi+'" style="display:none;padding:6px 14px 10px;border-top:1px solid var(--border)">'
@@ -5990,7 +5990,7 @@ function admRenderQualifList(torneoKey){
     } else {
       h+='<div style="padding:4px 14px 10px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">'
         +'<button onclick="admTriggerQualifImport(\''+torneoKey+'\','+qi+')" style="background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.2);color:#f59e0b;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer">📥 Importa giornata</button>'
-        +'<button onclick="admToggleQualifManual(\''+torneoKey+'\','+qi+')" style="background:rgba(99,102,241,.1);border:1px solid rgba(99,102,241,.2);color:#818cf8;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer">📝 Manuale</button>'
+        +'<button onclick="admToggleQualifManual(\''+torneoKey+'\','+qi+')" style="background:rgba(99,102,241,.1);border:1px solid rgba(99,102,241,.2);color:#818cf8;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer">📝 Inserimento manuale</button>'
         +(_mGs.length?'<span style="font-size:11px;color:var(--text3)">Giornate: '+_mGs.join(', ')+' / '+(q.giornate_totali||12)+'</span>':'<span style="font-size:11px;color:var(--text3)">Nessuna giornata importata</span>')
         +'</div>'
         +'<div id="qmf-'+torneoKey+'-'+qi+'" style="display:none;padding:6px 14px 10px;border-top:1px solid var(--border)">'
@@ -12251,7 +12251,7 @@ function admRenderQualifList(torneoKey){
     if(q.tipo==='f1'){
       h+='<div style="padding:4px 14px 10px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">'
         +'<button onclick="admTriggerQualifImport(\''+torneoKey+'\','+qi+')" style="background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.2);color:#f59e0b;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer">📥 Importa giornata</button>'
-        +'<button onclick="admToggleQualifManual(\''+torneoKey+'\','+qi+')" style="background:rgba(99,102,241,.1);border:1px solid rgba(99,102,241,.2);color:#818cf8;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer">📝 Manuale</button>'
+        +'<button onclick="admToggleQualifManual(\''+torneoKey+'\','+qi+')" style="background:rgba(99,102,241,.1);border:1px solid rgba(99,102,241,.2);color:#818cf8;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer">📝 Inserimento manuale</button>'
         +(_mGs.length?'<span style="font-size:11px;color:var(--text3)">Giornate: '+_mGs.join(', ')+' / '+(q.giornate_totali||12)+'</span>':'<span style="font-size:11px;color:var(--text3)">Nessuna giornata inserita</span>')
         +'</div>'
         +'<div id="qmf-'+torneoKey+'-'+qi+'" style="display:none;padding:6px 14px 10px;border-top:1px solid var(--border)">'
@@ -12267,7 +12267,7 @@ function admRenderQualifList(torneoKey){
     } else {
       h+='<div style="padding:4px 14px 10px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">'
         +'<button onclick="admTriggerQualifImport(\''+torneoKey+'\','+qi+')" style="background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.2);color:#f59e0b;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer">📥 Importa giornata</button>'
-        +'<button onclick="admToggleQualifManual(\''+torneoKey+'\','+qi+')" style="background:rgba(99,102,241,.1);border:1px solid rgba(99,102,241,.2);color:#818cf8;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer">📝 Manuale</button>'
+        +'<button onclick="admToggleQualifManual(\''+torneoKey+'\','+qi+')" style="background:rgba(99,102,241,.1);border:1px solid rgba(99,102,241,.2);color:#818cf8;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer">📝 Inserimento manuale</button>'
         +(_mGs.length?'<span style="font-size:11px;color:var(--text3)">Giornate: '+_mGs.join(', ')+' / '+(q.giornate_totali||12)+'</span>':'<span style="font-size:11px;color:var(--text3)">Nessuna giornata importata</span>')
         +'</div>'
         +'<div id="qmf-'+torneoKey+'-'+qi+'" style="display:none;padding:6px 14px 10px;border-top:1px solid var(--border)">'
