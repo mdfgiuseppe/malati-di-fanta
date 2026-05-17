@@ -1,4 +1,4 @@
-<!-- build:20260517_1640 -->
+<!-- build:20260517_1645 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260517_1640';
+  var BUILD='20260517_1645';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -5938,18 +5938,16 @@ function admProcessCoppaXlsx(torneoKey,coppaKey,file){
         if(!hasNum){
           for(var ci=0;ci<row.length;ci++){
             var cell=(row[ci]||'').toString().trim();
-            if(/^quarti$/i.test(cell)){currentPhase='quarti';return;}
-            if(/^semifinali$/i.test(cell)){currentPhase='semifinali';return;}
-            if(/^finale$/i.test(cell)&&!/semi/i.test(cell)){currentPhase='finale';return;}
+            if(/quarti/i.test(cell)){currentPhase='quarti';return;}
+            if(/semifinali/i.test(cell)){currentPhase='semifinali';return;}
+            if(/finale/i.test(cell)&&!/semi/i.test(cell)&&!/quarti/i.test(cell)){currentPhase='finale';return;}
           }
         }
         if(!currentPhase)return;
         var h=(row[0]||'').toString().trim();
         var a=(row[3]||'').toString().trim();
         if(!h||!a)return;
-        if(/giornata/i.test(h))return;
-        var pts1=parseFloat(row[1]);var pts2=parseFloat(row[2]);
-        if(isNaN(pts1)||isNaN(pts2))return;
+        if(/giornata/i.test(h)||/squadra/i.test(h))return;
         var andRes=(row[5]||'').toString().trim();
         var m1=andRes.match(/^(\d+)-(\d+)$/);
         if(!m1)return;
