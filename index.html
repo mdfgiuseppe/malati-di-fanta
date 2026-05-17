@@ -1,4 +1,4 @@
-<!-- build:20260517_1456 -->
+<!-- build:20260517_1459 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260517_1456';
+  var BUILD='20260517_1459';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -5931,8 +5931,8 @@ function admRenderQualifList(torneoKey){
     var _mGs=Object.keys(_mData).map(Number).sort(function(a,b){return a-b;});
     h+='<div style="border-bottom:1px solid var(--border)">';
     h+='<div style="display:flex;align-items:center;gap:10px;padding:10px 14px;flex-wrap:wrap">'
-      +'<input type="color" value="'+(q.color||'#f59e0b')+'" data-t="'+torneoKey+'" data-qi="'+qi+'" onchange="admUpdateQualifColor(this)" style="width:28px;height:28px;border:none;background:none;cursor:pointer;flex-shrink:0;padding:0">'
       +'<input type="text" value="'+q.name+'" data-t="'+torneoKey+'" data-qi="'+qi+'" onchange="admUpdateQualifName(this)" style="background:transparent;border:none;border-bottom:1px solid var(--border);color:var(--text);font-size:13px;font-weight:700;outline:none;min-width:160px;flex:1">'
+      +'<input type="color" value="'+(q.color||'#f59e0b')+'" data-t="'+torneoKey+'" data-qi="'+qi+'" onchange="admUpdateQualifColor(this)" style="width:32px;height:28px;border:none;background:none;cursor:pointer;flex-shrink:0;padding:0">'
       +'<div style="display:flex;align-items:center;gap:5px;flex-shrink:0"><label style="font-size:10px;color:var(--text3);white-space:nowrap">Giornate totali</label>'
       +'<input type="number" value="'+(q.giornate_totali||12)+'" min="1" step="1" data-t="'+torneoKey+'" data-qi="'+qi+'" onchange="admUpdateQualifGiornate(this)" style="width:52px;padding:3px 6px;background:var(--bg2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:12px;text-align:center;outline:none"></div>'
       +'<select data-t="'+torneoKey+'" data-qi="'+qi+'" onchange="admUpdateQualifTipo(this)" style="padding:3px 8px;background:var(--bg2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:11px;outline:none;flex-shrink:0">'
@@ -12197,8 +12197,8 @@ function admRenderQualifList(torneoKey){
     var _mGs=Object.keys(_mData).map(Number).sort(function(a,b){return a-b;});
     h+='<div style="border-bottom:1px solid var(--border)">';
     h+='<div style="display:flex;align-items:center;gap:10px;padding:10px 14px;flex-wrap:wrap">'
-      +'<input type="color" value="'+(q.color||'#f59e0b')+'" data-t="'+torneoKey+'" data-qi="'+qi+'" onchange="admUpdateQualifColor(this)" style="width:28px;height:28px;border:none;background:none;cursor:pointer;flex-shrink:0;padding:0">'
       +'<input type="text" value="'+q.name+'" data-t="'+torneoKey+'" data-qi="'+qi+'" onchange="admUpdateQualifName(this)" style="background:transparent;border:none;border-bottom:1px solid var(--border);color:var(--text);font-size:13px;font-weight:700;outline:none;min-width:160px;flex:1">'
+      +'<input type="color" value="'+(q.color||'#f59e0b')+'" data-t="'+torneoKey+'" data-qi="'+qi+'" onchange="admUpdateQualifColor(this)" style="width:32px;height:28px;border:none;background:none;cursor:pointer;flex-shrink:0;padding:0">'
       +'<div style="display:flex;align-items:center;gap:5px;flex-shrink:0"><label style="font-size:10px;color:var(--text3);white-space:nowrap">Giornate totali</label>'
       +'<input type="number" value="'+(q.giornate_totali||12)+'" min="1" step="1" data-t="'+torneoKey+'" data-qi="'+qi+'" onchange="admUpdateQualifGiornate(this)" style="width:52px;padding:3px 6px;background:var(--bg2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:12px;text-align:center;outline:none"></div>'
       +'<select data-t="'+torneoKey+'" data-qi="'+qi+'" onchange="admUpdateQualifTipo(this)" style="padding:3px 8px;background:var(--bg2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:11px;outline:none;flex-shrink:0">'
