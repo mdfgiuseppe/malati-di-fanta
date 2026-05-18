@@ -1,4 +1,4 @@
-<!-- build:20260518_1847 -->
+<!-- build:20260518_1852 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260518_1847';
+  var BUILD='20260518_1852';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -5970,7 +5970,11 @@ function admProcessCoppaXlsx(torneoKey,coppaKey,file){
         }
       });
       var found=Object.keys(phaseMatches);
-      if(!found.length){alert('Nessun risultato trovato. Verifica che il file sia nel formato corretto (Quarti/Semifinali/Finale con risultati A-B).');return;}
+      if(!found.length){
+        var _dbg=rows.slice(0,20).map(function(r,i){return 'R'+(i+1)+': '+r.slice(0,8).map(function(v){return JSON.stringify(v);}).join(' | ');}).join('\n');
+        alert('Nessun risultato trovato.\n\nPrime righe xlsx:\n'+_dbg);
+        return;
+      }
       var alreadyPresent=found.filter(function(ph){return data[ph]&&data[ph].length;});
       if(alreadyPresent.length&&!confirm('I seguenti turni sono già presenti e verranno sovrascritti:\n'+alreadyPresent.join(', ')+'\n\nContinuare?'))return;
       Object.keys(phaseMatches).forEach(function(ph){data[ph]=phaseMatches[ph];});
