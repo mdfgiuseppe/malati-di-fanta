@@ -1,4 +1,4 @@
-<!-- build:20260518_2142 -->
+<!-- build:20260518_2152 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260518_2142';
+  var BUILD='20260518_2152';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -9176,6 +9176,7 @@ function admProcessCalScheduleXlsx(input){
   var l=document.getElementById('adm-cal-lega').value;
   if(!t||!l){alert('Seleziona torneo e lega prima');input.value='';return;}
   var file=input.files[0];if(!file)return;
+  function _doProc(){
   var reader=new FileReader();
   reader.onload=function(e){
     try{
@@ -9205,6 +9206,10 @@ function admProcessCalScheduleXlsx(input){
     input.value='';
   };
   reader.readAsArrayBuffer(file);
+  }
+  if(typeof XLSX!=='undefined'){_doProc();return;}
+  var s=document.createElement('script');s.src='https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+  s.onload=_doProc;s.onerror=function(){alert('Errore caricamento libreria xlsx.');};document.head.appendChild(s);
 }
 function admProcessGiornataXlsx(input){
   var t=document.getElementById('adm-cal-torneo').value;
@@ -9215,6 +9220,7 @@ function admProcessGiornataXlsx(input){
   if(!t||!l||!g){alert('Seleziona torneo, lega e numero giornata prima');input.value='';return;}
   var file=input.files[0];if(!file)return;
   var teams=admGetTeams(t,l);
+  function _doProc(){
   function _findT(name){var u=(name||'').toUpperCase();return teams.find(function(x){return x.toUpperCase()===u;});}
   function _isAllCaps(s){return s.length>1&&s===s.toUpperCase()&&/[A-Z]/.test(s);}
   var reader=new FileReader();
@@ -9254,6 +9260,10 @@ function admProcessGiornataXlsx(input){
     input.value='';
   };
   reader.readAsArrayBuffer(file);
+  }
+  if(typeof XLSX!=='undefined'){_doProc();return;}
+  var s=document.createElement('script');s.src='https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+  s.onload=_doProc;s.onerror=function(){alert('Errore caricamento libreria xlsx.');};document.head.appendChild(s);
 }
 function admCalAutoNeutral(){
   var t=document.getElementById('adm-cal-torneo').value;
