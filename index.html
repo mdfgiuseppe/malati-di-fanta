@@ -1,4 +1,4 @@
-<!-- build:20260518_2025 -->
+<!-- build:20260518_2039 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260518_2025';
+  var BUILD='20260518_2039';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -9090,6 +9090,7 @@ function admLoadCalBody() {
     +'<label style="font-size:12px;color:var(--text2);display:flex;align-items:center;gap:4px;cursor:pointer"><input type="checkbox" id="adm-cal-neutral"> Neutrale</label>'
     +'<button onclick="document.getElementById(\'adm-cal-res-file\').click()" style="padding:5px 12px;background:rgba(16,185,129,.15);border:1px solid rgba(16,185,129,.3);border-radius:6px;color:#10b981;font-size:12px;font-weight:700;cursor:pointer">⚽ Risultati G</button>'
     +'<input type="file" id="adm-cal-res-file" accept=".xlsx" style="display:none" onchange="admProcessGiornataXlsx(this)">'
+    +'<button onclick="admAzzeraRisultatiCal()" style="padding:5px 12px;background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.3);border-radius:6px;color:#ef4444;font-size:12px;font-weight:700;cursor:pointer">🗑 Azzera</button>'
     +'</div>';
   el.innerHTML=_impH+h;
 }
@@ -9245,6 +9246,22 @@ function admProcessGiornataXlsx(input){
     input.value='';
   };
   reader.readAsArrayBuffer(file);
+}
+function admAzzeraRisultatiCal(){
+  var t=document.getElementById('adm-cal-torneo').value;
+  var l=document.getElementById('adm-cal-lega').value;
+  if(!t||!l){alert('Seleziona torneo e lega prima');return;}
+  if(!confirm('Cancellare TUTTI i risultati del calendario per questa lega?\nL\'operazione non può essere annullata.'))return;
+  var teams=admGetTeams(t,l);
+  var giornate=(t==='tsm')?(typeof TSM_TOTAL_GIORNATE!=='undefined'?TSM_TOTAL_GIORNATE:36):(typeof SLIM_TOTAL_GIORNATE!=='undefined'?SLIM_TOTAL_GIORNATE:36);
+  var cal={};
+  for(var g=1;g<=giornate;g++){cal[String(g)]={};teams.forEach(function(tm){cal[String(g)][tm]='';});}
+  localStorage.setItem('adm_cal_'+t+'_'+l,JSON.stringify(cal));
+  var appKey=(t==='tsm'&&l==='it')?'tsm_calendar_it':(t!=='slim'?'adm_cal_'+t+'_'+l:(l==='it'?'slim_calendar':'slim_calendar_'+l));
+  localStorage.setItem(appKey,JSON.stringify(cal));
+  gsSaveCalendario(t,l,cal);
+  var msg=document.createElement('div');msg.textContent='🗑 Risultati azzerati';msg.style.cssText='position:fixed;top:70px;right:20px;background:#ef4444;color:#fff;padding:8px 16px;border-radius:8px;font-weight:700;font-size:12px;z-index:9999';document.body.appendChild(msg);setTimeout(function(){msg.remove();},2500);
+  admLoadCalBody();
 }
 // ═══════════════════════════════════════════════════════
 // ADMIN — Modulistica
@@ -14989,6 +15006,7 @@ function admLoadCalBody() {
     +'<label style="font-size:12px;color:var(--text2);display:flex;align-items:center;gap:4px;cursor:pointer"><input type="checkbox" id="adm-cal-neutral"> Neutrale</label>'
     +'<button onclick="document.getElementById(\'adm-cal-res-file\').click()" style="padding:5px 12px;background:rgba(16,185,129,.15);border:1px solid rgba(16,185,129,.3);border-radius:6px;color:#10b981;font-size:12px;font-weight:700;cursor:pointer">⚽ Risultati G</button>'
     +'<input type="file" id="adm-cal-res-file" accept=".xlsx" style="display:none" onchange="admProcessGiornataXlsx(this)">'
+    +'<button onclick="admAzzeraRisultatiCal()" style="padding:5px 12px;background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.3);border-radius:6px;color:#ef4444;font-size:12px;font-weight:700;cursor:pointer">🗑 Azzera</button>'
     +'</div>';
   el.innerHTML=_impH+h;
 }
