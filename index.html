@@ -1,4 +1,4 @@
-<!-- build:20260518_2231 -->
+<!-- build:20260518_2241 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260518_2231';
+  var BUILD='20260518_2241';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -9090,19 +9090,14 @@ function admLoadCalBody() {
         else{
           h+='<div style="padding:5px 12px;display:flex;flex-direction:column;gap:2px">';
           matches.forEach(function(m){
-            var rH=gio[m.h]||gio[(m.h||'').toUpperCase()]||'';var rA=gio[m.a]||gio[(m.a||'').toUpperCase()]||'';
-            var sH=rH&&RC2[rH]?'background:'+RC2[rH]:'background:var(--bg2);color:var(--text3)';
-            var sA=rA&&RC2[rA]?'background:'+RC2[rA]:'background:var(--bg2);color:var(--text3)';
-            var lH=_logos[(m.h||'').toUpperCase()]?'<img src="'+_logos[(m.h||'').toUpperCase()]+'" style="width:13px;height:13px;object-fit:contain;margin-right:3px">':'';
-            var lA=_logos[(m.a||'').toUpperCase()]?'<img src="'+_logos[(m.a||'').toUpperCase()]+'" style="width:13px;height:13px;object-fit:contain;margin-left:3px">':'';
-            h+='<div style="display:grid;grid-template-columns:1fr 90px 1fr;align-items:center;gap:4px;padding:1px 0">'
-              +'<span style="display:flex;align-items:center;justify-content:flex-end;font-size:11px;font-weight:700">'+_teamCase(m.h||'')+lH+'</span>'
-              +'<span style="display:flex;gap:3px;justify-content:center;align-items:center">'
-              +'<span style="font-size:10px;font-weight:800;padding:1px 5px;border-radius:3px;'+sH+'">'+(rH||'—')+'</span>'
-              +'<span style="font-size:9px;color:var(--text3)">vs</span>'
-              +'<span style="font-size:10px;font-weight:800;padding:1px 5px;border-radius:3px;'+sA+'">'+(rA||'—')+'</span>'
-              +'</span>'
-              +'<span style="display:flex;align-items:center;font-size:11px;font-weight:700">'+lA+_teamCase(m.a||'')+'</span>'
+            var _gk=function(obj,k){var v=obj[k];if(v!==undefined)return v;var u=(k||'').toUpperCase();var fk=Object.keys(obj).find(function(x){return x.toUpperCase()===u;});return fk?obj[fk]:'';};
+            var rH=_gk(gio,m.h),rA=_gk(gio,m.a);
+            var score=(rH==='VC'||rH==='V')?'1-0':(rH==='PC'||rH==='P')?'1-1':(rH==='SC'||rH==='S')?'0-1':(rA==='VF'||rA==='V')?'0-1':(rA==='PF'||rA==='P')?'1-1':(rA==='SF'||rA==='S')?'1-0':null;
+            var scoreC=score?(score==='1-0'?'#10b981':score==='1-1'?'#3b82f6':'#ef4444'):'var(--text3)';
+            h+='<div style="display:grid;grid-template-columns:1fr 40px 1fr;align-items:center;gap:4px;padding:1px 0">'
+              +'<span style="display:flex;align-items:center;justify-content:flex-end;font-size:11px;font-weight:700">'+_teamCase(m.h||'')+'</span>'
+              +'<span style="text-align:center;font-family:\'Bebas Neue\';font-size:13px;color:'+scoreC+';letter-spacing:1px">'+(score||'—')+'</span>'
+              +'<span style="display:flex;align-items:center;font-size:11px;font-weight:700">'+_teamCase(m.a||'')+'</span>'
               +'</div>';
           });
           h+='</div>';
@@ -9261,11 +9256,19 @@ function admProcessGiornataXlsx(input){
       var aTeams=[],aTotals=[],kTeams=[],kTotals=[];
       function _parseTot(s){var m=s.match(/(\d+[,.]\d+|\d+)/);return m?parseFloat(m[1].replace(',','.')):null;}
       rows.forEach(function(row,ri){
-        var cA=(row[0]||'').toString().trim(),cK=(row[10]||'').toString().trim();
-        if(/TOTALE/i.test(cA)){var v=_parseTot(cA);if(v===null){var nb=(row[1]||'').toString().trim();v=_parseTot(nb);}if(v!==null)aTotals.push({ri:ri,val:v});}
+        var cA=(row[0]||'').toString().trim();
+        // Lato sinistro: colonna A
+        if(/TOTALE/i.test(cA)){var vA=_parseTot(cA);if(vA===null&&row.length>1){vA=_parseTot((row[1]||'').toString().trim());}if(vA!==null)aTotals.push({ri:ri,val:vA});}
         else if(_isAllCaps(cA)&&_findT(cA))aTeams.push({ri:ri,name:_findT(cA)});
-        if(/TOTALE/i.test(cK)){var v=_parseTot(cK);if(v===null){var nb=(row[11]||'').toString().trim();v=_parseTot(nb);}if(v!==null)kTotals.push({ri:ri,val:v});}
-        else if(_isAllCaps(cK)&&_findT(cK))kTeams.push({ri:ri,name:_findT(cK)});
+        // Lato destro: scansiona colonne 1-15 per primo nome squadra e primo TOTALE
+        var rTeam=null,rTot=null;
+        for(var ci=1;ci<row.length&&ci<=15;ci++){
+          var c=(row[ci]||'').toString().trim();if(!c)continue;
+          if(rTot===null&&/TOTALE/i.test(c)){var vK=_parseTot(c);if(vK===null&&ci+1<row.length)vK=_parseTot((row[ci+1]||'').toString().trim());if(vK!==null)rTot=vK;}
+          if(rTeam===null&&_isAllCaps(c)&&_findT(c))rTeam=_findT(c);
+        }
+        if(rTeam!==null&&!kTeams.some(function(t){return t.ri===ri;}))kTeams.push({ri:ri,name:rTeam});
+        if(rTot!==null&&!kTotals.some(function(t){return t.ri===ri;}))kTotals.push({ri:ri,val:rTot});
       });
       function pairTP(ts,tots){return ts.map(function(tm,ti){var nRi=(ts[ti+1]||{}).ri||Infinity;var tot=tots.find(function(x){return x.ri>tm.ri&&x.ri<nRi;});return{team:tm.name,total:tot?tot.val:null};}).filter(function(x){return x.total!==null;});}
       var ap=pairTP(aTeams,aTotals),kp=pairTP(kTeams,kTotals);
@@ -9372,18 +9375,15 @@ function calRenderGeneric(t, l, bodyId, nG, teams, callbackFn) {
         } else {
           h += '<div style="display:flex;flex-direction:column;gap:2px">';
           matches.forEach(function(m) {
-            var rH=gio[m.h]||gio[(m.h||'').toUpperCase()]||'';var rA=gio[m.a]||gio[(m.a||'').toUpperCase()]||'';
-            var sH=rH&&RC[rH]?'background:'+RC[rH]:'background:var(--bg2);color:var(--text3)';
-            var sA=rA&&RC[rA]?'background:'+RC[rA]:'background:var(--bg2);color:var(--text3)';
+            var _gk=function(obj,k){var v=obj[k];if(v!==undefined)return v;var u=(k||'').toUpperCase();var fk=Object.keys(obj).find(function(x){return x.toUpperCase()===u;});return fk?obj[fk]:'';};
+            var rH=_gk(gio,m.h),rA=_gk(gio,m.a);
+            var score=(rH==='VC'||rH==='V')?'1-0':(rH==='PC'||rH==='P')?'1-1':(rH==='SC'||rH==='S')?'0-1':(rA==='VF'||rA==='V')?'0-1':(rA==='PF'||rA==='P')?'1-1':(rA==='SF'||rA==='S')?'1-0':null;
+            var scoreC=score?(score==='1-0'?'#10b981':score==='1-1'?'#3b82f6':'#ef4444'):'var(--text3)';
             var lH=_logos[(m.h||'').toUpperCase()]?'<img src="'+_logos[(m.h||'').toUpperCase()]+'" style="width:13px;height:13px;object-fit:contain;flex-shrink:0;margin-right:3px">':'';
             var lA=_logos[(m.a||'').toUpperCase()]?'<img src="'+_logos[(m.a||'').toUpperCase()]+'" style="width:13px;height:13px;object-fit:contain;flex-shrink:0;margin-left:3px">':'';
-            h += '<div style="display:grid;grid-template-columns:1fr 90px 1fr;align-items:center;gap:4px;padding:2px 0">'
+            h += '<div style="display:grid;grid-template-columns:1fr 40px 1fr;align-items:center;gap:4px;padding:2px 0">'
               +'<span style="display:flex;align-items:center;justify-content:flex-end;font-size:11px;font-weight:700">'+_teamCase(m.h||'')+lH+'</span>'
-              +'<span style="display:flex;gap:3px;justify-content:center;align-items:center">'
-              +'<span style="font-size:10px;font-weight:800;padding:1px 5px;border-radius:3px;'+sH+'">'+(rH||'—')+'</span>'
-              +'<span style="font-size:9px;color:var(--text3)">vs</span>'
-              +'<span style="font-size:10px;font-weight:800;padding:1px 5px;border-radius:3px;'+sA+'">'+(rA||'—')+'</span>'
-              +'</span>'
+              +'<span style="text-align:center;font-family:\'Bebas Neue\';font-size:13px;color:'+scoreC+';letter-spacing:1px">'+(score||'—')+'</span>'
               +'<span style="display:flex;align-items:center;font-size:11px;font-weight:700">'+lA+_teamCase(m.a||'')+'</span>'
               +'</div>';
           });
@@ -15165,19 +15165,14 @@ function admLoadCalBody() {
         else{
           h+='<div style="padding:5px 12px;display:flex;flex-direction:column;gap:2px">';
           matches.forEach(function(m){
-            var rH=gio[m.h]||gio[(m.h||'').toUpperCase()]||'';var rA=gio[m.a]||gio[(m.a||'').toUpperCase()]||'';
-            var sH=rH&&RC2[rH]?'background:'+RC2[rH]:'background:var(--bg2);color:var(--text3)';
-            var sA=rA&&RC2[rA]?'background:'+RC2[rA]:'background:var(--bg2);color:var(--text3)';
-            var lH=_logos[(m.h||'').toUpperCase()]?'<img src="'+_logos[(m.h||'').toUpperCase()]+'" style="width:13px;height:13px;object-fit:contain;margin-right:3px">':'';
-            var lA=_logos[(m.a||'').toUpperCase()]?'<img src="'+_logos[(m.a||'').toUpperCase()]+'" style="width:13px;height:13px;object-fit:contain;margin-left:3px">':'';
-            h+='<div style="display:grid;grid-template-columns:1fr 90px 1fr;align-items:center;gap:4px;padding:1px 0">'
-              +'<span style="display:flex;align-items:center;justify-content:flex-end;font-size:11px;font-weight:700">'+_teamCase(m.h||'')+lH+'</span>'
-              +'<span style="display:flex;gap:3px;justify-content:center;align-items:center">'
-              +'<span style="font-size:10px;font-weight:800;padding:1px 5px;border-radius:3px;'+sH+'">'+(rH||'—')+'</span>'
-              +'<span style="font-size:9px;color:var(--text3)">vs</span>'
-              +'<span style="font-size:10px;font-weight:800;padding:1px 5px;border-radius:3px;'+sA+'">'+(rA||'—')+'</span>'
-              +'</span>'
-              +'<span style="display:flex;align-items:center;font-size:11px;font-weight:700">'+lA+_teamCase(m.a||'')+'</span>'
+            var _gk=function(obj,k){var v=obj[k];if(v!==undefined)return v;var u=(k||'').toUpperCase();var fk=Object.keys(obj).find(function(x){return x.toUpperCase()===u;});return fk?obj[fk]:'';};
+            var rH=_gk(gio,m.h),rA=_gk(gio,m.a);
+            var score=(rH==='VC'||rH==='V')?'1-0':(rH==='PC'||rH==='P')?'1-1':(rH==='SC'||rH==='S')?'0-1':(rA==='VF'||rA==='V')?'0-1':(rA==='PF'||rA==='P')?'1-1':(rA==='SF'||rA==='S')?'1-0':null;
+            var scoreC=score?(score==='1-0'?'#10b981':score==='1-1'?'#3b82f6':'#ef4444'):'var(--text3)';
+            h+='<div style="display:grid;grid-template-columns:1fr 40px 1fr;align-items:center;gap:4px;padding:1px 0">'
+              +'<span style="display:flex;align-items:center;justify-content:flex-end;font-size:11px;font-weight:700">'+_teamCase(m.h||'')+'</span>'
+              +'<span style="text-align:center;font-family:\'Bebas Neue\';font-size:13px;color:'+scoreC+';letter-spacing:1px">'+(score||'—')+'</span>'
+              +'<span style="display:flex;align-items:center;font-size:11px;font-weight:700">'+_teamCase(m.a||'')+'</span>'
               +'</div>';
           });
           h+='</div>';
