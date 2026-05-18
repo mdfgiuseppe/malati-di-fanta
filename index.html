@@ -1,4 +1,4 @@
-<!-- build:20260518_1907 -->
+<!-- build:20260518_2025 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260518_1907';
+  var BUILD='20260518_2025';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -9078,7 +9078,20 @@ function admLoadCalBody() {
       +'</tr>';
   }
   h += '</tbody></table></div></div>';
-  el.innerHTML = h;
+  var _schStored=localStorage.getItem('adm_cal_schedule_'+torneoKey+'_'+legaKey);
+  var _schN=_schStored?Object.keys(JSON.parse(_schStored)).length:0;
+  var _gOpts=Array.from({length:giornate},function(_,i){return '<option value="'+(i+1)+'">G'+(i+1)+'</option>';}).join('');
+  var _impH='<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;align-items:center;padding:10px 14px;background:var(--bg2);border-radius:10px;border:1px solid var(--border)">'
+    +'<button onclick="document.getElementById(\'adm-cal-sch-file\').click()" style="padding:5px 12px;background:rgba(59,130,246,.15);border:1px solid rgba(59,130,246,.3);border-radius:6px;color:#3b82f6;font-size:12px;font-weight:700;cursor:pointer">📅 Calendario</button>'
+    +'<input type="file" id="adm-cal-sch-file" accept=".xlsx" style="display:none" onchange="admProcessCalScheduleXlsx(this)">'
+    +'<span style="font-size:11px;color:var(--text2)">'+(_schN?'✅ '+_schN+' gior.':'non importato')+'</span>'
+    +'<span style="color:var(--border);margin:0 6px">|</span>'
+    +'<select id="adm-cal-giornata-import" style="padding:5px 8px;background:var(--bg);border:1px solid var(--border);border-radius:6px;font-size:12px;color:var(--text);outline:none">'+_gOpts+'</select>'
+    +'<label style="font-size:12px;color:var(--text2);display:flex;align-items:center;gap:4px;cursor:pointer"><input type="checkbox" id="adm-cal-neutral"> Neutrale</label>'
+    +'<button onclick="document.getElementById(\'adm-cal-res-file\').click()" style="padding:5px 12px;background:rgba(16,185,129,.15);border:1px solid rgba(16,185,129,.3);border-radius:6px;color:#10b981;font-size:12px;font-weight:700;cursor:pointer">⚽ Risultati G</button>'
+    +'<input type="file" id="adm-cal-res-file" accept=".xlsx" style="display:none" onchange="admProcessGiornataXlsx(this)">'
+    +'</div>';
+  el.innerHTML=_impH+h;
 }
 function admGetStadio(torneoKey, legaKey) {
   // Legge prima il salvataggio Admin (dopo aver premuto Salva)
@@ -9152,6 +9165,87 @@ function admSaveCalGiornata(t,l,g) {
   var msg=document.createElement('div');msg.textContent='✅ Giornata '+g+' salvata'+(GS_ONLINE?' · Sincronizzato':'');msg.style.cssText='position:fixed;top:70px;right:20px;background:#10b981;color:#fff;padding:8px 16px;border-radius:8px;font-weight:700;font-size:12px;z-index:9999';document.body.appendChild(msg);setTimeout(function(){msg.remove();},2000);
 }
 
+function admProcessCalScheduleXlsx(input){
+  var t=document.getElementById('adm-cal-torneo').value;
+  var l=document.getElementById('adm-cal-lega').value;
+  if(!t||!l){alert('Seleziona torneo e lega prima');input.value='';return;}
+  var file=input.files[0];if(!file)return;
+  var reader=new FileReader();
+  reader.onload=function(e){
+    try{
+      var wb=XLSX.read(e.target.result,{type:'array'});
+      var rows=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{header:1,defval:''});
+      var schedule={},leftG=null,rightG=null;
+      rows.forEach(function(row){
+        var c0=(row[0]||'').toString().trim(),c6=(row[6]||'').toString().trim();
+        var mL=c0.match(/(\d+)/),mR=c6.match(/(\d+)/);
+        if(/giornata/i.test(c0)&&mL){leftG=parseInt(mL[1]);if(!schedule[leftG])schedule[leftG]=[];}
+        if(/giornata/i.test(c6)&&mR){rightG=parseInt(mR[1]);if(!schedule[rightG])schedule[rightG]=[];}
+        if(!/giornata/i.test(c0)){var hl=c0,al=(row[3]||'').toString().trim();if(hl&&al&&leftG)schedule[leftG].push({h:hl,a:al});}
+        if(!/giornata/i.test(c6)){var hr=c6,ar=(row[9]||'').toString().trim();if(hr&&ar&&rightG)schedule[rightG].push({h:hr,a:ar});}
+      });
+      var nG=Object.keys(schedule).length;
+      if(!nG){alert('Nessuna giornata trovata. Verifica il formato file (atteso: "Nª Giornata" in col A o G).');input.value='';return;}
+      var existing=localStorage.getItem('adm_cal_schedule_'+t+'_'+l);
+      if(existing&&!confirm('Schedule già presente ('+Object.keys(JSON.parse(existing)).length+' giornate). Sovrascrivere?')){input.value='';return;}
+      localStorage.setItem('adm_cal_schedule_'+t+'_'+l,JSON.stringify(schedule));
+      gsSaveKey('adm_cal_schedule_'+t+'_'+l,JSON.stringify(schedule));
+      var msg=document.createElement('div');msg.textContent='✅ Calendario importato: '+nG+' giornate';msg.style.cssText='position:fixed;top:70px;right:20px;background:#3b82f6;color:#fff;padding:8px 16px;border-radius:8px;font-weight:700;font-size:12px;z-index:9999';document.body.appendChild(msg);setTimeout(function(){msg.remove();},3000);
+      admLoadCalBody();
+    }catch(ex){alert('Errore parsing xlsx: '+ex.message);}
+    input.value='';
+  };
+  reader.readAsArrayBuffer(file);
+}
+function admProcessGiornataXlsx(input){
+  var t=document.getElementById('adm-cal-torneo').value;
+  var l=document.getElementById('adm-cal-lega').value;
+  var selG=document.getElementById('adm-cal-giornata-import');
+  var g=selG?parseInt(selG.value):0;
+  var neutral=document.getElementById('adm-cal-neutral')?document.getElementById('adm-cal-neutral').checked:false;
+  if(!t||!l||!g){alert('Seleziona torneo, lega e numero giornata prima');input.value='';return;}
+  var file=input.files[0];if(!file)return;
+  var teams=admGetTeams(t,l);
+  function _findT(name){var u=(name||'').toUpperCase();return teams.find(function(x){return x.toUpperCase()===u;});}
+  function _isAllCaps(s){return s.length>1&&s===s.toUpperCase()&&/[A-Z]/.test(s);}
+  var reader=new FileReader();
+  reader.onload=function(e){
+    try{
+      var wb=XLSX.read(e.target.result,{type:'array'});
+      var rows=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{header:1,defval:''});
+      var aTeams=[],aTotals=[],kTeams=[],kTotals=[];
+      rows.forEach(function(row,ri){
+        var cA=(row[0]||'').toString().trim(),cK=(row[10]||'').toString().trim();
+        var mA=cA.match(/^TOTALE[:\s]+(\d+[,.]?\d*)/i),mK=cK.match(/^TOTALE[:\s]+(\d+[,.]?\d*)/i);
+        if(mA)aTotals.push({ri:ri,val:parseFloat(mA[1].replace(',','.'))});
+        else if(_isAllCaps(cA)&&_findT(cA))aTeams.push({ri:ri,name:_findT(cA)});
+        if(mK)kTotals.push({ri:ri,val:parseFloat(mK[1].replace(',','.'))});
+        else if(_isAllCaps(cK)&&_findT(cK))kTeams.push({ri:ri,name:_findT(cK)});
+      });
+      function pairTP(ts,tots){return ts.map(function(tm,ti){var nRi=(ts[ti+1]||{}).ri||Infinity;var tot=tots.find(function(x){return x.ri>tm.ri&&x.ri<nRi;});return{team:tm.name,total:tot?tot.val:null};}).filter(function(x){return x.total!==null;});}
+      var ap=pairTP(aTeams,aTotals),kp=pairTP(kTeams,kTotals);
+      var matches=[];ap.forEach(function(a,i){var k=kp[i];if(k)matches.push({team1:a.team,total1:a.total,team2:k.team,total2:k.total});});
+      if(!matches.length){alert('Nessuna partita trovata.\nVerifica che i nomi squadra nel file corrispondano esattamente (case-insensitive) ai nomi in calendario.');input.value='';return;}
+      var preview=matches.map(function(m){return m.team1+' '+m.total1.toFixed(2)+' - '+m.total2.toFixed(2)+' '+m.team2+(neutral?'':' ('+(m.total1>m.total2?'VC/SF':m.total1===m.total2?'PC/PF':'SC/VF')+')');}).join('\n');
+      if(!confirm('Importare '+matches.length+' partite per G'+g+(neutral?' [NEUTRALE]':'')+'?\n\n'+preview)){input.value='';return;}
+      var cal=admGetCalendar(t,l);
+      if(!cal[String(g)])cal[String(g)]={};
+      matches.forEach(function(m){
+        var w1=m.total1>m.total2,d=m.total1===m.total2;
+        if(neutral){cal[String(g)][m.team1]=w1?'VF':(d?'PF':'SF');cal[String(g)][m.team2]=w1?'SF':(d?'PF':'VF');}
+        else{if(w1){cal[String(g)][m.team1]='VC';cal[String(g)][m.team2]='SF';}else if(d){cal[String(g)][m.team1]='PC';cal[String(g)][m.team2]='PF';}else{cal[String(g)][m.team1]='SC';cal[String(g)][m.team2]='VF';}}
+      });
+      localStorage.setItem('adm_cal_'+t+'_'+l,JSON.stringify(cal));
+      var appKey=(t==='tsm'&&l==='it')?'tsm_calendar_it':(t!=='slim'?'adm_cal_'+t+'_'+l:(l==='it'?'slim_calendar':'slim_calendar_'+l));
+      localStorage.setItem(appKey,JSON.stringify(cal));
+      gsSaveCalendario(t,l,cal);
+      var msg=document.createElement('div');msg.textContent='✅ G'+g+': '+matches.length+' partite importate'+(neutral?' [neutrale]':'');msg.style.cssText='position:fixed;top:70px;right:20px;background:#10b981;color:#fff;padding:8px 16px;border-radius:8px;font-weight:700;font-size:12px;z-index:9999';document.body.appendChild(msg);setTimeout(function(){msg.remove();},3000);
+      admLoadCalBody();
+    }catch(ex){alert('Errore parsing xlsx: '+ex.message);}
+    input.value='';
+  };
+  reader.readAsArrayBuffer(file);
+}
 // ═══════════════════════════════════════════════════════
 // ADMIN — Modulistica
 // ═══════════════════════════════════════════════════════
@@ -14883,7 +14977,20 @@ function admLoadCalBody() {
       +'</tr>';
   }
   h += '</tbody></table></div></div>';
-  el.innerHTML = h;
+  var _schStored=localStorage.getItem('adm_cal_schedule_'+torneoKey+'_'+legaKey);
+  var _schN=_schStored?Object.keys(JSON.parse(_schStored)).length:0;
+  var _gOpts=Array.from({length:giornate},function(_,i){return '<option value="'+(i+1)+'">G'+(i+1)+'</option>';}).join('');
+  var _impH='<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;align-items:center;padding:10px 14px;background:var(--bg2);border-radius:10px;border:1px solid var(--border)">'
+    +'<button onclick="document.getElementById(\'adm-cal-sch-file\').click()" style="padding:5px 12px;background:rgba(59,130,246,.15);border:1px solid rgba(59,130,246,.3);border-radius:6px;color:#3b82f6;font-size:12px;font-weight:700;cursor:pointer">📅 Calendario</button>'
+    +'<input type="file" id="adm-cal-sch-file" accept=".xlsx" style="display:none" onchange="admProcessCalScheduleXlsx(this)">'
+    +'<span style="font-size:11px;color:var(--text2)">'+(_schN?'✅ '+_schN+' gior.':'non importato')+'</span>'
+    +'<span style="color:var(--border);margin:0 6px">|</span>'
+    +'<select id="adm-cal-giornata-import" style="padding:5px 8px;background:var(--bg);border:1px solid var(--border);border-radius:6px;font-size:12px;color:var(--text);outline:none">'+_gOpts+'</select>'
+    +'<label style="font-size:12px;color:var(--text2);display:flex;align-items:center;gap:4px;cursor:pointer"><input type="checkbox" id="adm-cal-neutral"> Neutrale</label>'
+    +'<button onclick="document.getElementById(\'adm-cal-res-file\').click()" style="padding:5px 12px;background:rgba(16,185,129,.15);border:1px solid rgba(16,185,129,.3);border-radius:6px;color:#10b981;font-size:12px;font-weight:700;cursor:pointer">⚽ Risultati G</button>'
+    +'<input type="file" id="adm-cal-res-file" accept=".xlsx" style="display:none" onchange="admProcessGiornataXlsx(this)">'
+    +'</div>';
+  el.innerHTML=_impH+h;
 }
 function admGetStadio(torneoKey, legaKey) {
   // Legge prima il salvataggio Admin (dopo aver premuto Salva)
