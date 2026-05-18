@@ -1,4 +1,4 @@
-<!-- build:20260518_2039 -->
+<!-- build:20260518_2048 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260518_2039';
+  var BUILD='20260518_2048';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -3767,13 +3767,13 @@ function slimCalcStandings() {
       var team = tk;
       var lv = stadio[team] || stadio[team.toUpperCase()] || 1;
       var st = SLIM_STADIO_TABLE[lv] || {};
-      if (res==='VC'||res==='VF') {
+      if (res==='VC'||res==='VF'||res==='V') {
         s[team].v++; s[team].pt+=3;
         if (res==='VC') { s[team].cr += (st.cr_vittoria||0); }
-      } else if (res==='PC'||res==='PF') {
+      } else if (res==='PC'||res==='PF'||res==='P') {
         s[team].p++; s[team].pt+=1;
         if (res==='PC') { s[team].cr += (st.cr_pareggio||0); }
-      } else if (res==='SC'||res==='SF') {
+      } else if (res==='SC'||res==='SF'||res==='S') {
         s[team].s++;
         if (res==='SC') { s[team].cr += (st.cr_sconfitta||0); }
       }
@@ -4347,13 +4347,13 @@ function tsmCalcStandings() {
       if (!res || !s[team]) continue;
       var lv = stadio[team] || 1;
       var st = ST[String(lv)] || {};
-      if (res==='VC'||res==='VF') {
+      if (res==='VC'||res==='VF'||res==='V') {
         s[team].v++; s[team].pt+=3;
         if (res==='VC') s[team].cr += (st.cr_vittoria||0);
-      } else if (res==='PC'||res==='PF') {
+      } else if (res==='PC'||res==='PF'||res==='P') {
         s[team].p++; s[team].pt+=1;
         if (res==='PC') s[team].cr += (st.cr_pareggio||0);
-      } else if (res==='SC'||res==='SF') {
+      } else if (res==='SC'||res==='SF'||res==='S') {
         s[team].s++;
         if (res==='SC') s[team].cr += (st.cr_sconfitta||0);
       }
@@ -9051,8 +9051,8 @@ function admLoadCalBody() {
   var cal = admGetCalendar(torneoKey, legaKey);
   var teams = admGetTeams(torneoKey, legaKey);
   var giornate = (torneoKey==='tsm') ? (typeof TSM_TOTAL_GIORNATE!=='undefined'?TSM_TOTAL_GIORNATE:36) : (typeof SLIM_TOTAL_GIORNATE!=='undefined'?SLIM_TOTAL_GIORNATE:36);
-  var OPTS = ['','VC','VF','PC','PF','SC','SF'];
-  var RC = {VC:'#10b981',VF:'#34d399',PC:'#3b82f6',PF:'#60a5fa',SC:'#ef4444',SF:'#f87171'};
+  var OPTS = ['','VC','VF','V','PC','PF','P','SC','SF','S'];
+  var RC = {VC:'#10b981',VF:'#34d399',V:'#6ee7b7',PC:'#3b82f6',PF:'#60a5fa',P:'#93c5fd',SC:'#ef4444',SF:'#f87171',S:'#fca5a5'};
   function headerRow() {
     return '<tr style="background:var(--bg2);font-size:9px;font-weight:800;text-transform:uppercase;color:var(--text3);position:sticky;top:0;z-index:2">'
       +'<th style="padding:7px 12px;text-align:left;min-width:70px">Giornata</th>'
@@ -9079,14 +9079,20 @@ function admLoadCalBody() {
   }
   h += '</tbody></table></div></div>';
   var _schStored=localStorage.getItem('adm_cal_schedule_'+torneoKey+'_'+legaKey);
-  var _schN=_schStored?Object.keys(JSON.parse(_schStored)).length:0;
+  var _schParsed=_schStored?JSON.parse(_schStored):null;
+  var _schGiornate=_schParsed?(_schParsed.giornate||_schParsed):{};
+  var _schN=Object.keys(_schGiornate).length;
+  var _schAr=_schParsed?(_schParsed.andata_ritorno||0):0;
+  var _schNe=_schParsed?(_schParsed.neutre||0):0;
   var _gOpts=Array.from({length:giornate},function(_,i){return '<option value="'+(i+1)+'">G'+(i+1)+'</option>';}).join('');
   var _impH='<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;align-items:center;padding:10px 14px;background:var(--bg2);border-radius:10px;border:1px solid var(--border)">'
     +'<button onclick="document.getElementById(\'adm-cal-sch-file\').click()" style="padding:5px 12px;background:rgba(59,130,246,.15);border:1px solid rgba(59,130,246,.3);border-radius:6px;color:#3b82f6;font-size:12px;font-weight:700;cursor:pointer">📅 Calendario</button>'
     +'<input type="file" id="adm-cal-sch-file" accept=".xlsx" style="display:none" onchange="admProcessCalScheduleXlsx(this)">'
+    +'<label style="font-size:11px;color:var(--text2)">A/R:<input id="adm-cal-ar" type="number" min="0" value="'+_schAr+'" style="width:42px;margin-left:4px;padding:2px 4px;background:var(--bg);border:1px solid var(--border);border-radius:4px;color:var(--text);font-size:11px;outline:none"></label>'
+    +'<label style="font-size:11px;color:var(--text2)">N:<input id="adm-cal-ne" type="number" min="0" value="'+_schNe+'" style="width:42px;margin-left:4px;padding:2px 4px;background:var(--bg);border:1px solid var(--border);border-radius:4px;color:var(--text);font-size:11px;outline:none"></label>'
     +'<span style="font-size:11px;color:var(--text2)">'+(_schN?'✅ '+_schN+' gior.':'non importato')+'</span>'
     +'<span style="color:var(--border);margin:0 6px">|</span>'
-    +'<select id="adm-cal-giornata-import" style="padding:5px 8px;background:var(--bg);border:1px solid var(--border);border-radius:6px;font-size:12px;color:var(--text);outline:none">'+_gOpts+'</select>'
+    +'<select id="adm-cal-giornata-import" onchange="admCalAutoNeutral()" style="padding:5px 8px;background:var(--bg);border:1px solid var(--border);border-radius:6px;font-size:12px;color:var(--text);outline:none">'+_gOpts+'</select>'
     +'<label style="font-size:12px;color:var(--text2);display:flex;align-items:center;gap:4px;cursor:pointer"><input type="checkbox" id="adm-cal-neutral"> Neutrale</label>'
     +'<button onclick="document.getElementById(\'adm-cal-res-file\').click()" style="padding:5px 12px;background:rgba(16,185,129,.15);border:1px solid rgba(16,185,129,.3);border-radius:6px;color:#10b981;font-size:12px;font-weight:700;cursor:pointer">⚽ Risultati G</button>'
     +'<input type="file" id="adm-cal-res-file" accept=".xlsx" style="display:none" onchange="admProcessGiornataXlsx(this)">'
@@ -9188,9 +9194,12 @@ function admProcessCalScheduleXlsx(input){
       var nG=Object.keys(schedule).length;
       if(!nG){alert('Nessuna giornata trovata. Verifica il formato file (atteso: "Nª Giornata" in col A o G).');input.value='';return;}
       var existing=localStorage.getItem('adm_cal_schedule_'+t+'_'+l);
-      if(existing&&!confirm('Schedule già presente ('+Object.keys(JSON.parse(existing)).length+' giornate). Sovrascrivere?')){input.value='';return;}
-      localStorage.setItem('adm_cal_schedule_'+t+'_'+l,JSON.stringify(schedule));
-      gsSaveKey('adm_cal_schedule_'+t+'_'+l,JSON.stringify(schedule));
+      if(existing){var exP=JSON.parse(existing);var exN=Object.keys(exP.giornate||exP).length;if(!confirm('Schedule già presente ('+exN+' giornate). Sovrascrivere?')){input.value='';return;}}
+      var ar=parseInt((document.getElementById('adm-cal-ar')||{}).value)||0;
+      var ne=parseInt((document.getElementById('adm-cal-ne')||{}).value)||0;
+      var toStore={giornate:schedule,andata_ritorno:ar,neutre:ne};
+      localStorage.setItem('adm_cal_schedule_'+t+'_'+l,JSON.stringify(toStore));
+      gsSaveKey('adm_cal_schedule_'+t+'_'+l,JSON.stringify(toStore));
       var msg=document.createElement('div');msg.textContent='✅ Calendario importato: '+nG+' giornate';msg.style.cssText='position:fixed;top:70px;right:20px;background:#3b82f6;color:#fff;padding:8px 16px;border-radius:8px;font-weight:700;font-size:12px;z-index:9999';document.body.appendChild(msg);setTimeout(function(){msg.remove();},3000);
       admLoadCalBody();
     }catch(ex){alert('Errore parsing xlsx: '+ex.message);}
@@ -9227,13 +9236,13 @@ function admProcessGiornataXlsx(input){
       var ap=pairTP(aTeams,aTotals),kp=pairTP(kTeams,kTotals);
       var matches=[];ap.forEach(function(a,i){var k=kp[i];if(k)matches.push({team1:a.team,total1:a.total,team2:k.team,total2:k.total});});
       if(!matches.length){alert('Nessuna partita trovata.\nVerifica che i nomi squadra nel file corrispondano esattamente (case-insensitive) ai nomi in calendario.');input.value='';return;}
-      var preview=matches.map(function(m){return m.team1+' '+m.total1.toFixed(2)+' - '+m.total2.toFixed(2)+' '+m.team2+(neutral?'':' ('+(m.total1>m.total2?'VC/SF':m.total1===m.total2?'PC/PF':'SC/VF')+')');}).join('\n');
+      var preview=matches.map(function(m){var w1=m.total1>m.total2,d=m.total1===m.total2;return m.team1+' '+m.total1.toFixed(2)+' - '+m.total2.toFixed(2)+' '+m.team2+' ('+(neutral?(w1?'V/S':d?'P/P':'S/V'):(w1?'VC/SF':d?'PC/PF':'SC/VF'))+')';}).join('\n');
       if(!confirm('Importare '+matches.length+' partite per G'+g+(neutral?' [NEUTRALE]':'')+'?\n\n'+preview)){input.value='';return;}
       var cal=admGetCalendar(t,l);
       if(!cal[String(g)])cal[String(g)]={};
       matches.forEach(function(m){
         var w1=m.total1>m.total2,d=m.total1===m.total2;
-        if(neutral){cal[String(g)][m.team1]=w1?'VF':(d?'PF':'SF');cal[String(g)][m.team2]=w1?'SF':(d?'PF':'VF');}
+        if(neutral){cal[String(g)][m.team1]=w1?'V':(d?'P':'S');cal[String(g)][m.team2]=w1?'S':(d?'P':'V');}
         else{if(w1){cal[String(g)][m.team1]='VC';cal[String(g)][m.team2]='SF';}else if(d){cal[String(g)][m.team1]='PC';cal[String(g)][m.team2]='PF';}else{cal[String(g)][m.team1]='SC';cal[String(g)][m.team2]='VF';}}
       });
       localStorage.setItem('adm_cal_'+t+'_'+l,JSON.stringify(cal));
@@ -9246,6 +9255,18 @@ function admProcessGiornataXlsx(input){
     input.value='';
   };
   reader.readAsArrayBuffer(file);
+}
+function admCalAutoNeutral(){
+  var t=document.getElementById('adm-cal-torneo').value;
+  var l=document.getElementById('adm-cal-lega').value;
+  var g=parseInt((document.getElementById('adm-cal-giornata-import')||{}).value)||0;
+  var chk=document.getElementById('adm-cal-neutral');
+  if(!chk||!g)return;
+  var ar=parseInt((document.getElementById('adm-cal-ar')||{}).value)||0;
+  var ne=parseInt((document.getElementById('adm-cal-ne')||{}).value)||0;
+  var sch=localStorage.getItem('adm_cal_schedule_'+t+'_'+l);
+  if(sch){try{var meta=JSON.parse(sch);ar=meta.andata_ritorno||ar;ne=meta.neutre||ne;}catch(e){}}
+  if(ar>0)chk.checked=g>ar&&g<=(ar+ne);
 }
 function admAzzeraRisultatiCal(){
   var t=document.getElementById('adm-cal-torneo').value;
@@ -10997,13 +11018,13 @@ function slimCalcStandings() {
       var team = tk;
       var lv = stadio[team] || stadio[team.toUpperCase()] || 1;
       var st = SLIM_STADIO_TABLE[lv] || {};
-      if (res==='VC'||res==='VF') {
+      if (res==='VC'||res==='VF'||res==='V') {
         s[team].v++; s[team].pt+=3;
         if (res==='VC') { s[team].cr += (st.cr_vittoria||0); }
-      } else if (res==='PC'||res==='PF') {
+      } else if (res==='PC'||res==='PF'||res==='P') {
         s[team].p++; s[team].pt+=1;
         if (res==='PC') { s[team].cr += (st.cr_pareggio||0); }
-      } else if (res==='SC'||res==='SF') {
+      } else if (res==='SC'||res==='SF'||res==='S') {
         s[team].s++;
         if (res==='SC') { s[team].cr += (st.cr_sconfitta||0); }
       }
@@ -11577,13 +11598,13 @@ function tsmCalcStandings() {
       if (!res || !s[team]) continue;
       var lv = stadio[team] || 1;
       var st = ST[String(lv)] || {};
-      if (res==='VC'||res==='VF') {
+      if (res==='VC'||res==='VF'||res==='V') {
         s[team].v++; s[team].pt+=3;
         if (res==='VC') s[team].cr += (st.cr_vittoria||0);
-      } else if (res==='PC'||res==='PF') {
+      } else if (res==='PC'||res==='PF'||res==='P') {
         s[team].p++; s[team].pt+=1;
         if (res==='PC') s[team].cr += (st.cr_pareggio||0);
-      } else if (res==='SC'||res==='SF') {
+      } else if (res==='SC'||res==='SF'||res==='S') {
         s[team].s++;
         if (res==='SC') s[team].cr += (st.cr_sconfitta||0);
       }
@@ -14967,8 +14988,8 @@ function admLoadCalBody() {
   var cal = admGetCalendar(torneoKey, legaKey);
   var teams = admGetTeams(torneoKey, legaKey);
   var giornate = (torneoKey==='tsm') ? (typeof TSM_TOTAL_GIORNATE!=='undefined'?TSM_TOTAL_GIORNATE:36) : (typeof SLIM_TOTAL_GIORNATE!=='undefined'?SLIM_TOTAL_GIORNATE:36);
-  var OPTS = ['','VC','VF','PC','PF','SC','SF'];
-  var RC = {VC:'#10b981',VF:'#34d399',PC:'#3b82f6',PF:'#60a5fa',SC:'#ef4444',SF:'#f87171'};
+  var OPTS = ['','VC','VF','V','PC','PF','P','SC','SF','S'];
+  var RC = {VC:'#10b981',VF:'#34d399',V:'#6ee7b7',PC:'#3b82f6',PF:'#60a5fa',P:'#93c5fd',SC:'#ef4444',SF:'#f87171',S:'#fca5a5'};
   function headerRow() {
     return '<tr style="background:var(--bg2);font-size:9px;font-weight:800;text-transform:uppercase;color:var(--text3);position:sticky;top:0;z-index:2">'
       +'<th style="padding:7px 12px;text-align:left;min-width:70px">Giornata</th>'
@@ -14995,14 +15016,20 @@ function admLoadCalBody() {
   }
   h += '</tbody></table></div></div>';
   var _schStored=localStorage.getItem('adm_cal_schedule_'+torneoKey+'_'+legaKey);
-  var _schN=_schStored?Object.keys(JSON.parse(_schStored)).length:0;
+  var _schParsed=_schStored?JSON.parse(_schStored):null;
+  var _schGiornate=_schParsed?(_schParsed.giornate||_schParsed):{};
+  var _schN=Object.keys(_schGiornate).length;
+  var _schAr=_schParsed?(_schParsed.andata_ritorno||0):0;
+  var _schNe=_schParsed?(_schParsed.neutre||0):0;
   var _gOpts=Array.from({length:giornate},function(_,i){return '<option value="'+(i+1)+'">G'+(i+1)+'</option>';}).join('');
   var _impH='<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;align-items:center;padding:10px 14px;background:var(--bg2);border-radius:10px;border:1px solid var(--border)">'
     +'<button onclick="document.getElementById(\'adm-cal-sch-file\').click()" style="padding:5px 12px;background:rgba(59,130,246,.15);border:1px solid rgba(59,130,246,.3);border-radius:6px;color:#3b82f6;font-size:12px;font-weight:700;cursor:pointer">📅 Calendario</button>'
     +'<input type="file" id="adm-cal-sch-file" accept=".xlsx" style="display:none" onchange="admProcessCalScheduleXlsx(this)">'
+    +'<label style="font-size:11px;color:var(--text2)">A/R:<input id="adm-cal-ar" type="number" min="0" value="'+_schAr+'" style="width:42px;margin-left:4px;padding:2px 4px;background:var(--bg);border:1px solid var(--border);border-radius:4px;color:var(--text);font-size:11px;outline:none"></label>'
+    +'<label style="font-size:11px;color:var(--text2)">N:<input id="adm-cal-ne" type="number" min="0" value="'+_schNe+'" style="width:42px;margin-left:4px;padding:2px 4px;background:var(--bg);border:1px solid var(--border);border-radius:4px;color:var(--text);font-size:11px;outline:none"></label>'
     +'<span style="font-size:11px;color:var(--text2)">'+(_schN?'✅ '+_schN+' gior.':'non importato')+'</span>'
     +'<span style="color:var(--border);margin:0 6px">|</span>'
-    +'<select id="adm-cal-giornata-import" style="padding:5px 8px;background:var(--bg);border:1px solid var(--border);border-radius:6px;font-size:12px;color:var(--text);outline:none">'+_gOpts+'</select>'
+    +'<select id="adm-cal-giornata-import" onchange="admCalAutoNeutral()" style="padding:5px 8px;background:var(--bg);border:1px solid var(--border);border-radius:6px;font-size:12px;color:var(--text);outline:none">'+_gOpts+'</select>'
     +'<label style="font-size:12px;color:var(--text2);display:flex;align-items:center;gap:4px;cursor:pointer"><input type="checkbox" id="adm-cal-neutral"> Neutrale</label>'
     +'<button onclick="document.getElementById(\'adm-cal-res-file\').click()" style="padding:5px 12px;background:rgba(16,185,129,.15);border:1px solid rgba(16,185,129,.3);border-radius:6px;color:#10b981;font-size:12px;font-weight:700;cursor:pointer">⚽ Risultati G</button>'
     +'<input type="file" id="adm-cal-res-file" accept=".xlsx" style="display:none" onchange="admProcessGiornataXlsx(this)">'
