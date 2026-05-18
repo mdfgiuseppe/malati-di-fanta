@@ -1,4 +1,4 @@
-<!-- build:20260518_2109 -->
+<!-- build:20260518_2142 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260518_2109';
+  var BUILD='20260518_2142';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -9136,8 +9136,10 @@ function admGetCalendar(torneoKey, legaKey) {
       Object.keys(parsed).forEach(function(g) {
         if (typeof parsed[g]!=='object'||!parsed[g]) return;
         if (!base[g]) base[g] = {};
+        var bkMap={};Object.keys(base[g]).forEach(function(k){bkMap[k.toUpperCase()]=k;});
         Object.keys(parsed[g]).forEach(function(team) {
-          base[g][team] = parsed[g][team];
+          var bk=bkMap[team.toUpperCase()]||team;
+          base[g][bk]=parsed[g][team];
         });
       });
     } catch(e) {}
@@ -15070,8 +15072,10 @@ function admGetCalendar(torneoKey, legaKey) {
       Object.keys(parsed).forEach(function(g) {
         if (typeof parsed[g]!=='object'||!parsed[g]) return;
         if (!base[g]) base[g] = {};
+        var bkMap={};Object.keys(base[g]).forEach(function(k){bkMap[k.toUpperCase()]=k;});
         Object.keys(parsed[g]).forEach(function(team) {
-          base[g][team] = parsed[g][team];
+          var bk=bkMap[team.toUpperCase()]||team;
+          base[g][bk]=parsed[g][team];
         });
       });
     } catch(e) {}
