@@ -1,4 +1,4 @@
-<!-- build:20260518_2204 -->
+<!-- build:20260518_2231 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260518_2204';
+  var BUILD='20260518_2231';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -9046,7 +9046,7 @@ function admLoadCalBody() {
   var OPTS = ['','VC','VF','V','PC','PF','P','SC','SF','S'];
   var RC = {VC:'#10b981',VF:'#34d399',V:'#6ee7b7',PC:'#3b82f6',PF:'#60a5fa',P:'#93c5fd',SC:'#ef4444',SF:'#f87171',S:'#fca5a5'};
   var RC2 = {VC:'rgba(16,185,129,.15);color:#10b981',VF:'rgba(16,185,129,.1);color:#34d399',V:'rgba(110,231,183,.15);color:#6ee7b7',PC:'rgba(59,130,246,.12);color:#3b82f6',PF:'rgba(59,130,246,.08);color:#60a5fa',P:'rgba(147,197,253,.12);color:#93c5fd',SC:'rgba(239,68,68,.12);color:#ef4444',SF:'rgba(239,68,68,.08);color:#f87171',S:'rgba(252,165,165,.12);color:#fca5a5'};
-  var _logos={};if(typeof FANTASY_LOGOS!=='undefined')Object.keys(FANTASY_LOGOS).forEach(function(k){_logos[k.toUpperCase()]=FANTASY_LOGOS[k];});
+  var _logos={};
   function headerRow() {
     return '<tr style="background:var(--bg2);font-size:9px;font-weight:800;text-transform:uppercase;color:var(--text3);position:sticky;top:0;z-index:2">'
       +'<th style="padding:7px 12px;text-align:left;min-width:70px">Giornata</th>'
@@ -9067,7 +9067,7 @@ function admLoadCalBody() {
     +'<span style="color:var(--border);margin:0 6px">|</span>'
     +'<select id="adm-cal-giornata-import" onchange="admCalAutoNeutral()" style="padding:5px 8px;background:var(--bg);border:1px solid var(--border);border-radius:6px;font-size:12px;color:var(--text);outline:none">'+_gOpts+'</select>'
     +'<label style="font-size:12px;color:var(--text2);display:flex;align-items:center;gap:4px;cursor:pointer"><input type="checkbox" id="adm-cal-neutral"> Neutrale</label>'
-    +'<button onclick="document.getElementById(\'adm-cal-res-file\').click()" style="padding:5px 12px;background:rgba(16,185,129,.15);border:1px solid rgba(16,185,129,.3);border-radius:6px;color:#10b981;font-size:12px;font-weight:700;cursor:pointer">⚽ Import Giornata</button>'
+    +'<button onclick="document.getElementById(\'adm-cal-res-file\').click()" style="padding:5px 12px;background:rgba(16,185,129,.15);border:1px solid rgba(16,185,129,.3);border-radius:6px;color:#10b981;font-size:12px;font-weight:700;cursor:pointer">⚽ Importa Giornata</button>'
     +'<input type="file" id="adm-cal-res-file" accept=".xlsx" style="display:none" onchange="admProcessGiornataXlsx(this)">'
     +'<button onclick="admAzzeraRisultatiCal()" style="padding:5px 12px;background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.3);border-radius:6px;color:#ef4444;font-size:12px;font-weight:700;cursor:pointer">🗑 Azzera</button>'
     +'</div>';
@@ -9259,18 +9259,29 @@ function admProcessGiornataXlsx(input){
       var wb=XLSX.read(e.target.result,{type:'array'});
       var rows=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{header:1,defval:''});
       var aTeams=[],aTotals=[],kTeams=[],kTotals=[];
+      function _parseTot(s){var m=s.match(/(\d+[,.]\d+|\d+)/);return m?parseFloat(m[1].replace(',','.')):null;}
       rows.forEach(function(row,ri){
         var cA=(row[0]||'').toString().trim(),cK=(row[10]||'').toString().trim();
-        var mA=cA.match(/^TOTALE[:\s]+(\d+[,.]?\d*)/i),mK=cK.match(/^TOTALE[:\s]+(\d+[,.]?\d*)/i);
-        if(mA)aTotals.push({ri:ri,val:parseFloat(mA[1].replace(',','.'))});
+        if(/TOTALE/i.test(cA)){var v=_parseTot(cA);if(v===null){var nb=(row[1]||'').toString().trim();v=_parseTot(nb);}if(v!==null)aTotals.push({ri:ri,val:v});}
         else if(_isAllCaps(cA)&&_findT(cA))aTeams.push({ri:ri,name:_findT(cA)});
-        if(mK)kTotals.push({ri:ri,val:parseFloat(mK[1].replace(',','.'))});
+        if(/TOTALE/i.test(cK)){var v=_parseTot(cK);if(v===null){var nb=(row[11]||'').toString().trim();v=_parseTot(nb);}if(v!==null)kTotals.push({ri:ri,val:v});}
         else if(_isAllCaps(cK)&&_findT(cK))kTeams.push({ri:ri,name:_findT(cK)});
       });
       function pairTP(ts,tots){return ts.map(function(tm,ti){var nRi=(ts[ti+1]||{}).ri||Infinity;var tot=tots.find(function(x){return x.ri>tm.ri&&x.ri<nRi;});return{team:tm.name,total:tot?tot.val:null};}).filter(function(x){return x.total!==null;});}
       var ap=pairTP(aTeams,aTotals),kp=pairTP(kTeams,kTotals);
-      var matches=[];ap.forEach(function(a,i){var k=kp[i];if(k)matches.push({team1:a.team,total1:a.total,team2:k.team,total2:k.total});});
-      if(!matches.length){alert('Nessuna partita trovata.\nVerifica che i nomi squadra nel file corrispondano esattamente (case-insensitive) ai nomi in calendario.');input.value='';return;}
+      var matches=[];
+      if(ap.length>0&&kp.length>0){
+        ap.forEach(function(a,i){var k=kp[i];if(k)matches.push({team1:a.team,total1:a.total,team2:k.team,total2:k.total});});
+      }
+      if(!matches.length&&ap.length>=2){
+        for(var i=0;i<ap.length-1;i+=2){var a=ap[i],b=ap[i+1];if(a&&b)matches.push({team1:a.team,total1:a.total,team2:b.team,total2:b.total});}
+      }
+      if(!matches.length){
+        var dbg='Colonna A: '+aTeams.map(function(x){return x.name+'(totale:'+aTotals.filter(function(t){return t.ri>x.ri;}).slice(0,1).map(function(t){return t.val;}).join('')+')'}).join(', ')
+          +'\nColonna K: '+kTeams.map(function(x){return x.name;}).join(', ');
+        alert('Nessuna partita trovata.\nVerifica che i nomi squadra nel file corrispondano (case-insensitive) ai nomi in calendario.\n\n'+dbg);
+        input.value='';return;
+      }
       var preview=matches.map(function(m){var w1=m.total1>m.total2,d=m.total1===m.total2;return m.team1+' '+m.total1.toFixed(2)+' - '+m.total2.toFixed(2)+' '+m.team2+' ('+(neutral?(w1?'V/S':d?'P/P':'S/V'):(w1?'VC/SF':d?'PC/PF':'SC/VF'))+')';}).join('\n');
       if(!confirm('Importare '+matches.length+' partite per G'+g+(neutral?' [NEUTRALE]':'')+'?\n\n'+preview)){input.value='';return;}
       var cal=admGetCalendar(t,l);
@@ -9332,7 +9343,7 @@ function admAzzeraRisultatiCal(){
 function calRenderGeneric(t, l, bodyId, nG, teams, callbackFn) {
   var el = document.getElementById(bodyId); if(!el) return;
   var viewKey = '_calView_'+t+'_'+l;
-  var view = window[viewKey] || 'rendimento';
+  var view = window[viewKey] || 'calendario';
   var cal = admGetCalendar(t, l);
   var schRaw = localStorage.getItem('adm_cal_schedule_'+t+'_'+l);
   var schParsed = schRaw ? (function(){try{return JSON.parse(schRaw);}catch(e){return null;}})() : null;
@@ -15110,7 +15121,7 @@ function admLoadCalBody() {
   var OPTS = ['','VC','VF','V','PC','PF','P','SC','SF','S'];
   var RC = {VC:'#10b981',VF:'#34d399',V:'#6ee7b7',PC:'#3b82f6',PF:'#60a5fa',P:'#93c5fd',SC:'#ef4444',SF:'#f87171',S:'#fca5a5'};
   var RC2 = {VC:'rgba(16,185,129,.15);color:#10b981',VF:'rgba(16,185,129,.1);color:#34d399',V:'rgba(110,231,183,.15);color:#6ee7b7',PC:'rgba(59,130,246,.12);color:#3b82f6',PF:'rgba(59,130,246,.08);color:#60a5fa',P:'rgba(147,197,253,.12);color:#93c5fd',SC:'rgba(239,68,68,.12);color:#ef4444',SF:'rgba(239,68,68,.08);color:#f87171',S:'rgba(252,165,165,.12);color:#fca5a5'};
-  var _logos={};if(typeof FANTASY_LOGOS!=='undefined')Object.keys(FANTASY_LOGOS).forEach(function(k){_logos[k.toUpperCase()]=FANTASY_LOGOS[k];});
+  var _logos={};
   function headerRow() {
     return '<tr style="background:var(--bg2);font-size:9px;font-weight:800;text-transform:uppercase;color:var(--text3);position:sticky;top:0;z-index:2">'
       +'<th style="padding:7px 12px;text-align:left;min-width:70px">Giornata</th>'
@@ -15131,7 +15142,7 @@ function admLoadCalBody() {
     +'<span style="color:var(--border);margin:0 6px">|</span>'
     +'<select id="adm-cal-giornata-import" onchange="admCalAutoNeutral()" style="padding:5px 8px;background:var(--bg);border:1px solid var(--border);border-radius:6px;font-size:12px;color:var(--text);outline:none">'+_gOpts+'</select>'
     +'<label style="font-size:12px;color:var(--text2);display:flex;align-items:center;gap:4px;cursor:pointer"><input type="checkbox" id="adm-cal-neutral"> Neutrale</label>'
-    +'<button onclick="document.getElementById(\'adm-cal-res-file\').click()" style="padding:5px 12px;background:rgba(16,185,129,.15);border:1px solid rgba(16,185,129,.3);border-radius:6px;color:#10b981;font-size:12px;font-weight:700;cursor:pointer">⚽ Import Giornata</button>'
+    +'<button onclick="document.getElementById(\'adm-cal-res-file\').click()" style="padding:5px 12px;background:rgba(16,185,129,.15);border:1px solid rgba(16,185,129,.3);border-radius:6px;color:#10b981;font-size:12px;font-weight:700;cursor:pointer">⚽ Importa Giornata</button>'
     +'<input type="file" id="adm-cal-res-file" accept=".xlsx" style="display:none" onchange="admProcessGiornataXlsx(this)">'
     +'<button onclick="admAzzeraRisultatiCal()" style="padding:5px 12px;background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.3);border-radius:6px;color:#ef4444;font-size:12px;font-weight:700;cursor:pointer">🗑 Azzera</button>'
     +'</div>';
