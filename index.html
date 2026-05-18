@@ -1,4 +1,4 @@
-<!-- build:20260518_1852 -->
+<!-- build:20260518_1857 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260518_1852';
+  var BUILD='20260518_1857';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -5948,7 +5948,7 @@ function admProcessCoppaXlsx(torneoKey,coppaKey,file){
         var a=(row[3]||'').toString().trim();
         if(!h||!a)return;
         if(/giornata/i.test(h)||/squadra/i.test(h))return;
-        var andRes=(row[5]||'').toString().trim();
+        var andRes=(row[4]||'').toString().trim();
         var m1=andRes.match(/^(\d+)-(\d+)$/);
         if(!m1)return;
         var rh1=parseInt(m1[1]),ra1=parseInt(m1[2]);
@@ -5956,7 +5956,7 @@ function admProcessCoppaXlsx(torneoKey,coppaKey,file){
           if(!phaseMatches[currentPhase])phaseMatches[currentPhase]=[];
           phaseMatches[currentPhase].push({h:h,a:a,rh:rh1,ra:ra1});
         } else {
-          var ritRes=(row[11]||'').toString().trim();
+          var ritRes=(row[10]||'').toString().trim();
           var m2=ritRes.match(/^(\d+)-(\d+)$/);
           var ra2='',rh2='',esito='';
           if(m2){
@@ -5970,11 +5970,7 @@ function admProcessCoppaXlsx(torneoKey,coppaKey,file){
         }
       });
       var found=Object.keys(phaseMatches);
-      if(!found.length){
-        var _dbg=rows.slice(0,20).map(function(r,i){return 'R'+(i+1)+': '+r.slice(0,8).map(function(v){return JSON.stringify(v);}).join(' | ');}).join('\n');
-        alert('Nessun risultato trovato.\n\nPrime righe xlsx:\n'+_dbg);
-        return;
-      }
+      if(!found.length){alert('Nessun risultato trovato. Verifica che il file sia nel formato corretto (Quarti/Semifinali/Finale con risultati A-B).');return;}
       var alreadyPresent=found.filter(function(ph){return data[ph]&&data[ph].length;});
       if(alreadyPresent.length&&!confirm('I seguenti turni sono già presenti e verranno sovrascritti:\n'+alreadyPresent.join(', ')+'\n\nContinuare?'))return;
       Object.keys(phaseMatches).forEach(function(ph){data[ph]=phaseMatches[ph];});
