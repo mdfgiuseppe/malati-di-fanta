@@ -1,4 +1,4 @@
-<!-- build:20260518_2048 -->
+<!-- build:20260518_2058 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260518_2048';
+  var BUILD='20260518_2058';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -9094,7 +9094,7 @@ function admLoadCalBody() {
     +'<span style="color:var(--border);margin:0 6px">|</span>'
     +'<select id="adm-cal-giornata-import" onchange="admCalAutoNeutral()" style="padding:5px 8px;background:var(--bg);border:1px solid var(--border);border-radius:6px;font-size:12px;color:var(--text);outline:none">'+_gOpts+'</select>'
     +'<label style="font-size:12px;color:var(--text2);display:flex;align-items:center;gap:4px;cursor:pointer"><input type="checkbox" id="adm-cal-neutral"> Neutrale</label>'
-    +'<button onclick="document.getElementById(\'adm-cal-res-file\').click()" style="padding:5px 12px;background:rgba(16,185,129,.15);border:1px solid rgba(16,185,129,.3);border-radius:6px;color:#10b981;font-size:12px;font-weight:700;cursor:pointer">⚽ Risultati G</button>'
+    +'<button onclick="document.getElementById(\'adm-cal-res-file\').click()" style="padding:5px 12px;background:rgba(16,185,129,.15);border:1px solid rgba(16,185,129,.3);border-radius:6px;color:#10b981;font-size:12px;font-weight:700;cursor:pointer">⚽ Import Giornata</button>'
     +'<input type="file" id="adm-cal-res-file" accept=".xlsx" style="display:none" onchange="admProcessGiornataXlsx(this)">'
     +'<button onclick="admAzzeraRisultatiCal()" style="padding:5px 12px;background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.3);border-radius:6px;color:#ef4444;font-size:12px;font-weight:700;cursor:pointer">🗑 Azzera</button>'
     +'</div>';
@@ -15031,7 +15031,7 @@ function admLoadCalBody() {
     +'<span style="color:var(--border);margin:0 6px">|</span>'
     +'<select id="adm-cal-giornata-import" onchange="admCalAutoNeutral()" style="padding:5px 8px;background:var(--bg);border:1px solid var(--border);border-radius:6px;font-size:12px;color:var(--text);outline:none">'+_gOpts+'</select>'
     +'<label style="font-size:12px;color:var(--text2);display:flex;align-items:center;gap:4px;cursor:pointer"><input type="checkbox" id="adm-cal-neutral"> Neutrale</label>'
-    +'<button onclick="document.getElementById(\'adm-cal-res-file\').click()" style="padding:5px 12px;background:rgba(16,185,129,.15);border:1px solid rgba(16,185,129,.3);border-radius:6px;color:#10b981;font-size:12px;font-weight:700;cursor:pointer">⚽ Risultati G</button>'
+    +'<button onclick="document.getElementById(\'adm-cal-res-file\').click()" style="padding:5px 12px;background:rgba(16,185,129,.15);border:1px solid rgba(16,185,129,.3);border-radius:6px;color:#10b981;font-size:12px;font-weight:700;cursor:pointer">⚽ Import Giornata</button>'
     +'<input type="file" id="adm-cal-res-file" accept=".xlsx" style="display:none" onchange="admProcessGiornataXlsx(this)">'
     +'<button onclick="admAzzeraRisultatiCal()" style="padding:5px 12px;background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.3);border-radius:6px;color:#ef4444;font-size:12px;font-weight:700;cursor:pointer">🗑 Azzera</button>'
     +'</div>';
