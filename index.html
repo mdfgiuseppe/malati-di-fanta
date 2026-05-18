@@ -1,4 +1,4 @@
-<!-- build:20260518_2058 -->
+<!-- build:20260518_2109 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260518_2058';
+  var BUILD='20260518_2109';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -9133,16 +9133,13 @@ function admGetCalendar(torneoKey, legaKey) {
   if (stored) {
     try {
       var parsed = JSON.parse(stored);
-      var hasData = Object.values(parsed).some(function(g){ return Object.values(g).some(function(v){return v;}); });
-      if (hasData) {
-        // Merge: le modifiche admin sovrascrivono il base
-        Object.keys(parsed).forEach(function(g) {
-          if (!base[g]) base[g] = {};
-          Object.keys(parsed[g]).forEach(function(team) {
-            base[g][team] = parsed[g][team];
-          });
+      Object.keys(parsed).forEach(function(g) {
+        if (typeof parsed[g]!=='object'||!parsed[g]) return;
+        if (!base[g]) base[g] = {};
+        Object.keys(parsed[g]).forEach(function(team) {
+          base[g][team] = parsed[g][team];
         });
-      }
+      });
     } catch(e) {}
   }
   return base;
@@ -15070,16 +15067,13 @@ function admGetCalendar(torneoKey, legaKey) {
   if (stored) {
     try {
       var parsed = JSON.parse(stored);
-      var hasData = Object.values(parsed).some(function(g){ return Object.values(g).some(function(v){return v;}); });
-      if (hasData) {
-        // Merge: le modifiche admin sovrascrivono il base
-        Object.keys(parsed).forEach(function(g) {
-          if (!base[g]) base[g] = {};
-          Object.keys(parsed[g]).forEach(function(team) {
-            base[g][team] = parsed[g][team];
-          });
+      Object.keys(parsed).forEach(function(g) {
+        if (typeof parsed[g]!=='object'||!parsed[g]) return;
+        if (!base[g]) base[g] = {};
+        Object.keys(parsed[g]).forEach(function(team) {
+          base[g][team] = parsed[g][team];
         });
-      }
+      });
     } catch(e) {}
   }
   return base;
