@@ -1,4 +1,4 @@
-<!-- build:20260517_1645 -->
+<!-- build:20260518_1847 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260517_1645';
+  var BUILD='20260518_1847';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -3512,11 +3512,11 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
         <select id="adm-cop-torneo" onchange="admLoadCoppeTorneo()" style="padding:8px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;outline:none">
           <option value="">-- Seleziona Torneo --</option>
         </select>
-        <select id="adm-cop-coppa" onchange="admLoadCoppaEditor()" style="padding:8px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;outline:none">
-          <option value="">-- Seleziona Coppa --</option>
-        </select>
         <select id="adm-qualif-select" onchange="admLoadQualifPanel()" style="padding:8px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;outline:none">
           <option value="">-- Seleziona Qualificazione --</option>
+        </select>
+        <select id="adm-cop-coppa" onchange="admLoadCoppaEditor()" style="padding:8px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;outline:none">
+          <option value="">-- Seleziona Coppa --</option>
         </select>
         <button id="adm-cop-add-btn" onclick="admAddCoppa()" style="display:none;padding:8px 14px;background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.2);color:#10b981;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer">+ Nuova Coppa</button>
         <button id="adm-qualif-add-btn" onclick="admAddQualif()" style="display:none;padding:8px 14px;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.2);color:#f59e0b;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer">+ Crea Qualificazione</button>
@@ -6630,7 +6630,7 @@ function admLoadCoppaEditor() {
     h+='<button onclick="admGenBracketFromQualif(\''+torneoKey+'\',\''+coppaKey+'\')" style="background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.2);color:#10b981;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer">&#128202; Genera accoppiamenti</button>';
   }
   h+='<button onclick="admTriggerCoppaImport(\''+torneoKey+'\',\''+coppaKey+'\')" style="background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.2);color:#3b82f6;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer">&#128229; Importa Risultati</button>';
-  h+='<button onclick="admShowBracketEditor()" style="background:rgba(107,114,128,.15);border:1px solid rgba(107,114,128,.3);color:var(--text);border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer">&#9998; Modifica Bracket</button>';
+  h+='<button onclick="admToggleBracketEditor()" style="background:rgba(107,114,128,.15);border:1px solid rgba(107,114,128,.3);color:var(--text);border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer">&#9998; Modifica Bracket</button>';
   h+='</div></div>';
   elCfg.innerHTML=h;
 }
@@ -6642,6 +6642,11 @@ function admLoadQualifPanel() {
   if(!el) return;
   if(!torneoKey||qiStr===''){el.innerHTML='';return;}
   admRenderQualifList(torneoKey,parseInt(qiStr));
+}
+function admToggleBracketEditor() {
+  var el = document.getElementById('adm-cop-editor-body');
+  if(el && el.innerHTML.trim()) { el.innerHTML=''; return; }
+  admShowBracketEditor();
 }
 function admShowBracketEditor() {
   var torneoKey = document.getElementById('adm-cop-torneo').value;
