@@ -1,4 +1,4 @@
-<!-- build:20260518_1857 -->
+<!-- build:20260518_1907 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260518_1857';
+  var BUILD='20260518_1907';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -10649,6 +10649,7 @@ function buildBracket(key) {
       html += '<div style="text-align:center;padding:10px 6px 8px;font-size:9px;font-weight:800;letter-spacing:1.5px;color:'+color+';border-bottom:2px solid '+color+'33;margin-bottom:10px">SQUADRA CAMPIONE</div>';
       html += '<div style="flex:1;display:flex;align-items:center;justify-content:center;padding:0 6px">';
       var champion = data.vincitore || '';
+      if(!champion && data.finale && data.finale.length){var _f=data.finale[0];if(_f.rh>_f.ra)champion=_f.h;else if(_f.ra>_f.rh)champion=_f.a;}
       var trophyImg = (typeof COPPA_TROPHIES!=='undefined' && COPPA_TROPHIES[key])
         ? '<img src="'+COPPA_TROPHIES[key]+'" style="width:100px;height:100px;object-fit:contain;display:block;margin:0 auto 10px;filter:drop-shadow(0 6px 20px '+color+'99)">'
         : '<div style="font-size:40px;margin-bottom:10px">🏆</div>';
@@ -16582,6 +16583,7 @@ function buildBracket(key) {
       html += '<div style="text-align:center;padding:10px 6px 8px;font-size:9px;font-weight:800;letter-spacing:1.5px;color:'+color+';border-bottom:2px solid '+color+'33;margin-bottom:10px">SQUADRA CAMPIONE</div>';
       html += '<div style="flex:1;display:flex;align-items:center;justify-content:center;padding:0 6px">';
       var champion = data.vincitore || '';
+      if(!champion && data.finale && data.finale.length){var _f=data.finale[0];if(_f.rh>_f.ra)champion=_f.h;else if(_f.ra>_f.rh)champion=_f.a;}
       var trophyImg = (typeof COPPA_TROPHIES!=='undefined' && COPPA_TROPHIES[key])
         ? '<img src="'+COPPA_TROPHIES[key]+'" style="width:100px;height:100px;object-fit:contain;display:block;margin:0 auto 10px;filter:drop-shadow(0 6px 20px '+color+'99)">'
         : '<div style="font-size:40px;margin-bottom:10px">🏆</div>';
