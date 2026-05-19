@@ -1,4 +1,4 @@
-<!-- build:20260519_2106 -->
+<!-- build:20260519_2114 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260519_2106';
+  var BUILD='20260519_2114';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -5035,6 +5035,22 @@ function gsPing() {
                   if (_tel) _tel.src = _normalizeImgUrl(val);
                 }
               }
+            });
+          })(t.key, l.key);
+          // Calendario risultati, schedule e pts fantasy
+          (function(_tk, _lk) {
+            gsLoadCalendario(_tk, _lk, function(calData) {
+              if (!calData) return;
+              var str = typeof calData === 'string' ? calData : JSON.stringify(calData);
+              localStorage.setItem('adm_cal_'+_tk+'_'+_lk, str);
+              var _appKey = (_tk==='tsm'&&_lk==='it') ? 'tsm_calendar_it' : (_tk!=='slim'?'adm_cal_'+_tk+'_'+_lk:(_lk==='it'?'slim_calendar':'slim_calendar_'+_lk));
+              localStorage.setItem(_appKey, str);
+            });
+            gsLoadKey('adm_cal_schedule_'+_tk+'_'+_lk, function(val) {
+              if (val !== null && val !== undefined) localStorage.setItem('adm_cal_schedule_'+_tk+'_'+_lk, typeof val==='string'?val:JSON.stringify(val));
+            });
+            gsLoadKey('adm_cal_pts_'+_tk+'_'+_lk, function(val) {
+              if (val !== null && val !== undefined) localStorage.setItem('adm_cal_pts_'+_tk+'_'+_lk, typeof val==='string'?val:JSON.stringify(val));
             });
           })(t.key, l.key);
         });
