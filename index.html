@@ -1,4 +1,4 @@
-<!-- build:20260518_2241 -->
+<!-- build:20260519_2012 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260518_2241';
+  var BUILD='20260519_2012';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -1130,6 +1130,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
           <th style="padding:8px 6px;text-align:center">P</th>
           <th style="padding:8px 6px;text-align:center;color:#ef4444">S</th>
           <th style="padding:8px 6px;text-align:center">Pt</th>
+          <th style="padding:8px 6px;text-align:center">Pt.Tot</th>
         </tr></thead>
         <tbody id="slim-classifica-body"></tbody>
       </table>
@@ -1565,6 +1566,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
             <th style="padding:7px 8px;width:26px">P</th>
             <th style="padding:7px 8px;width:26px">S</th>
             <th style="padding:7px 8px;width:36px;color:var(--green)">Pt</th>
+            <th style="padding:7px 8px;width:44px">Pt.Tot</th>
           </tr>
         </thead>
         <tbody id="tsm-classifica-body"></tbody>
@@ -3750,7 +3752,7 @@ function slimCalcStandings() {
   var s = {};
   var teamKeyMap = {};
   SLIM_TEAMS.forEach(function(t) {
-    s[t]={v:0,vf:0,p:0,s:0,pt:0,cr:0,gf:0,gs:0,penalita:0};
+    s[t]={v:0,vf:0,p:0,s:0,pt:0,cr:0,gf:0,gs:0,penalita:0,totalPts:0};
     teamKeyMap[t.toUpperCase()] = t;
   });
   var giocate = 0;
@@ -3783,8 +3785,11 @@ function slimCalcStandings() {
     var pen = parseInt(md.penalita) || 0;
     if (pen > 0) { s[t].pt -= pen; s[t].penalita = pen; }
   });
+  var _slimPtsRaw=localStorage.getItem('adm_cal_pts_'+_tk+'_'+(typeof currentLeagueKey!=='undefined'?currentLeagueKey:'it'));
+  if(_slimPtsRaw){try{var _slimPts=JSON.parse(_slimPtsRaw);Object.keys(_slimPts).forEach(function(gk){Object.keys(_slimPts[gk]).forEach(function(tn){var tk2=teamKeyMap[tn.toUpperCase()]||tn;if(s[tk2])s[tk2].totalPts+=(_slimPts[gk][tn]||0);});});}catch(e){}}
   var sorted = SLIM_TEAMS.slice().sort(function(a,b){
     if (s[b].pt !== s[a].pt) return s[b].pt - s[a].pt;
+    if (s[b].totalPts !== s[a].totalPts) return s[b].totalPts - s[a].totalPts;
     return s[b].v - s[a].v;
   });
   return {standings: s, sorted: sorted, giocate: giocate};
@@ -4332,7 +4337,7 @@ function tsmCalcStandings() {
   // Mappa lookup case-insensitive
   var teamKeyMap = {};
   tsmTeams.forEach(function(t) {
-    s[t] = {v:0,p:0,s:0,pt:0,cr:0};
+    s[t] = {v:0,p:0,s:0,pt:0,cr:0,totalPts:0};
     teamKeyMap[t.toUpperCase()] = t;
   });
   var giocate = 0;
@@ -4366,8 +4371,11 @@ function tsmCalcStandings() {
     var pen = parseInt(md.penalita) || 0;
     if (pen > 0) { s[t].pt -= pen; s[t].penalita = pen; }
   });
+  var _tsmPtsRaw=localStorage.getItem('adm_cal_pts_'+(window._currentTourneyKey||'tsm')+'_'+(typeof currentLeagueKey!=='undefined'?currentLeagueKey:'it'));
+  if(_tsmPtsRaw){try{var _tsmPts=JSON.parse(_tsmPtsRaw);Object.keys(_tsmPts).forEach(function(gk){Object.keys(_tsmPts[gk]).forEach(function(tn){var tk2=teamKeyMap[tn.toUpperCase()]||tn;if(s[tk2])s[tk2].totalPts+=(_tsmPts[gk][tn]||0);});});}catch(e){}}
   var sorted = tsmTeams.slice().sort(function(a,b){
     if (s[b].pt !== s[a].pt) return s[b].pt - s[a].pt;
+    if (s[b].totalPts !== s[a].totalPts) return s[b].totalPts - s[a].totalPts;
     return s[b].v - s[a].v;
   });
   return {standings: s, sorted: sorted, giocate: giocate};
@@ -4404,6 +4412,7 @@ function tsmRenderClassifica() {
       +'<td style="text-align:center;font-size:11px;color:var(--text2);width:26px">'+t.p+'</td>'
       +'<td style="text-align:center;font-size:11px;color:#ef4444;width:26px">'+t.s+'</td>'
       +'<td style="text-align:center;font-family:\'Bebas Neue\';font-size:17px;color:var(--green);width:36px">'+t.pt+'</td>'
+      +'<td style="text-align:center;font-size:10px;color:var(--text3);width:40px">'+(t.totalPts||0).toFixed(1)+'</td>'
       +'</tr>';
   }).join('');
   var gEl = document.getElementById('tsm-giornata-label');
@@ -9042,7 +9051,8 @@ function admLoadCalBody() {
   var cal = admGetCalendar(torneoKey, legaKey);
   var teams = admGetTeams(torneoKey, legaKey);
   var viewKey='_admCalView_'+torneoKey+'_'+legaKey;
-  var view=window[viewKey]||'risultati';
+  var view=window[viewKey]||'calendario';
+  if(view==='calendario'&&!_schN){var _har=Object.keys(cal).some(function(g){return Object.values(cal[g]||{}).some(function(v){return v;});});if(_har)view='risultati';}
   var OPTS = ['','VC','VF','V','PC','PF','P','SC','SF','S'];
   var RC = {VC:'#10b981',VF:'#34d399',V:'#6ee7b7',PC:'#3b82f6',PF:'#60a5fa',P:'#93c5fd',SC:'#ef4444',SF:'#f87171',S:'#fca5a5'};
   var RC2 = {VC:'rgba(16,185,129,.15);color:#10b981',VF:'rgba(16,185,129,.1);color:#34d399',V:'rgba(110,231,183,.15);color:#6ee7b7',PC:'rgba(59,130,246,.12);color:#3b82f6',PF:'rgba(59,130,246,.08);color:#60a5fa',P:'rgba(147,197,253,.12);color:#93c5fd',SC:'rgba(239,68,68,.12);color:#ef4444',SF:'rgba(239,68,68,.08);color:#f87171',S:'rgba(252,165,165,.12);color:#fca5a5'};
@@ -9289,15 +9299,18 @@ function admProcessGiornataXlsx(input){
       if(!confirm('Importare '+matches.length+' partite per G'+g+(neutral?' [NEUTRALE]':'')+'?\n\n'+preview)){input.value='';return;}
       var cal=admGetCalendar(t,l);
       if(!cal[String(g)])cal[String(g)]={};
+      var _ck=function(calG,name){var u=(name||'').toUpperCase();var k=Object.keys(calG).find(function(x){return x.toUpperCase()===u;});return k!==undefined?k:name;};
       matches.forEach(function(m){
         var w1=m.total1>m.total2,d=m.total1===m.total2;
-        if(neutral){cal[String(g)][m.team1]=w1?'V':(d?'P':'S');cal[String(g)][m.team2]=w1?'S':(d?'P':'V');}
-        else{if(w1){cal[String(g)][m.team1]='VC';cal[String(g)][m.team2]='SF';}else if(d){cal[String(g)][m.team1]='PC';cal[String(g)][m.team2]='PF';}else{cal[String(g)][m.team1]='SC';cal[String(g)][m.team2]='VF';}}
+        var k1=_ck(cal[String(g)],m.team1),k2=_ck(cal[String(g)],m.team2);
+        if(neutral){cal[String(g)][k1]=w1?'V':(d?'P':'S');cal[String(g)][k2]=w1?'S':(d?'P':'V');}
+        else{if(w1){cal[String(g)][k1]='VC';cal[String(g)][k2]='SF';}else if(d){cal[String(g)][k1]='PC';cal[String(g)][k2]='PF';}else{cal[String(g)][k1]='SC';cal[String(g)][k2]='VF';}}
       });
       localStorage.setItem('adm_cal_'+t+'_'+l,JSON.stringify(cal));
       var appKey=(t==='tsm'&&l==='it')?'tsm_calendar_it':(t!=='slim'?'adm_cal_'+t+'_'+l:(l==='it'?'slim_calendar':'slim_calendar_'+l));
       localStorage.setItem(appKey,JSON.stringify(cal));
       gsSaveCalendario(t,l,cal);
+      var ptsKey='adm_cal_pts_'+t+'_'+l;var ptsRaw=localStorage.getItem(ptsKey);var pts=ptsRaw?(function(){try{return JSON.parse(ptsRaw);}catch(e){return{};}}()):{}; if(!pts[String(g)])pts[String(g)]={};matches.forEach(function(m){pts[String(g)][m.team1]=m.total1;pts[String(g)][m.team2]=m.total2;});localStorage.setItem(ptsKey,JSON.stringify(pts));gsSaveKey(ptsKey,JSON.stringify(pts));
       var msg=document.createElement('div');msg.textContent='✅ G'+g+': '+matches.length+' partite importate'+(neutral?' [neutrale]':'');msg.style.cssText='position:fixed;top:70px;right:20px;background:#10b981;color:#fff;padding:8px 16px;border-radius:8px;font-weight:700;font-size:12px;z-index:9999';document.body.appendChild(msg);setTimeout(function(){msg.remove();},3000);
       admLoadCalBody();
     }catch(ex){alert('Errore parsing xlsx: '+ex.message);}
@@ -9351,6 +9364,7 @@ function calRenderGeneric(t, l, bodyId, nG, teams, callbackFn) {
   var schRaw = localStorage.getItem('adm_cal_schedule_'+t+'_'+l);
   var schParsed = schRaw ? (function(){try{return JSON.parse(schRaw);}catch(e){return null;}})() : null;
   var sch = schParsed ? (schParsed.giornate || schParsed) : null;
+  if (view==='calendario'&&!sch){var _hr=Object.keys(cal).some(function(g){return Object.values(cal[g]||{}).some(function(v){return v;});});if(_hr)view='rendimento';}
   var RC = {VC:'rgba(16,185,129,.15);color:#10b981',VF:'rgba(16,185,129,.1);color:#34d399',V:'rgba(110,231,183,.15);color:#6ee7b7',PC:'rgba(59,130,246,.12);color:#3b82f6',PF:'rgba(59,130,246,.08);color:#60a5fa',P:'rgba(147,197,253,.12);color:#93c5fd',SC:'rgba(239,68,68,.12);color:#ef4444',SF:'rgba(239,68,68,.08);color:#f87171',S:'rgba(252,165,165,.12);color:#fca5a5'};
   var _logos = {};
   if (typeof FANTASY_LOGOS !== 'undefined') Object.keys(FANTASY_LOGOS).forEach(function(k){_logos[k.toUpperCase()]=FANTASY_LOGOS[k];});
@@ -9393,13 +9407,14 @@ function calRenderGeneric(t, l, bodyId, nG, teams, callbackFn) {
       }
     }
   } else {
+    var _gkR=function(obj,k){var v=obj[k];if(v!==undefined)return v;var u=(k||'').toUpperCase();var fk=Object.keys(obj).find(function(x){return x.toUpperCase()===u;});return fk!==undefined?obj[fk]:'';};
     for (var g=1; g<=nG; g++) {
       var gio = cal[String(g)] || {};
       var hasData = Object.values(gio).some(function(v){return v;});
       h += '<div style="margin-bottom:10px"><div style="font-family:\'Bebas Neue\';font-size:13px;letter-spacing:1px;color:var(--text2);padding:6px 10px;background:var(--bg2);border-radius:8px 8px 0 0;border:1px solid var(--border);border-bottom:none;display:flex;justify-content:space-between"><span>Giornata '+g+'</span>'+(hasData?'<span style="color:var(--green);font-size:10px">✓ Completata</span>':'<span style="color:var(--text3);font-size:10px">Da giocare</span>')+'</div>';
       h += '<div style="background:var(--card);border:1px solid var(--border);border-radius:0 0 8px 8px;padding:8px 10px;display:grid;grid-template-columns:repeat(2,1fr);gap:4px">';
       teams.forEach(function(team) {
-        var res = gio[team] || gio[team.toUpperCase()] || '';
+        var res = _gkR(gio, team);
         var st = RC[res] ? 'background:'+RC[res] : 'background:var(--bg2);color:var(--text3)';
         var lUrl = _logos[team.toUpperCase()] || '';
         var fl = lUrl ? '<img src="'+lUrl+'" style="width:16px;height:16px;object-fit:contain;flex-shrink:0;margin-right:4px" onerror="this.style.display=\'none\'">' : '';
@@ -10450,6 +10465,7 @@ function slimRenderClassifica(){
       +'<td style="text-align:center;font-size:11px;color:var(--text2);width:26px">'+t.p+'</td>'
       +'<td style="text-align:center;font-size:11px;color:#ef4444;width:26px">'+t.s+'</td>'
       +'<td style="text-align:center;font-family:\'Bebas Neue\';font-size:17px;color:var(--green);width:36px">'+t.pt+'</td>'
+      +'<td style="text-align:center;font-size:10px;color:var(--text3);width:40px">'+(t.totalPts||0).toFixed(1)+'</td>'
       +'</tr>';
   }).join('');
   var gEl=document.getElementById('slim-giornata-label');
@@ -11139,7 +11155,7 @@ function slimCalcStandings() {
   var s = {};
   var teamKeyMap = {};
   SLIM_TEAMS.forEach(function(t) {
-    s[t]={v:0,vf:0,p:0,s:0,pt:0,cr:0,gf:0,gs:0,penalita:0};
+    s[t]={v:0,vf:0,p:0,s:0,pt:0,cr:0,gf:0,gs:0,penalita:0,totalPts:0};
     teamKeyMap[t.toUpperCase()] = t;
   });
   var giocate = 0;
@@ -11172,8 +11188,11 @@ function slimCalcStandings() {
     var pen = parseInt(md.penalita) || 0;
     if (pen > 0) { s[t].pt -= pen; s[t].penalita = pen; }
   });
+  var _slimPtsRaw=localStorage.getItem('adm_cal_pts_'+_tk+'_'+(typeof currentLeagueKey!=='undefined'?currentLeagueKey:'it'));
+  if(_slimPtsRaw){try{var _slimPts=JSON.parse(_slimPtsRaw);Object.keys(_slimPts).forEach(function(gk){Object.keys(_slimPts[gk]).forEach(function(tn){var tk2=teamKeyMap[tn.toUpperCase()]||tn;if(s[tk2])s[tk2].totalPts+=(_slimPts[gk][tn]||0);});});}catch(e){}}
   var sorted = SLIM_TEAMS.slice().sort(function(a,b){
     if (s[b].pt !== s[a].pt) return s[b].pt - s[a].pt;
+    if (s[b].totalPts !== s[a].totalPts) return s[b].totalPts - s[a].totalPts;
     return s[b].v - s[a].v;
   });
   return {standings: s, sorted: sorted, giocate: giocate};
@@ -11721,7 +11740,7 @@ function tsmCalcStandings() {
   // Mappa lookup case-insensitive
   var teamKeyMap = {};
   tsmTeams.forEach(function(t) {
-    s[t] = {v:0,p:0,s:0,pt:0,cr:0};
+    s[t] = {v:0,p:0,s:0,pt:0,cr:0,totalPts:0};
     teamKeyMap[t.toUpperCase()] = t;
   });
   var giocate = 0;
@@ -11755,8 +11774,11 @@ function tsmCalcStandings() {
     var pen = parseInt(md.penalita) || 0;
     if (pen > 0) { s[t].pt -= pen; s[t].penalita = pen; }
   });
+  var _tsmPtsRaw=localStorage.getItem('adm_cal_pts_'+(window._currentTourneyKey||'tsm')+'_'+(typeof currentLeagueKey!=='undefined'?currentLeagueKey:'it'));
+  if(_tsmPtsRaw){try{var _tsmPts=JSON.parse(_tsmPtsRaw);Object.keys(_tsmPts).forEach(function(gk){Object.keys(_tsmPts[gk]).forEach(function(tn){var tk2=teamKeyMap[tn.toUpperCase()]||tn;if(s[tk2])s[tk2].totalPts+=(_tsmPts[gk][tn]||0);});});}catch(e){}}
   var sorted = tsmTeams.slice().sort(function(a,b){
     if (s[b].pt !== s[a].pt) return s[b].pt - s[a].pt;
+    if (s[b].totalPts !== s[a].totalPts) return s[b].totalPts - s[a].totalPts;
     return s[b].v - s[a].v;
   });
   return {standings: s, sorted: sorted, giocate: giocate};
@@ -11793,6 +11815,7 @@ function tsmRenderClassifica() {
       +'<td style="text-align:center;font-size:11px;color:var(--text2);width:26px">'+t.p+'</td>'
       +'<td style="text-align:center;font-size:11px;color:#ef4444;width:26px">'+t.s+'</td>'
       +'<td style="text-align:center;font-family:\'Bebas Neue\';font-size:17px;color:var(--green);width:36px">'+t.pt+'</td>'
+      +'<td style="text-align:center;font-size:10px;color:var(--text3);width:40px">'+(t.totalPts||0).toFixed(1)+'</td>'
       +'</tr>';
   }).join('');
   var gEl = document.getElementById('tsm-giornata-label');
@@ -15117,7 +15140,8 @@ function admLoadCalBody() {
   var cal = admGetCalendar(torneoKey, legaKey);
   var teams = admGetTeams(torneoKey, legaKey);
   var viewKey='_admCalView_'+torneoKey+'_'+legaKey;
-  var view=window[viewKey]||'risultati';
+  var view=window[viewKey]||'calendario';
+  if(view==='calendario'&&!_schN){var _har=Object.keys(cal).some(function(g){return Object.values(cal[g]||{}).some(function(v){return v;});});if(_har)view='risultati';}
   var OPTS = ['','VC','VF','V','PC','PF','P','SC','SF','S'];
   var RC = {VC:'#10b981',VF:'#34d399',V:'#6ee7b7',PC:'#3b82f6',PF:'#60a5fa',P:'#93c5fd',SC:'#ef4444',SF:'#f87171',S:'#fca5a5'};
   var RC2 = {VC:'rgba(16,185,129,.15);color:#10b981',VF:'rgba(16,185,129,.1);color:#34d399',V:'rgba(110,231,183,.15);color:#6ee7b7',PC:'rgba(59,130,246,.12);color:#3b82f6',PF:'rgba(59,130,246,.08);color:#60a5fa',P:'rgba(147,197,253,.12);color:#93c5fd',SC:'rgba(239,68,68,.12);color:#ef4444',SF:'rgba(239,68,68,.08);color:#f87171',S:'rgba(252,165,165,.12);color:#fca5a5'};
@@ -15871,6 +15895,7 @@ function dynRenderRose() {
 
 function dynRenderCalendario() {
   var el = document.getElementById('dyn-cal-body'); if(!el) return;
+  if(window._dynTorneo&&window._dynLega){var _fc=admGetCalendar(window._dynTorneo,window._dynLega);if(Object.keys(_fc).length>0){window._dynCal=_fc;}}
   var cal = window._dynCal || {};
   var giornate = (window._dynConfig||{}).giornate || 34;
   var RC = {VC:'rgba(16,185,129,.15);color:#10b981',VF:'rgba(16,185,129,.1);color:#34d399',
@@ -15878,6 +15903,7 @@ function dynRenderCalendario() {
             SC:'rgba(239,68,68,.12);color:#ef4444',SF:'rgba(239,68,68,.08);color:#f87171',
             V:'rgba(16,185,129,.15);color:#10b981',P:'rgba(59,130,246,.12);color:#3b82f6',
             S:'rgba(239,68,68,.12);color:#ef4444'};
+  var _gk=function(obj,k){var v=obj[k];if(v!==undefined)return v;var u=(k||'').toUpperCase();var fk=Object.keys(obj).find(function(x){return x.toUpperCase()===u;});return fk!==undefined?obj[fk]:'';};
   var h = '';
   for (var g=1; g<=giornate; g++) {
     var gio = cal[String(g)] || {};
@@ -15885,7 +15911,7 @@ function dynRenderCalendario() {
     h += '<div style="margin-bottom:10px"><div style="font-size:10px;font-weight:800;color:var(--text3);margin-bottom:6px">G'+g+'</div>'
       +'<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:4px">';
     (window._dynSquadre||[]).forEach(function(sq){
-      var res = gio[sq] || gio[sq.toUpperCase()] || '';
+      var res = _gk(gio, sq);
       var style = res && RC[res] ? 'background:'+RC[res]+';' : 'background:var(--bg2);color:var(--text3);';
       h += '<div style="'+style+'border-radius:6px;padding:5px 8px;font-size:10px;display:flex;justify-content:space-between;align-items:center">'
         +'<span style="font-weight:700">'+sq+'</span>'
@@ -15899,15 +15925,19 @@ function dynRenderCalendario() {
 
 function dynRenderClassifica() {
   var el = document.getElementById('dyn-class-body'); if(!el) return;
+  if(window._dynTorneo&&window._dynLega){var _fc2=admGetCalendar(window._dynTorneo,window._dynLega);if(Object.keys(_fc2).length>0){window._dynCal=_fc2;}}
   var cal = window._dynCal || {};
   var squadre = window._dynSquadre || [];
+  var _dt = window._dynTorneo || '';
+  var _dl = window._dynLega || '';
   var s = {};
-  squadre.forEach(function(t){ s[t]={v:0,p:0,s2:0,pt:0}; });
+  var teamKeyMap = {};
+  squadre.forEach(function(t){ s[t]={v:0,p:0,s2:0,pt:0,totalPts:0}; teamKeyMap[t.toUpperCase()]=t; });
   Object.keys(cal).forEach(function(g){
     var gio = cal[g];
     if (!Object.values(gio).some(function(v){return v;})) return;
     Object.keys(gio).forEach(function(tRaw){
-      var t = squadre.find(function(sq){return sq.toUpperCase()===tRaw.toUpperCase();})||tRaw;
+      var t = teamKeyMap[tRaw.toUpperCase()] || tRaw;
       var res = gio[tRaw];
       if (!res || !s[t]) return;
       if (res==='VC'||res==='VF'||res==='V') { s[t].v++; s[t].pt+=3; }
@@ -15915,8 +15945,11 @@ function dynRenderClassifica() {
       else if (res==='SC'||res==='SF'||res==='S') { s[t].s2++; }
     });
   });
+  var _dynPtsRaw=localStorage.getItem('adm_cal_pts_'+_dt+'_'+_dl);
+  if(_dynPtsRaw){try{var _dynPts=JSON.parse(_dynPtsRaw);Object.keys(_dynPts).forEach(function(gk){Object.keys(_dynPts[gk]).forEach(function(tn){var tk2=teamKeyMap[tn.toUpperCase()]||tn;if(s[tk2])s[tk2].totalPts+=(_dynPts[gk][tn]||0);});});}catch(e){}}
   var sorted = squadre.slice().sort(function(a,b){
     if(s[b].pt!==s[a].pt) return s[b].pt-s[a].pt;
+    if(s[b].totalPts!==s[a].totalPts) return s[b].totalPts-s[a].totalPts;
     return s[b].v-s[a].v;
   });
   el.innerHTML = '<table style="width:100%;border-collapse:collapse">'
@@ -15925,6 +15958,7 @@ function dynRenderClassifica() {
     +'<th style="padding:7px 8px;text-align:center">G</th><th style="padding:7px 8px;text-align:center;color:#10b981">V</th>'
     +'<th style="padding:7px 8px;text-align:center">P</th><th style="padding:7px 8px;text-align:center;color:#ef4444">S</th>'
     +'<th style="padding:7px 8px;text-align:center;color:var(--green)">Pt</th>'
+    +'<th style="padding:7px 8px;text-align:center;color:var(--text3)">Pt.Tot</th>'
     +'</tr></thead><tbody>'
     + sorted.map(function(t,i){
         var st=s[t]; var g=st.v+st.p+st.s2;
@@ -15936,6 +15970,7 @@ function dynRenderClassifica() {
           +'<td style="padding:7px 8px;text-align:center;font-size:11px;color:var(--text2)">'+st.p+'</td>'
           +'<td style="padding:7px 8px;text-align:center;font-size:11px;color:#ef4444">'+st.s2+'</td>'
           +'<td style="padding:7px 8px;text-align:center;font-family:Bebas Neue,sans-serif;font-size:17px;color:var(--green)">'+st.pt+'</td>'
+          +'<td style="padding:7px 8px;text-align:center;font-size:10px;color:var(--text3)">'+(st.totalPts||0).toFixed(1)+'</td>'
           +'</tr>';
       }).join('')
     +'</tbody></table>';
@@ -16440,6 +16475,7 @@ function slimRenderClassifica(){
       +'<td style="text-align:center;font-size:11px;color:var(--text2);width:26px">'+t.p+'</td>'
       +'<td style="text-align:center;font-size:11px;color:#ef4444;width:26px">'+t.s+'</td>'
       +'<td style="text-align:center;font-family:\'Bebas Neue\';font-size:17px;color:var(--green);width:36px">'+t.pt+'</td>'
+      +'<td style="text-align:center;font-size:10px;color:var(--text3);width:40px">'+(t.totalPts||0).toFixed(1)+'</td>'
       +'</tr>';
   }).join('');
   var gEl=document.getElementById('slim-giornata-label');
