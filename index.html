@@ -1,4 +1,4 @@
-<!-- build:20260519_2012 -->
+<!-- build:20260519_2106 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260519_2012';
+  var BUILD='20260519_2106';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -9310,8 +9310,9 @@ function admProcessGiornataXlsx(input){
       var appKey=(t==='tsm'&&l==='it')?'tsm_calendar_it':(t!=='slim'?'adm_cal_'+t+'_'+l:(l==='it'?'slim_calendar':'slim_calendar_'+l));
       localStorage.setItem(appKey,JSON.stringify(cal));
       gsSaveCalendario(t,l,cal);
-      var ptsKey='adm_cal_pts_'+t+'_'+l;var ptsRaw=localStorage.getItem(ptsKey);var pts=ptsRaw?(function(){try{return JSON.parse(ptsRaw);}catch(e){return{};}}()):{}; if(!pts[String(g)])pts[String(g)]={};matches.forEach(function(m){pts[String(g)][m.team1]=m.total1;pts[String(g)][m.team2]=m.total2;});localStorage.setItem(ptsKey,JSON.stringify(pts));gsSaveKey(ptsKey,JSON.stringify(pts));
+      var ptsKey='adm_cal_pts_'+t+'_'+l;var ptsRaw=localStorage.getItem(ptsKey);var pts=ptsRaw?(function(){try{return JSON.parse(ptsRaw);}catch(e){return{};}}()):{}; if(!pts[String(g)])pts[String(g)]={};matches.forEach(function(m){var pk1=_ck(cal[String(g)],m.team1),pk2=_ck(cal[String(g)],m.team2);pts[String(g)][pk1]=m.total1;pts[String(g)][pk2]=m.total2;});localStorage.setItem(ptsKey,JSON.stringify(pts));gsSaveKey(ptsKey,JSON.stringify(pts));
       var msg=document.createElement('div');msg.textContent='✅ G'+g+': '+matches.length+' partite importate'+(neutral?' [neutrale]':'');msg.style.cssText='position:fixed;top:70px;right:20px;background:#10b981;color:#fff;padding:8px 16px;border-radius:8px;font-weight:700;font-size:12px;z-index:9999';document.body.appendChild(msg);setTimeout(function(){msg.remove();},3000);
+      var _sG=document.getElementById('adm-cal-giornata-import');if(_sG){var _nv=parseInt(_sG.value)+1;if(_nv<=_sG.options.length){_sG.value=String(_nv);if(typeof admCalAutoNeutral==='function')admCalAutoNeutral();}}
       admLoadCalBody();
     }catch(ex){alert('Errore parsing xlsx: '+ex.message);}
     input.value='';
@@ -9378,6 +9379,7 @@ function calRenderGeneric(t, l, bodyId, nG, teams, callbackFn) {
     if (!sch) {
       h += '<div style="padding:30px;text-align:center;color:var(--text3);font-size:13px">📅 Calendario non ancora importato.<br><span style="font-size:11px">Importa il file xlsx dalla sezione Admin → Calendario.</span></div>';
     } else {
+      var _ptsRaw=localStorage.getItem('adm_cal_pts_'+t+'_'+l);var _pts=_ptsRaw?(function(){try{return JSON.parse(_ptsRaw);}catch(e){return{};}}()):{}; var _gkPts=function(pg,k){if(!pg)return null;var v=pg[k];if(v!==undefined&&v!==null)return v;var u=(k||'').toUpperCase();var fk=Object.keys(pg).find(function(x){return x.toUpperCase()===u;});return fk!==undefined?pg[fk]:null;};
       for (var g=1; g<=nG; g++) {
         var matches = sch[String(g)] || [];
         var gio = cal[String(g)] || {};
@@ -9391,8 +9393,8 @@ function calRenderGeneric(t, l, bodyId, nG, teams, callbackFn) {
           matches.forEach(function(m) {
             var _gk=function(obj,k){var v=obj[k];if(v!==undefined)return v;var u=(k||'').toUpperCase();var fk=Object.keys(obj).find(function(x){return x.toUpperCase()===u;});return fk?obj[fk]:'';};
             var rH=_gk(gio,m.h),rA=_gk(gio,m.a);
-            var score=(rH==='VC'||rH==='V')?'1-0':(rH==='PC'||rH==='P')?'1-1':(rH==='SC'||rH==='S')?'0-1':(rA==='VF'||rA==='V')?'0-1':(rA==='PF'||rA==='P')?'1-1':(rA==='SF'||rA==='S')?'1-0':null;
-            var scoreC=score?(score==='1-0'?'#10b981':score==='1-1'?'#3b82f6':'#ef4444'):'var(--text3)';
+            var _pG=_pts[String(g)]||null;var pH=_gkPts(_pG,m.h),pA=_gkPts(_pG,m.a);
+            var score,scoreC;if(pH!==null&&pA!==null){var _fmt=function(v){return Number.isInteger(v)?String(v):v.toFixed(1);};score=_fmt(pH)+'-'+_fmt(pA);scoreC=pH>pA?'#10b981':(pH===pA?'#3b82f6':'#ef4444');}else{score=(rH==='VC'||rH==='V')?'1-0':(rH==='PC'||rH==='P')?'1-1':(rH==='SC'||rH==='S')?'0-1':(rA==='VF'||rA==='V')?'0-1':(rA==='PF'||rA==='P')?'1-1':(rA==='SF'||rA==='S')?'1-0':null;scoreC=score?(score==='1-0'?'#10b981':score==='1-1'?'#3b82f6':'#ef4444'):'var(--text3)';}
             var lH=_logos[(m.h||'').toUpperCase()]?'<img src="'+_logos[(m.h||'').toUpperCase()]+'" style="width:13px;height:13px;object-fit:contain;flex-shrink:0;margin-right:3px">':'';
             var lA=_logos[(m.a||'').toUpperCase()]?'<img src="'+_logos[(m.a||'').toUpperCase()]+'" style="width:13px;height:13px;object-fit:contain;flex-shrink:0;margin-left:3px">':'';
             h += '<div style="display:grid;grid-template-columns:1fr 40px 1fr;align-items:center;gap:4px;padding:2px 0">'
