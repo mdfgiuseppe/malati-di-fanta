@@ -1,4 +1,4 @@
-<!-- build:20260519_2114 -->
+<!-- build:20260519_2143 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260519_2114';
+  var BUILD='20260519_2143';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -5045,12 +5045,26 @@ function gsPing() {
               localStorage.setItem('adm_cal_'+_tk+'_'+_lk, str);
               var _appKey = (_tk==='tsm'&&_lk==='it') ? 'tsm_calendar_it' : (_tk!=='slim'?'adm_cal_'+_tk+'_'+_lk:(_lk==='it'?'slim_calendar':'slim_calendar_'+_lk));
               localStorage.setItem(_appKey, str);
+              // Re-render calendario se attivo
+              if (window._currentTourneyKey===_tk && (typeof currentLeagueKey==='undefined'||currentLeagueKey===_lk)) {
+                var _apC=document.querySelector('.page.active');var _scC=_apC?_apC.querySelector('.section.active'):null;var _siC=_scC?_scC.id:'';
+                if(_siC==='s-calendario'&&typeof slimRenderCalendario==='function')slimRenderCalendario();
+                if(_siC==='tsm-s-calendario'&&typeof tsmRenderCalendario==='function')tsmRenderCalendario();
+              }
             });
             gsLoadKey('adm_cal_schedule_'+_tk+'_'+_lk, function(val) {
               if (val !== null && val !== undefined) localStorage.setItem('adm_cal_schedule_'+_tk+'_'+_lk, typeof val==='string'?val:JSON.stringify(val));
             });
             gsLoadKey('adm_cal_pts_'+_tk+'_'+_lk, function(val) {
-              if (val !== null && val !== undefined) localStorage.setItem('adm_cal_pts_'+_tk+'_'+_lk, typeof val==='string'?val:JSON.stringify(val));
+              if (val !== null && val !== undefined) {
+                localStorage.setItem('adm_cal_pts_'+_tk+'_'+_lk, typeof val==='string'?val:JSON.stringify(val));
+                // Re-render classifica se attiva
+                if (window._currentTourneyKey===_tk && (typeof currentLeagueKey==='undefined'||currentLeagueKey===_lk)) {
+                  var _ap=document.querySelector('.page.active');var _sc=_ap?_ap.querySelector('.section.active'):null;var _si=_sc?_sc.id:'';
+                  if(_si==='s-classifica'&&typeof slimRenderClassifica==='function')slimRenderClassifica();
+                  if(_si==='tsm-s-classifica'&&typeof tsmRenderClassifica==='function')tsmRenderClassifica();
+                }
+              }
             });
           })(t.key, l.key);
         });
@@ -9082,8 +9096,8 @@ function admLoadCalBody() {
   }
   var _gOpts=Array.from({length:giornate},function(_,i){return '<option value="'+(i+1)+'">G'+(i+1)+'</option>';}).join('');
   var _impH='<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;align-items:center;padding:10px 14px;background:var(--bg2);border-radius:10px;border:1px solid var(--border)">'
-    +'<button onclick="window[\''+viewKey+'\']=\'calendario\';admLoadCalBody();" style="padding:5px 12px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;border:1px solid '+(view==='calendario'?'rgba(59,130,246,.5)':'var(--border)')+';background:'+(view==='calendario'?'rgba(59,130,246,.15)':'var(--bg2)')+';color:'+(view==='calendario'?'#3b82f6':'var(--text2)')+'">📅 Calendario</button>'
-    +'<button onclick="window[\''+viewKey+'\']=\'risultati\';admLoadCalBody();" style="padding:5px 12px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;border:1px solid '+(view==='risultati'?'rgba(16,185,129,.5)':'var(--border)')+';background:'+(view==='risultati'?'rgba(16,185,129,.15)':'var(--bg2)')+';color:'+(view==='risultati'?'#10b981':'var(--text2)')+'">✏️ Risultati</button>'
+    +'<button onclick="window[\''+viewKey+'\']=\'calendario\';admLoadCalBody();" style="padding:5px 12px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;border:1px solid '+(view==='calendario'?'rgba(59,130,246,.5)':'var(--border)')+';background:'+(view==='calendario'?'rgba(59,130,246,.15)':'var(--bg2)')+';color:'+(view==='calendario'?'#3b82f6':'var(--text2)')+'">📅 Risultati</button>'
+    +'<button onclick="window[\''+viewKey+'\']=\'risultati\';admLoadCalBody();" style="padding:5px 12px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;border:1px solid '+(view==='risultati'?'rgba(16,185,129,.5)':'var(--border)')+';background:'+(view==='risultati'?'rgba(16,185,129,.15)':'var(--bg2)')+';color:'+(view==='risultati'?'#10b981':'var(--text2)')+'">📊 Rendimento</button>'
     +'<span style="color:var(--border);margin:0 2px">|</span>'
     +'<button onclick="document.getElementById(\'adm-cal-sch-file\').click()" style="padding:5px 12px;background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.3);border-radius:6px;color:#3b82f6;font-size:12px;font-weight:700;cursor:pointer">📥 Importa Cal.</button>'
     +'<input type="file" id="adm-cal-sch-file" accept=".xlsx" style="display:none" onchange="admProcessCalScheduleXlsx(this)">'
@@ -9387,7 +9401,7 @@ function calRenderGeneric(t, l, bodyId, nG, teams, callbackFn) {
   if (typeof FANTASY_LOGOS !== 'undefined') Object.keys(FANTASY_LOGOS).forEach(function(k){_logos[k.toUpperCase()]=FANTASY_LOGOS[k];});
   var cb = callbackFn || '';
   var toggleHtml = '<div style="display:flex;gap:6px;margin-bottom:12px">'
-    +'<button onclick="window[\''+viewKey+'\']=\'calendario\';'+(cb?cb+'()':'')+'" style="padding:5px 12px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;border:1px solid '+(view==='calendario'?'rgba(59,130,246,.5)':'var(--border)')+';background:'+(view==='calendario'?'rgba(59,130,246,.15)':'var(--bg2)')+';color:'+(view==='calendario'?'#3b82f6':'var(--text2)')+'">📅 Calendario</button>'
+    +'<button onclick="window[\''+viewKey+'\']=\'calendario\';'+(cb?cb+'()':'')+'" style="padding:5px 12px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;border:1px solid '+(view==='calendario'?'rgba(59,130,246,.5)':'var(--border)')+';background:'+(view==='calendario'?'rgba(59,130,246,.15)':'var(--bg2)')+';color:'+(view==='calendario'?'#3b82f6':'var(--text2)')+'">📅 Risultati</button>'
     +'<button onclick="window[\''+viewKey+'\']=\'rendimento\';'+(cb?cb+'()':'')+'" style="padding:5px 12px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;border:1px solid '+(view==='rendimento'?'rgba(16,185,129,.5)':'var(--border)')+';background:'+(view==='rendimento'?'rgba(16,185,129,.15)':'var(--bg2)')+';color:'+(view==='rendimento'?'#10b981':'var(--text2)')+'">📊 Rendimento</button>'
     +'</div>';
   var h = toggleHtml;
@@ -9395,7 +9409,6 @@ function calRenderGeneric(t, l, bodyId, nG, teams, callbackFn) {
     if (!sch) {
       h += '<div style="padding:30px;text-align:center;color:var(--text3);font-size:13px">📅 Calendario non ancora importato.<br><span style="font-size:11px">Importa il file xlsx dalla sezione Admin → Calendario.</span></div>';
     } else {
-      var _ptsRaw=localStorage.getItem('adm_cal_pts_'+t+'_'+l);var _pts=_ptsRaw?(function(){try{return JSON.parse(_ptsRaw);}catch(e){return{};}}()):{}; var _gkPts=function(pg,k){if(!pg)return null;var v=pg[k];if(v!==undefined&&v!==null)return v;var u=(k||'').toUpperCase();var fk=Object.keys(pg).find(function(x){return x.toUpperCase()===u;});return fk!==undefined?pg[fk]:null;};
       for (var g=1; g<=nG; g++) {
         var matches = sch[String(g)] || [];
         var gio = cal[String(g)] || {};
@@ -9409,8 +9422,8 @@ function calRenderGeneric(t, l, bodyId, nG, teams, callbackFn) {
           matches.forEach(function(m) {
             var _gk=function(obj,k){var v=obj[k];if(v!==undefined)return v;var u=(k||'').toUpperCase();var fk=Object.keys(obj).find(function(x){return x.toUpperCase()===u;});return fk?obj[fk]:'';};
             var rH=_gk(gio,m.h),rA=_gk(gio,m.a);
-            var _pG=_pts[String(g)]||null;var pH=_gkPts(_pG,m.h),pA=_gkPts(_pG,m.a);
-            var score,scoreC;if(pH!==null&&pA!==null){var _fmt=function(v){return Number.isInteger(v)?String(v):v.toFixed(1);};score=_fmt(pH)+'-'+_fmt(pA);scoreC=pH>pA?'#10b981':(pH===pA?'#3b82f6':'#ef4444');}else{score=(rH==='VC'||rH==='V')?'1-0':(rH==='PC'||rH==='P')?'1-1':(rH==='SC'||rH==='S')?'0-1':(rA==='VF'||rA==='V')?'0-1':(rA==='PF'||rA==='P')?'1-1':(rA==='SF'||rA==='S')?'1-0':null;scoreC=score?(score==='1-0'?'#10b981':score==='1-1'?'#3b82f6':'#ef4444'):'var(--text3)';}
+            var score=(rH==='VC'||rH==='V')?'1-0':(rH==='PC'||rH==='P')?'1-1':(rH==='SC'||rH==='S')?'0-1':(rA==='VF'||rA==='V')?'0-1':(rA==='PF'||rA==='P')?'1-1':(rA==='SF'||rA==='S')?'1-0':null;
+            var scoreC=score?(score==='1-0'?'#10b981':score==='1-1'?'#3b82f6':'#ef4444'):'var(--text3)';
             var lH=_logos[(m.h||'').toUpperCase()]?'<img src="'+_logos[(m.h||'').toUpperCase()]+'" style="width:13px;height:13px;object-fit:contain;flex-shrink:0;margin-right:3px">':'';
             var lA=_logos[(m.a||'').toUpperCase()]?'<img src="'+_logos[(m.a||'').toUpperCase()]+'" style="width:13px;height:13px;object-fit:contain;flex-shrink:0;margin-left:3px">':'';
             h += '<div style="display:grid;grid-template-columns:1fr 40px 1fr;align-items:center;gap:4px;padding:2px 0">'
@@ -15173,8 +15186,8 @@ function admLoadCalBody() {
   }
   var _gOpts=Array.from({length:giornate},function(_,i){return '<option value="'+(i+1)+'">G'+(i+1)+'</option>';}).join('');
   var _impH='<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;align-items:center;padding:10px 14px;background:var(--bg2);border-radius:10px;border:1px solid var(--border)">'
-    +'<button onclick="window[\''+viewKey+'\']=\'calendario\';admLoadCalBody();" style="padding:5px 12px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;border:1px solid '+(view==='calendario'?'rgba(59,130,246,.5)':'var(--border)')+';background:'+(view==='calendario'?'rgba(59,130,246,.15)':'var(--bg2)')+';color:'+(view==='calendario'?'#3b82f6':'var(--text2)')+'">📅 Calendario</button>'
-    +'<button onclick="window[\''+viewKey+'\']=\'risultati\';admLoadCalBody();" style="padding:5px 12px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;border:1px solid '+(view==='risultati'?'rgba(16,185,129,.5)':'var(--border)')+';background:'+(view==='risultati'?'rgba(16,185,129,.15)':'var(--bg2)')+';color:'+(view==='risultati'?'#10b981':'var(--text2)')+'">✏️ Risultati</button>'
+    +'<button onclick="window[\''+viewKey+'\']=\'calendario\';admLoadCalBody();" style="padding:5px 12px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;border:1px solid '+(view==='calendario'?'rgba(59,130,246,.5)':'var(--border)')+';background:'+(view==='calendario'?'rgba(59,130,246,.15)':'var(--bg2)')+';color:'+(view==='calendario'?'#3b82f6':'var(--text2)')+'">📅 Risultati</button>'
+    +'<button onclick="window[\''+viewKey+'\']=\'risultati\';admLoadCalBody();" style="padding:5px 12px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;border:1px solid '+(view==='risultati'?'rgba(16,185,129,.5)':'var(--border)')+';background:'+(view==='risultati'?'rgba(16,185,129,.15)':'var(--bg2)')+';color:'+(view==='risultati'?'#10b981':'var(--text2)')+'">📊 Rendimento</button>'
     +'<span style="color:var(--border);margin:0 2px">|</span>'
     +'<button onclick="document.getElementById(\'adm-cal-sch-file\').click()" style="padding:5px 12px;background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.3);border-radius:6px;color:#3b82f6;font-size:12px;font-weight:700;cursor:pointer">📥 Importa Cal.</button>'
     +'<input type="file" id="adm-cal-sch-file" accept=".xlsx" style="display:none" onchange="admProcessCalScheduleXlsx(this)">'
