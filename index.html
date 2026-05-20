@@ -1,4 +1,4 @@
-<!-- build:20260520_2022 -->
+<!-- build:20260520_2036 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260520_2022';
+  var BUILD='20260520_2036';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -9126,15 +9126,20 @@ function admLoadCalBody() {
     if (!_schN) {
       h = '<div style="padding:30px;text-align:center;color:var(--text3);font-size:13px">📅 Calendario non ancora importato.<br><span style="font-size:11px">Premi "Importa Cal." per caricare il file xlsx.</span></div>';
     } else {
+      var _editG=window['_admCalEditG_'+torneoKey+'_'+legaKey]||null;
       h = '<div style="display:flex;flex-direction:column;gap:6px">';
       for (var g=1; g<=giornate; g++) {
         var matches=_schGiornate[String(g)]||[];
         var gio=cal[String(g)]||{};
         var hasD=Object.values(gio).some(function(v){return v;});
+        var _isEdit=(g===_editG);
         h+='<div style="background:var(--card);border:1px solid var(--border);border-radius:8px;overflow:hidden">'
           +'<div style="padding:5px 12px;background:var(--bg2);display:flex;justify-content:space-between;align-items:center">'
           +'<span style="font-family:\'Bebas Neue\';font-size:14px;letter-spacing:1px;color:var(--text2)">Giornata '+g+'</span>'
-          +(hasD?'<span style="font-size:9px;color:#10b981;font-weight:700">✓ COMPLETATA</span>':'<span style="font-size:9px;color:var(--text3)">da giocare</span>')
+          +'<div style="display:flex;align-items:center;gap:6px">'
+          +(hasD?'<span style="font-size:9px;color:#10b981;font-weight:700">&#10003; COMPLETATA</span>':'<span style="font-size:9px;color:var(--text3)">da giocare</span>')
+          +'<button onclick="admCalToggleEdit('+g+',\''+torneoKey+'\',\''+legaKey+'\')" style="padding:2px 8px;border-radius:5px;font-size:10px;font-weight:700;cursor:pointer;border:1px solid '+(_isEdit?'rgba(239,68,68,.4)':'rgba(59,130,246,.4)')+';background:'+(_isEdit?'rgba(239,68,68,.12)':'rgba(59,130,246,.1)')+';color:'+(_isEdit?'#ef4444':'#3b82f6')+'">'+(_isEdit?'&#10005; Chiudi':'&#9998; Modifica')+'</button>'
+          +'</div>'
           +'</div>';
         if(!matches.length){h+='<div style="padding:5px 12px;font-size:11px;color:var(--text3)">Nessuna partita</div>';}
         else{
@@ -9148,11 +9153,24 @@ function admLoadCalBody() {
             var scoreC=_symScore?(_symScore==='1-0'?'#10b981':_symScore==='1-1'?'#3b82f6':'#ef4444'):'var(--text3)';
             h+='<div style="display:grid;grid-template-columns:1fr 40px 1fr;align-items:center;gap:4px;padding:1px 0">'
               +'<span style="display:flex;align-items:center;justify-content:flex-end;font-size:11px;font-weight:700">'+_teamCase(m.h||'')+'</span>'
-              +'<span style="text-align:center;font-family:\'Bebas Neue\';font-size:13px;color:'+scoreC+';letter-spacing:1px">'+(score||'—')+'</span>'
+              +'<span style="text-align:center;font-family:\'Bebas Neue\';font-size:13px;color:'+scoreC+';letter-spacing:1px">'+(score||'&#8212;')+'</span>'
               +'<span style="display:flex;align-items:center;font-size:11px;font-weight:700">'+_teamCase(m.a||'')+'</span>'
               +'</div>';
           });
           h+='</div>';
+        }
+        if(_isEdit){
+          h+='<div style="border-top:1px solid var(--border);padding:8px 12px;background:rgba(59,130,246,.04)">'
+            +'<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:4px;margin-bottom:8px">'
+            +teams.map(function(team){
+              var val=gio[team]||gio[team.toUpperCase()]||'';
+              var col=RC[val]||'var(--text3)';
+              var opts=OPTS.map(function(o){return '<option value="'+o+'"'+(o===val?' selected':'')+'>'+( o||'&#8212;')+'</option>';}).join('');
+              return '<div style="display:flex;align-items:center;gap:4px"><span style="font-size:10px;font-weight:700;flex:1;min-width:0;overflow:hidden;white-space:nowrap;color:var(--text2)">'+_teamCase(team)+'</span><select data-t="'+torneoKey+'" data-l="'+legaKey+'" data-g="'+g+'" data-team="'+team+'" onchange="admUpdateCalEl(this)" style="width:62px;padding:2px 2px;background:var(--bg2);border:1px solid var(--border);border-radius:4px;color:'+col+';font-size:10px;font-weight:700;outline:none">'+opts+'</select></div>';
+            }).join('')
+            +'</div>'
+            +'<button onclick="admCalSaveAndClose('+g+',\''+torneoKey+'\',\''+legaKey+'\')" style="padding:5px 14px;background:#10b981;color:#fff;border:none;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer">&#128190; Salva G'+g+'</button>'
+            +'</div>';
         }
         h+='</div>';
       }
@@ -9246,6 +9264,18 @@ function admSaveCalGiornata(t,l,g) {
   // Sincronizza su GSheets
   gsSaveCalendario(t, l, cal);
   var msg=document.createElement('div');msg.textContent='✅ Giornata '+g+' salvata'+(GS_ONLINE?' · Sincronizzato':'');msg.style.cssText='position:fixed;top:70px;right:20px;background:#10b981;color:#fff;padding:8px 16px;border-radius:8px;font-weight:700;font-size:12px;z-index:9999';document.body.appendChild(msg);setTimeout(function(){msg.remove();},2000);
+}
+function admCalToggleEdit(g,t,l){
+  var key='_admCalEditG_'+t+'_'+l;
+  window[key]=(window[key]===g)?null:g;
+  window['_admCalToggle_'+t+'_'+l]=true;
+  admLoadCalBody();
+}
+function admCalSaveAndClose(g,t,l){
+  admSaveCalGiornata(t,l,g);
+  window['_admCalEditG_'+t+'_'+l]=null;
+  window['_admCalToggle_'+t+'_'+l]=true;
+  admLoadCalBody();
 }
 
 function admProcessCalScheduleXlsx(input){
@@ -15242,15 +15272,20 @@ function admLoadCalBody() {
     if (!_schN) {
       h = '<div style="padding:30px;text-align:center;color:var(--text3);font-size:13px">📅 Calendario non ancora importato.<br><span style="font-size:11px">Premi "Importa Cal." per caricare il file xlsx.</span></div>';
     } else {
+      var _editG=window['_admCalEditG_'+torneoKey+'_'+legaKey]||null;
       h = '<div style="display:flex;flex-direction:column;gap:6px">';
       for (var g=1; g<=giornate; g++) {
         var matches=_schGiornate[String(g)]||[];
         var gio=cal[String(g)]||{};
         var hasD=Object.values(gio).some(function(v){return v;});
+        var _isEdit=(g===_editG);
         h+='<div style="background:var(--card);border:1px solid var(--border);border-radius:8px;overflow:hidden">'
           +'<div style="padding:5px 12px;background:var(--bg2);display:flex;justify-content:space-between;align-items:center">'
           +'<span style="font-family:\'Bebas Neue\';font-size:14px;letter-spacing:1px;color:var(--text2)">Giornata '+g+'</span>'
-          +(hasD?'<span style="font-size:9px;color:#10b981;font-weight:700">✓ COMPLETATA</span>':'<span style="font-size:9px;color:var(--text3)">da giocare</span>')
+          +'<div style="display:flex;align-items:center;gap:6px">'
+          +(hasD?'<span style="font-size:9px;color:#10b981;font-weight:700">&#10003; COMPLETATA</span>':'<span style="font-size:9px;color:var(--text3)">da giocare</span>')
+          +'<button onclick="admCalToggleEdit('+g+',\''+torneoKey+'\',\''+legaKey+'\')" style="padding:2px 8px;border-radius:5px;font-size:10px;font-weight:700;cursor:pointer;border:1px solid '+(_isEdit?'rgba(239,68,68,.4)':'rgba(59,130,246,.4)')+';background:'+(_isEdit?'rgba(239,68,68,.12)':'rgba(59,130,246,.1)')+';color:'+(_isEdit?'#ef4444':'#3b82f6')+'">'+(_isEdit?'&#10005; Chiudi':'&#9998; Modifica')+'</button>'
+          +'</div>'
           +'</div>';
         if(!matches.length){h+='<div style="padding:5px 12px;font-size:11px;color:var(--text3)">Nessuna partita</div>';}
         else{
@@ -15264,11 +15299,24 @@ function admLoadCalBody() {
             var scoreC=_symScore?(_symScore==='1-0'?'#10b981':_symScore==='1-1'?'#3b82f6':'#ef4444'):'var(--text3)';
             h+='<div style="display:grid;grid-template-columns:1fr 40px 1fr;align-items:center;gap:4px;padding:1px 0">'
               +'<span style="display:flex;align-items:center;justify-content:flex-end;font-size:11px;font-weight:700">'+_teamCase(m.h||'')+'</span>'
-              +'<span style="text-align:center;font-family:\'Bebas Neue\';font-size:13px;color:'+scoreC+';letter-spacing:1px">'+(score||'—')+'</span>'
+              +'<span style="text-align:center;font-family:\'Bebas Neue\';font-size:13px;color:'+scoreC+';letter-spacing:1px">'+(score||'&#8212;')+'</span>'
               +'<span style="display:flex;align-items:center;font-size:11px;font-weight:700">'+_teamCase(m.a||'')+'</span>'
               +'</div>';
           });
           h+='</div>';
+        }
+        if(_isEdit){
+          h+='<div style="border-top:1px solid var(--border);padding:8px 12px;background:rgba(59,130,246,.04)">'
+            +'<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:4px;margin-bottom:8px">'
+            +teams.map(function(team){
+              var val=gio[team]||gio[team.toUpperCase()]||'';
+              var col=RC[val]||'var(--text3)';
+              var opts=OPTS.map(function(o){return '<option value="'+o+'"'+(o===val?' selected':'')+'>'+( o||'&#8212;')+'</option>';}).join('');
+              return '<div style="display:flex;align-items:center;gap:4px"><span style="font-size:10px;font-weight:700;flex:1;min-width:0;overflow:hidden;white-space:nowrap;color:var(--text2)">'+_teamCase(team)+'</span><select data-t="'+torneoKey+'" data-l="'+legaKey+'" data-g="'+g+'" data-team="'+team+'" onchange="admUpdateCalEl(this)" style="width:62px;padding:2px 2px;background:var(--bg2);border:1px solid var(--border);border-radius:4px;color:'+col+';font-size:10px;font-weight:700;outline:none">'+opts+'</select></div>';
+            }).join('')
+            +'</div>'
+            +'<button onclick="admCalSaveAndClose('+g+',\''+torneoKey+'\',\''+legaKey+'\')" style="padding:5px 14px;background:#10b981;color:#fff;border:none;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer">&#128190; Salva G'+g+'</button>'
+            +'</div>';
         }
         h+='</div>';
       }
