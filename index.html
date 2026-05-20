@@ -1,4 +1,4 @@
-<!-- build:20260520_2137 -->
+<!-- build:20260520_2156 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260520_2137';
+  var BUILD='20260520_2156';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -5071,14 +5071,19 @@ function gsPing() {
             gsLoadCalendario(_tk, _lk, function(calData) {
               if (!calData||_calRecentReset) return;
               var str = typeof calData === 'string' ? calData : JSON.stringify(calData);
-              localStorage.setItem('adm_cal_'+_tk+'_'+_lk, str);
+              // Salva solo sulla chiave display (non sovrascrivere adm_cal_ = delta utente)
               var _appKey = (_tk==='tsm'&&_lk==='it') ? 'tsm_calendar_it' : (_tk!=='slim'?'adm_cal_'+_tk+'_'+_lk:(_lk==='it'?'slim_calendar':'slim_calendar_'+_lk));
-              localStorage.setItem(_appKey, str);
+              if (_appKey !== 'adm_cal_'+_tk+'_'+_lk) localStorage.setItem(_appKey, str);
               // Re-render calendario se attivo
               if (window._currentTourneyKey===_tk && (typeof currentLeagueKey==='undefined'||currentLeagueKey===_lk)) {
                 var _apC=document.querySelector('.page.active');var _scC=_apC?_apC.querySelector('.section.active'):null;var _siC=_scC?_scC.id:'';
                 if(_siC==='s-calendario'&&typeof slimRenderCalendario==='function')slimRenderCalendario();
                 if(_siC==='tsm-s-calendario'&&typeof tsmRenderCalendario==='function')tsmRenderCalendario();
+              }
+            });
+            gsLoadKey('adm_cal_'+_tk+'_'+_lk, function(val) {
+              if (val !== null && val !== undefined && !_calRecentReset) {
+                try{localStorage.setItem('adm_cal_'+_tk+'_'+_lk, typeof val==='string'?val:JSON.stringify(val));}catch(e){}
               }
             });
             gsLoadKey('adm_cal_schedule_'+_tk+'_'+_lk, function(val) {
@@ -9295,6 +9300,8 @@ function admSaveCalGiornata(t,l,g) {
   var appKey = (t==='tsm'&&l==='it') ? 'tsm_calendar_it' : (t!=='slim'?'adm_cal_'+t+'_'+l:(l==='it'?'slim_calendar':'slim_calendar_'+l));
   localStorage.setItem(appKey, JSON.stringify(merged));
   // NON sovrascrivere adm_cal_ con merged (conterrebbe risultati stagione precedente)
+  var _deltaRaw=localStorage.getItem('adm_cal_'+t+'_'+l);
+  if(_deltaRaw)gsSaveKey('adm_cal_'+t+'_'+l,_deltaRaw);
   gsSaveCalendario(t, l, merged);
   var msg=document.createElement('div');msg.textContent='✅ Giornata '+g+' salvata'+(GS_ONLINE?' · Sincronizzato':'');msg.style.cssText='position:fixed;top:70px;right:20px;background:#10b981;color:#fff;padding:8px 16px;border-radius:8px;font-weight:700;font-size:12px;z-index:9999';document.body.appendChild(msg);setTimeout(function(){msg.remove();},2000);
 }
@@ -15505,6 +15512,8 @@ function admSaveCalGiornata(t,l,g) {
   var appKey = (t==='tsm'&&l==='it') ? 'tsm_calendar_it' : (t!=='slim'?'adm_cal_'+t+'_'+l:(l==='it'?'slim_calendar':'slim_calendar_'+l));
   localStorage.setItem(appKey, JSON.stringify(merged));
   // NON sovrascrivere adm_cal_ con merged (conterrebbe risultati stagione precedente)
+  var _deltaRaw=localStorage.getItem('adm_cal_'+t+'_'+l);
+  if(_deltaRaw)gsSaveKey('adm_cal_'+t+'_'+l,_deltaRaw);
   gsSaveCalendario(t, l, merged);
   var msg=document.createElement('div');msg.textContent='✅ Giornata '+g+' salvata'+(GS_ONLINE?' · Sincronizzato':'');msg.style.cssText='position:fixed;top:70px;right:20px;background:#10b981;color:#fff;padding:8px 16px;border-radius:8px;font-weight:700;font-size:12px;z-index:9999';document.body.appendChild(msg);setTimeout(function(){msg.remove();},2000);
 }
