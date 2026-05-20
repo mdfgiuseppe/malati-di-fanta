@@ -1,4 +1,4 @@
-<!-- build:20260520_2043 -->
+<!-- build:20260520_2049 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260520_2043';
+  var BUILD='20260520_2049';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -1129,6 +1129,9 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
           <th style="padding:8px 6px;text-align:center;color:#10b981">V</th>
           <th style="padding:8px 6px;text-align:center">P</th>
           <th style="padding:8px 6px;text-align:center;color:#ef4444">S</th>
+          <th style="padding:8px 6px;text-align:center;color:#f59e0b">GF</th>
+          <th style="padding:8px 6px;text-align:center;color:var(--text3)">GS</th>
+          <th style="padding:8px 6px;text-align:center">DR</th>
           <th style="padding:8px 6px;text-align:center">Pt</th>
           <th style="padding:8px 6px;text-align:center">Pt.Tot</th>
         </tr></thead>
@@ -1565,6 +1568,9 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
             <th style="padding:7px 8px;width:26px">V</th>
             <th style="padding:7px 8px;width:26px">P</th>
             <th style="padding:7px 8px;width:26px">S</th>
+            <th style="padding:7px 6px;width:28px;color:#f59e0b;text-align:center">GF</th>
+            <th style="padding:7px 6px;width:28px;color:var(--text3);text-align:center">GS</th>
+            <th style="padding:7px 6px;width:30px;text-align:center">DR</th>
             <th style="padding:7px 8px;width:36px;color:var(--green)">Pt</th>
             <th style="padding:7px 8px;width:44px">Pt.Tot</th>
           </tr>
@@ -3787,6 +3793,13 @@ function slimCalcStandings() {
   });
   var _slimPtsRaw=localStorage.getItem('adm_cal_pts_'+_tk+'_'+(typeof currentLeagueKey!=='undefined'?currentLeagueKey:'it'));
   if(_slimPtsRaw){try{var _slimPts=JSON.parse(_slimPtsRaw);Object.keys(_slimPts).forEach(function(gk){Object.keys(_slimPts[gk]).forEach(function(tn){var tk2=teamKeyMap[tn.toUpperCase()]||tn;if(s[tk2])s[tk2].totalPts+=(_slimPts[gk][tn]||0);});});}catch(e){}}
+  var _slimLkSc=(typeof currentLeagueKey!=='undefined'?currentLeagueKey:'it');
+  var _slimScRaw=localStorage.getItem('adm_cal_score_'+_tk+'_'+_slimLkSc);
+  var _slimScData=_slimScRaw?(function(){try{return JSON.parse(_slimScRaw);}catch(e){return{};}}()):{};
+  var _slimSchRaw=localStorage.getItem('adm_cal_schedule_'+_tk+'_'+_slimLkSc);
+  var _slimSchP=_slimSchRaw?(function(){try{return JSON.parse(_slimSchRaw);}catch(e){return null;}})():null;
+  var _slimSchG=_slimSchP?(_slimSchP.giornate||_slimSchP):{};
+  Object.keys(_slimScData).forEach(function(gk){var schG=_slimSchG[gk]||[];schG.forEach(function(m){var hK=(m.h||'').toUpperCase();var aK=(m.a||'').toUpperCase();var scK=Object.keys(_slimScData[gk]).find(function(k){return k.toUpperCase()===hK;});if(!scK)return;var pts=(_slimScData[gk][scK]||'').split('-');if(pts.length<2)return;var gh=parseInt(pts[0])||0;var ga=parseInt(pts[1])||0;var hT=teamKeyMap[hK]||hK;var aT=teamKeyMap[aK]||aK;if(s[hT]){s[hT].gf+=gh;s[hT].gs+=ga;}if(s[aT]){s[aT].gf+=ga;s[aT].gs+=gh;}});});
   var sorted = SLIM_TEAMS.slice().sort(function(a,b){
     if (s[b].pt !== s[a].pt) return s[b].pt - s[a].pt;
     if (s[b].totalPts !== s[a].totalPts) return s[b].totalPts - s[a].totalPts;
@@ -4337,7 +4350,7 @@ function tsmCalcStandings() {
   // Mappa lookup case-insensitive
   var teamKeyMap = {};
   tsmTeams.forEach(function(t) {
-    s[t] = {v:0,p:0,s:0,pt:0,cr:0,totalPts:0};
+    s[t] = {v:0,p:0,s:0,pt:0,cr:0,gf:0,gs:0,totalPts:0};
     teamKeyMap[t.toUpperCase()] = t;
   });
   var giocate = 0;
@@ -4374,6 +4387,12 @@ function tsmCalcStandings() {
   var _tsmLk=(typeof currentLeagueKey!=='undefined'?currentLeagueKey:'it').replace(/^tsm_/,'');
   var _tsmPtsRaw=localStorage.getItem('adm_cal_pts_tsm_'+_tsmLk);
   if(_tsmPtsRaw){try{var _tsmPts=JSON.parse(_tsmPtsRaw);Object.keys(_tsmPts).forEach(function(gk){Object.keys(_tsmPts[gk]).forEach(function(tn){var tk2=teamKeyMap[tn.toUpperCase()]||tn;if(s[tk2])s[tk2].totalPts+=(_tsmPts[gk][tn]||0);});});}catch(e){}}
+  var _tsmScRaw=localStorage.getItem('adm_cal_score_tsm_'+_tsmLk);
+  var _tsmScData=_tsmScRaw?(function(){try{return JSON.parse(_tsmScRaw);}catch(e){return{};}}()):{};
+  var _tsmSchRaw=localStorage.getItem('adm_cal_schedule_tsm_'+_tsmLk);
+  var _tsmSchP=_tsmSchRaw?(function(){try{return JSON.parse(_tsmSchRaw);}catch(e){return null;}})():null;
+  var _tsmSchG=_tsmSchP?(_tsmSchP.giornate||_tsmSchP):{};
+  Object.keys(_tsmScData).forEach(function(gk){var schG=_tsmSchG[gk]||[];schG.forEach(function(m){var hK=(m.h||'').toUpperCase();var aK=(m.a||'').toUpperCase();var scK=Object.keys(_tsmScData[gk]).find(function(k){return k.toUpperCase()===hK;});if(!scK)return;var pts=(_tsmScData[gk][scK]||'').split('-');if(pts.length<2)return;var gh=parseInt(pts[0])||0;var ga=parseInt(pts[1])||0;var hT=teamKeyMap[hK]||hK;var aT=teamKeyMap[aK]||aK;if(s[hT]){s[hT].gf+=gh;s[hT].gs+=ga;}if(s[aT]){s[aT].gf+=ga;s[aT].gs+=gh;}});});
   var sorted = tsmTeams.slice().sort(function(a,b){
     if (s[b].pt !== s[a].pt) return s[b].pt - s[a].pt;
     if (s[b].totalPts !== s[a].totalPts) return s[b].totalPts - s[a].totalPts;
@@ -4412,6 +4431,9 @@ function tsmRenderClassifica() {
       +'<td style="text-align:center;font-size:11px;color:#10b981;width:26px">'+t.v+'</td>'
       +'<td style="text-align:center;font-size:11px;color:var(--text2);width:26px">'+t.p+'</td>'
       +'<td style="text-align:center;font-size:11px;color:#ef4444;width:26px">'+t.s+'</td>'
+      +'<td style="text-align:center;font-size:11px;color:#f59e0b;width:28px">'+(t.gf||0)+'</td>'
+      +'<td style="text-align:center;font-size:11px;color:var(--text3);width:28px">'+(t.gs||0)+'</td>'
+      +'<td style="text-align:center;font-size:11px;color:var(--text2);font-weight:700;width:30px">'+((t.gf||0)-(t.gs||0)>0?'+':'')+((t.gf||0)-(t.gs||0))+'</td>'
       +'<td style="text-align:center;font-family:\'Bebas Neue\';font-size:17px;color:var(--green);width:36px">'+t.pt+'</td>'
       +'<td style="text-align:center;font-size:10px;color:var(--text3);width:40px">'+(t.totalPts||0).toFixed(1)+'</td>'
       +'</tr>';
@@ -10589,6 +10611,9 @@ function slimRenderClassifica(){
       +'<td style="text-align:center;font-size:11px;color:#10b981;width:26px">'+t.v+'</td>'
       +'<td style="text-align:center;font-size:11px;color:var(--text2);width:26px">'+t.p+'</td>'
       +'<td style="text-align:center;font-size:11px;color:#ef4444;width:26px">'+t.s+'</td>'
+      +'<td style="text-align:center;font-size:11px;color:#f59e0b;width:28px">'+(t.gf||0)+'</td>'
+      +'<td style="text-align:center;font-size:11px;color:var(--text3);width:28px">'+(t.gs||0)+'</td>'
+      +'<td style="text-align:center;font-size:11px;color:var(--text2);font-weight:700;width:30px">'+((t.gf||0)-(t.gs||0)>0?'+':'')+((t.gf||0)-(t.gs||0))+'</td>'
       +'<td style="text-align:center;font-family:\'Bebas Neue\';font-size:17px;color:var(--green);width:36px">'+t.pt+'</td>'
       +'<td style="text-align:center;font-size:10px;color:var(--text3);width:40px">'+(t.totalPts||0).toFixed(1)+'</td>'
       +'</tr>';
@@ -11315,6 +11340,13 @@ function slimCalcStandings() {
   });
   var _slimPtsRaw=localStorage.getItem('adm_cal_pts_'+_tk+'_'+(typeof currentLeagueKey!=='undefined'?currentLeagueKey:'it'));
   if(_slimPtsRaw){try{var _slimPts=JSON.parse(_slimPtsRaw);Object.keys(_slimPts).forEach(function(gk){Object.keys(_slimPts[gk]).forEach(function(tn){var tk2=teamKeyMap[tn.toUpperCase()]||tn;if(s[tk2])s[tk2].totalPts+=(_slimPts[gk][tn]||0);});});}catch(e){}}
+  var _slimLkSc=(typeof currentLeagueKey!=='undefined'?currentLeagueKey:'it');
+  var _slimScRaw=localStorage.getItem('adm_cal_score_'+_tk+'_'+_slimLkSc);
+  var _slimScData=_slimScRaw?(function(){try{return JSON.parse(_slimScRaw);}catch(e){return{};}}()):{};
+  var _slimSchRaw=localStorage.getItem('adm_cal_schedule_'+_tk+'_'+_slimLkSc);
+  var _slimSchP=_slimSchRaw?(function(){try{return JSON.parse(_slimSchRaw);}catch(e){return null;}})():null;
+  var _slimSchG=_slimSchP?(_slimSchP.giornate||_slimSchP):{};
+  Object.keys(_slimScData).forEach(function(gk){var schG=_slimSchG[gk]||[];schG.forEach(function(m){var hK=(m.h||'').toUpperCase();var aK=(m.a||'').toUpperCase();var scK=Object.keys(_slimScData[gk]).find(function(k){return k.toUpperCase()===hK;});if(!scK)return;var pts=(_slimScData[gk][scK]||'').split('-');if(pts.length<2)return;var gh=parseInt(pts[0])||0;var ga=parseInt(pts[1])||0;var hT=teamKeyMap[hK]||hK;var aT=teamKeyMap[aK]||aK;if(s[hT]){s[hT].gf+=gh;s[hT].gs+=ga;}if(s[aT]){s[aT].gf+=ga;s[aT].gs+=gh;}});});
   var sorted = SLIM_TEAMS.slice().sort(function(a,b){
     if (s[b].pt !== s[a].pt) return s[b].pt - s[a].pt;
     if (s[b].totalPts !== s[a].totalPts) return s[b].totalPts - s[a].totalPts;
@@ -11865,7 +11897,7 @@ function tsmCalcStandings() {
   // Mappa lookup case-insensitive
   var teamKeyMap = {};
   tsmTeams.forEach(function(t) {
-    s[t] = {v:0,p:0,s:0,pt:0,cr:0,totalPts:0};
+    s[t] = {v:0,p:0,s:0,pt:0,cr:0,gf:0,gs:0,totalPts:0};
     teamKeyMap[t.toUpperCase()] = t;
   });
   var giocate = 0;
@@ -11902,6 +11934,12 @@ function tsmCalcStandings() {
   var _tsmLk=(typeof currentLeagueKey!=='undefined'?currentLeagueKey:'it').replace(/^tsm_/,'');
   var _tsmPtsRaw=localStorage.getItem('adm_cal_pts_tsm_'+_tsmLk);
   if(_tsmPtsRaw){try{var _tsmPts=JSON.parse(_tsmPtsRaw);Object.keys(_tsmPts).forEach(function(gk){Object.keys(_tsmPts[gk]).forEach(function(tn){var tk2=teamKeyMap[tn.toUpperCase()]||tn;if(s[tk2])s[tk2].totalPts+=(_tsmPts[gk][tn]||0);});});}catch(e){}}
+  var _tsmScRaw=localStorage.getItem('adm_cal_score_tsm_'+_tsmLk);
+  var _tsmScData=_tsmScRaw?(function(){try{return JSON.parse(_tsmScRaw);}catch(e){return{};}}()):{};
+  var _tsmSchRaw=localStorage.getItem('adm_cal_schedule_tsm_'+_tsmLk);
+  var _tsmSchP=_tsmSchRaw?(function(){try{return JSON.parse(_tsmSchRaw);}catch(e){return null;}})():null;
+  var _tsmSchG=_tsmSchP?(_tsmSchP.giornate||_tsmSchP):{};
+  Object.keys(_tsmScData).forEach(function(gk){var schG=_tsmSchG[gk]||[];schG.forEach(function(m){var hK=(m.h||'').toUpperCase();var aK=(m.a||'').toUpperCase();var scK=Object.keys(_tsmScData[gk]).find(function(k){return k.toUpperCase()===hK;});if(!scK)return;var pts=(_tsmScData[gk][scK]||'').split('-');if(pts.length<2)return;var gh=parseInt(pts[0])||0;var ga=parseInt(pts[1])||0;var hT=teamKeyMap[hK]||hK;var aT=teamKeyMap[aK]||aK;if(s[hT]){s[hT].gf+=gh;s[hT].gs+=ga;}if(s[aT]){s[aT].gf+=ga;s[aT].gs+=gh;}});});
   var sorted = tsmTeams.slice().sort(function(a,b){
     if (s[b].pt !== s[a].pt) return s[b].pt - s[a].pt;
     if (s[b].totalPts !== s[a].totalPts) return s[b].totalPts - s[a].totalPts;
@@ -11940,6 +11978,9 @@ function tsmRenderClassifica() {
       +'<td style="text-align:center;font-size:11px;color:#10b981;width:26px">'+t.v+'</td>'
       +'<td style="text-align:center;font-size:11px;color:var(--text2);width:26px">'+t.p+'</td>'
       +'<td style="text-align:center;font-size:11px;color:#ef4444;width:26px">'+t.s+'</td>'
+      +'<td style="text-align:center;font-size:11px;color:#f59e0b;width:28px">'+(t.gf||0)+'</td>'
+      +'<td style="text-align:center;font-size:11px;color:var(--text3);width:28px">'+(t.gs||0)+'</td>'
+      +'<td style="text-align:center;font-size:11px;color:var(--text2);font-weight:700;width:30px">'+((t.gf||0)-(t.gs||0)>0?'+':'')+((t.gf||0)-(t.gs||0))+'</td>'
       +'<td style="text-align:center;font-family:\'Bebas Neue\';font-size:17px;color:var(--green);width:36px">'+t.pt+'</td>'
       +'<td style="text-align:center;font-size:10px;color:var(--text3);width:40px">'+(t.totalPts||0).toFixed(1)+'</td>'
       +'</tr>';
@@ -16633,6 +16674,9 @@ function slimRenderClassifica(){
       +'<td style="text-align:center;font-size:11px;color:#10b981;width:26px">'+t.v+'</td>'
       +'<td style="text-align:center;font-size:11px;color:var(--text2);width:26px">'+t.p+'</td>'
       +'<td style="text-align:center;font-size:11px;color:#ef4444;width:26px">'+t.s+'</td>'
+      +'<td style="text-align:center;font-size:11px;color:#f59e0b;width:28px">'+(t.gf||0)+'</td>'
+      +'<td style="text-align:center;font-size:11px;color:var(--text3);width:28px">'+(t.gs||0)+'</td>'
+      +'<td style="text-align:center;font-size:11px;color:var(--text2);font-weight:700;width:30px">'+((t.gf||0)-(t.gs||0)>0?'+':'')+((t.gf||0)-(t.gs||0))+'</td>'
       +'<td style="text-align:center;font-family:\'Bebas Neue\';font-size:17px;color:var(--green);width:36px">'+t.pt+'</td>'
       +'<td style="text-align:center;font-size:10px;color:var(--text3);width:40px">'+(t.totalPts||0).toFixed(1)+'</td>'
       +'</tr>';
