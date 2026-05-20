@@ -1,4 +1,4 @@
-<!-- build:20260520_1916 -->
+<!-- build:20260520_1925 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260520_1916';
+  var BUILD='20260520_1925';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -5040,8 +5040,10 @@ function gsPing() {
           })(t.key, l.key);
           // Calendario risultati, schedule e pts fantasy
           (function(_tk, _lk) {
+            var _calResetTs=parseInt(localStorage.getItem('_cal_reset_ts_'+_tk+'_'+_lk)||'0');
+            var _calRecentReset=Date.now()-_calResetTs<300000;
             gsLoadCalendario(_tk, _lk, function(calData) {
-              if (!calData) return;
+              if (!calData||_calRecentReset) return;
               var str = typeof calData === 'string' ? calData : JSON.stringify(calData);
               localStorage.setItem('adm_cal_'+_tk+'_'+_lk, str);
               var _appKey = (_tk==='tsm'&&_lk==='it') ? 'tsm_calendar_it' : (_tk!=='slim'?'adm_cal_'+_tk+'_'+_lk:(_lk==='it'?'slim_calendar':'slim_calendar_'+_lk));
@@ -5057,7 +5059,7 @@ function gsPing() {
               if (val !== null && val !== undefined) localStorage.setItem('adm_cal_schedule_'+_tk+'_'+_lk, typeof val==='string'?val:JSON.stringify(val));
             });
             gsLoadKey('adm_cal_pts_'+_tk+'_'+_lk, function(val) {
-              if (val !== null && val !== undefined) {
+              if (val !== null && val !== undefined && !_calRecentReset) {
                 localStorage.setItem('adm_cal_pts_'+_tk+'_'+_lk, typeof val==='string'?val:JSON.stringify(val));
                 // Re-render classifica se attiva
                 if (window._currentTourneyKey===_tk && (typeof currentLeagueKey==='undefined'||currentLeagueKey===_lk)) {
@@ -5068,7 +5070,7 @@ function gsPing() {
               }
             });
             gsLoadKey('adm_cal_score_'+_tk+'_'+_lk, function(val) {
-              if (val !== null && val !== undefined) localStorage.setItem('adm_cal_score_'+_tk+'_'+_lk, typeof val==='string'?val:JSON.stringify(val));
+              if (val !== null && val !== undefined && !_calRecentReset) localStorage.setItem('adm_cal_score_'+_tk+'_'+_lk, typeof val==='string'?val:JSON.stringify(val));
             });
           })(t.key, l.key);
         });
@@ -9395,6 +9397,7 @@ function admAzzeraRisultatiCal(){
   gsSaveCalendario(t,l,cal);
   localStorage.setItem('adm_cal_pts_'+t+'_'+l,'{}');gsSaveKey('adm_cal_pts_'+t+'_'+l,'{}');
   localStorage.setItem('adm_cal_score_'+t+'_'+l,'{}');gsSaveKey('adm_cal_score_'+t+'_'+l,'{}');
+  localStorage.setItem('_cal_reset_ts_'+t+'_'+l,String(Date.now()));
   var msg=document.createElement('div');msg.textContent='🗑 Risultati azzerati';msg.style.cssText='position:fixed;top:70px;right:20px;background:#ef4444;color:#fff;padding:8px 16px;border-radius:8px;font-weight:700;font-size:12px;z-index:9999';document.body.appendChild(msg);setTimeout(function(){msg.remove();},2500);
   admLoadCalBody();
 }
