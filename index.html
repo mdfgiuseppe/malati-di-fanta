@@ -1,4 +1,4 @@
-<!-- build:20260520_2132 -->
+<!-- build:20260520_2137 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260520_2132';
+  var BUILD='20260520_2137';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -9137,8 +9137,8 @@ function admLoadCalBody() {
     +'<span style="color:var(--border);margin:0 2px">|</span>'
     +'<button onclick="document.getElementById(\'adm-cal-sch-file\').click()" style="padding:5px 12px;background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.3);border-radius:6px;color:#3b82f6;font-size:12px;font-weight:700;cursor:pointer">📥 Importa Cal.</button>'
     +'<input type="file" id="adm-cal-sch-file" accept=".xlsx" style="display:none" onchange="admProcessCalScheduleXlsx(this)">'
-    +'<label style="font-size:11px;color:var(--text2)">A/R:<input id="adm-cal-ar" type="number" min="0" value="'+_schAr+'" style="width:42px;margin-left:4px;padding:2px 4px;background:var(--bg);border:1px solid var(--border);border-radius:4px;color:var(--text);font-size:11px;outline:none"></label>'
-    +'<label style="font-size:11px;color:var(--text2)">N:<input id="adm-cal-ne" type="number" min="0" value="'+_schNe+'" style="width:42px;margin-left:4px;padding:2px 4px;background:var(--bg);border:1px solid var(--border);border-radius:4px;color:var(--text);font-size:11px;outline:none"></label>'
+    +'<label style="font-size:11px;color:var(--text2)">A/R:<input id="adm-cal-ar" type="number" min="0" value="'+_schAr+'" onchange="admCalSaveArNe()" style="width:42px;margin-left:4px;padding:2px 4px;background:var(--bg);border:1px solid var(--border);border-radius:4px;color:var(--text);font-size:11px;outline:none"></label>'
+    +'<label style="font-size:11px;color:var(--text2)">N:<input id="adm-cal-ne" type="number" min="0" value="'+_schNe+'" onchange="admCalSaveArNe()" style="width:42px;margin-left:4px;padding:2px 4px;background:var(--bg);border:1px solid var(--border);border-radius:4px;color:var(--text);font-size:11px;outline:none"></label>'
     +'<span style="font-size:11px;color:var(--text2)">'+(_schN?'✅ '+_schN+' gior.':'non importato')+'</span>'
     +'<span style="color:var(--border);margin:0 6px">|</span>'
     +'<select id="adm-cal-giornata-import" onchange="admCalAutoNeutral()" style="padding:5px 8px;background:var(--bg);border:1px solid var(--border);border-radius:6px;font-size:12px;color:var(--text);outline:none">'+_gOpts+'</select>'
@@ -9464,6 +9464,20 @@ function admCalAutoNeutral(){
   var sch=localStorage.getItem('adm_cal_schedule_'+t+'_'+l);
   if(sch){try{var meta=JSON.parse(sch);ar=meta.andata_ritorno||ar;ne=meta.neutre||ne;}catch(e){}}
   if(ar>0)chk.checked=g>ar&&g<=(ar+ne);
+}
+function admCalSaveArNe(){
+  var t=document.getElementById('adm-cal-torneo').value;
+  var l=document.getElementById('adm-cal-lega').value;
+  if(!t||!l)return;
+  var key='adm_cal_schedule_'+t+'_'+l;
+  var raw=localStorage.getItem(key);
+  var sch=raw?(function(){try{return JSON.parse(raw);}catch(e){return null;}})():null;
+  if(!sch)sch={giornate:{},andata_ritorno:0,neutre:0};
+  sch.andata_ritorno=parseInt((document.getElementById('adm-cal-ar')||{}).value)||0;
+  sch.neutre=parseInt((document.getElementById('adm-cal-ne')||{}).value)||0;
+  localStorage.setItem(key,JSON.stringify(sch));
+  gsSaveKey(key,JSON.stringify(sch));
+  admCalAutoNeutral();
 }
 function admAzzeraRisultatiCal(){
   var t=document.getElementById('adm-cal-torneo').value;
@@ -15333,8 +15347,8 @@ function admLoadCalBody() {
     +'<span style="color:var(--border);margin:0 2px">|</span>'
     +'<button onclick="document.getElementById(\'adm-cal-sch-file\').click()" style="padding:5px 12px;background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.3);border-radius:6px;color:#3b82f6;font-size:12px;font-weight:700;cursor:pointer">📥 Importa Cal.</button>'
     +'<input type="file" id="adm-cal-sch-file" accept=".xlsx" style="display:none" onchange="admProcessCalScheduleXlsx(this)">'
-    +'<label style="font-size:11px;color:var(--text2)">A/R:<input id="adm-cal-ar" type="number" min="0" value="'+_schAr+'" style="width:42px;margin-left:4px;padding:2px 4px;background:var(--bg);border:1px solid var(--border);border-radius:4px;color:var(--text);font-size:11px;outline:none"></label>'
-    +'<label style="font-size:11px;color:var(--text2)">N:<input id="adm-cal-ne" type="number" min="0" value="'+_schNe+'" style="width:42px;margin-left:4px;padding:2px 4px;background:var(--bg);border:1px solid var(--border);border-radius:4px;color:var(--text);font-size:11px;outline:none"></label>'
+    +'<label style="font-size:11px;color:var(--text2)">A/R:<input id="adm-cal-ar" type="number" min="0" value="'+_schAr+'" onchange="admCalSaveArNe()" style="width:42px;margin-left:4px;padding:2px 4px;background:var(--bg);border:1px solid var(--border);border-radius:4px;color:var(--text);font-size:11px;outline:none"></label>'
+    +'<label style="font-size:11px;color:var(--text2)">N:<input id="adm-cal-ne" type="number" min="0" value="'+_schNe+'" onchange="admCalSaveArNe()" style="width:42px;margin-left:4px;padding:2px 4px;background:var(--bg);border:1px solid var(--border);border-radius:4px;color:var(--text);font-size:11px;outline:none"></label>'
     +'<span style="font-size:11px;color:var(--text2)">'+(_schN?'✅ '+_schN+' gior.':'non importato')+'</span>'
     +'<span style="color:var(--border);margin:0 6px">|</span>'
     +'<select id="adm-cal-giornata-import" onchange="admCalAutoNeutral()" style="padding:5px 8px;background:var(--bg);border:1px solid var(--border);border-radius:6px;font-size:12px;color:var(--text);outline:none">'+_gOpts+'</select>'
