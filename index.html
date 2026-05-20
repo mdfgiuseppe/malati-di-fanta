@@ -1,4 +1,4 @@
-<!-- build:20260520_1855 -->
+<!-- build:20260520_1916 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260520_1855';
+  var BUILD='20260520_1916';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -9090,6 +9090,8 @@ function admLoadCalBody() {
   var OPTS = ['','VC','VF','V','PC','PF','P','SC','SF','S'];
   var RC = {VC:'#10b981',VF:'#34d399',V:'#6ee7b7',PC:'#3b82f6',PF:'#60a5fa',P:'#93c5fd',SC:'#ef4444',SF:'#f87171',S:'#fca5a5'};
   var RC2 = {VC:'rgba(16,185,129,.15);color:#10b981',VF:'rgba(16,185,129,.1);color:#34d399',V:'rgba(110,231,183,.15);color:#6ee7b7',PC:'rgba(59,130,246,.12);color:#3b82f6',PF:'rgba(59,130,246,.08);color:#60a5fa',P:'rgba(147,197,253,.12);color:#93c5fd',SC:'rgba(239,68,68,.12);color:#ef4444',SF:'rgba(239,68,68,.08);color:#f87171',S:'rgba(252,165,165,.12);color:#fca5a5'};
+  var _admScRaw=localStorage.getItem('adm_cal_score_'+torneoKey+'_'+legaKey);
+  var _scores=_admScRaw?(function(){try{return JSON.parse(_admScRaw);}catch(e){return null;}})():null;
   var _logos={};
   function headerRow() {
     return '<tr style="background:var(--bg2);font-size:9px;font-weight:800;text-transform:uppercase;color:var(--text3);position:sticky;top:0;z-index:2">'
@@ -9351,8 +9353,9 @@ function admProcessGiornataXlsx(input){
       var ptsKey='adm_cal_pts_'+t+'_'+l;var ptsRaw=localStorage.getItem(ptsKey);var pts=ptsRaw?(function(){try{return JSON.parse(ptsRaw);}catch(e){return{};}}()):{}; if(!pts[String(g)])pts[String(g)]={};matches.forEach(function(m){var pk1=_ck(cal[String(g)],m.team1),pk2=_ck(cal[String(g)],m.team2);pts[String(g)][pk1]=m.total1;pts[String(g)][pk2]=m.total2;});localStorage.setItem(ptsKey,JSON.stringify(pts));gsSaveKey(ptsKey,JSON.stringify(pts));
       var scKey='adm_cal_score_'+t+'_'+l;var scRaw=localStorage.getItem(scKey);var scores=scRaw?(function(){try{return JSON.parse(scRaw);}catch(e){return{};}}()):{}; if(!scores[String(g)])scores[String(g)]={};matches.forEach(function(m){if(m.scoreStr){var sk1=_ck(cal[String(g)],m.team1);scores[String(g)][sk1]=m.scoreStr;}});localStorage.setItem(scKey,JSON.stringify(scores));gsSaveKey(scKey,JSON.stringify(scores));
       var msg=document.createElement('div');msg.textContent='✅ G'+g+': '+matches.length+' partite importate'+(neutral?' [neutrale]':'');msg.style.cssText='position:fixed;top:70px;right:20px;background:#10b981;color:#fff;padding:8px 16px;border-radius:8px;font-weight:700;font-size:12px;z-index:9999';document.body.appendChild(msg);setTimeout(function(){msg.remove();},3000);
-      var _sG=document.getElementById('adm-cal-giornata-import');if(_sG){var _nv=parseInt(_sG.value)+1;if(_nv<=_sG.options.length){_sG.value=String(_nv);if(typeof admCalAutoNeutral==='function')admCalAutoNeutral();}}
+      var _nxtG=g+1;
       admLoadCalBody();
+      var _sGN=document.getElementById('adm-cal-giornata-import');if(_sGN&&_nxtG<=_sGN.options.length){_sGN.value=String(_nxtG);if(typeof admCalAutoNeutral==='function')admCalAutoNeutral();}
     }catch(ex){alert('Errore parsing xlsx: '+ex.message);}
     input.value='';
   };
@@ -9390,6 +9393,8 @@ function admAzzeraRisultatiCal(){
   var appKey=(t==='tsm'&&l==='it')?'tsm_calendar_it':(t!=='slim'?'adm_cal_'+t+'_'+l:(l==='it'?'slim_calendar':'slim_calendar_'+l));
   localStorage.setItem(appKey,JSON.stringify(cal));
   gsSaveCalendario(t,l,cal);
+  localStorage.setItem('adm_cal_pts_'+t+'_'+l,'{}');gsSaveKey('adm_cal_pts_'+t+'_'+l,'{}');
+  localStorage.setItem('adm_cal_score_'+t+'_'+l,'{}');gsSaveKey('adm_cal_score_'+t+'_'+l,'{}');
   var msg=document.createElement('div');msg.textContent='🗑 Risultati azzerati';msg.style.cssText='position:fixed;top:70px;right:20px;background:#ef4444;color:#fff;padding:8px 16px;border-radius:8px;font-weight:700;font-size:12px;z-index:9999';document.body.appendChild(msg);setTimeout(function(){msg.remove();},2500);
   admLoadCalBody();
 }
@@ -9452,27 +9457,26 @@ function calRenderGeneric(t, l, bodyId, nG, teams, callbackFn) {
     }
   } else {
     var _gkR=function(obj,k){var v=obj[k];if(v!==undefined)return v;var u=(k||'').toUpperCase();var fk=Object.keys(obj).find(function(x){return x.toUpperCase()===u;});return fk!==undefined?obj[fk]:'';};
-    var completedGs=[];for(var g=1;g<=nG;g++){var _gv=cal[String(g)]||{};if(Object.values(_gv).some(function(v){return v;}))completedGs.push(g);}
-    if(!completedGs.length){
-      h+='<div style="padding:30px;text-align:center;color:var(--text3);font-size:13px">📊 Nessun risultato ancora importato.</div>';
-    } else {
-      h+='<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:11px">';
-      h+='<thead><tr><th style="text-align:left;padding:5px 8px;background:var(--bg2);border:1px solid var(--border);font-family:\'Bebas Neue\';font-size:12px;letter-spacing:1px;min-width:110px;white-space:nowrap">Squadra</th>';
-      completedGs.forEach(function(g){h+='<th style="text-align:center;padding:5px 6px;background:var(--bg2);border:1px solid var(--border);font-family:\'Bebas Neue\';font-size:12px;letter-spacing:1px;min-width:36px">G'+g+'</th>';});
-      h+='</tr></thead><tbody>';
-      teams.forEach(function(team){
-        var lUrl=_logos[team.toUpperCase()]||'';
-        var fl=lUrl?'<img src="'+lUrl+'" style="width:14px;height:14px;object-fit:contain;flex-shrink:0;margin-right:4px" onerror="this.style.display=\'none\'">':'';
-        h+='<tr><td style="padding:4px 8px;border:1px solid var(--border);white-space:nowrap"><div style="display:flex;align-items:center;font-weight:700">'+fl+_teamCase(team)+'</div></td>';
-        completedGs.forEach(function(g){
-          var gio=cal[String(g)]||{};var res=_gkR(gio,team);
-          var bg=RC[res]?RC[res].split(';color:')[0]:'var(--bg2)';var clr=RC[res]?RC[res].split(';color:')[1]:'var(--text3)';
-          h+='<td style="text-align:center;padding:4px 6px;border:1px solid var(--border);font-weight:800;background:'+bg+';color:'+clr+'">'+(res||'—')+'</td>';
-        });
-        h+='</tr>';
-      });
-      h+='</tbody></table></div>';
+    h+='<div style="overflow:auto"><table style="width:100%;border-collapse:collapse">';
+    h+='<thead><tr style="background:var(--bg2);font-size:9px;font-weight:800;text-transform:uppercase;color:var(--text3);position:sticky;top:0;z-index:2">'
+      +'<th style="padding:7px 12px;text-align:left;min-width:70px">Giornata</th>'
+      +teams.map(function(t){var lUrl=_logos[t.toUpperCase()]||'';var fl=lUrl?'<img src="'+lUrl+'" style="width:12px;height:12px;object-fit:contain;margin-right:3px" onerror="this.style.display=\'none\'">':'';return '<th style="padding:7px 6px;min-width:70px;font-weight:800">'+fl+_teamCase(t)+'</th>';}).join('')
+      +'</tr></thead><tbody>';
+    for(var g=1;g<=nG;g++){
+      var gio=cal[String(g)]||{};
+      var hasD=Object.values(gio).some(function(v){return v;});
+      if(!hasD)continue;
+      h+='<tr style="border-bottom:1px solid var(--border)">'
+        +'<td style="padding:6px 12px;font-family:\'Bebas Neue\',sans-serif;font-size:15px;color:var(--text2)">G'+g+'</td>'
+        +teams.map(function(team){
+          var val=_gkR(gio,team);
+          var bg=RC[val]?RC[val].split(';color:')[0]:'';
+          var clr=RC[val]?RC[val].split(';color:')[1]:'var(--text3)';
+          return '<td style="padding:4px 6px;text-align:center;background:'+bg+';font-size:11px;font-weight:800;color:'+clr+'">'+(val||'—')+'</td>';
+        }).join('')
+        +'</tr>';
     }
+    h+='</tbody></table></div>';
   }
   el.innerHTML = h;
 }
@@ -15197,6 +15201,8 @@ function admLoadCalBody() {
   var OPTS = ['','VC','VF','V','PC','PF','P','SC','SF','S'];
   var RC = {VC:'#10b981',VF:'#34d399',V:'#6ee7b7',PC:'#3b82f6',PF:'#60a5fa',P:'#93c5fd',SC:'#ef4444',SF:'#f87171',S:'#fca5a5'};
   var RC2 = {VC:'rgba(16,185,129,.15);color:#10b981',VF:'rgba(16,185,129,.1);color:#34d399',V:'rgba(110,231,183,.15);color:#6ee7b7',PC:'rgba(59,130,246,.12);color:#3b82f6',PF:'rgba(59,130,246,.08);color:#60a5fa',P:'rgba(147,197,253,.12);color:#93c5fd',SC:'rgba(239,68,68,.12);color:#ef4444',SF:'rgba(239,68,68,.08);color:#f87171',S:'rgba(252,165,165,.12);color:#fca5a5'};
+  var _admScRaw=localStorage.getItem('adm_cal_score_'+torneoKey+'_'+legaKey);
+  var _scores=_admScRaw?(function(){try{return JSON.parse(_admScRaw);}catch(e){return null;}})():null;
   var _logos={};
   function headerRow() {
     return '<tr style="background:var(--bg2);font-size:9px;font-weight:800;text-transform:uppercase;color:var(--text3);position:sticky;top:0;z-index:2">'
