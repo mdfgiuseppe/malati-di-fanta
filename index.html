@@ -1,4 +1,4 @@
-<!-- build:20260520_2036 -->
+<!-- build:20260520_2043 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260520_2036';
+  var BUILD='20260520_2043';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -9161,15 +9161,24 @@ function admLoadCalBody() {
         }
         if(_isEdit){
           h+='<div style="border-top:1px solid var(--border);padding:8px 12px;background:rgba(59,130,246,.04)">'
-            +'<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:4px;margin-bottom:8px">'
-            +teams.map(function(team){
-              var val=gio[team]||gio[team.toUpperCase()]||'';
-              var col=RC[val]||'var(--text3)';
-              var opts=OPTS.map(function(o){return '<option value="'+o+'"'+(o===val?' selected':'')+'>'+( o||'&#8212;')+'</option>';}).join('');
-              return '<div style="display:flex;align-items:center;gap:4px"><span style="font-size:10px;font-weight:700;flex:1;min-width:0;overflow:hidden;white-space:nowrap;color:var(--text2)">'+_teamCase(team)+'</span><select data-t="'+torneoKey+'" data-l="'+legaKey+'" data-g="'+g+'" data-team="'+team+'" onchange="admUpdateCalEl(this)" style="width:62px;padding:2px 2px;background:var(--bg2);border:1px solid var(--border);border-radius:4px;color:'+col+';font-size:10px;font-weight:700;outline:none">'+opts+'</select></div>';
-            }).join('')
-            +'</div>'
-            +'<button onclick="admCalSaveAndClose('+g+',\''+torneoKey+'\',\''+legaKey+'\')" style="padding:5px 14px;background:#10b981;color:#fff;border:none;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer">&#128190; Salva G'+g+'</button>'
+            +'<div style="display:flex;flex-direction:column;gap:4px;margin-bottom:8px">';
+          matches.forEach(function(m){
+            var _scGE=_scores&&_scores[String(g)];
+            var _scKE=_scGE&&Object.keys(_scGE).find(function(k){return k.toUpperCase()===(m.h||'').toUpperCase();});
+            var scoreStrE=(_scKE&&_scGE[_scKE])||'';
+            var partsE=scoreStrE.split('-');
+            var shE=partsE.length>=2?partsE[0]:'';
+            var saE=partsE.length>=2?partsE[1]:'';
+            h+='<div style="display:grid;grid-template-columns:1fr 38px 12px 38px 1fr;align-items:center;gap:4px">'
+              +'<span style="text-align:right;font-size:11px;font-weight:700;color:var(--text)">'+_teamCase(m.h||'')+'</span>'
+              +'<input type="number" min="0" max="99" data-score-t="'+torneoKey+'" data-score-l="'+legaKey+'" data-score-g="'+g+'" data-score-h="'+(m.h||'').toUpperCase()+'" data-score-side="h" value="'+shE+'" style="width:38px;text-align:center;padding:3px 2px;background:var(--bg2);border:1px solid var(--border);border-radius:4px;color:var(--text);font-size:12px;font-weight:700;outline:none">'
+              +'<span style="text-align:center;font-family:\'Bebas Neue\';font-size:14px;color:var(--text3)">-</span>'
+              +'<input type="number" min="0" max="99" data-score-t="'+torneoKey+'" data-score-l="'+legaKey+'" data-score-g="'+g+'" data-score-h="'+(m.h||'').toUpperCase()+'" data-score-side="a" value="'+saE+'" style="width:38px;text-align:center;padding:3px 2px;background:var(--bg2);border:1px solid var(--border);border-radius:4px;color:var(--text);font-size:12px;font-weight:700;outline:none">'
+              +'<span style="text-align:left;font-size:11px;font-weight:700;color:var(--text)">'+_teamCase(m.a||'')+'</span>'
+              +'</div>';
+          });
+          h+='</div>'
+            +'<button onclick="admCalSaveScoreAndClose('+g+',\''+torneoKey+'\',\''+legaKey+'\')" style="padding:5px 14px;background:#10b981;color:#fff;border:none;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer">&#128190; Salva G'+g+'</button>'
             +'</div>';
         }
         h+='</div>';
@@ -9276,6 +9285,30 @@ function admCalSaveAndClose(g,t,l){
   window['_admCalEditG_'+t+'_'+l]=null;
   window['_admCalToggle_'+t+'_'+l]=true;
   admLoadCalBody();
+}
+function admCalSaveScoreAndClose(g,t,l){
+  var scKey='adm_cal_score_'+t+'_'+l;
+  var scRaw=localStorage.getItem(scKey);
+  var scores=scRaw?(function(){try{return JSON.parse(scRaw);}catch(e){return{};}}()):{};
+  if(!scores[String(g)])scores[String(g)]={};
+  var inputs=document.querySelectorAll('[data-score-g="'+g+'"][data-score-t="'+t+'"][data-score-l="'+l+'"]');
+  var matchMap={};
+  Array.prototype.forEach.call(inputs,function(inp){
+    var hKey=inp.getAttribute('data-score-h');
+    var side=inp.getAttribute('data-score-side');
+    if(!matchMap[hKey])matchMap[hKey]={h:'',a:''};
+    matchMap[hKey][side]=inp.value;
+  });
+  Object.keys(matchMap).forEach(function(hKey){
+    var sh=matchMap[hKey].h;var sa=matchMap[hKey].a;
+    if(sh!==''&&sa!=='')scores[String(g)][hKey]=sh+'-'+sa;
+  });
+  localStorage.setItem(scKey,JSON.stringify(scores));
+  gsSaveKey(scKey,JSON.stringify(scores));
+  window['_admCalEditG_'+t+'_'+l]=null;
+  window['_admCalToggle_'+t+'_'+l]=true;
+  admLoadCalBody();
+  var msg=document.createElement('div');msg.textContent='&#10003; Risultati G'+g+' salvati'+(GS_ONLINE?' · Sincronizzato':'');msg.style.cssText='position:fixed;top:70px;right:20px;background:#10b981;color:#fff;padding:8px 16px;border-radius:8px;font-weight:700;font-size:12px;z-index:9999';document.body.appendChild(msg);setTimeout(function(){msg.remove();},2000);
 }
 
 function admProcessCalScheduleXlsx(input){
@@ -15307,15 +15340,24 @@ function admLoadCalBody() {
         }
         if(_isEdit){
           h+='<div style="border-top:1px solid var(--border);padding:8px 12px;background:rgba(59,130,246,.04)">'
-            +'<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:4px;margin-bottom:8px">'
-            +teams.map(function(team){
-              var val=gio[team]||gio[team.toUpperCase()]||'';
-              var col=RC[val]||'var(--text3)';
-              var opts=OPTS.map(function(o){return '<option value="'+o+'"'+(o===val?' selected':'')+'>'+( o||'&#8212;')+'</option>';}).join('');
-              return '<div style="display:flex;align-items:center;gap:4px"><span style="font-size:10px;font-weight:700;flex:1;min-width:0;overflow:hidden;white-space:nowrap;color:var(--text2)">'+_teamCase(team)+'</span><select data-t="'+torneoKey+'" data-l="'+legaKey+'" data-g="'+g+'" data-team="'+team+'" onchange="admUpdateCalEl(this)" style="width:62px;padding:2px 2px;background:var(--bg2);border:1px solid var(--border);border-radius:4px;color:'+col+';font-size:10px;font-weight:700;outline:none">'+opts+'</select></div>';
-            }).join('')
-            +'</div>'
-            +'<button onclick="admCalSaveAndClose('+g+',\''+torneoKey+'\',\''+legaKey+'\')" style="padding:5px 14px;background:#10b981;color:#fff;border:none;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer">&#128190; Salva G'+g+'</button>'
+            +'<div style="display:flex;flex-direction:column;gap:4px;margin-bottom:8px">';
+          matches.forEach(function(m){
+            var _scGE=_scores&&_scores[String(g)];
+            var _scKE=_scGE&&Object.keys(_scGE).find(function(k){return k.toUpperCase()===(m.h||'').toUpperCase();});
+            var scoreStrE=(_scKE&&_scGE[_scKE])||'';
+            var partsE=scoreStrE.split('-');
+            var shE=partsE.length>=2?partsE[0]:'';
+            var saE=partsE.length>=2?partsE[1]:'';
+            h+='<div style="display:grid;grid-template-columns:1fr 38px 12px 38px 1fr;align-items:center;gap:4px">'
+              +'<span style="text-align:right;font-size:11px;font-weight:700;color:var(--text)">'+_teamCase(m.h||'')+'</span>'
+              +'<input type="number" min="0" max="99" data-score-t="'+torneoKey+'" data-score-l="'+legaKey+'" data-score-g="'+g+'" data-score-h="'+(m.h||'').toUpperCase()+'" data-score-side="h" value="'+shE+'" style="width:38px;text-align:center;padding:3px 2px;background:var(--bg2);border:1px solid var(--border);border-radius:4px;color:var(--text);font-size:12px;font-weight:700;outline:none">'
+              +'<span style="text-align:center;font-family:\'Bebas Neue\';font-size:14px;color:var(--text3)">-</span>'
+              +'<input type="number" min="0" max="99" data-score-t="'+torneoKey+'" data-score-l="'+legaKey+'" data-score-g="'+g+'" data-score-h="'+(m.h||'').toUpperCase()+'" data-score-side="a" value="'+saE+'" style="width:38px;text-align:center;padding:3px 2px;background:var(--bg2);border:1px solid var(--border);border-radius:4px;color:var(--text);font-size:12px;font-weight:700;outline:none">'
+              +'<span style="text-align:left;font-size:11px;font-weight:700;color:var(--text)">'+_teamCase(m.a||'')+'</span>'
+              +'</div>';
+          });
+          h+='</div>'
+            +'<button onclick="admCalSaveScoreAndClose('+g+',\''+torneoKey+'\',\''+legaKey+'\')" style="padding:5px 14px;background:#10b981;color:#fff;border:none;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer">&#128190; Salva G'+g+'</button>'
             +'</div>';
         }
         h+='</div>';
