@@ -1,4 +1,4 @@
-<!-- build:20260520_2109 -->
+<!-- build:20260520_2112 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260520_2109';
+  var BUILD='20260520_2112';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -9125,7 +9125,7 @@ function admLoadCalBody() {
       +'<th style="padding:7px 6px;min-width:50px">Salva</th>'
       +'</tr>';
   }
-  var _lastG=window['_admCalLastG_'+torneoKey+'_'+legaKey]||parseInt(localStorage.getItem('_admCalLastG_'+torneoKey+'_'+legaKey))||1;
+  var _lastG=1;for(var _fg=1;_fg<=giornate;_fg++){var _fgD=Object.values(cal[String(_fg)]||{}).some(function(v){return v;});if(_fgD){_lastG=Math.min(_fg+1,giornate);}else{break;}}
   var _gOpts=Array.from({length:giornate},function(_,i){var v=i+1;return '<option value="'+v+'"'+(v===_lastG?' selected':'')+'>G'+v+'</option>';}).join('');
   var _impH='<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;align-items:center;padding:10px 14px;background:var(--bg2);border-radius:10px;border:1px solid var(--border)">'
     +'<button onclick="window[\''+viewKey+'\']=\'calendario\';window[\'_admCalToggle_'+torneoKey+'_'+legaKey+'\']=true;admLoadCalBody();" style="padding:5px 12px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;border:1px solid '+(view==='calendario'?'rgba(59,130,246,.5)':'var(--border)')+';background:'+(view==='calendario'?'rgba(59,130,246,.15)':'var(--bg2)')+';color:'+(view==='calendario'?'#3b82f6':'var(--text2)')+'">📅 Risultati</button>'
@@ -9137,7 +9137,7 @@ function admLoadCalBody() {
     +'<label style="font-size:11px;color:var(--text2)">N:<input id="adm-cal-ne" type="number" min="0" value="'+_schNe+'" style="width:42px;margin-left:4px;padding:2px 4px;background:var(--bg);border:1px solid var(--border);border-radius:4px;color:var(--text);font-size:11px;outline:none"></label>'
     +'<span style="font-size:11px;color:var(--text2)">'+(_schN?'✅ '+_schN+' gior.':'non importato')+'</span>'
     +'<span style="color:var(--border);margin:0 6px">|</span>'
-    +'<select id="adm-cal-giornata-import" onchange="admCalSetLastG(\''+torneoKey+'\',\''+legaKey+'\',parseInt(this.value)||1);admCalAutoNeutral()" style="padding:5px 8px;background:var(--bg);border:1px solid var(--border);border-radius:6px;font-size:12px;color:var(--text);outline:none">'+_gOpts+'</select>'
+    +'<select id="adm-cal-giornata-import" onchange="admCalAutoNeutral()" style="padding:5px 8px;background:var(--bg);border:1px solid var(--border);border-radius:6px;font-size:12px;color:var(--text);outline:none">'+_gOpts+'</select>'
     +'<label style="font-size:12px;color:var(--text2);display:flex;align-items:center;gap:4px;cursor:pointer"><input type="checkbox" id="adm-cal-neutral"> Neutrale</label>'
     +'<button onclick="document.getElementById(\'adm-cal-res-file\').click()" style="padding:5px 12px;background:rgba(16,185,129,.15);border:1px solid rgba(16,185,129,.3);border-radius:6px;color:#10b981;font-size:12px;font-weight:700;cursor:pointer">⚽ Importa Giornata</button>'
     +'<input type="file" id="adm-cal-res-file" accept=".xlsx" style="display:none" onchange="admProcessGiornataXlsx(this)">'
@@ -9332,11 +9332,6 @@ function admCalSaveScoreAndClose(g,t,l){
   admLoadCalBody();
   var msg=document.createElement('div');msg.textContent='&#10003; Risultati G'+g+' salvati'+(GS_ONLINE?' · Sincronizzato':'');msg.style.cssText='position:fixed;top:70px;right:20px;background:#10b981;color:#fff;padding:8px 16px;border-radius:8px;font-weight:700;font-size:12px;z-index:9999';document.body.appendChild(msg);setTimeout(function(){msg.remove();},2000);
 }
-function admCalSetLastG(t,l,g){
-  window['_admCalLastG_'+t+'_'+l]=g;
-  localStorage.setItem('_admCalLastG_'+t+'_'+l,String(g));
-}
-
 function admProcessCalScheduleXlsx(input){
   var t=document.getElementById('adm-cal-torneo').value;
   var l=document.getElementById('adm-cal-lega').value;
@@ -9446,8 +9441,6 @@ function admProcessGiornataXlsx(input){
       var ptsKey='adm_cal_pts_'+t+'_'+l;var ptsRaw=localStorage.getItem(ptsKey);var pts=ptsRaw?(function(){try{return JSON.parse(ptsRaw);}catch(e){return{};}}()):{}; if(!pts[String(g)])pts[String(g)]={};matches.forEach(function(m){var pk1=_ck(cal[String(g)],m.team1),pk2=_ck(cal[String(g)],m.team2);pts[String(g)][pk1]=m.total1;pts[String(g)][pk2]=m.total2;});localStorage.setItem(ptsKey,JSON.stringify(pts));gsSaveKey(ptsKey,JSON.stringify(pts));
       var scKey='adm_cal_score_'+t+'_'+l;var scRaw=localStorage.getItem(scKey);var scores=scRaw?(function(){try{return JSON.parse(scRaw);}catch(e){return{};}}()):{}; if(!scores[String(g)])scores[String(g)]={};matches.forEach(function(m){if(m.scoreStr){var sk1=_ck(cal[String(g)],m.team1);scores[String(g)][sk1]=m.scoreStr;}});localStorage.setItem(scKey,JSON.stringify(scores));gsSaveKey(scKey,JSON.stringify(scores));
       var msg=document.createElement('div');msg.textContent='✅ G'+g+': '+matches.length+' partite importate'+(neutral?' [neutrale]':'');msg.style.cssText='position:fixed;top:70px;right:20px;background:#10b981;color:#fff;padding:8px 16px;border-radius:8px;font-weight:700;font-size:12px;z-index:9999';document.body.appendChild(msg);setTimeout(function(){msg.remove();},3000);
-      var _nxtG=g+1;
-      admCalSetLastG(t,l,_nxtG);
       admLoadCalBody();
       var _sGN=document.getElementById('adm-cal-giornata-import');if(_sGN&&_nxtG<=_sGN.options.length){_sGN.value=String(_nxtG);if(typeof admCalAutoNeutral==='function')admCalAutoNeutral();}
     }catch(ex){alert('Errore parsing xlsx: '+ex.message);}
@@ -15327,7 +15320,7 @@ function admLoadCalBody() {
       +'<th style="padding:7px 6px;min-width:50px">Salva</th>'
       +'</tr>';
   }
-  var _lastG=window['_admCalLastG_'+torneoKey+'_'+legaKey]||parseInt(localStorage.getItem('_admCalLastG_'+torneoKey+'_'+legaKey))||1;
+  var _lastG=1;for(var _fg=1;_fg<=giornate;_fg++){var _fgD=Object.values(cal[String(_fg)]||{}).some(function(v){return v;});if(_fgD){_lastG=Math.min(_fg+1,giornate);}else{break;}}
   var _gOpts=Array.from({length:giornate},function(_,i){var v=i+1;return '<option value="'+v+'"'+(v===_lastG?' selected':'')+'>G'+v+'</option>';}).join('');
   var _impH='<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;align-items:center;padding:10px 14px;background:var(--bg2);border-radius:10px;border:1px solid var(--border)">'
     +'<button onclick="window[\''+viewKey+'\']=\'calendario\';window[\'_admCalToggle_'+torneoKey+'_'+legaKey+'\']=true;admLoadCalBody();" style="padding:5px 12px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;border:1px solid '+(view==='calendario'?'rgba(59,130,246,.5)':'var(--border)')+';background:'+(view==='calendario'?'rgba(59,130,246,.15)':'var(--bg2)')+';color:'+(view==='calendario'?'#3b82f6':'var(--text2)')+'">📅 Risultati</button>'
@@ -15339,7 +15332,7 @@ function admLoadCalBody() {
     +'<label style="font-size:11px;color:var(--text2)">N:<input id="adm-cal-ne" type="number" min="0" value="'+_schNe+'" style="width:42px;margin-left:4px;padding:2px 4px;background:var(--bg);border:1px solid var(--border);border-radius:4px;color:var(--text);font-size:11px;outline:none"></label>'
     +'<span style="font-size:11px;color:var(--text2)">'+(_schN?'✅ '+_schN+' gior.':'non importato')+'</span>'
     +'<span style="color:var(--border);margin:0 6px">|</span>'
-    +'<select id="adm-cal-giornata-import" onchange="admCalSetLastG(\''+torneoKey+'\',\''+legaKey+'\',parseInt(this.value)||1);admCalAutoNeutral()" style="padding:5px 8px;background:var(--bg);border:1px solid var(--border);border-radius:6px;font-size:12px;color:var(--text);outline:none">'+_gOpts+'</select>'
+    +'<select id="adm-cal-giornata-import" onchange="admCalAutoNeutral()" style="padding:5px 8px;background:var(--bg);border:1px solid var(--border);border-radius:6px;font-size:12px;color:var(--text);outline:none">'+_gOpts+'</select>'
     +'<label style="font-size:12px;color:var(--text2);display:flex;align-items:center;gap:4px;cursor:pointer"><input type="checkbox" id="adm-cal-neutral"> Neutrale</label>'
     +'<button onclick="document.getElementById(\'adm-cal-res-file\').click()" style="padding:5px 12px;background:rgba(16,185,129,.15);border:1px solid rgba(16,185,129,.3);border-radius:6px;color:#10b981;font-size:12px;font-weight:700;cursor:pointer">⚽ Importa Giornata</button>'
     +'<input type="file" id="adm-cal-res-file" accept=".xlsx" style="display:none" onchange="admProcessGiornataXlsx(this)">'
