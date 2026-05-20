@@ -1,4 +1,4 @@
-<!-- build:20260520_2119 -->
+<!-- build:20260520_2132 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260520_2119';
+  var BUILD='20260520_2132';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -3749,9 +3749,11 @@ function slimGetStadio() {
   return SLIM_INITIAL_STADIO;
 }
 function slimCalcStandings() {
-  var cal = slimGetCalendar();
-  var stadio = slimGetStadio();
   var _tk = window._currentTourneyKey || 'slim';
+  var _slimCalLk=(typeof currentLeagueKey!=='undefined'?currentLeagueKey:'it');
+  var _slimCalRaw=localStorage.getItem('adm_cal_'+_tk+'_'+_slimCalLk);
+  var cal=_slimCalRaw?(function(){try{return JSON.parse(_slimCalRaw);}catch(e){return{};}}()):{};
+  var stadio = slimGetStadio();
   var multeKey = _tk + '_multe_' + (typeof currentLeagueKey !== 'undefined' ? currentLeagueKey : 'it');
   var multeRaw = localStorage.getItem(multeKey);
   var multeData = multeRaw ? JSON.parse(multeRaw) : {};
@@ -4341,7 +4343,9 @@ function tsmGetStadio() {
 }
 
 function tsmCalcStandings() {
-  var cal = tsmGetCalendar();
+  var _tsmCalLk=(typeof currentLeagueKey!=='undefined'?currentLeagueKey:'it').replace(/^tsm_/,'');
+  var _tsmCalRaw=localStorage.getItem('adm_cal_tsm_'+_tsmCalLk);
+  var cal=_tsmCalRaw?(function(){try{return JSON.parse(_tsmCalRaw);}catch(e){return{};}}()):{};
   var stadio = tsmGetStadio();
   var ST = TSM_STADIO_TABLE_IT || {};
   var s = {};
@@ -9273,27 +9277,25 @@ function admGetCalendar(torneoKey, legaKey) {
   return base;
 }
 function admUpdateCal(t,l,g,team,val) {
-  var cal = admGetCalendar(t,l);
-  if (!cal[String(g)]) cal[String(g)]={};
-  // Usa la chiave nel formato già presente nel calendario
-  var key = cal[String(g)].hasOwnProperty(team) ? team : team.toUpperCase();
-  cal[String(g)][key]=val;
-  localStorage.setItem('adm_cal_'+t+'_'+l, JSON.stringify(cal));
-  // Sincronizza con chiave app
-  var appKey = (t==='tsm'&&l==='it') ? 'tsm_calendar_it' : (t!=='slim'?'adm_cal_'+t+'_'+l:(l==='it'?'slim_calendar':'slim_calendar_'+l));
-  localStorage.setItem(appKey, JSON.stringify(cal));
+  // Legge solo delta utente (senza merge con base pre-compilata)
+  var _uRaw=localStorage.getItem('adm_cal_'+t+'_'+l);
+  var cal=_uRaw?(function(){try{return JSON.parse(_uRaw);}catch(e){return{};}}()):{};
+  if(!cal[String(g)])cal[String(g)]={};
+  cal[String(g)][(team||'').toUpperCase()]=val;
+  localStorage.setItem('adm_cal_'+t+'_'+l,JSON.stringify(cal));
+  // Salva versione merged (base+delta) sulla chiave app solo per visualizzazione
+  var appKey=(t==='tsm'&&l==='it')?'tsm_calendar_it':(t!=='slim'?'adm_cal_'+t+'_'+l:(l==='it'?'slim_calendar':'slim_calendar_'+l));
+  if(appKey!=='adm_cal_'+t+'_'+l){var merged=admGetCalendar(t,l);localStorage.setItem(appKey,JSON.stringify(merged));}
 }
 function admSaveCalGiornataEl(el) {
   admSaveCalGiornata(el.dataset.t, el.dataset.l, el.dataset.g);
 }
 function admSaveCalGiornata(t,l,g) {
-  var cal = admGetCalendar(t,l);
-  // Sincronizza con chiave app (lato utente)
+  var merged = admGetCalendar(t,l); // merge base+delta per visualizzazione
   var appKey = (t==='tsm'&&l==='it') ? 'tsm_calendar_it' : (t!=='slim'?'adm_cal_'+t+'_'+l:(l==='it'?'slim_calendar':'slim_calendar_'+l));
-  localStorage.setItem(appKey, JSON.stringify(cal));
-  localStorage.setItem('adm_cal_'+t+'_'+l, JSON.stringify(cal));
-  // Sincronizza su GSheets
-  gsSaveCalendario(t, l, cal);
+  localStorage.setItem(appKey, JSON.stringify(merged));
+  // NON sovrascrivere adm_cal_ con merged (conterrebbe risultati stagione precedente)
+  gsSaveCalendario(t, l, merged);
   var msg=document.createElement('div');msg.textContent='✅ Giornata '+g+' salvata'+(GS_ONLINE?' · Sincronizzato':'');msg.style.cssText='position:fixed;top:70px;right:20px;background:#10b981;color:#fff;padding:8px 16px;border-radius:8px;font-weight:700;font-size:12px;z-index:9999';document.body.appendChild(msg);setTimeout(function(){msg.remove();},2000);
 }
 function admCalToggleEdit(g,t,l){
@@ -11292,9 +11294,11 @@ function slimGetStadio() {
   return SLIM_INITIAL_STADIO;
 }
 function slimCalcStandings() {
-  var cal = slimGetCalendar();
-  var stadio = slimGetStadio();
   var _tk = window._currentTourneyKey || 'slim';
+  var _slimCalLk=(typeof currentLeagueKey!=='undefined'?currentLeagueKey:'it');
+  var _slimCalRaw=localStorage.getItem('adm_cal_'+_tk+'_'+_slimCalLk);
+  var cal=_slimCalRaw?(function(){try{return JSON.parse(_slimCalRaw);}catch(e){return{};}}()):{};
+  var stadio = slimGetStadio();
   var multeKey = _tk + '_multe_' + (typeof currentLeagueKey !== 'undefined' ? currentLeagueKey : 'it');
   var multeRaw = localStorage.getItem(multeKey);
   var multeData = multeRaw ? JSON.parse(multeRaw) : {};
@@ -11884,7 +11888,9 @@ function tsmGetStadio() {
 }
 
 function tsmCalcStandings() {
-  var cal = tsmGetCalendar();
+  var _tsmCalLk=(typeof currentLeagueKey!=='undefined'?currentLeagueKey:'it').replace(/^tsm_/,'');
+  var _tsmCalRaw=localStorage.getItem('adm_cal_tsm_'+_tsmCalLk);
+  var cal=_tsmCalRaw?(function(){try{return JSON.parse(_tsmCalRaw);}catch(e){return{};}}()):{};
   var stadio = tsmGetStadio();
   var ST = TSM_STADIO_TABLE_IT || {};
   var s = {};
@@ -15467,27 +15473,25 @@ function admGetCalendar(torneoKey, legaKey) {
   return base;
 }
 function admUpdateCal(t,l,g,team,val) {
-  var cal = admGetCalendar(t,l);
-  if (!cal[String(g)]) cal[String(g)]={};
-  // Usa la chiave nel formato già presente nel calendario
-  var key = cal[String(g)].hasOwnProperty(team) ? team : team.toUpperCase();
-  cal[String(g)][key]=val;
-  localStorage.setItem('adm_cal_'+t+'_'+l, JSON.stringify(cal));
-  // Sincronizza con chiave app
-  var appKey = (t==='tsm'&&l==='it') ? 'tsm_calendar_it' : (t!=='slim'?'adm_cal_'+t+'_'+l:(l==='it'?'slim_calendar':'slim_calendar_'+l));
-  localStorage.setItem(appKey, JSON.stringify(cal));
+  // Legge solo delta utente (senza merge con base pre-compilata)
+  var _uRaw=localStorage.getItem('adm_cal_'+t+'_'+l);
+  var cal=_uRaw?(function(){try{return JSON.parse(_uRaw);}catch(e){return{};}}()):{};
+  if(!cal[String(g)])cal[String(g)]={};
+  cal[String(g)][(team||'').toUpperCase()]=val;
+  localStorage.setItem('adm_cal_'+t+'_'+l,JSON.stringify(cal));
+  // Salva versione merged (base+delta) sulla chiave app solo per visualizzazione
+  var appKey=(t==='tsm'&&l==='it')?'tsm_calendar_it':(t!=='slim'?'adm_cal_'+t+'_'+l:(l==='it'?'slim_calendar':'slim_calendar_'+l));
+  if(appKey!=='adm_cal_'+t+'_'+l){var merged=admGetCalendar(t,l);localStorage.setItem(appKey,JSON.stringify(merged));}
 }
 function admSaveCalGiornataEl(el) {
   admSaveCalGiornata(el.dataset.t, el.dataset.l, el.dataset.g);
 }
 function admSaveCalGiornata(t,l,g) {
-  var cal = admGetCalendar(t,l);
-  // Sincronizza con chiave app (lato utente)
+  var merged = admGetCalendar(t,l); // merge base+delta per visualizzazione
   var appKey = (t==='tsm'&&l==='it') ? 'tsm_calendar_it' : (t!=='slim'?'adm_cal_'+t+'_'+l:(l==='it'?'slim_calendar':'slim_calendar_'+l));
-  localStorage.setItem(appKey, JSON.stringify(cal));
-  localStorage.setItem('adm_cal_'+t+'_'+l, JSON.stringify(cal));
-  // Sincronizza su GSheets
-  gsSaveCalendario(t, l, cal);
+  localStorage.setItem(appKey, JSON.stringify(merged));
+  // NON sovrascrivere adm_cal_ con merged (conterrebbe risultati stagione precedente)
+  gsSaveCalendario(t, l, merged);
   var msg=document.createElement('div');msg.textContent='✅ Giornata '+g+' salvata'+(GS_ONLINE?' · Sincronizzato':'');msg.style.cssText='position:fixed;top:70px;right:20px;background:#10b981;color:#fff;padding:8px 16px;border-radius:8px;font-weight:700;font-size:12px;z-index:9999';document.body.appendChild(msg);setTimeout(function(){msg.remove();},2000);
 }
 // ═══════════════════════════════════════════════════════
