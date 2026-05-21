@@ -1,4 +1,4 @@
-<!-- build:20260521_2110 -->
+<!-- build:20260521_2117 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260521_2110';
+  var BUILD='20260521_2117';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -4347,7 +4347,8 @@ function tsmCalcStandings() {
   var _tsmCalRaw=localStorage.getItem('adm_cal_tsm_'+_tsmCalLk);
   var cal=_tsmCalRaw?(function(){try{return JSON.parse(_tsmCalRaw);}catch(e){return{};}}()):{};
   var stadio = tsmGetStadio();
-  var ST = TSM_STADIO_TABLE_IT || {};
+  var _stGlobalC = localStorage.getItem('adm_stadio_table_global');
+  var ST = (_stGlobalC ? (function(){try{return JSON.parse(_stGlobalC);}catch(e){return null;}})() : null) || TSM_STADIO_TABLE_IT || {};
   var s = {};
   // Usa TSM_TEAMS_IT se disponibile, altronde SLIM_TEAMS
   var tsmTeams = (typeof TSM_TEAMS_IT !== 'undefined' && TSM_TEAMS_IT.length) ? TSM_TEAMS_IT : SLIM_TEAMS;
@@ -11984,7 +11985,8 @@ function tsmCalcStandings() {
   var _tsmCalRaw=localStorage.getItem('adm_cal_tsm_'+_tsmCalLk);
   var cal=_tsmCalRaw?(function(){try{return JSON.parse(_tsmCalRaw);}catch(e){return{};}}()):{};
   var stadio = tsmGetStadio();
-  var ST = TSM_STADIO_TABLE_IT || {};
+  var _stGlobalC = localStorage.getItem('adm_stadio_table_global');
+  var ST = (_stGlobalC ? (function(){try{return JSON.parse(_stGlobalC);}catch(e){return null;}})() : null) || TSM_STADIO_TABLE_IT || {};
   var s = {};
   // Usa TSM_TEAMS_IT se disponibile, altronde SLIM_TEAMS
   var tsmTeams = (typeof TSM_TEAMS_IT !== 'undefined' && TSM_TEAMS_IT.length) ? TSM_TEAMS_IT : SLIM_TEAMS;
