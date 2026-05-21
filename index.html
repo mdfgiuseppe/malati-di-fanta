@@ -1,4 +1,4 @@
-<!-- build:20260521_2052 -->
+<!-- build:20260521_2101 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260521_2052';
+  var BUILD='20260521_2101';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -9368,39 +9368,6 @@ function admCalSaveScoreAndClose(g,t,l){
   });
   localStorage.setItem(scKey,JSON.stringify(scores));
   gsSaveKey(scKey,JSON.stringify(scores));
-  // Deriva V/P/S dallo schedule e aggiorna adm_cal_
-  (function(){
-    var _schRaw=localStorage.getItem('adm_cal_schedule_'+t+'_'+l);
-    var _schP=_schRaw?(function(){try{return JSON.parse(_schRaw);}catch(e){return null;}})():null;
-    var _schMatches=_schP?(_schP.giornate||_schP)[String(g)]||[]:[];
-    if(!_schMatches.length)return;
-    var _uRaw=localStorage.getItem('adm_cal_'+t+'_'+l);
-    var _uCal=_uRaw?(function(){try{return JSON.parse(_uRaw);}catch(e){return{};}}()):{};
-    if(!_uCal[String(g)])_uCal[String(g)]={};
-    var _ar=_schP?(_schP.andata_ritorno||0):0,_ne=_schP?(_schP.neutre||0):0;
-    var _isNeutral=_ar>0&&g>_ar&&g<=(_ar+_ne);
-    var _fk=function(calG,name){var u=(name||'').toUpperCase();var k=Object.keys(calG).find(function(x){return x.toUpperCase()===u;});return k!==undefined?k:name;};
-    _schMatches.forEach(function(m){
-      var _hOrig=(m.h||'').toUpperCase();
-      var _scoreVal=(scores[String(g)]||{})[_hOrig];
-      if(!_scoreVal)return;
-      var _pts=_scoreVal.split('-');
-      if(_pts.length<2)return;
-      var _gh=parseInt(_pts[0])||0,_ga=parseInt(_pts[1])||0;
-      var _hR,_aR;
-      if(_gh>_ga){_hR=_isNeutral?'V':'VC';_aR=_isNeutral?'S':'SF';}
-      else if(_gh<_ga){_hR=_isNeutral?'S':'SC';_aR=_isNeutral?'V':'VF';}
-      else{_hR=_isNeutral?'P':'PC';_aR=_isNeutral?'P':'PF';}
-      _uCal[String(g)][_fk(_uCal[String(g)],m.h||_hOrig)]=_hR;
-      if(m.a)_uCal[String(g)][_fk(_uCal[String(g)],m.a)]=_aR;
-    });
-    localStorage.setItem('adm_cal_'+t+'_'+l,JSON.stringify(_uCal));
-    gsSaveKey('adm_cal_'+t+'_'+l,JSON.stringify(_uCal));
-    var _merged=admGetCalendar(t,l);
-    var _appKey=(t==='tsm'&&l==='it')?'tsm_calendar_it':(t!=='slim'?'adm_cal_'+t+'_'+l:(l==='it'?'slim_calendar':'slim_calendar_'+l));
-    localStorage.setItem(_appKey,JSON.stringify(_merged));
-    gsSaveCalendario(t,l,_merged);
-  })();
   window['_admCalEditG_'+t+'_'+l]=null;
   window['_admCalToggle_'+t+'_'+l]=true;
   admLoadCalBody();
