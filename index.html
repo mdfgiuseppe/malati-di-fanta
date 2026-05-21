@@ -1,4 +1,4 @@
-<!-- build:20260521_2117 -->
+<!-- build:20260521_2134 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260521_2117';
+  var BUILD='20260521_2134';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -4347,8 +4347,8 @@ function tsmCalcStandings() {
   var _tsmCalRaw=localStorage.getItem('adm_cal_tsm_'+_tsmCalLk);
   var cal=_tsmCalRaw?(function(){try{return JSON.parse(_tsmCalRaw);}catch(e){return{};}}()):{};
   var stadio = tsmGetStadio();
-  var _stGlobalC = localStorage.getItem('adm_stadio_table_global');
-  var ST = (_stGlobalC ? (function(){try{return JSON.parse(_stGlobalC);}catch(e){return null;}})() : null) || TSM_STADIO_TABLE_IT || {};
+  var _stRC = localStorage.getItem('adm_stadio_table_tsm') || localStorage.getItem('adm_stadio_table_global');
+  var ST = (_stRC ? (function(){try{return JSON.parse(_stRC);}catch(e){return null;}})() : null) || TSM_STADIO_TABLE_IT || {};
   var s = {};
   // Usa TSM_TEAMS_IT se disponibile, altronde SLIM_TEAMS
   var tsmTeams = (typeof TSM_TEAMS_IT !== 'undefined' && TSM_TEAMS_IT.length) ? TSM_TEAMS_IT : SLIM_TEAMS;
@@ -4467,8 +4467,8 @@ function tsmRenderStadio() {
   var el = document.getElementById('tsm-stadio-body'); if(!el) return;
   var stadio = tsmGetStadio();
   // Usa tabella globale aggiornata se disponibile
-  var _stGlobal = localStorage.getItem('adm_stadio_table_global');
-  var ST = (_stGlobal ? JSON.parse(_stGlobal) : null) || TSM_STADIO_TABLE_IT || {};
+  var _stGlobal = localStorage.getItem('adm_stadio_table_tsm') || localStorage.getItem('adm_stadio_table_global');
+  var ST = (_stGlobal ? (function(){try{return JSON.parse(_stGlobal);}catch(e){return null;}})() : null) || TSM_STADIO_TABLE_IT || {};
   var res = tsmCalcStandings();
   var tsmTeams3 = (typeof TSM_TEAMS_IT!=='undefined' && TSM_TEAMS_IT.length) ? TSM_TEAMS_IT : SLIM_TEAMS;
   el.innerHTML = tsmTeams3.slice().sort(function(a,b){
@@ -11985,8 +11985,8 @@ function tsmCalcStandings() {
   var _tsmCalRaw=localStorage.getItem('adm_cal_tsm_'+_tsmCalLk);
   var cal=_tsmCalRaw?(function(){try{return JSON.parse(_tsmCalRaw);}catch(e){return{};}}()):{};
   var stadio = tsmGetStadio();
-  var _stGlobalC = localStorage.getItem('adm_stadio_table_global');
-  var ST = (_stGlobalC ? (function(){try{return JSON.parse(_stGlobalC);}catch(e){return null;}})() : null) || TSM_STADIO_TABLE_IT || {};
+  var _stRC = localStorage.getItem('adm_stadio_table_tsm') || localStorage.getItem('adm_stadio_table_global');
+  var ST = (_stRC ? (function(){try{return JSON.parse(_stRC);}catch(e){return null;}})() : null) || TSM_STADIO_TABLE_IT || {};
   var s = {};
   // Usa TSM_TEAMS_IT se disponibile, altronde SLIM_TEAMS
   var tsmTeams = (typeof TSM_TEAMS_IT !== 'undefined' && TSM_TEAMS_IT.length) ? TSM_TEAMS_IT : SLIM_TEAMS;
@@ -12105,8 +12105,8 @@ function tsmRenderStadio() {
   var el = document.getElementById('tsm-stadio-body'); if(!el) return;
   var stadio = tsmGetStadio();
   // Usa tabella globale aggiornata se disponibile
-  var _stGlobal = localStorage.getItem('adm_stadio_table_global');
-  var ST = (_stGlobal ? JSON.parse(_stGlobal) : null) || TSM_STADIO_TABLE_IT || {};
+  var _stGlobal = localStorage.getItem('adm_stadio_table_tsm') || localStorage.getItem('adm_stadio_table_global');
+  var ST = (_stGlobal ? (function(){try{return JSON.parse(_stGlobal);}catch(e){return null;}})() : null) || TSM_STADIO_TABLE_IT || {};
   var res = tsmCalcStandings();
   var tsmTeams3 = (typeof TSM_TEAMS_IT!=='undefined' && TSM_TEAMS_IT.length) ? TSM_TEAMS_IT : SLIM_TEAMS;
   el.innerHTML = tsmTeams3.slice().sort(function(a,b){
