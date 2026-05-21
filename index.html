@@ -1,4 +1,4 @@
-<!-- build:20260521_2024 -->
+<!-- build:20260521_2052 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260521_2024';
+  var BUILD='20260521_2052';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -9368,6 +9368,39 @@ function admCalSaveScoreAndClose(g,t,l){
   });
   localStorage.setItem(scKey,JSON.stringify(scores));
   gsSaveKey(scKey,JSON.stringify(scores));
+  // Deriva V/P/S dallo schedule e aggiorna adm_cal_
+  (function(){
+    var _schRaw=localStorage.getItem('adm_cal_schedule_'+t+'_'+l);
+    var _schP=_schRaw?(function(){try{return JSON.parse(_schRaw);}catch(e){return null;}})():null;
+    var _schMatches=_schP?(_schP.giornate||_schP)[String(g)]||[]:[];
+    if(!_schMatches.length)return;
+    var _uRaw=localStorage.getItem('adm_cal_'+t+'_'+l);
+    var _uCal=_uRaw?(function(){try{return JSON.parse(_uRaw);}catch(e){return{};}}()):{};
+    if(!_uCal[String(g)])_uCal[String(g)]={};
+    var _ar=_schP?(_schP.andata_ritorno||0):0,_ne=_schP?(_schP.neutre||0):0;
+    var _isNeutral=_ar>0&&g>_ar&&g<=(_ar+_ne);
+    var _fk=function(calG,name){var u=(name||'').toUpperCase();var k=Object.keys(calG).find(function(x){return x.toUpperCase()===u;});return k!==undefined?k:name;};
+    _schMatches.forEach(function(m){
+      var _hOrig=(m.h||'').toUpperCase();
+      var _scoreVal=(scores[String(g)]||{})[_hOrig];
+      if(!_scoreVal)return;
+      var _pts=_scoreVal.split('-');
+      if(_pts.length<2)return;
+      var _gh=parseInt(_pts[0])||0,_ga=parseInt(_pts[1])||0;
+      var _hR,_aR;
+      if(_gh>_ga){_hR=_isNeutral?'V':'VC';_aR=_isNeutral?'S':'SF';}
+      else if(_gh<_ga){_hR=_isNeutral?'S':'SC';_aR=_isNeutral?'V':'VF';}
+      else{_hR=_isNeutral?'P':'PC';_aR=_isNeutral?'P':'PF';}
+      _uCal[String(g)][_fk(_uCal[String(g)],m.h||_hOrig)]=_hR;
+      if(m.a)_uCal[String(g)][_fk(_uCal[String(g)],m.a)]=_aR;
+    });
+    localStorage.setItem('adm_cal_'+t+'_'+l,JSON.stringify(_uCal));
+    gsSaveKey('adm_cal_'+t+'_'+l,JSON.stringify(_uCal));
+    var _merged=admGetCalendar(t,l);
+    var _appKey=(t==='tsm'&&l==='it')?'tsm_calendar_it':(t!=='slim'?'adm_cal_'+t+'_'+l:(l==='it'?'slim_calendar':'slim_calendar_'+l));
+    localStorage.setItem(_appKey,JSON.stringify(_merged));
+    gsSaveCalendario(t,l,_merged);
+  })();
   window['_admCalEditG_'+t+'_'+l]=null;
   window['_admCalToggle_'+t+'_'+l]=true;
   admLoadCalBody();
@@ -9464,7 +9497,11 @@ function admProcessGiornataXlsx(input){
         alert('Nessuna partita trovata.\nVerifica che i nomi squadra nel file corrispondano (case-insensitive) ai nomi in calendario.\n\n'+dbg);
         input.value='';return;
       }
-      var preview=matches.map(function(m){var w1=m.total1>m.total2,d=m.total1===m.total2;return m.team1+' '+m.total1.toFixed(2)+' - '+m.total2.toFixed(2)+' '+m.team2+' ('+(neutral?(w1?'V/S':d?'P/P':'S/V'):(w1?'VC/SF':d?'PC/PF':'SC/VF'))+')';}).join('\n');
+      var _schRawI=localStorage.getItem('adm_cal_schedule_'+t+'_'+l);
+      var _schPI=_schRawI?(function(){try{return JSON.parse(_schRawI);}catch(e){return null;}})():null;
+      var _schMI=_schPI?(_schPI.giornate||_schPI)[String(g)]||[]:[];
+      function _getHA(m){var u1=(m.team1||'').toUpperCase(),u2=(m.team2||'').toUpperCase();for(var _i=0;_i<_schMI.length;_i++){var _sm=_schMI[_i];var _sh=(_sm.h||'').toUpperCase(),_sa=(_sm.a||'').toUpperCase();if((_sh===u1&&_sa===u2)||(_sh===u2&&_sa===u1))return{team1IsHome:_sh===u1};}return{team1IsHome:true};}
+      var preview=matches.map(function(m){var w1=m.total1>m.total2,d=m.total1===m.total2;if(neutral)return m.team1+' '+m.total1.toFixed(2)+' - '+m.total2.toFixed(2)+' '+m.team2+' ('+(w1?'V/S':d?'P/P':'S/V')+')';var _h=_getHA(m);return m.team1+' '+m.total1.toFixed(2)+' - '+m.total2.toFixed(2)+' '+m.team2+' '+(_h.team1IsHome?(w1?'(VC/SF)':d?'(PC/PF)':'(SC/VF)'):(w1?'(VF/SC)':d?'(PF/PC)':'(SF/VC)'));}).join('\n');
       if(!confirm('Importare '+matches.length+' partite per G'+g+(neutral?' [NEUTRALE]':'')+'?\n\n'+preview)){input.value='';return;}
       var cal=admGetCalendar(t,l);
       if(!cal[String(g)])cal[String(g)]={};
@@ -9473,7 +9510,7 @@ function admProcessGiornataXlsx(input){
         var w1=m.total1>m.total2,d=m.total1===m.total2;
         var k1=_ck(cal[String(g)],m.team1),k2=_ck(cal[String(g)],m.team2);
         if(neutral){cal[String(g)][k1]=w1?'V':(d?'P':'S');cal[String(g)][k2]=w1?'S':(d?'P':'V');}
-        else{if(w1){cal[String(g)][k1]='VC';cal[String(g)][k2]='SF';}else if(d){cal[String(g)][k1]='PC';cal[String(g)][k2]='PF';}else{cal[String(g)][k1]='SC';cal[String(g)][k2]='VF';}}
+        else{var _h=_getHA(m);var _hk=_h.team1IsHome?k1:k2,_ak=_h.team1IsHome?k2:k1,_hW=_h.team1IsHome?w1:!w1;if(_hW){cal[String(g)][_hk]='VC';cal[String(g)][_ak]='SF';}else if(d){cal[String(g)][_hk]='PC';cal[String(g)][_ak]='PF';}else{cal[String(g)][_hk]='SC';cal[String(g)][_ak]='VF';}}
       });
       localStorage.setItem('adm_cal_'+t+'_'+l,JSON.stringify(cal));
       var appKey=(t==='tsm'&&l==='it')?'tsm_calendar_it':(t!=='slim'?'adm_cal_'+t+'_'+l:(l==='it'?'slim_calendar':'slim_calendar_'+l));
