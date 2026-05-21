@@ -1,4 +1,4 @@
-<!-- build:20260520_2156 -->
+<!-- build:20260521_2024 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260520_2156';
+  var BUILD='20260521_2024';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -5102,6 +5102,38 @@ function gsPing() {
             });
             gsLoadKey('adm_cal_score_'+_tk+'_'+_lk, function(val) {
               if (val !== null && val !== undefined && !_calRecentReset) localStorage.setItem('adm_cal_score_'+_tk+'_'+_lk, typeof val==='string'?val:JSON.stringify(val));
+            });
+          })(t.key, l.key);
+          // Loghi squadre: caricamento diretto da GSheets (fallback se adm_rose_ non in GSheets)
+          (function(_tk, _lk) {
+            var _roseRaw = localStorage.getItem('adm_rose_'+_tk+'_'+_lk);
+            var _tl = [];
+            try { if(_roseRaw) _tl = Object.keys(JSON.parse(_roseRaw)); } catch(e) {}
+            if (!_tl.length && _tk==='tsm' && _lk==='it' && typeof TSM_TEAMS_IT!=='undefined') _tl = TSM_TEAMS_IT.slice();
+            if (!_tl.length && _tk==='slim' && _lk==='it' && typeof SLIM_TEAMS_IT!=='undefined') _tl = SLIM_TEAMS_IT.slice();
+            _tl.concat(['INFERMERIA']).forEach(function(sq) {
+              (function(_sq) {
+                var _lk2 = 'adm_logo_'+_tk+'_'+_lk+'_'+_sq;
+                gsLoadKey(_lk2, function(v) {
+                  if (!v) return;
+                  localStorage.setItem(_lk2, v);
+                  var _nv = typeof _normalizeImgUrl==='function' ? _normalizeImgUrl(v) : v;
+                  if (typeof FANTASY_LOGOS !== 'undefined') { FANTASY_LOGOS[_sq]=_nv; FANTASY_LOGOS[_sq.toUpperCase()]=_nv; }
+                  if (window._pendingLogoRefresh) clearTimeout(window._pendingLogoRefresh);
+                  window._pendingLogoRefresh = setTimeout(function() {
+                    var _ap = document.querySelector('.page.active'); if (!_ap) return;
+                    var _clk = typeof currentLeagueKey!=='undefined' ? currentLeagueKey : '';
+                    if (window._currentTourneyKey!==_tk || (_clk!==_lk && _clk!==_tk+'_'+_lk)) return;
+                    var _si = (_ap.querySelector('.section.active')||{}).id || '';
+                    if (_si==='s-rose'&&typeof buildTeamsGrid==='function') { buildTeamsGrid(); if(typeof updateHeader==='function') updateHeader(); }
+                    else if (_si==='tsm-s-rose'&&typeof tsmBuildTeamsGrid==='function') { tsmBuildTeamsGrid(); if(typeof tsmUpdateHeader==='function') tsmUpdateHeader(); }
+                    else if (_si==='s-classifica'&&typeof slimRenderClassifica==='function') slimRenderClassifica();
+                    else if (_si==='tsm-s-classifica'&&typeof tsmRenderClassifica==='function') tsmRenderClassifica();
+                    else if (_si==='s-stadio'&&typeof slimRenderStadio==='function') slimRenderStadio();
+                    else if (_si==='tsm-s-stadio'&&typeof tsmRenderStadio==='function') tsmRenderStadio();
+                  }, 300);
+                });
+              })(sq);
             });
           })(t.key, l.key);
         });
