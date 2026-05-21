@@ -1,4 +1,4 @@
-<!-- build:20260521_2137 -->
+<!-- build:20260521_2140 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260521_2137';
+  var BUILD='20260521_2140';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -4369,7 +4369,7 @@ function tsmCalcStandings() {
       var team = teamKeyMap[teamRaw.toUpperCase()] || teamRaw;
       var res = cal[g][teamRaw];
       if (!res || !s[team]) continue;
-      var lv = stadio[team] || 1;
+      var lv = stadio[team] || stadio[team.toUpperCase()] || 1;
       var st = ST[String(lv)] || {};
       if (res==='VC'||res==='VF'||res==='V') {
         s[team].v++; s[team].pt+=3;
@@ -12010,7 +12010,7 @@ function tsmCalcStandings() {
       var team = teamKeyMap[teamRaw.toUpperCase()] || teamRaw;
       var res = cal[g][teamRaw];
       if (!res || !s[team]) continue;
-      var lv = stadio[team] || 1;
+      var lv = stadio[team] || stadio[team.toUpperCase()] || 1;
       var st = ST[String(lv)] || {};
       if (res==='VC'||res==='VF'||res==='V') {
         s[team].v++; s[team].pt+=3;
