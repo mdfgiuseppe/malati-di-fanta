@@ -1,4 +1,4 @@
-<!-- build:20260521_2134 -->
+<!-- build:20260521_2137 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260521_2134';
+  var BUILD='20260521_2137';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -3754,6 +3754,8 @@ function slimCalcStandings() {
   var _slimCalRaw=localStorage.getItem('adm_cal_'+_tk+'_'+_slimCalLk);
   var cal=_slimCalRaw?(function(){try{return JSON.parse(_slimCalRaw);}catch(e){return{};}}()):{};
   var stadio = slimGetStadio();
+  var _stSlimR = localStorage.getItem('adm_stadio_table_'+_tk);
+  var _STslim = (_stSlimR ? (function(){try{return JSON.parse(_stSlimR);}catch(e){return null;}})() : null) || SLIM_STADIO_TABLE || {};
   var multeKey = _tk + '_multe_' + (typeof currentLeagueKey !== 'undefined' ? currentLeagueKey : 'it');
   var multeRaw = localStorage.getItem(multeKey);
   var multeData = multeRaw ? JSON.parse(multeRaw) : {};
@@ -3775,7 +3777,7 @@ function slimCalcStandings() {
       if (!res || !s[tk]) continue;
       var team = tk;
       var lv = stadio[team] || stadio[team.toUpperCase()] || 1;
-      var st = SLIM_STADIO_TABLE[lv] || {};
+      var st = _STslim[String(lv)] || {};
       if (res==='VC'||res==='VF'||res==='V') {
         s[team].v++; s[team].pt+=3;
         if (res==='VC') { s[team].cr += (st.cr_vittoria||0); }
@@ -8929,7 +8931,8 @@ function admAddPlayerEl(el) {
 function admCalcCreditiStadio(torneoKey, legaKey, squadra) {
   var cal = admGetCalendar(torneoKey, legaKey);
   var stadio = admGetStadio(torneoKey, legaKey);
-  var ST = (torneoKey==='tsm') ? (typeof TSM_STADIO_TABLE_IT!=='undefined'?TSM_STADIO_TABLE_IT:{}) : (typeof SLIM_STADIO_TABLE!=='undefined'?SLIM_STADIO_TABLE:{});
+  var _stAdmR = localStorage.getItem('adm_stadio_table_'+torneoKey);
+  var ST = (_stAdmR ? (function(){try{return JSON.parse(_stAdmR);}catch(e){return null;}})() : null) || (torneoKey==='tsm' ? (typeof TSM_STADIO_TABLE_IT!=='undefined'?TSM_STADIO_TABLE_IT:{}) : (typeof SLIM_STADIO_TABLE!=='undefined'?SLIM_STADIO_TABLE:{}));
   var teamKey = stadio.hasOwnProperty(squadra) ? squadra : squadra.toUpperCase();
   var lv = stadio[teamKey] || 1;
   var st = ST[String(lv)] || {};
@@ -11392,6 +11395,8 @@ function slimCalcStandings() {
   var _slimCalRaw=localStorage.getItem('adm_cal_'+_tk+'_'+_slimCalLk);
   var cal=_slimCalRaw?(function(){try{return JSON.parse(_slimCalRaw);}catch(e){return{};}}()):{};
   var stadio = slimGetStadio();
+  var _stSlimR = localStorage.getItem('adm_stadio_table_'+_tk);
+  var _STslim = (_stSlimR ? (function(){try{return JSON.parse(_stSlimR);}catch(e){return null;}})() : null) || SLIM_STADIO_TABLE || {};
   var multeKey = _tk + '_multe_' + (typeof currentLeagueKey !== 'undefined' ? currentLeagueKey : 'it');
   var multeRaw = localStorage.getItem(multeKey);
   var multeData = multeRaw ? JSON.parse(multeRaw) : {};
@@ -11413,7 +11418,7 @@ function slimCalcStandings() {
       if (!res || !s[tk]) continue;
       var team = tk;
       var lv = stadio[team] || stadio[team.toUpperCase()] || 1;
-      var st = SLIM_STADIO_TABLE[lv] || {};
+      var st = _STslim[String(lv)] || {};
       if (res==='VC'||res==='VF'||res==='V') {
         s[team].v++; s[team].pt+=3;
         if (res==='VC') { s[team].cr += (st.cr_vittoria||0); }
@@ -15224,7 +15229,8 @@ function admAddPlayerEl(el) {
 function admCalcCreditiStadio(torneoKey, legaKey, squadra) {
   var cal = admGetCalendar(torneoKey, legaKey);
   var stadio = admGetStadio(torneoKey, legaKey);
-  var ST = (torneoKey==='tsm') ? (typeof TSM_STADIO_TABLE_IT!=='undefined'?TSM_STADIO_TABLE_IT:{}) : (typeof SLIM_STADIO_TABLE!=='undefined'?SLIM_STADIO_TABLE:{});
+  var _stAdmR = localStorage.getItem('adm_stadio_table_'+torneoKey);
+  var ST = (_stAdmR ? (function(){try{return JSON.parse(_stAdmR);}catch(e){return null;}})() : null) || (torneoKey==='tsm' ? (typeof TSM_STADIO_TABLE_IT!=='undefined'?TSM_STADIO_TABLE_IT:{}) : (typeof SLIM_STADIO_TABLE!=='undefined'?SLIM_STADIO_TABLE:{}));
   var teamKey = stadio.hasOwnProperty(squadra) ? squadra : squadra.toUpperCase();
   var lv = stadio[teamKey] || 1;
   var st = ST[String(lv)] || {};
