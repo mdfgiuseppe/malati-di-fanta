@@ -1,4 +1,4 @@
-<!-- build:20260605_1310 -->
+<!-- build:20260605_1323 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260605_1310';
+  var BUILD='20260605_1323';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -8760,6 +8760,11 @@ function admCsConfirm() {
     if(torneoKey==='slim'&&legaKey==='it'&&typeof SLIM_TEAMS_IT!=='undefined'){var i=SLIM_TEAMS_IT.indexOf(o);if(i>=0)SLIM_TEAMS_IT[i]=n;}
     if(typeof SLIM_TEAMS!=='undefined'){var i2=SLIM_TEAMS.indexOf(o);if(i2>=0)SLIM_TEAMS[i2]=n;}
   });
+  // Salva le rose aggiornate su GSheets
+  var rk='adm_rose_'+torneoKey+'_'+legaKey;
+  var roseData=localStorage.getItem(rk);
+  if(roseData) gsCall({action:'saveRose', torneo:torneoKey, lega:legaKey, data:roseData}, null);
+
   // Aggiorna versione loghi per cache-busting automatico lato utente
   var _lver=String(Date.now());
   localStorage.setItem('adm_logo_ver_'+torneoKey+'_'+legaKey,_lver);
@@ -15270,6 +15275,11 @@ function admCsConfirm() {
     if(torneoKey==='slim'&&legaKey==='it'&&typeof SLIM_TEAMS_IT!=='undefined'){var i=SLIM_TEAMS_IT.indexOf(o);if(i>=0)SLIM_TEAMS_IT[i]=n;}
     if(typeof SLIM_TEAMS!=='undefined'){var i2=SLIM_TEAMS.indexOf(o);if(i2>=0)SLIM_TEAMS[i2]=n;}
   });
+  // Salva le rose aggiornate su GSheets
+  var rk='adm_rose_'+torneoKey+'_'+legaKey;
+  var roseData=localStorage.getItem(rk);
+  if(roseData) gsCall({action:'saveRose', torneo:torneoKey, lega:legaKey, data:roseData}, null);
+
   // Aggiorna versione loghi per cache-busting automatico lato utente
   var _lver=String(Date.now());
   localStorage.setItem('adm_logo_ver_'+torneoKey+'_'+legaKey,_lver);
