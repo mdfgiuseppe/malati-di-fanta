@@ -61,10 +61,16 @@ export default {
 }
 
 .splash-logo img {
-  width: 200px;
+  width: 280px;
   height: auto;
   filter: drop-shadow(0 8px 32px rgba(16, 185, 129, 0.2));
   animation: float 3s ease-in-out infinite;
+}
+
+@media (max-width: 600px) {
+  .splash-logo img {
+    width: 220px;
+  }
 }
 
 @keyframes float {
