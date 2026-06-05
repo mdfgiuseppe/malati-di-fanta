@@ -1,4 +1,4 @@
-<!-- build:20260605_1432 -->
+<!-- build:20260605_1434 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260605_1432';
+  var BUILD='20260605_1434';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -7464,6 +7464,7 @@ function showAdminSection(id, el) {
   var _nsw=document.getElementById('adm-rose-new-sq-wrap'); if(_nsw) _nsw.style.display='none';
   if (id==='tornei') admRenderTornei();
   if (id==='utenti') {
+    console.log('[showAdminSection] Entrando nel blocco utenti');
     // Carica utenti e richieste pendenti (sempre, anche se offline)
     console.log('[admInit] Caricando utenti da GSheets...');
     gsCall({action:'getUtenti'}, function(err, data) {
