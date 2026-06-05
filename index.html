@@ -1,4 +1,4 @@
-<!-- build:20260605_2108 -->
+<!-- build:20260605_2110 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260605_2108';
+  var BUILD='20260605_2110';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -4939,7 +4939,10 @@ function gsPing() {
           });
           updateDashboardCounters();
           updateLogosTornei();
-          // Carica loghi/trofei/rose per ogni torneo e lega
+          // LAZY LOADING: Disabilita caricamento massivo di loghi/trofei/rose al boot
+          // Il codice seguente veniva richiamato al boot e causava 1700+ richieste GET inutili
+          // Adesso carica solo quando l'utente naviga a una sezione specifica
+          /*
           gsLoadKey('adm_logo_main', function(v){ if(v){ localStorage.setItem('adm_logo_main',v); _applyLogoMain(v); } });
           _atGS.forEach(function(t) {
             gsLoadKey('adm_logo_torneo_'+t.key, function(v){ if(v){ localStorage.setItem('adm_logo_torneo_'+t.key,v); updateLogosTornei(); } });
@@ -4950,10 +4953,10 @@ function gsPing() {
               gsLoadKey('adm_rose_'+t.key+'_'+l.key, function(v){ if(v) localStorage.setItem('adm_rose_'+t.key+'_'+l.key, typeof v==='string'?v:JSON.stringify(v)); });
             });
           });
-          // Carica loghi coppe europee
           ['cl','el','conf','sc'].forEach(function(k) {
             gsLoadKey('adm_img_coppa_'+k, function(v){ if(v){ localStorage.setItem('adm_img_coppa_'+k,v); if(typeof initCoppaLogos==='function') initCoppaLogos(); } });
           });
+          */
           // Carica logo principale e trofei/crediti slim (indipendente da admin_tornei)
           gsLoadKey('adm_logo_main', function(v){ if(v){ localStorage.setItem('adm_logo_main',v); if(typeof _applyLogoMain==='function') _applyLogoMain(v); } });
           ['it','en','de','es','fr','pt','nl','tr'].forEach(function(lk) {
