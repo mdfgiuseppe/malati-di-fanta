@@ -5,6 +5,8 @@ const app = {
     { nome: 'Luca Verdi', email: 'luca@example.com', ruolo: 'utente', stato: 'Inattivo' }
   ],
   currentUser: null,
+  pendingRequests: [],
+  scriptsUrl: 'https://script.google.com/macros/s/AKfycbwJ3ekDa1nxHu0irViJhBFsFZTYubaC6hApb5z0eSVnuDbhJMiuzQcgyI1ANW7jItgQ/exec',
 
   init() {
     console.log('✅ Admin panel caricato');
@@ -14,6 +16,7 @@ const app = {
     this.setupAddUtente();
     this.renderUtenti();
     this.updateUI();
+    this.loadPendingRequests();
   },
 
   setupBurgerMenu() {
@@ -154,7 +157,29 @@ const app = {
       statusText.textContent = 'offline';
       statusText.parentElement.querySelector('span').style.background = '#6b7280';
     }
+  },
+
+  loadPendingRequests() {
+    const script = document.createElement('script');
+    script.src = this.scriptsUrl + '?callback=app.handlePendingRequests';
+    document.head.appendChild(script);
+  },
+
+  handlePendingRequests(data) {
+    this.pendingRequests = data;
+    const count = document.getElementById('pending-count');
+    const msg = document.getElementById('pending-msg');
+
+    if (count) count.textContent = data.length;
+    if (msg) {
+      if (data.length === 0) {
+        msg.textContent = 'Nessuna richiesta pendente';
+      } else {
+        msg.innerHTML = `<strong>${data.length}</strong> richiesta${data.length > 1 ? 'e' : ''} in sospeso`;
+      }
+    }
   }
 };
 
 document.addEventListener('DOMContentLoaded', () => app.init());
+window.app = app;
