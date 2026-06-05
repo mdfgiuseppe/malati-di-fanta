@@ -1,4 +1,4 @@
-<!-- build:20260605_1434 -->
+<!-- build:20260605_1709 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260605_1434';
+  var BUILD='20260605_1709';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -4713,10 +4713,10 @@ function modSelLegaChange() {
 var GS_URL = 'https://script.google.com/macros/s/AKfycbx0E-fnzINJJRNnPlC3xc9vSArFIxwPNfsT_US6D6vZBQ_UkQG_-I9xA9m5X0nD1o51/exec';
 var GS_ONLINE = false; // diventa true dopo il primo ping riuscito
 
-// Throttling: max 5 richieste simultanee (aumentato per permettere caricamento utenti/richieste pendenti)
+// Throttling: max 15 richieste simultanee (aumentato per permettere caricamento utenti/richieste pendenti)
 var _gsQueue = [];
 var _gsInFlight = 0;
-var _gsMaxConcurrent = 5;
+var _gsMaxConcurrent = 15;
 
 function _gsProcessQueue() {
   if(_gsInFlight >= _gsMaxConcurrent || _gsQueue.length === 0) return;
@@ -7465,7 +7465,6 @@ function showAdminSection(id, el) {
   if (id==='tornei') admRenderTornei();
   if (id==='utenti') {
     console.log('[showAdminSection] Entrando nel blocco utenti');
-    // Carica utenti e richieste pendenti (sempre, anche se offline)
     console.log('[admInit] Caricando utenti da GSheets...');
     gsCall({action:'getUtenti'}, function(err, data) {
       console.log('[admInit] Risposta getUtenti:', {err: err, ok: data && data.ok, count: data && data.data && data.data.length});
