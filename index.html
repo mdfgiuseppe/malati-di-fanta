@@ -1,4 +1,4 @@
-<!-- build:20260605_1323 -->
+<!-- build:20260605_1331 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260605_1323';
+  var BUILD='20260605_1331';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -3759,9 +3759,15 @@ function slimCalcStandings() {
   var multeKey = _tk + '_multe_' + (typeof currentLeagueKey !== 'undefined' ? currentLeagueKey : 'it');
   var multeRaw = localStorage.getItem(multeKey);
   var multeData = multeRaw ? JSON.parse(multeRaw) : {};
+
+  // Leggi squadre da adm_rose_* (aggiornato dall'admin) oppure fallback a SLIM_TEAMS
+  var _roseRaw = localStorage.getItem('adm_rose_'+_tk+'_'+_slimCalLk);
+  var _roseData = (_roseRaw ? (function(){try{return JSON.parse(_roseRaw);}catch(e){return null;}})() : null) || null;
+  var _teamsList = _roseData ? Object.keys(_roseData) : SLIM_TEAMS;
+
   var s = {};
   var teamKeyMap = {};
-  SLIM_TEAMS.forEach(function(t) {
+  _teamsList.forEach(function(t) {
     s[t]={v:0,vf:0,p:0,s:0,pt:0,cr:0,gf:0,gs:0,penalita:0,totalPts:0};
     teamKeyMap[t.toUpperCase()] = t;
   });
@@ -11503,9 +11509,15 @@ function slimCalcStandings() {
   var multeKey = _tk + '_multe_' + (typeof currentLeagueKey !== 'undefined' ? currentLeagueKey : 'it');
   var multeRaw = localStorage.getItem(multeKey);
   var multeData = multeRaw ? JSON.parse(multeRaw) : {};
+
+  // Leggi squadre da adm_rose_* (aggiornato dall'admin) oppure fallback a SLIM_TEAMS
+  var _roseRaw = localStorage.getItem('adm_rose_'+_tk+'_'+_slimCalLk);
+  var _roseData = (_roseRaw ? (function(){try{return JSON.parse(_roseRaw);}catch(e){return null;}})() : null) || null;
+  var _teamsList = _roseData ? Object.keys(_roseData) : SLIM_TEAMS;
+
   var s = {};
   var teamKeyMap = {};
-  SLIM_TEAMS.forEach(function(t) {
+  _teamsList.forEach(function(t) {
     s[t]={v:0,vf:0,p:0,s:0,pt:0,cr:0,gf:0,gs:0,penalita:0,totalPts:0};
     teamKeyMap[t.toUpperCase()] = t;
   });
