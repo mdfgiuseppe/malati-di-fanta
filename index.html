@@ -3,16 +3,90 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Malati di Fanta</title>
+  <title>Malati di Fanta - Admin</title>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;600;700&display=swap" rel="stylesheet">
   <style>
-    :root[data-theme="dark"] { --bg: #07090f; --text: #eef2ff; --green: #10b981; }
-    :root[data-theme="light"] { --bg: #f0f4fc; --text: #08101e; --green: #059669; }
+    :root[data-theme="dark"] { --bg: #07090f; --bg2: #0d1220; --bg3: #131b2e; --card: #101622; --border: rgba(255,255,255,0.055); --text: #eef2ff; --text2: #6a7d9e; --text3: #2e3e5e; --green: #10b981; }
+    :root[data-theme="light"] { --bg: #f0f4fc; --bg2: #e4eaf6; --bg3: #d6dff0; --card: #fff; --border: rgba(0,10,40,0.07); --text: #08101e; --text2: #4a5a7a; --text3: #9aacc0; --green: #059669; }
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { font-family: "Barlow", sans-serif; background: var(--bg); color: var(--text); }
+    .topbar { position: sticky; top: 0; z-index: 200; height: 56px; background: rgba(7,9,15,0.92); border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 20px; }
+    .topbar-title { font-family: "Bebas Neue"; font-size: 18px; letter-spacing: 2px; color: var(--green); }
+    .layout { display: flex; min-height: calc(100vh - 56px); }
+    .sidebar { width: 240px; background: var(--bg2); border-right: 1px solid var(--border); padding: 20px 0; }
+    .sidebar-section { padding: 16px; font-size: 10px; font-weight: 800; text-transform: uppercase; color: var(--text3); }
+    .sidebar-item { display: flex; align-items: center; gap: 10px; padding: 10px 16px; cursor: pointer; color: var(--text2); border-left: 3px solid transparent; background: none; border: none; width: 100%; text-align: left; font-size: 13px; }
+    .sidebar-item.active { color: var(--green); background: rgba(16,185,129,0.06); border-left-color: var(--green); }
+    .main-area { flex: 1; padding: 24px; overflow-y: auto; }
+    .section { display: none; }
+    .section.active { display: block; }
+    .page-title { font-family: "Bebas Neue"; font-size: 28px; letter-spacing: 2px; margin-bottom: 20px; }
+    table { width: 100%; border-collapse: collapse; background: var(--card); border: 1px solid var(--border); border-radius: 8px; }
+    th { background: var(--bg3); padding: 12px; text-align: left; font-weight: 700; font-size: 12px; text-transform: uppercase; border-bottom: 1px solid var(--border); }
+    td { padding: 12px; border-bottom: 1px solid var(--border); font-size: 13px; }
   </style>
 </head>
 <body>
+  <header class="topbar">
+    <span style="font-size: 20px; margin-right: 10px;">⚙️</span>
+    <span class="topbar-title">PANNELLO ADMIN</span>
+  </header>
+
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="sidebar-section">GESTIONE</div>
+      <button class="sidebar-item active" data-section="utenti">👤 Utenti</button>
+      <button class="sidebar-item" data-section="tornei">🏆 Tornei & Leghe</button>
+      <button class="sidebar-item" data-section="rose">⚽ Rose Squadre</button>
+      <button class="sidebar-item" data-section="scambio">🔄 Scambio Giocatori</button>
+      <button class="sidebar-item" data-section="calendario">📅 Calendario</button>
+      <button class="sidebar-item" data-section="coppe">🏅 Coppe</button>
+      <button class="sidebar-item" data-section="stadio">🏟️ Stadio</button>
+      <button class="sidebar-item" data-section="sponsor">💼 Sponsor</button>
+      <button class="sidebar-item" data-section="multe">⚖️ Multe & Sanzioni</button>
+      <button class="sidebar-item" data-section="modulistica">📋 Modulistica</button>
+
+      <div class="sidebar-section" style="margin-top: 20px;">SISTEMA</div>
+      <button class="sidebar-item" data-section="stagioni">🌞 Stagioni</button>
+      <button class="sidebar-item" data-section="cambio">🔀 Cambio Squadre</button>
+      <button class="sidebar-item" data-section="tab-stadio">📊 Tabella Stadio</button>
+      <button class="sidebar-item" data-section="tab-sponsor">📊 Tabella Sponsor</button>
+      <button class="sidebar-item" data-section="impostazioni">⚙️ Impostazioni</button>
+    </aside>
+
+    <main class="main-area">
+      <section class="section active" id="section-utenti">
+        <h1 class="page-title">Utenti</h1>
+        <table>
+          <thead>
+            <tr>
+              <th>Nome</th>
+              <th>Email</th>
+              <th>Ruolo</th>
+              <th>Stato</th>
+            </tr>
+          </thead>
+          <tbody id="utenti-list"></tbody>
+        </table>
+      </section>
+
+      <section class="section" id="section-tornei"><h1 class="page-title">Tornei & Leghe</h1><p style="color: var(--text2);">In arrivo...</p></section>
+      <section class="section" id="section-rose"><h1 class="page-title">Rose Squadre</h1><p style="color: var(--text2);">In arrivo...</p></section>
+      <section class="section" id="section-scambio"><h1 class="page-title">Scambio Giocatori</h1><p style="color: var(--text2);">In arrivo...</p></section>
+      <section class="section" id="section-calendario"><h1 class="page-title">Calendario</h1><p style="color: var(--text2);">In arrivo...</p></section>
+      <section class="section" id="section-coppe"><h1 class="page-title">Coppe</h1><p style="color: var(--text2);">In arrivo...</p></section>
+      <section class="section" id="section-stadio"><h1 class="page-title">Stadio</h1><p style="color: var(--text2);">In arrivo...</p></section>
+      <section class="section" id="section-sponsor"><h1 class="page-title">Sponsor</h1><p style="color: var(--text2);">In arrivo...</p></section>
+      <section class="section" id="section-multe"><h1 class="page-title">Multe & Sanzioni</h1><p style="color: var(--text2);">In arrivo...</p></section>
+      <section class="section" id="section-modulistica"><h1 class="page-title">Modulistica</h1><p style="color: var(--text2);">In arrivo...</p></section>
+      <section class="section" id="section-stagioni"><h1 class="page-title">Stagioni</h1><p style="color: var(--text2);">In arrivo...</p></section>
+      <section class="section" id="section-cambio"><h1 class="page-title">Cambio Squadre</h1><p style="color: var(--text2);">In arrivo...</p></section>
+      <section class="section" id="section-tab-stadio"><h1 class="page-title">Tabella Stadio</h1><p style="color: var(--text2);">In arrivo...</p></section>
+      <section class="section" id="section-tab-sponsor"><h1 class="page-title">Tabella Sponsor</h1><p style="color: var(--text2);">In arrivo...</p></section>
+      <section class="section" id="section-impostazioni"><h1 class="page-title">Impostazioni</h1><p style="color: var(--text2);">In arrivo...</p></section>
+    </main>
+  </div>
+
   <script src="app.js"></script>
 </body>
 </html>
