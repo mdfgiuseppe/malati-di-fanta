@@ -52,19 +52,19 @@ const app = {
     const torneo = UI.tornei.find(t => t.id === torneoId);
     if (!torneo) return;
 
-    const html = `
-      <div class="dashboard">
+    const leaguesHtml = `
+      <div style="margin-top: 40px; padding-top: 40px; border-top: 2px solid var(--border);">
         <div class="page-header">
           <h2>${torneo.name} - LEGHE</h2>
         </div>
-        <div class="cards-grid">
+        <div class="cards-grid" style="grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));">
           ${torneo.leghe.map(lega => `
             <div class="card">
-              <div class="card-logo" style="background: linear-gradient(135deg, ${torneo.color}40, ${torneo.color}20); height: 80px;">
-                <div style="font-size: 40px;">⚽</div>
+              <div class="card-logo" style="background: linear-gradient(135deg, ${torneo.color}40, ${torneo.color}20); height: 60px;">
+                <div style="font-size: 32px;">⚽</div>
               </div>
               <div class="card-header">
-                <h3>${lega.name}</h3>
+                <h3 style="font-size: 12px;">${lega.name}</h3>
               </div>
               <div class="card-stats">
                 <div class="stat">
@@ -73,8 +73,8 @@ const app = {
                 </div>
               </div>
               <div class="card-actions">
-                <button class="action-btn primary" onclick="alert('Entra in: ${lega.name}')">
-                  → ENTRA
+                <button class="action-btn primary" style="font-size: 10px; padding: 8px;" onclick="alert('Entra in: ${lega.name}')">
+                  ENTRA
                 </button>
               </div>
             </div>
@@ -82,7 +82,18 @@ const app = {
         </div>
       </div>
     `;
-    document.getElementById('main-content').innerHTML = html;
+
+    const mainContent = document.getElementById('main-content');
+    const leaguesSection = mainContent.querySelector('[data-leagues-section]');
+
+    if (leaguesSection) {
+      leaguesSection.innerHTML = leaguesHtml.replace('<div style="margin-top: 40px; padding-top: 40px; border-top: 2px solid var(--border);">', '<div>');
+    } else {
+      const newSection = document.createElement('div');
+      newSection.setAttribute('data-leagues-section', 'true');
+      newSection.innerHTML = leaguesHtml;
+      mainContent.appendChild(newSection);
+    }
   },
 
   handleLogoClick: () => {
