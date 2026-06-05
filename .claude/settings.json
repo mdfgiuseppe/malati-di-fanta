@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git push *)",
+      "Bash(grep -v \"^.*:.*\\\\..*{\")",
+      "WebFetch(domain:mdfgiuseppe.github.io)",
+      "Bash(gh api *)",
+      "Bash(git ls-remote *)",
+      "WebFetch(domain:script.google.com)",
+      "WebFetch(domain:script.googleusercontent.com)",
+      "Bash(git commit *)",
+      "Bash(git checkout *)",
+      "Bash(git merge *)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Read(//c/Users/Utente/.claude/projects/c--Users-Utente-mdf-final/memory/**)"
+    ]
+  }
+}
