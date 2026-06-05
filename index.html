@@ -1,4 +1,4 @@
-<!-- build:20260605_1425 -->
+<!-- build:20260605_1426 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260605_1425';
+  var BUILD='20260605_1426';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -7464,7 +7464,9 @@ function showAdminSection(id, el) {
   if (id==='tornei') admRenderTornei();
   if (id==='utenti') {
     // Carica utenti e richieste pendenti (sempre, anche se offline)
+    console.log('[admInit] Caricando utenti da GSheets...');
     gsCall({action:'getUtenti'}, function(err, data) {
+      console.log('[admInit] Risposta getUtenti:', {err: err, ok: data && data.ok, count: data && data.data && data.data.length});
       if (!err && data && data.ok && data.data) {
         ADMIN_USERS = data.data;
         localStorage.setItem('admin_users', JSON.stringify(ADMIN_USERS));
@@ -7474,6 +7476,7 @@ function showAdminSection(id, el) {
       }
       // Carica anche richieste pendenti
       gsCall({action:'getPendingRequests'}, function(e2, d2) {
+        console.log('[admInit] Risposta getPendingRequests:', {err: e2, ok: d2 && d2.ok, count: d2 && d2.data && d2.data.length});
         if (!e2 && d2 && d2.ok) {
           localStorage.setItem('_pendingRequests', JSON.stringify(d2.data || []));
         }
