@@ -1,4 +1,4 @@
-<!-- build:20260521_2211 -->
+<!-- build:20260605_1221 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260521_2211';
+  var BUILD='20260605_1221';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -4718,13 +4718,31 @@ var _gsCallbacks = {};
 var _gsCallId = 0;
 
 function gsCall(params, callback) {
+  // Genera un nome callback unico
+  var cbName = 'gsCb_' + Math.random().toString(36).substr(2, 9);
+
+  // Salva il callback nella finestra globale
+  window[cbName] = function(data) {
+    delete window[cbName];
+    document.body.removeChild(script);
+    if(callback) callback(null, data);
+  };
+
+  // Prepara i parametri con il callback
   var urlParams = Object.keys(params).map(function(k){
     return encodeURIComponent(k) + '=' + encodeURIComponent(params[k]);
   }).join('&');
-  fetch(GS_URL, {method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'}, body:urlParams})
-    .then(function(r){ return r.json(); })
-    .then(function(data){ if(callback) callback(null, data); })
-    .catch(function(e){ if(callback) callback(e, null); });
+  urlParams += '&callback=' + cbName;
+
+  // Crea uno script tag per la richiesta JSONP
+  var script = document.createElement('script');
+  script.src = GS_URL + '?' + urlParams;
+  script.onerror = function() {
+    delete window[cbName];
+    document.body.removeChild(script);
+    if(callback) callback(new Error('JSONP request failed'), null);
+  };
+  document.body.appendChild(script);
 }
 
 // Ping al caricamento per verificare connessione
