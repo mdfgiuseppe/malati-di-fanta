@@ -150,14 +150,45 @@
   </div>
 
   <!-- MODAL LOGIN -->
-  <div id="modal-login" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 1000; justify-content: center; align-items: center;">
-    <div style="background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 24px; max-width: 400px; width: 90%;">
-      <h2 style="font-family: 'Bebas Neue'; font-size: 20px; letter-spacing: 2px; margin-bottom: 16px; color: var(--green);">ACCEDI</h2>
-      <div style="display: flex; flex-direction: column; gap: 12px;">
-        <input type="email" id="login-email" placeholder="Email" style="background: var(--bg3); border: 1px solid var(--border); padding: 12px; border-radius: 6px; color: var(--text); font-size: 14px;">
-        <input type="password" id="login-password" placeholder="Password" style="background: var(--bg3); border: 1px solid var(--border); padding: 12px; border-radius: 6px; color: var(--text); font-size: 14px;">
-        <button id="btn-login-submit" style="background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; padding: 12px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 14px;">Accedi</button>
-        <button id="btn-login-close" style="background: none; border: 1px solid var(--border); color: var(--text2); padding: 12px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 14px;">Annulla</button>
+  <div id="modal-login" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center; padding: 16px;">
+    <div style="background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 32px 24px; max-width: 440px; width: 100%;">
+      <div style="text-align: center; margin-bottom: 24px;">
+        <div style="width: 64px; height: 64px; background: rgba(16,185,129,0.15); border: 2px solid var(--green); border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 32px; margin: 0 auto 16px;">🔒</div>
+        <h2 style="font-family: 'Bebas Neue'; font-size: 24px; letter-spacing: 3px; color: var(--text); margin-bottom: 8px;">ACCEDI</h2>
+        <p style="color: var(--text2); font-size: 13px;">Inserisci le tue credenziali per continuare</p>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 16px; margin-bottom: 16px;">
+        <div>
+          <label style="display: block; color: var(--text3); font-size: 11px; font-weight: 700; text-transform: uppercase; margin-bottom: 8px; letter-spacing: 1px;">Email o Username</label>
+          <input type="text" id="login-email" placeholder="es. marco.rossi" style="width: 100%; background: transparent; border: 1px solid var(--green); padding: 12px 14px; border-radius: 8px; color: var(--text); font-size: 14px; transition: all 0.3s;">
+        </div>
+
+        <div>
+          <label style="display: block; color: var(--text3); font-size: 11px; font-weight: 700; text-transform: uppercase; margin-bottom: 8px; letter-spacing: 1px;">Password</label>
+          <div style="position: relative;">
+            <input type="password" id="login-password" placeholder="••••••••" style="width: 100%; background: transparent; border: 1px solid var(--green); padding: 12px 14px; border-radius: 8px; color: var(--text); font-size: 14px; transition: all 0.3s;">
+            <button id="toggle-password" type="button" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--text2); cursor: pointer; font-size: 16px;">👁️</button>
+          </div>
+        </div>
+
+        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+          <input type="checkbox" id="remember-me" style="width: 16px; height: 16px; cursor: pointer; accent-color: var(--green);">
+          <span style="color: var(--text2); font-size: 13px;">Ricordami su questo dispositivo</span>
+        </label>
+      </div>
+
+      <button id="btn-login-submit" style="width: 100%; background: var(--green); color: white; border: none; padding: 14px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 15px; margin-bottom: 12px; transition: all 0.3s;">Accedi →</button>
+
+      <div style="text-align: center; font-size: 12px; margin-bottom: 12px;">
+        <a href="#" style="color: var(--text2); text-decoration: none;">Credenziali fornite dallo staff</a>
+        <span style="color: var(--text3);"> - </span>
+        <a href="#" style="color: var(--green); text-decoration: none;">Password dimenticata?</a>
+      </div>
+
+      <div style="text-align: center; font-size: 12px; border-top: 1px solid var(--border); padding-top: 12px;">
+        <span style="color: var(--text2);">Non hai un account? </span>
+        <a href="#" style="color: var(--green); text-decoration: none; font-weight: 600;">Richiedi accesso →</a>
       </div>
     </div>
   </div>

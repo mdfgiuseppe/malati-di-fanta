@@ -59,18 +59,28 @@ const app = {
   setupLogin() {
     const modal = document.getElementById('modal-login');
     const btnLogin = document.getElementById('btn-login');
-    const btnLoginClose = document.getElementById('btn-login-close');
     const btnLoginSubmit = document.getElementById('btn-login-submit');
     const btnLogout = document.getElementById('btn-logout');
+    const togglePassword = document.getElementById('toggle-password');
+    const loginPassword = document.getElementById('login-password');
 
     btnLogin?.addEventListener('click', () => {
       modal.style.display = 'flex';
     });
 
-    btnLoginClose?.addEventListener('click', () => {
-      modal.style.display = 'none';
-      document.getElementById('login-email').value = '';
-      document.getElementById('login-password').value = '';
+    modal?.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        modal.style.display = 'none';
+        document.getElementById('login-email').value = '';
+        document.getElementById('login-password').value = '';
+      }
+    });
+
+    togglePassword?.addEventListener('click', (e) => {
+      e.preventDefault();
+      const type = loginPassword.type === 'password' ? 'text' : 'password';
+      loginPassword.type = type;
+      togglePassword.textContent = type === 'password' ? '👁️' : '👁️‍🗨️';
     });
 
     btnLoginSubmit?.addEventListener('click', () => {
