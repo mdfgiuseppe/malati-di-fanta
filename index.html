@@ -1,4 +1,4 @@
-<!-- build:20260605_1429 -->
+<!-- build:20260605_1432 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260605_1429';
+  var BUILD='20260605_1432';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -7421,6 +7421,7 @@ function admSaveMulteEl(el) {
 }
 
 function showAdminSection(id, el) {
+  console.log('[showAdminSection] id=' + id);
   if (!id) return;
   document.querySelectorAll('.adm-section').forEach(function(s){ s.style.display='none'; });
   var sec = document.getElementById('adm-s-'+id);
