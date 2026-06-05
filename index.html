@@ -1,4 +1,4 @@
-<!-- build:20260605_2056 -->
+<!-- build:20260605_2104 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260605_2056';
+  var BUILD='20260605_2104';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -7478,8 +7478,11 @@ function showAdminSection(id, el) {
       // Carica anche richieste pendenti
       gsCall({action:'getPendingRequests'}, function(e2, d2) {
         console.log('[admInit] Risposta getPendingRequests:', {err: e2, ok: d2 && d2.ok, count: d2 && d2.data && d2.data.length});
-        if (!e2 && d2 && d2.ok) {
-          localStorage.setItem('_pendingRequests', JSON.stringify(d2.data || []));
+        if (!e2 && d2 && d2.ok && d2.data) {
+          localStorage.setItem('_pendingRequests', JSON.stringify(d2.data));
+          console.log('[admInit] Richieste pendenti salvate:', d2.data.length);
+        } else {
+          console.log('[admInit] getPendingRequests fallito, usando cache');
         }
         admRenderUtenti();
       });
