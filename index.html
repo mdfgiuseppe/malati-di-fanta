@@ -1,4 +1,4 @@
-<!-- build:20260605_1221 -->
+<!-- build:20260605_1308 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260605_1221';
+  var BUILD='20260605_1308';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -4720,11 +4720,24 @@ var _gsCallId = 0;
 function gsCall(params, callback) {
   // Genera un nome callback unico
   var cbName = 'gsCb_' + Math.random().toString(36).substr(2, 9);
+  var timedOut = false;
+
+  // Timeout di 10 secondi
+  var timeoutId = setTimeout(function() {
+    timedOut = true;
+    delete window[cbName];
+    if(script && script.parentNode) document.body.removeChild(script);
+    console.error('[gsCall] TIMEOUT:', params.action);
+    if(callback) callback(new Error('JSONP timeout'), null);
+  }, 10000);
 
   // Salva il callback nella finestra globale
   window[cbName] = function(data) {
+    if(timedOut) return;
+    clearTimeout(timeoutId);
     delete window[cbName];
-    document.body.removeChild(script);
+    if(script && script.parentNode) document.body.removeChild(script);
+    console.log('[gsCall] SUCCESS:', params.action, data);
     if(callback) callback(null, data);
   };
 
@@ -4738,10 +4751,14 @@ function gsCall(params, callback) {
   var script = document.createElement('script');
   script.src = GS_URL + '?' + urlParams;
   script.onerror = function() {
+    if(timedOut) return;
+    clearTimeout(timeoutId);
     delete window[cbName];
     document.body.removeChild(script);
+    console.error('[gsCall] ERROR:', params.action);
     if(callback) callback(new Error('JSONP request failed'), null);
   };
+  console.log('[gsCall] Chiamando:', params.action, 'callback=' + cbName);
   document.body.appendChild(script);
 }
 
