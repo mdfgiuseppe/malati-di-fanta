@@ -1,4 +1,4 @@
-<!-- build:20260605_2104 -->
+<!-- build:20260605_2108 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260605_2104';
+  var BUILD='20260605_2108';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -10988,12 +10988,12 @@ document.addEventListener('DOMContentLoaded',function(){
   window._currentLeagueCalKey = 'slim_calendar';
   window._currentLeagueStaKey = 'slim_stadio';
   initCoppaLogos();
-  slimRenderClassifica();
-  slimRenderCalendario();
-  slimRenderStadio();
+  // LAZY LOADING: Disabilita caricamento automatico di tutti i dati
+  // slimRenderClassifica();  // ← Carica on-demand quando clicchi sulla lega
+  // slimRenderCalendario();  // ← Carica on-demand quando clicchi su Calendario
+  // slimRenderStadio();      // ← Carica on-demand quando clicchi su Stadio
   updateDashboardCounters();
-  // Aggiorna dashboard lega con trofeo della nazione corrente
-  _updateLegaDashboard('slim_it');
+  // _updateLegaDashboard('slim_it');
 });
 function openAlboModal(){var modal=document.getElementById('albo-modal');if(!modal)return;modal.style.display='block';document.body.style.overflow='hidden';var first=document.querySelector('.albo-btn');if(first)alboTab(first,first.getAttribute('data-key'));}
 
@@ -17089,12 +17089,12 @@ document.addEventListener('DOMContentLoaded',function(){
   window._currentLeagueCalKey = 'slim_calendar';
   window._currentLeagueStaKey = 'slim_stadio';
   initCoppaLogos();
-  slimRenderClassifica();
-  slimRenderCalendario();
-  slimRenderStadio();
+  // LAZY LOADING: Disabilita caricamento automatico di tutti i dati
+  // slimRenderClassifica();  // ← Carica on-demand quando clicchi sulla lega
+  // slimRenderCalendario();  // ← Carica on-demand quando clicchi su Calendario
+  // slimRenderStadio();      // ← Carica on-demand quando clicchi su Stadio
   updateDashboardCounters();
-  // Aggiorna dashboard lega con trofeo della nazione corrente
-  _updateLegaDashboard('slim_it');
+  // _updateLegaDashboard('slim_it');
 });
 function openAlboModal(){var modal=document.getElementById('albo-modal');if(!modal)return;modal.style.display='block';document.body.style.overflow='hidden';var first=document.querySelector('.albo-btn');if(first)alboTab(first,first.getAttribute('data-key'));}
 
