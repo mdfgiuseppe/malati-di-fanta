@@ -1,82 +1,24 @@
-// Google Sheets API calls via JSONP
-
+// API - Google Sheets comunicazione
 const GAS_URL = 'https://script.google.com/macros/s/AKfycbyAQAgaXj_SjZqJdwtcfaXrzcG-v1Bxqs7RRyofJTijzOMmu9J8ab4XdDScCW3hFUiw/exec';
 
-// Throttling: max 15 concurrent requests
-let _gsQueue = [];
-let _gsInFlight = 0;
-const _gsMaxConcurrent = 15;
-const _gsCallbacks = {};
-let _gsCallId = 0;
-
-function _gsProcessQueue() {
-  if (_gsInFlight >= _gsMaxConcurrent || _gsQueue.length === 0) return;
-
-  const req = _gsQueue.shift();
-  _gsInFlight++;
-
-  const originalCallback = req.callback;
-  req.callback = function(err, data) {
-    _gsInFlight--;
-    if (originalCallback) originalCallback(err, data);
-    _gsProcessQueue();
-  };
-
-  _gsCallImpl(req.params, req.callback);
-}
-
-function gsCall(params, callback) {
-  return new Promise((resolve, reject) => {
-    const wrappedCallback = (err, data) => {
-      if (callback) callback(err, data);
-      if (err) reject(err);
-      else resolve(data);
+const API = {
+  call(params, callback) {
+    const callId = Math.random().toString(36).substring(7);
+    window[`callback_${callId}`] = function(data) {
+      callback(null, data);
+      delete window[`callback_${callId}`];
     };
 
-    const isPriority = params.action && params.action.indexOf('save') === 0;
-    if (isPriority || (_gsInFlight < _gsMaxConcurrent && _gsQueue.length === 0)) {
-      _gsCallImpl(params, wrappedCallback);
-    } else {
-      _gsQueue.push({ params, callback: wrappedCallback });
-      _gsProcessQueue();
-    }
-  });
-}
+    const script = document.createElement('script');
+    script.src = GAS_URL + '?callback=callback_' + callId + '&' + new URLSearchParams(params).toString();
+    document.head.appendChild(script);
+  },
 
-function _gsCallImpl(params, callback) {
-  const callId = ++_gsCallId;
-  const jsonpCallback = `_gsCallback${callId}`;
+  getUtenti(callback) {
+    this.call({ action: 'getUtenti' }, callback);
+  },
 
-  window[jsonpCallback] = function(response) {
-    delete window[jsonpCallback];
-    const script = document.getElementById(`gs-script-${callId}`);
-    if (script) script.remove();
-
-    if (callback) callback(null, response);
-  };
-
-  const url = new URL(GAS_URL);
-  Object.entries(params).forEach(([k, v]) => {
-    url.searchParams.append(k, typeof v === 'object' ? JSON.stringify(v) : v);
-  });
-  url.searchParams.append('callback', jsonpCallback);
-
-  const script = document.createElement('script');
-  script.id = `gs-script-${callId}`;
-  script.src = url.toString();
-  script.onerror = () => {
-    delete window[jsonpCallback];
-    script.remove();
-    if (callback) callback(new Error('JSONP request failed'));
-  };
-
-  document.head.appendChild(script);
-}
-
-// API calls
-const API = {
-  getUtenti: () => gsCall({ action: 'getUtenti' }),
-  getPendingRequests: () => gsCall({ action: 'getPendingRequests' }),
-  approveRequest: (email) => gsCall({ action: 'approveRequest', email }),
-  saveKey: (key, value) => gsCall({ action: 'saveKey', key, value }),
+  getTornei(callback) {
+    this.call({ action: 'getTornei' }, callback);
+  }
 };

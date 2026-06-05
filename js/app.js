@@ -1,196 +1,181 @@
-// Main app logic
+// ═══════════════════════════════════════════════════════
+// APP - Logica principale
+// ═══════════════════════════════════════════════════════
 
 const app = {
   isAdmin: false,
-  isDark: true,
-  currentSection: 'dashboard',
   logoClickCount: 0,
   logoClickTimer: null,
 
-  init: () => {
-    // Load theme
-    const savedTheme = Utils.getTheme();
-    app.isDark = savedTheme === 'dark';
-    document.documentElement.setAttribute('data-theme', savedTheme);
-    app.updateThemeButton();
+  // Dati locali (hardcoded per test, poi da GSheets)
+  tornei: [
+    {
+      id: 1,
+      name: 'Tana dei Mister',
+      icon: '🏆',
+      stats: [
+        { label: 'Leghe', value: 3 },
+        { label: 'Club', value: 120 }
+      ]
+    },
+    {
+      id: 2,
+      name: 'Scudetto Slim',
+      icon: '⚽',
+      stats: [
+        { label: 'Leghe', value: 2 },
+        { label: 'Club', value: 80 }
+      ]
+    },
+    {
+      id: 3,
+      name: 'TSM',
+      icon: '👑',
+      stats: [
+        { label: 'Leghe', value: 1 },
+        { label: 'Club', value: 10 }
+      ]
+    }
+  ],
 
-    // Render initial dashboard
-    UI.renderDashboard();
-  },
+  init() {
+    console.log('📱 App inizializzato');
 
-  enterApp: () => {
-    Utils.removeClass('splash', 'active');
-    Utils.addClass('main-app', 'active');
-    app.init();
-  },
+    // Event listeners
+    document.getElementById('logo-btn').addEventListener('click', () => this.handleLogoClick());
+    document.getElementById('theme-btn').addEventListener('click', () => this.toggleTheme());
 
-  selectSection: (section) => {
-    app.currentSection = section;
-
-    // Update sidebar
+    // Sidebar
     document.querySelectorAll('.sidebar-item').forEach(btn => {
-      Utils.removeClass(btn, 'active');
+      btn.addEventListener('click', (e) => this.selectSection(e.target.getAttribute('data-section')));
     });
-    event.target.closest('.sidebar-item')?.classList.add('active');
 
-    // Render section
-    if (section === 'dashboard') {
-      UI.renderDashboard();
-    } else {
-      document.getElementById('main-content').innerHTML = `
-        <div class="dashboard">
-          <div class="page-header">
-            <h2>${section.toUpperCase()}</h2>
-            <p class="header-sub">In arrivo...</p>
-          </div>
-        </div>
-      `;
-    }
+    // Enter key in login
+    document.getElementById('login-pwd').addEventListener('keyup', (e) => {
+      if (e.key === 'Enter') this.submitLogin();
+    });
+
+    // Render dashboard
+    this.showDashboard();
   },
 
-  showLeagues: (torneoId) => {
-    const torneo = UI.tornei.find(t => t.id === torneoId);
-    if (!torneo) return;
+  handleLogoClick() {
+    this.logoClickCount++;
+    clearTimeout(this.logoClickTimer);
 
-    const leaguesHtml = `
-      <div style="margin-top: 40px; padding-top: 40px; border-top: 2px solid var(--border);">
-        <div class="page-header">
-          <h2>${torneo.name} - LEGHE</h2>
-        </div>
-        <div class="cards-grid" style="grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));">
-          ${torneo.leghe.map(lega => `
-            <div class="card">
-              <div class="card-logo" style="background: linear-gradient(135deg, ${torneo.color}40, ${torneo.color}20); height: 60px;">
-                <div style="font-size: 32px;">⚽</div>
-              </div>
-              <div class="card-header">
-                <h3 style="font-size: 12px;">${lega.name}</h3>
-              </div>
-              <div class="card-stats">
-                <div class="stat">
-                  <span class="stat-label">Squadre</span>
-                  <span class="stat-value">${lega.squadre}</span>
-                </div>
-              </div>
-              <div class="card-actions">
-                <button class="action-btn primary" style="font-size: 10px; padding: 8px;" onclick="alert('Entra in: ${lega.name}')">
-                  ENTRA
-                </button>
-              </div>
-            </div>
-          `).join('')}
-        </div>
-      </div>
-    `;
-
-    const mainContent = document.getElementById('main-content');
-    const leaguesSection = mainContent.querySelector('[data-leagues-section]');
-
-    if (leaguesSection) {
-      leaguesSection.innerHTML = leaguesHtml.replace('<div style="margin-top: 40px; padding-top: 40px; border-top: 2px solid var(--border);">', '<div>');
-    } else {
-      const newSection = document.createElement('div');
-      newSection.setAttribute('data-leagues-section', 'true');
-      newSection.innerHTML = leaguesHtml;
-      mainContent.appendChild(newSection);
-    }
-  },
-
-  handleLogoClick: () => {
-    app.logoClickCount++;
-    clearTimeout(app.logoClickTimer);
-
-    if (app.logoClickCount === 3) {
-      app.logoClickCount = 0;
-      app.openLoginModal();
+    if (this.logoClickCount === 3) {
+      this.openLogin();
     }
 
-    app.logoClickTimer = setTimeout(() => {
-      app.logoClickCount = 0;
+    this.logoClickTimer = setTimeout(() => {
+      this.logoClickCount = 0;
     }, 500);
   },
 
-  toggleTheme: () => {
-    app.isDark = !app.isDark;
-    const theme = app.isDark ? 'dark' : 'light';
-    Utils.setTheme(theme);
-    app.updateThemeButton();
+  toggleTheme() {
+    const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('theme', theme);
+    document.getElementById('theme-btn').textContent = theme === 'dark' ? '☀️' : '🌙';
   },
 
-  updateThemeButton: () => {
-    const btn = document.querySelector('.theme-toggle');
-    if (btn) {
-      btn.textContent = app.isDark ? '☀️' : '🌙';
-      btn.title = app.isDark ? 'Tema chiaro' : 'Tema scuro';
+  selectSection(section) {
+    // Update sidebar
+    document.querySelectorAll('.sidebar-item').forEach(btn => btn.classList.remove('active'));
+    event.target.classList.add('active');
+
+    // Update sections
+    document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
+    document.getElementById(`section-${section}`).classList.add('active');
+
+    // Render content
+    if (section === 'dashboard') {
+      this.showDashboard();
+    } else if (section === 'leghe') {
+      // Passa primo torneo come default
+      this.showLeghe(this.tornei[0]);
+    } else if (section === 'admin') {
+      this.showAdmin();
     }
   },
 
-  toggleAdmin: () => {
-    if (!app.isAdmin) {
-      app.openLoginModal();
-    } else {
-      app.isAdmin = false;
-      app.updateAccediButton();
-      UI.showSidebar();
-      UI.renderDashboard();
-    }
-  },
-
-  openLoginModal: () => {
-    Utils.show('login-modal');
-    setTimeout(() => {
-      document.getElementById('password-input')?.focus();
-    }, 100);
-  },
-
-  closeLoginModal: () => {
-    Utils.hide('login-modal');
-    document.getElementById('password-input').value = '';
-    const errorMsg = document.getElementById('error-msg');
-    if (errorMsg) Utils.hide(errorMsg);
-  },
-
-  submitLogin: () => {
-    const password = document.getElementById('password-input').value;
-    if (password === 'admin') {
-      app.isAdmin = true;
-      app.updateAccediButton();
-      UI.hideSidebar();
-      app.closeLoginModal();
-      // Render admin panel (TBD)
-      document.getElementById('main-content').innerHTML = `
-        <div class="dashboard">
-          <div class="page-header">
-            <h2>PANNELLO ADMIN</h2>
-            <p class="header-sub">In arrivo...</p>
-          </div>
+  showDashboard() {
+    const grid = document.getElementById('tornei-grid');
+    grid.innerHTML = this.tornei.map(t => `
+      <div class="card" onclick="app.selectTorneo(${t.id})">
+        <div class="card-logo">
+          <span style="font-size: 48px;">${t.icon}</span>
         </div>
-      `;
-    } else {
-      const errorMsg = document.getElementById('error-msg');
-      errorMsg.textContent = 'Password errata';
-      Utils.show(errorMsg);
-      document.getElementById('password-input').value = '';
-    }
+        <div class="card-body">
+          <div class="card-name">${t.name}</div>
+          ${t.stats.map(s => `
+            <div class="card-stat">
+              <span>${s.label}</span>
+              <strong>${s.value}</strong>
+            </div>
+          `).join('')}
+          <button class="card-action" onclick="app.selectTorneo(${t.id}); event.stopPropagation();">
+            Visualizza Leghe →
+          </button>
+        </div>
+      </div>
+    `).join('');
   },
 
-  updateAccediButton: () => {
-    const btn = document.getElementById('accedi-btn');
-    if (app.isAdmin) {
-      btn.textContent = '✓ ACCEDI';
-      Utils.addClass(btn, 'active');
-    } else {
-      btn.textContent = '🔐 ACCEDI';
-      Utils.removeClass(btn, 'active');
-    }
+  selectTorneo(torneoId) {
+    const torneo = this.tornei.find(t => t.id === torneoId);
+    document.querySelector('[data-section="leghe"]').click();
   },
+
+  showLeghe(torneo) {
+    document.getElementById('leghe-title').textContent = `Leghe - ${torneo.name}`;
+    const grid = document.getElementById('leghe-grid');
+    grid.innerHTML = `
+      <div style="grid-column: 1/-1; padding: 20px; background: var(--bg3); border-radius: 12px; text-align: center;">
+        <p style="color: var(--text2); margin-bottom: 12px;">Leghe di <strong>${torneo.name}</strong></p>
+        <p style="font-size: 12px; color: var(--text3);">In arrivo...</p>
+      </div>
+    `;
+  },
+
+  showAdmin() {
+    if (!this.isAdmin) {
+      document.getElementById('admin-content').innerHTML = '<p style="color: var(--text2);">Accedi per vedere il pannello admin</p>';
+      return;
+    }
+
+    document.getElementById('admin-content').innerHTML = `
+      <div style="background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 16px;">
+        <p style="color: var(--text2);">Benvenuto admin! 🎉</p>
+        <p style="font-size: 12px; color: var(--text3); margin-top: 8px;">Sezioni: Utenti, Richieste, Squadre, Dati</p>
+      </div>
+    `;
+  },
+
+  openLogin() {
+    document.getElementById('login-modal').style.display = 'flex';
+    document.getElementById('login-pwd').focus();
+  },
+
+  closeLogin() {
+    document.getElementById('login-modal').style.display = 'none';
+    document.getElementById('login-pwd').value = '';
+    document.getElementById('login-error').textContent = '';
+  },
+
+  submitLogin() {
+    const pwd = document.getElementById('login-pwd').value;
+
+    if (pwd === 'admin') {
+      this.isAdmin = true;
+      this.closeLogin();
+      this.showAdmin();
+      console.log('✅ Admin attivato');
+    } else {
+      document.getElementById('login-error').textContent = 'Password errata';
+    }
+  }
 };
 
-// Initialize app when DOM is ready
-document.addEventListener('DOMContentLoaded', () => {
-  // Page system
-  document.querySelectorAll('.page').forEach(page => {
-    Utils.addClass(page, 'hidden');
-  });
-  Utils.addClass('splash', 'active');
-});
+// Init quando DOM è pronto
+document.addEventListener('DOMContentLoaded', () => app.init());
