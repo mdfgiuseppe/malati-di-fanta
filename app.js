@@ -1,8 +1,32 @@
 const app = {
   init() {
     console.log('✅ Admin panel caricato');
+    this.setupBurgerMenu();
     this.setupNavigation();
     this.renderUtenti();
+  },
+
+  setupBurgerMenu() {
+    const burger = document.getElementById('burger-menu');
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebar-overlay');
+
+    burger?.addEventListener('click', () => {
+      sidebar.classList.toggle('open');
+      overlay.classList.toggle('open');
+    });
+
+    overlay?.addEventListener('click', () => {
+      sidebar.classList.remove('open');
+      overlay.classList.remove('open');
+    });
+
+    document.querySelectorAll('.sidebar-item').forEach(item => {
+      item.addEventListener('click', () => {
+        sidebar.classList.remove('open');
+        overlay.classList.remove('open');
+      });
+    });
   },
 
   setupNavigation() {
