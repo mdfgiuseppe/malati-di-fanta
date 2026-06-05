@@ -1,9 +1,19 @@
 const app = {
+  users: [
+    { nome: 'Mario Rossi', email: 'mario@example.com', ruolo: 'admin', stato: 'Attivo' },
+    { nome: 'Giovanni Bianchi', email: 'giovanni@example.com', ruolo: 'utente', stato: 'Attivo' },
+    { nome: 'Luca Verdi', email: 'luca@example.com', ruolo: 'utente', stato: 'Inattivo' }
+  ],
+  currentUser: null,
+
   init() {
     console.log('✅ Admin panel caricato');
     this.setupBurgerMenu();
     this.setupNavigation();
+    this.setupLogin();
+    this.setupAddUtente();
     this.renderUtenti();
+    this.updateUI();
   },
 
   setupBurgerMenu() {
@@ -46,14 +56,67 @@ const app = {
     document.getElementById(`section-${section}`).classList.add('active');
   },
 
-  renderUtenti() {
-    const utenti = [
-      { nome: 'Mario Rossi', email: 'mario@example.com', ruolo: 'admin', stato: 'Attivo' },
-      { nome: 'Giovanni Bianchi', email: 'giovanni@example.com', ruolo: 'utente', stato: 'Attivo' },
-      { nome: 'Luca Verdi', email: 'luca@example.com', ruolo: 'utente', stato: 'Inattivo' }
-    ];
+  setupLogin() {
+    const modal = document.getElementById('modal-login');
+    const btnLogin = document.getElementById('btn-login');
+    const btnLoginClose = document.getElementById('btn-login-close');
+    const btnLoginSubmit = document.getElementById('btn-login-submit');
+    const btnLogout = document.getElementById('btn-logout');
 
-    const html = utenti.map(u => `
+    btnLogin?.addEventListener('click', () => {
+      modal.style.display = 'flex';
+    });
+
+    btnLoginClose?.addEventListener('click', () => {
+      modal.style.display = 'none';
+      document.getElementById('login-email').value = '';
+      document.getElementById('login-password').value = '';
+    });
+
+    btnLoginSubmit?.addEventListener('click', () => {
+      const email = document.getElementById('login-email').value;
+      const password = document.getElementById('login-password').value;
+      if (email && password) {
+        this.currentUser = { email, nome: email.split('@')[0] };
+        modal.style.display = 'none';
+        this.updateUI();
+        document.getElementById('login-email').value = '';
+        document.getElementById('login-password').value = '';
+      }
+    });
+
+    btnLogout?.addEventListener('click', () => {
+      this.currentUser = null;
+      this.updateUI();
+    });
+  },
+
+  setupAddUtente() {
+    const btn = document.getElementById('btn-add-utente');
+    btn?.addEventListener('click', () => {
+      const nome = document.getElementById('input-nome').value;
+      const username = document.getElementById('input-username').value;
+      const password = document.getElementById('input-password').value;
+      const lega = document.getElementById('input-lega').value;
+
+      if (nome && username && password && lega) {
+        this.users.push({
+          nome: nome,
+          email: `${username}@malati-di-fanta.com`,
+          ruolo: 'utente',
+          stato: 'Attivo'
+        });
+        this.renderUtenti();
+        document.getElementById('input-nome').value = '';
+        document.getElementById('input-username').value = '';
+        document.getElementById('input-password').value = '';
+        document.getElementById('input-lega').value = '';
+      }
+    });
+  },
+
+  renderUtenti() {
+    const html = this.users.map(u => `
       <tr>
         <td>${u.nome}</td>
         <td>${u.email}</td>
@@ -63,6 +126,24 @@ const app = {
     `).join('');
 
     document.getElementById('utenti-list').innerHTML = html;
+  },
+
+  updateUI() {
+    const btnLogin = document.getElementById('btn-login');
+    const btnLogout = document.getElementById('btn-logout');
+    const statusText = document.getElementById('status-text');
+
+    if (this.currentUser) {
+      btnLogin.style.display = 'none';
+      btnLogout.style.display = 'block';
+      statusText.textContent = 'online';
+      statusText.parentElement.querySelector('span').style.background = '#10b981';
+    } else {
+      btnLogin.style.display = 'block';
+      btnLogout.style.display = 'none';
+      statusText.textContent = 'offline';
+      statusText.parentElement.querySelector('span').style.background = '#6b7280';
+    }
   }
 };
 

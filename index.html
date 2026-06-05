@@ -47,6 +47,13 @@
     <button class="burger-btn" id="burger-menu">☰</button>
     <span style="font-size: 18px;">⚙️</span>
     <span class="topbar-title">ADMIN</span>
+    <div style="display: flex; gap: 12px; align-items: center;">
+      <div style="display: flex; align-items: center; gap: 6px; font-size: 12px;">
+        <span style="width: 8px; height: 8px; background: #10b981; border-radius: 50%; display: inline-block;"></span>
+        <span id="status-text" style="color: var(--text2);">online</span>
+      </div>
+      <button id="btn-logout" style="background: none; border: 1px solid #ef4444; color: #ef4444; padding: 4px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; display: none;">Esci</button>
+    </div>
   </header>
 
   <div class="sidebar-overlay" id="sidebar-overlay"></div>
@@ -77,18 +84,50 @@
 
     <main class="main-area">
       <section class="section active" id="section-utenti">
-        <h1 class="page-title">Utenti</h1>
-        <table>
-          <thead>
-            <tr>
-              <th>Nome</th>
-              <th>Email</th>
-              <th>Ruolo</th>
-              <th>Stato</th>
-            </tr>
-          </thead>
-          <tbody id="utenti-list"></tbody>
-        </table>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+          <h1 class="page-title">Gestione Utenti</h1>
+          <button id="btn-login" style="background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; padding: 10px 16px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 13px;">🔓 Accedi</button>
+        </div>
+        <p style="color: var(--text2); margin-bottom: 20px; font-size: 14px;">Gestisci gli accessi del manager alla piattaforma</p>
+
+        <div style="background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 16px; margin-bottom: 20px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+            <span style="font-weight: 600; color: #f59e0b; text-transform: uppercase; font-size: 12px;">📋 Richieste Pendenti da Google Form</span>
+            <span style="background: #f59e0b; color: var(--bg); border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 12px;" id="pending-count">0</span>
+          </div>
+          <p id="pending-msg" style="color: var(--text2); font-size: 13px;">Nessuna richiesta pendente</p>
+        </div>
+
+        <details style="margin-bottom: 20px;">
+          <summary style="background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 16px; cursor: pointer; font-weight: 600; color: var(--text); user-select: none;">➕ Aggiungi Utente Manualmente</summary>
+          <div style="background: var(--card); border: 1px solid var(--border); border-top: none; border-radius: 0 0 8px 8px; padding: 16px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+            <input type="text" id="input-nome" placeholder="NOME COMPLETO" style="background: var(--bg3); border: 1px solid var(--border); padding: 10px; border-radius: 4px; color: var(--text); font-size: 12px;">
+            <input type="text" id="input-username" placeholder="USERNAME" style="background: var(--bg3); border: 1px solid var(--border); padding: 10px; border-radius: 4px; color: var(--text); font-size: 12px;">
+            <input type="password" id="input-password" placeholder="PASSWORD" style="background: var(--bg3); border: 1px solid var(--border); padding: 10px; border-radius: 4px; color: var(--text); font-size: 12px;">
+            <select id="input-lega" style="background: var(--bg3); border: 1px solid var(--border); padding: 10px; border-radius: 4px; color: var(--text2); font-size: 12px;">
+              <option value="">– Seleziona Lega –</option>
+              <option value="lega1">Lega 1</option>
+              <option value="lega2">Lega 2</option>
+            </select>
+            <div></div>
+            <button id="btn-add-utente" style="background: linear-gradient(135deg, #ef4444, #dc2626); color: white; border: none; padding: 10px 16px; border-radius: 4px; cursor: pointer; font-weight: 600; font-size: 13px;">Aggiungi</button>
+          </div>
+        </details>
+
+        <div style="background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 16px; margin-bottom: 20px;">
+          <h3 style="color: var(--text3); text-transform: uppercase; font-size: 11px; font-weight: 700; margin-bottom: 12px;">Utenti Registrati</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Nome</th>
+                <th>Email</th>
+                <th>Ruolo</th>
+                <th>Stato</th>
+              </tr>
+            </thead>
+            <tbody id="utenti-list"></tbody>
+          </table>
+        </div>
       </section>
 
       <section class="section" id="section-tornei"><h1 class="page-title">Tornei & Leghe</h1><p style="color: var(--text2);">In arrivo...</p></section>
@@ -108,6 +147,19 @@
       <section class="section" id="section-bilancio"><h1 class="page-title">Bilancio</h1><p style="color: var(--text2);">In arrivo...</p></section>
       <section class="section" id="section-impostazioni"><h1 class="page-title">Impostazioni</h1><p style="color: var(--text2);">In arrivo...</p></section>
     </main>
+  </div>
+
+  <!-- MODAL LOGIN -->
+  <div id="modal-login" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 1000; justify-content: center; align-items: center;">
+    <div style="background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 24px; max-width: 400px; width: 90%;">
+      <h2 style="font-family: 'Bebas Neue'; font-size: 20px; letter-spacing: 2px; margin-bottom: 16px; color: var(--green);">ACCEDI</h2>
+      <div style="display: flex; flex-direction: column; gap: 12px;">
+        <input type="email" id="login-email" placeholder="Email" style="background: var(--bg3); border: 1px solid var(--border); padding: 12px; border-radius: 6px; color: var(--text); font-size: 14px;">
+        <input type="password" id="login-password" placeholder="Password" style="background: var(--bg3); border: 1px solid var(--border); padding: 12px; border-radius: 6px; color: var(--text); font-size: 14px;">
+        <button id="btn-login-submit" style="background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; padding: 12px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 14px;">Accedi</button>
+        <button id="btn-login-close" style="background: none; border: 1px solid var(--border); color: var(--text2); padding: 12px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 14px;">Annulla</button>
+      </div>
+    </div>
   </div>
 
   <script src="app.js"></script>
