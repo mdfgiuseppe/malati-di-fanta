@@ -1,4 +1,4 @@
-<!-- build:20260605_1422 -->
+<!-- build:20260605_1425 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260605_1422';
+  var BUILD='20260605_1425';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -7463,25 +7463,23 @@ function showAdminSection(id, el) {
   var _nsw=document.getElementById('adm-rose-new-sq-wrap'); if(_nsw) _nsw.style.display='none';
   if (id==='tornei') admRenderTornei();
   if (id==='utenti') {
-    // Carica utenti da GSheets prima di renderizzare
-    if (GS_ONLINE) {
-      gsCall({action:'getUtenti'}, function(err, data) {
-        if (!err && data && data.ok && data.data) {
-          ADMIN_USERS = data.data;
-          localStorage.setItem('admin_users', JSON.stringify(ADMIN_USERS));
+    // Carica utenti e richieste pendenti (sempre, anche se offline)
+    gsCall({action:'getUtenti'}, function(err, data) {
+      if (!err && data && data.ok && data.data) {
+        ADMIN_USERS = data.data;
+        localStorage.setItem('admin_users', JSON.stringify(ADMIN_USERS));
+      } else {
+        var cached = localStorage.getItem('admin_users');
+        if (cached) ADMIN_USERS = JSON.parse(cached);
+      }
+      // Carica anche richieste pendenti
+      gsCall({action:'getPendingRequests'}, function(e2, d2) {
+        if (!e2 && d2 && d2.ok) {
+          localStorage.setItem('_pendingRequests', JSON.stringify(d2.data || []));
         }
         admRenderUtenti();
-        // Carica anche richieste pendenti
-        gsCall({action:'getPendingRequests'}, function(e2, d2) {
-          if (!e2 && d2 && d2.ok) {
-            localStorage.setItem('_pendingRequests', JSON.stringify(d2.data || []));
-          }
-          admRenderUtenti();
-        });
       });
-    } else {
-      admRenderUtenti();
-    }
+    });
   }
   if (id==='rose') { admInitSelettori('rose', true); admInitImportSelectors(); }
   if (id==='cambio-squadre') admCsInit();
