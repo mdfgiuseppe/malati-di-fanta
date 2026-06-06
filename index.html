@@ -1,4 +1,4 @@
-<!-- build:20260606_1300 -->
+<!-- build:20260606_1304 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260606_1300';
+  var BUILD='20260606_1304';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
@@ -3847,6 +3847,25 @@ function toggleTheme(){
   // luna = siamo in chiaro, click porta al buio | sole = siamo in scuro, click porta al chiaro
   if(btn) btn.textContent=newTheme==='dark'?'☀️':'🌙';
 }
+function getLeaguesDataSlim() {
+  var flagMap = {'it':'🇮🇹','en':'🏴','es':'🇪🇸','de':'🇩🇪','fr':'🇫🇷','pt':'🇵🇹','nl':'🇳🇱','tr':'🇹🇷'};
+  if (typeof ADMIN_TORNEI !== 'undefined') {
+    var t = ADMIN_TORNEI.find(function(x){ return x.key === 'slim'; });
+    if (t && t.leghe) {
+      return {color: '#10b981', leghe: t.leghe.map(function(l) { return {key:l.key, label:l.label, flag:flagMap[l.key]||'', clubs:10}; })};
+    }
+  }
+  return {color: '#10b981', leghe: [
+    {key:'it', label:'Italia', flag:'🇮🇹', clubs:10},
+    {key:'en', label:'Inghilterra', flag:'🏴', clubs:10},
+    {key:'es', label:'Spagna', flag:'🇪🇸', clubs:10},
+    {key:'de', label:'Germania', flag:'🇩🇪', clubs:10},
+    {key:'fr', label:'Francia', flag:'🇫🇷', clubs:10},
+    {key:'pt', label:'Portogallo', flag:'🇵🇹', clubs:10},
+    {key:'nl', label:'Olanda', flag:'🇳🇱', clubs:10},
+    {key:'tr', label:'Turchia', flag:'🇹🇷', clubs:10},
+  ]};
+}
 // Dati leghe per torneo
 var LEAGUES_DATA = {
   slim: {
@@ -5509,9 +5528,10 @@ var ADMIN_TORNEI = JSON.parse(localStorage.getItem('admin_tornei') || 'null') ||
     {key:'it',label:'Italia'}
   ]}
 ];
-// Aggiorna SLIM_GROUPS.nazioni e SLIM_CONFIG da ADMIN_TORNEI
+// Aggiorna SLIM_GROUPS.nazioni, SLIM_CONFIG e LEAGUES_DATA da ADMIN_TORNEI
 SLIM_GROUPS.nazioni = getSlimLeghe();
 SLIM_CONFIG = getSlimConfig();
+LEAGUES_DATA.slim = getLeaguesDataSlim();
 
 // Utenti
 var ADMIN_USERS = JSON.parse(localStorage.getItem('admin_users') || '[]');
@@ -11609,6 +11629,25 @@ function toggleTheme(){
   // luna = siamo in chiaro, click porta al buio | sole = siamo in scuro, click porta al chiaro
   if(btn) btn.textContent=newTheme==='dark'?'☀️':'🌙';
 }
+function getLeaguesDataSlim() {
+  var flagMap = {'it':'🇮🇹','en':'🏴','es':'🇪🇸','de':'🇩🇪','fr':'🇫🇷','pt':'🇵🇹','nl':'🇳🇱','tr':'🇹🇷'};
+  if (typeof ADMIN_TORNEI !== 'undefined') {
+    var t = ADMIN_TORNEI.find(function(x){ return x.key === 'slim'; });
+    if (t && t.leghe) {
+      return {color: '#10b981', leghe: t.leghe.map(function(l) { return {key:l.key, label:l.label, flag:flagMap[l.key]||'', clubs:10}; })};
+    }
+  }
+  return {color: '#10b981', leghe: [
+    {key:'it', label:'Italia', flag:'🇮🇹', clubs:10},
+    {key:'en', label:'Inghilterra', flag:'🏴', clubs:10},
+    {key:'es', label:'Spagna', flag:'🇪🇸', clubs:10},
+    {key:'de', label:'Germania', flag:'🇩🇪', clubs:10},
+    {key:'fr', label:'Francia', flag:'🇫🇷', clubs:10},
+    {key:'pt', label:'Portogallo', flag:'🇵🇹', clubs:10},
+    {key:'nl', label:'Olanda', flag:'🇳🇱', clubs:10},
+    {key:'tr', label:'Turchia', flag:'🇹🇷', clubs:10},
+  ]};
+}
 // Dati leghe per torneo
 var LEAGUES_DATA = {
   slim: {
@@ -12522,9 +12561,10 @@ var ADMIN_TORNEI = JSON.parse(localStorage.getItem('admin_tornei') || 'null') ||
     {key:'it',label:'Italia'}
   ]}
 ];
-// Aggiorna SLIM_GROUPS.nazioni e SLIM_CONFIG da ADMIN_TORNEI
+// Aggiorna SLIM_GROUPS.nazioni, SLIM_CONFIG e LEAGUES_DATA da ADMIN_TORNEI
 SLIM_GROUPS.nazioni = getSlimLeghe();
 SLIM_CONFIG = getSlimConfig();
+LEAGUES_DATA.slim = getLeaguesDataSlim();
 
 // Utenti
 var ADMIN_USERS = JSON.parse(localStorage.getItem('admin_users') || '[]');
