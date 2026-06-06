@@ -1,4 +1,4 @@
-<!-- build:20260606_1244 -->
+<!-- build:20260606_1249 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260606_1244';
+  var BUILD='20260606_1249';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
@@ -4126,12 +4126,9 @@ function _updateLegaDashboard(leagueKey) {
   if (_campEl) {
     var _standRes = (_admTK === 'tsm' && typeof tsmCalcStandings === 'function') ? tsmCalcStandings() : ((typeof slimCalcStandings === 'function') ? slimCalcStandings() : null);
     if (_standRes && _standRes.sorted && _standRes.sorted.length > 0 && _standRes.giocate > 0) {
-      var _totGiornate = TSM_TOTAL_GIORNATE || 38;
-      if (_admTK === 'slim') {
-        var _slimCalRaw = localStorage.getItem('adm_cal_'+_admTK+'_'+_realLK);
-        var _slimCal = _slimCalRaw ? (function(){try{return JSON.parse(_slimCalRaw);}catch(e){return{};}})() : {};
-        _totGiornate = Object.keys(_slimCal).filter(function(g){return Object.values(_slimCal[g]||{}).some(function(v){return v;});}).length || 38;
-      }
+      var _calRaw = localStorage.getItem('adm_cal_'+_admTK+'_'+_realLK);
+      var _cal = _calRaw ? (function(){try{return JSON.parse(_calRaw);}catch(e){return{};}})() : {};
+      var _totGiornate = Object.keys(_cal).filter(function(g){return Object.values(_cal[g]||{}).some(function(v){return v;});}).length || 1;
       if (_standRes.giocate >= _totGiornate) {
         var _campTeam = _standRes.sorted[0];
         var _campLogo = FANTASY_LOGOS[_campTeam] || FANTASY_LOGOS[_campTeam.toUpperCase()] || '';
@@ -11888,12 +11885,9 @@ function _updateLegaDashboard(leagueKey) {
   if (_campEl) {
     var _standRes = (_admTK === 'tsm' && typeof tsmCalcStandings === 'function') ? tsmCalcStandings() : ((typeof slimCalcStandings === 'function') ? slimCalcStandings() : null);
     if (_standRes && _standRes.sorted && _standRes.sorted.length > 0 && _standRes.giocate > 0) {
-      var _totGiornate = TSM_TOTAL_GIORNATE || 38;
-      if (_admTK === 'slim') {
-        var _slimCalRaw = localStorage.getItem('adm_cal_'+_admTK+'_'+_realLK);
-        var _slimCal = _slimCalRaw ? (function(){try{return JSON.parse(_slimCalRaw);}catch(e){return{};}})() : {};
-        _totGiornate = Object.keys(_slimCal).filter(function(g){return Object.values(_slimCal[g]||{}).some(function(v){return v;});}).length || 38;
-      }
+      var _calRaw = localStorage.getItem('adm_cal_'+_admTK+'_'+_realLK);
+      var _cal = _calRaw ? (function(){try{return JSON.parse(_calRaw);}catch(e){return{};}})() : {};
+      var _totGiornate = Object.keys(_cal).filter(function(g){return Object.values(_cal[g]||{}).some(function(v){return v;});}).length || 1;
       if (_standRes.giocate >= _totGiornate) {
         var _campTeam = _standRes.sorted[0];
         var _campLogo = FANTASY_LOGOS[_campTeam] || FANTASY_LOGOS[_campTeam.toUpperCase()] || '';
