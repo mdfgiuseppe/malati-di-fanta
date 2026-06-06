@@ -1,4 +1,4 @@
-<!-- build:20260606_1259 -->
+<!-- build:20260606_1300 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260606_1259';
+  var BUILD='20260606_1300';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
@@ -3690,7 +3690,16 @@ var ROLE_COLORS={"Por": ["rgba(245,158,11,.15)", "#f59e0b"], "Dc": ["rgba(16,185
 var ALL_ROLES=['Por','Dc','B','Dd','Ds','E','M','C','T','W','Pc','A'];
 var PDF_MAP_REG={"ilc": "https://drive.google.com/file/d/1ysbwce7AvJnmANjKiB-1K1RuVINZiyyi/preview", "ilm": "https://drive.google.com/file/d/1p3sAwyaZL4wS_4seHsFeKRASKNZ3Z44U/preview", "slim": "https://drive.google.com/file/d/1JZngqv7dBpm6paCfH94NB79Mq4rVpsvy/preview", "tdm": "https://drive.google.com/file/d/1Gel57VaxoUl2VndxJSSHbKEVkrkJtOMq/preview", "tsm": "https://drive.google.com/file/d/1rIaxQoYkfslCeKMkHj6Ty2USu_A-KkkT/preview"};
 var ALBO_PDF_MAP={"ilc": "https://drive.google.com/file/d/1t7hoZHxDPk3Uc-Uhc2AqWTvir1Se2yvF/preview", "ilm": "https://drive.google.com/file/d/1GssqxUF3aVpt0iKHTjSRe9jMUsrCgiui/preview", "slim": "https://drive.google.com/file/d/1icb0q5h-pfzz7y8tMOBVqp_vYjkEOzVj/preview", "tsm": "https://drive.google.com/file/d/1mGVdIjqYq8-g1s5MIeWc31b3W_Jb3fjQ/preview", "tdm": "https://drive.google.com/file/d/1IwzQjAUxm9AsxZcCCWDG5qlB4gut-soA/preview"};
-var SLIM_CONFIG={"n_leghe": 8, "n_club": 80, "leghe": ["Italia", "Inghilterra", "Germania", "Spagna", "Francia", "Portogallo", "Olanda", "Turchia"]};
+function getSlimConfig() {
+  if (typeof ADMIN_TORNEI !== 'undefined') {
+    var t = ADMIN_TORNEI.find(function(x){ return x.key === 'slim'; });
+    if (t && t.leghe) {
+      return {n_leghe: t.leghe.length, n_club: 80, leghe: t.leghe.map(function(l){ return l.label; })};
+    }
+  }
+  return {n_leghe: 8, n_club: 80, leghe: ["Italia", "Inghilterra", "Germania", "Spagna", "Francia", "Portogallo", "Olanda", "Turchia"]};
+}
+var SLIM_CONFIG = {n_leghe: 8, n_club: 80, leghe: ["Italia", "Inghilterra", "Germania", "Spagna", "Francia", "Portogallo", "Olanda", "Turchia"]};
 var COPPA_TROPHIES={"cl": "", "el": "", "conf": "", "sc": ""};
 var COPPA_HUB_LOGOS={"cl": "", "el": "", "conf": "", "sc": ""};
 function getSlimLeghe() {
@@ -5500,8 +5509,9 @@ var ADMIN_TORNEI = JSON.parse(localStorage.getItem('admin_tornei') || 'null') ||
     {key:'it',label:'Italia'}
   ]}
 ];
-// Aggiorna SLIM_GROUPS.nazioni da ADMIN_TORNEI
+// Aggiorna SLIM_GROUPS.nazioni e SLIM_CONFIG da ADMIN_TORNEI
 SLIM_GROUPS.nazioni = getSlimLeghe();
+SLIM_CONFIG = getSlimConfig();
 
 // Utenti
 var ADMIN_USERS = JSON.parse(localStorage.getItem('admin_users') || '[]');
@@ -12512,8 +12522,9 @@ var ADMIN_TORNEI = JSON.parse(localStorage.getItem('admin_tornei') || 'null') ||
     {key:'it',label:'Italia'}
   ]}
 ];
-// Aggiorna SLIM_GROUPS.nazioni da ADMIN_TORNEI
+// Aggiorna SLIM_GROUPS.nazioni e SLIM_CONFIG da ADMIN_TORNEI
 SLIM_GROUPS.nazioni = getSlimLeghe();
+SLIM_CONFIG = getSlimConfig();
 
 // Utenti
 var ADMIN_USERS = JSON.parse(localStorage.getItem('admin_users') || '[]');
