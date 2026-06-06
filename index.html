@@ -1,4 +1,4 @@
-<!-- build:20260606_1329 -->
+<!-- build:20260606_1336 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260606_1329';
+  var BUILD='20260606_1336';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
@@ -3725,72 +3725,82 @@ var SLIM_TOTAL_GIORNATE = 36;
 var SLIM_INITIAL_CALENDAR ={"1":{"BARI":"VC","COMO":"VC","JUVENTUS":"PF","MILAN":"SF","NAPOLI":"VC","PALERMO":"SF","ROMA":"VF","SALERNITANA":"PC","SASSUOLO":"SC","TORINO":"SF"},"2":{"BARI":"SF","COMO":"VF","JUVENTUS":"SC","MILAN":"VC","NAPOLI":"VF","PALERMO":"SC","ROMA":"SC","SALERNITANA":"VF","SASSUOLO":"SF","TORINO":"VC"},"3":{"BARI":"VC","COMO":"SF","JUVENTUS":"PC","MILAN":"PF","NAPOLI":"SC","PALERMO":"PF","ROMA":"VF","SALERNITANA":"PC","SASSUOLO":"PC","TORINO":"PF"},"4":{"BARI":"SF","COMO":"SC","JUVENTUS":"SF","MILAN":"PC","NAPOLI":"PF","PALERMO":"VC","ROMA":"VC","SALERNITANA":"PF","SASSUOLO":"VF","TORINO":"PC"},"5":{"BARI":"SF","COMO":"SF","JUVENTUS":"PC","MILAN":"PF","NAPOLI":"VC","PALERMO":"VF","ROMA":"SC","SALERNITANA":"SC","SASSUOLO":"VC","TORINO":"SF"},"6":{"BARI":"VC","COMO":"SC","JUVENTUS":"SF","MILAN":"PC","NAPOLI":"VF","PALERMO":"VC","ROMA":"PF","SALERNITANA":"SF","SASSUOLO":"SF","TORINO":"VC"},"7":{"BARI":"SF","COMO":"SF","JUVENTUS":"VC","MILAN":"SC","NAPOLI":"VC","PALERMO":"VF","ROMA":"SC","SALERNITANA":"VC","SASSUOLO":"SF","TORINO":"VF"},"8":{"BARI":"SC","COMO":"VC","JUVENTUS":"VF","MILAN":"SF","NAPOLI":"VF","PALERMO":"SF","ROMA":"SF","SALERNITANA":"VC","SASSUOLO":"SC","TORINO":"VC"},"9":{"BARI":"PF","COMO":"VF","JUVENTUS":"VC","MILAN":"SC","NAPOLI":"VC","PALERMO":"PC","ROMA":"PC","SALERNITANA":"SF","SASSUOLO":"SF","TORINO":"PF"},"10":{"BARI":"VC","COMO":"SF","JUVENTUS":"SF","MILAN":"VF","NAPOLI":"VC","PALERMO":"SC","ROMA":"SF","SALERNITANA":"VC","SASSUOLO":"SF","TORINO":"VC"},"11":{"BARI":"VF","COMO":"VC","JUVENTUS":"SC","MILAN":"SC","NAPOLI":"SF","PALERMO":"SF","ROMA":"VC","SALERNITANA":"VF","SASSUOLO":"SC","TORINO":"VF"},"12":{"BARI":"VF","COMO":"SF","JUVENTUS":"SC","MILAN":"VF","NAPOLI":"SC","PALERMO":"VF","ROMA":"VF","SALERNITANA":"SC","SASSUOLO":"VC","TORINO":"SC"},"13":{"BARI":"SC","COMO":"VC","JUVENTUS":"VF","MILAN":"PC","NAPOLI":"VF","PALERMO":"SC","ROMA":"SC","SALERNITANA":"SF","SASSUOLO":"VF","TORINO":"PF"},"14":{"BARI":"SF","COMO":"VC","JUVENTUS":"PC","MILAN":"VF","NAPOLI":"SF","PALERMO":"VC","ROMA":"SF","SALERNITANA":"PF","SASSUOLO":"SC","TORINO":"VC"},"15":{"BARI":"PC","COMO":"PF","JUVENTUS":"SF","MILAN":"SF","NAPOLI":"PC","PALERMO":"PF","ROMA":"VC","SALERNITANA":"VC","SASSUOLO":"VC","TORINO":"SF"},"16":{"BARI":"SC","COMO":"SC","JUVENTUS":"VF","MILAN":"VC","NAPOLI":"SF","PALERMO":"VC","ROMA":"VF","SALERNITANA":"SF","SASSUOLO":"SF","TORINO":"VC"},"17":{"BARI":"SF","COMO":"PC","JUVENTUS":"VC","MILAN":"PF","NAPOLI":"VC","PALERMO":"VC","ROMA":"PF","SALERNITANA":"SF","SASSUOLO":"SF","TORINO":"PC"},"18":{"BARI":"PC","COMO":"PF","JUVENTUS":"VF","MILAN":"SC","NAPOLI":"SF","PALERMO":"SF","ROMA":"PC","SALERNITANA":"VC","SASSUOLO":"VC","TORINO":"PF"},"19":{"BARI":"PF","COMO":"SC","JUVENTUS":"PC","MILAN":"SF","NAPOLI":"VF","PALERMO":"SF","ROMA":"VC","SALERNITANA":"PF","SASSUOLO":"VC","TORINO":"PC"},"20":{"BARI":"VC","COMO":"SF","JUVENTUS":"SF","MILAN":"VC","NAPOLI":"VC","PALERMO":"VC","ROMA":"SF","SALERNITANA":"VC","SASSUOLO":"SF","TORINO":"SF"},"21":{"BARI":"VF","COMO":"SC","JUVENTUS":"VF","MILAN":"SF","NAPOLI":"PF","PALERMO":"PC","ROMA":"VC","SALERNITANA":"PF","SASSUOLO":"SC","TORINO":"PC"},"22":{"BARI":"PC","COMO":"SF","JUVENTUS":"VC","MILAN":"SC","NAPOLI":"PC","PALERMO":"PF","ROMA":"PF","SALERNITANA":"PC","SASSUOLO":"PF","TORINO":"VF"},"23":{"BARI":"PF","COMO":"PC","JUVENTUS":"SF","MILAN":"VF","NAPOLI":"SC","PALERMO":"SC","ROMA":"VC","SALERNITANA":"VF","SASSUOLO":"PF","TORINO":"PC"},"24":{"BARI":"VC","COMO":"SF","JUVENTUS":"SC","MILAN":"VC","NAPOLI":"SF","PALERMO":"SF","ROMA":"SF","SALERNITANA":"VC","SASSUOLO":"VC","TORINO":"VF"},"25":{"BARI":"PF","COMO":"PF","JUVENTUS":"PF","MILAN":"SC","NAPOLI":"PC","PALERMO":"PC","ROMA":"PC","SALERNITANA":"VF","SASSUOLO":"VF","TORINO":"SC"},"26":{"BARI":"PC","COMO":"PC","JUVENTUS":"PC","MILAN":"PF","NAPOLI":"PF","PALERMO":"VF","ROMA":"SC","SALERNITANA":"VF","SASSUOLO":"SC","TORINO":"PF"},"27":{"BARI":"SF","COMO":"VF","JUVENTUS":"VF","MILAN":"SC","NAPOLI":"VC","PALERMO":"SC","ROMA":"PF","SALERNITANA":"VC","SASSUOLO":"SF","TORINO":"PC"},"28":{"BARI":"VC","COMO":"SF","JUVENTUS":"SF","MILAN":"SF","NAPOLI":"VF","PALERMO":"SF","ROMA":"SC","SALERNITANA":"VC","SASSUOLO":"VC","TORINO":"VC"},"29":{"BARI":"","COMO":"","JUVENTUS":"","MILAN":"","NAPOLI":"","PALERMO":"","ROMA":"","SALERNITANA":"","SASSUOLO":"","TORINO":""},"30":{"BARI":"","COMO":"","JUVENTUS":"","MILAN":"","NAPOLI":"","PALERMO":"","ROMA":"","SALERNITANA":"","SASSUOLO":"","TORINO":""},"31":{"BARI":"","COMO":"","JUVENTUS":"","MILAN":"","NAPOLI":"","PALERMO":"","ROMA":"","SALERNITANA":"","SASSUOLO":"","TORINO":""},"32":{"BARI":"","COMO":"","JUVENTUS":"","MILAN":"","NAPOLI":"","PALERMO":"","ROMA":"","SALERNITANA":"","SASSUOLO":"","TORINO":""},"33":{"BARI":"","COMO":"","JUVENTUS":"","MILAN":"","NAPOLI":"","PALERMO":"","ROMA":"","SALERNITANA":"","SASSUOLO":"","TORINO":""},"34":{"BARI":"","COMO":"","JUVENTUS":"","MILAN":"","NAPOLI":"","PALERMO":"","ROMA":"","SALERNITANA":"","SASSUOLO":"","TORINO":""},"35":{"BARI":"","COMO":"","JUVENTUS":"","MILAN":"","NAPOLI":"","PALERMO":"","ROMA":"","SALERNITANA":"","SASSUOLO":"","TORINO":""},"36":{"BARI":"","COMO":"","JUVENTUS":"","MILAN":"","NAPOLI":"","PALERMO":"","ROMA":"","SALERNITANA":"","SASSUOLO":"","TORINO":""}};
 var SLIM_INITIAL_STADIO   = {"BARI": 3, "COMO": 2, "JUVENTUS": 1, "MILAN": 4, "NAPOLI": 5, "PALERMO": 2, "ROMA": 1, "SALERNITANA": 4, "SASSUOLO": 5, "TORINO": 6};
 
-function slimGetCalendar() {
-  var _tk = window._currentTourneyKey || 'slim';
-  // Tornei non-slim: usa la chiave impostata da enterLeague, non sovrascrivere
-  if (_tk !== 'slim') {
-    var key = window._currentLeagueCalKey;
-    if (key) { var r = localStorage.getItem(key); if (r) { try { return JSON.parse(r); } catch(e){} } }
+function genericGetCalendar(torneoKey, legaKey) {
+  if (!torneoKey) torneoKey = window._currentTourneyKey || 'slim';
+  if (!legaKey) legaKey = (typeof currentLeagueKey !== 'undefined' ? currentLeagueKey : 'it');
+
+  if (torneoKey === 'slim') {
+    var lk = legaKey;
+    var key = (lk === 'it') ? 'slim_calendar' : 'slim_calendar_' + lk;
+    window._currentLeagueCalKey = key;
+    var raw = localStorage.getItem(key);
+    if (raw) return JSON.parse(raw);
+    var admKey = 'adm_cal_' + torneoKey + '_' + (lk==='it'?'it':lk);
+    var admRaw = localStorage.getItem(admKey);
+    if (admRaw) { try { var parsed = JSON.parse(admRaw); localStorage.setItem(key, admRaw); return parsed; } catch(e) {} }
+    if (key !== 'slim_calendar' && typeof ALL_SEASON_DATA !== 'undefined') { if (ALL_SEASON_DATA[lk]) return ALL_SEASON_DATA[lk].calendario || {}; }
+    return SLIM_INITIAL_CALENDAR;
+  } else if (torneoKey === 'tsm') {
+    var key = (legaKey === 'it') ? 'tsm_calendar_it' : 'tsm_calendar_' + legaKey;
+    var raw = localStorage.getItem(key);
+    if (raw) return JSON.parse(raw);
+    return TSM_INITIAL_CALENDAR_IT || {};
+  } else {
+    var key = 'adm_cal_' + torneoKey + '_' + legaKey;
+    var raw = localStorage.getItem(key);
+    if (raw) return JSON.parse(raw);
     return {};
   }
-  // Slim: logica originale
-  var lkCur = (typeof currentLeagueKey !== 'undefined' ? currentLeagueKey : 'it');
-  window._currentLeagueCalKey = (lkCur === 'it') ? 'slim_calendar' : 'slim_calendar_' + lkCur;
-  var key = window._currentLeagueCalKey;
-  var lk = key.replace('slim_calendar_','');
-  var torneo = 'slim';
-  var raw = localStorage.getItem(key);
-  if (raw) return JSON.parse(raw);
-  var admKey = 'adm_cal_'+torneo+'_'+(lk==='slim_calendar'?'it':lk);
-  var admRaw = localStorage.getItem(admKey);
-  if (admRaw) {
-    try {
-      var parsed = JSON.parse(admRaw);
-      localStorage.setItem(key, admRaw); return parsed;
-    } catch(e) {}
-  }
-  if (key !== 'slim_calendar' && typeof ALL_SEASON_DATA !== 'undefined') {
-    if (ALL_SEASON_DATA[lk]) return ALL_SEASON_DATA[lk].calendario || {};
-  }
-  return SLIM_INITIAL_CALENDAR;
 }
-function slimGetStadio() {
-  var _tk = window._currentTourneyKey || 'slim';
-  // Tornei non-slim: usa la chiave impostata da enterLeague
-  if (_tk !== 'slim') {
-    var key = window._currentLeagueStaKey;
-    if (key) { var r = localStorage.getItem(key); if (r) { try { return JSON.parse(r); } catch(e){} } }
+
+function genericGetStadio(torneoKey, legaKey) {
+  if (!torneoKey) torneoKey = window._currentTourneyKey || 'slim';
+  if (!legaKey) legaKey = (typeof currentLeagueKey !== 'undefined' ? currentLeagueKey : 'it');
+
+  if (torneoKey === 'slim') {
+    var lk = legaKey;
+    var key = (lk === 'it') ? 'slim_stadio' : 'slim_stadio_' + lk;
+    window._currentLeagueStaKey = key;
+    var raw = localStorage.getItem(key);
+    if (raw) return JSON.parse(raw);
+    if (key !== 'slim_stadio' && typeof ALL_SEASON_DATA !== 'undefined') { var lkR = key.replace('slim_stadio_',''); if (ALL_SEASON_DATA[lkR]) return ALL_SEASON_DATA[lkR].stadio || {}; }
+    return SLIM_INITIAL_STADIO;
+  } else if (torneoKey === 'tsm') {
+    var key = (legaKey === 'it') ? 'tsm_stadio_it' : 'tsm_stadio_' + legaKey;
+    var raw = localStorage.getItem(key);
+    if (raw) return JSON.parse(raw);
+    return TSM_INITIAL_STADIO_IT || {};
+  } else {
+    var key = 'adm_stadio_' + torneoKey + '_' + legaKey;
+    var raw = localStorage.getItem(key);
+    if (raw) return JSON.parse(raw);
     return {};
   }
-  // Slim: logica originale
-  var lkCur = (typeof currentLeagueKey !== 'undefined' ? currentLeagueKey : 'it');
-  window._currentLeagueStaKey = (lkCur === 'it') ? 'slim_stadio' : 'slim_stadio_' + lkCur;
-  var key = window._currentLeagueStaKey;
-  var raw = localStorage.getItem(key);
-  if (raw) return JSON.parse(raw);
-  if (key !== 'slim_stadio' && typeof ALL_SEASON_DATA !== 'undefined') {
-    var lk = key.replace('slim_stadio_','');
-    if (ALL_SEASON_DATA[lk]) return ALL_SEASON_DATA[lk].stadio || {};
-  }
-  return SLIM_INITIAL_STADIO;
 }
-function slimCalcStandings() {
-  var _tk = window._currentTourneyKey || 'slim';
-  var _slimCalLk=(typeof currentLeagueKey!=='undefined'?currentLeagueKey:'it');
-  var _slimCalRaw=localStorage.getItem('adm_cal_'+_tk+'_'+_slimCalLk);
-  var cal=_slimCalRaw?(function(){try{return JSON.parse(_slimCalRaw);}catch(e){return{};}}()):{};
-  var stadio = slimGetStadio();
-  var _stSlimR = localStorage.getItem('adm_stadio_table_'+_tk);
-  var _STslim = (_stSlimR ? (function(){try{return JSON.parse(_stSlimR);}catch(e){return null;}})() : null) || SLIM_STADIO_TABLE || {};
-  var multeKey = _tk + '_multe_' + (typeof currentLeagueKey !== 'undefined' ? currentLeagueKey : 'it');
+
+function genericCalcStandings(torneoKey, legaKey) {
+  if (!torneoKey) torneoKey = window._currentTourneyKey || 'slim';
+  if (!legaKey) legaKey = (typeof currentLeagueKey !== 'undefined' ? currentLeagueKey : 'it');
+
+  var cal = genericGetCalendar(torneoKey, legaKey);
+  var stadio = genericGetStadio(torneoKey, legaKey);
+
+  var _stR = localStorage.getItem('adm_stadio_table_' + torneoKey);
+  var _ST = (_stR ? (function(){try{return JSON.parse(_stR);}catch(e){return null;}})() : null) || (torneoKey === 'slim' ? SLIM_STADIO_TABLE : TSM_STADIO_TABLE_IT) || {};
+
+  var multeKey = torneoKey + '_multe_' + legaKey;
   var multeRaw = localStorage.getItem(multeKey);
   var multeData = multeRaw ? JSON.parse(multeRaw) : {};
+
+  var squadre = (torneoKey === 'slim') ? SLIM_TEAMS : (torneoKey === 'tsm') ? ((typeof TSM_TEAMS_IT !== 'undefined' && TSM_TEAMS_IT.length) ? TSM_TEAMS_IT : SLIM_TEAMS) : JSON.parse(localStorage.getItem('adm_squadre_'+torneoKey)||'[]');
+
   var s = {};
   var teamKeyMap = {};
-  SLIM_TEAMS.forEach(function(t) {
-    s[t]={v:0,vf:0,p:0,s:0,pt:0,cr:0,gf:0,gs:0,penalita:0,totalPts:0};
+  squadre.forEach(function(t) {
+    s[t] = {v:0, vf:0, p:0, s:0, pt:0, cr:0, gf:0, gs:0, penalita:0, totalPts:0};
     teamKeyMap[t.toUpperCase()] = t;
   });
+
   var giocate = 0;
   for (var g in cal) {
     var hasData = Object.values(cal[g]).some(function(v){return v;});
@@ -3798,44 +3808,189 @@ function slimCalcStandings() {
     giocate++;
     for (var team in cal[g]) {
       var res = cal[g][team];
-      // Normalizza chiave: BARI -> Bari
       var tk = teamKeyMap[team] || teamKeyMap[team.toUpperCase()] || team;
       if (!res || !s[tk]) continue;
-      var team = tk;
-      var lv = stadio[team] || stadio[team.toUpperCase()] || 1;
-      var st = _STslim[String(lv)] || {};
-      if (res==='VC'||res==='VF'||res==='V') {
-        s[team].v++; s[team].pt+=3;
-        if (res==='VC') { s[team].cr += (st.cr_vittoria||0); }
-      } else if (res==='PC'||res==='PF'||res==='P') {
-        s[team].p++; s[team].pt+=1;
-        if (res==='PC') { s[team].cr += (st.cr_pareggio||0); }
-      } else if (res==='SC'||res==='SF'||res==='S') {
-        s[team].s++;
-        if (res==='SC') { s[team].cr += (st.cr_sconfitta||0); }
-      }
+      var lv = stadio[tk] || stadio[tk.toUpperCase()] || 1;
+      var st = _ST[String(lv)] || {};
+      if (res==='VC'||res==='VF'||res==='V') { s[tk].v++; s[tk].pt+=3; if (res==='VC') { s[tk].cr += (st.cr_vittoria||0); } }
+      else if (res==='PC'||res==='PF'||res==='P') { s[tk].p++; s[tk].pt+=1; if (res==='PC') { s[tk].cr += (st.cr_pareggio||0); } }
+      else if (res==='SC'||res==='SF'||res==='S') { s[tk].s++; if (res==='SC') { s[tk].cr += (st.cr_sconfitta||0); } }
     }
   }
-  SLIM_TEAMS.forEach(function(t) {
+
+  squadre.forEach(function(t) {
     var md = multeData[t] || multeData[t.toUpperCase()] || {};
     var pen = parseInt(md.penalita) || 0;
     if (pen > 0) { s[t].pt -= pen; s[t].penalita = pen; }
   });
-  var _slimPtsRaw=localStorage.getItem('adm_cal_pts_'+_tk+'_'+(typeof currentLeagueKey!=='undefined'?currentLeagueKey:'it'));
-  if(_slimPtsRaw){try{var _slimPts=JSON.parse(_slimPtsRaw);Object.keys(_slimPts).forEach(function(gk){Object.keys(_slimPts[gk]).forEach(function(tn){var tk2=teamKeyMap[tn.toUpperCase()]||tn;if(s[tk2])s[tk2].totalPts+=(_slimPts[gk][tn]||0);});});}catch(e){}}
-  var _slimLkSc=(typeof currentLeagueKey!=='undefined'?currentLeagueKey:'it');
-  var _slimScRaw=localStorage.getItem('adm_cal_score_'+_tk+'_'+_slimLkSc);
-  var _slimScData=_slimScRaw?(function(){try{return JSON.parse(_slimScRaw);}catch(e){return{};}}()):{};
-  var _slimSchRaw=localStorage.getItem('adm_cal_schedule_'+_tk+'_'+_slimLkSc);
-  var _slimSchP=_slimSchRaw?(function(){try{return JSON.parse(_slimSchRaw);}catch(e){return null;}})():null;
-  var _slimSchG=_slimSchP?(_slimSchP.giornate||_slimSchP):{};
-  Object.keys(_slimScData).forEach(function(gk){var schG=_slimSchG[gk]||[];schG.forEach(function(m){var hK=(m.h||'').toUpperCase();var aK=(m.a||'').toUpperCase();var scK=Object.keys(_slimScData[gk]).find(function(k){return k.toUpperCase()===hK;});if(!scK)return;var pts=(_slimScData[gk][scK]||'').split('-');if(pts.length<2)return;var gh=parseInt(pts[0])||0;var ga=parseInt(pts[1])||0;var hT=teamKeyMap[hK]||hK;var aT=teamKeyMap[aK]||aK;if(s[hT]){s[hT].gf+=gh;s[hT].gs+=ga;}if(s[aT]){s[aT].gf+=ga;s[aT].gs+=gh;}});});
-  var sorted = SLIM_TEAMS.slice().sort(function(a,b){
-    if (s[b].pt !== s[a].pt) return s[b].pt - s[a].pt;
-    if (s[b].totalPts !== s[a].totalPts) return s[b].totalPts - s[a].totalPts;
-    return s[b].v - s[a].v;
+
+  var _ptsRaw = localStorage.getItem('adm_cal_pts_'+torneoKey+'_'+legaKey);
+  if(_ptsRaw){try{var _pts=JSON.parse(_ptsRaw);Object.keys(_pts).forEach(function(gk){Object.keys(_pts[gk]).forEach(function(tn){var tk2=teamKeyMap[tn.toUpperCase()]||tn;if(s[tk2])s[tk2].totalPts+=(_pts[gk][tn]||0);});});}catch(e){}}
+
+  var _scRaw = localStorage.getItem('adm_cal_score_'+torneoKey+'_'+legaKey);
+  if(_scRaw){try{var _sc=JSON.parse(_scRaw);Object.keys(_sc).forEach(function(g){var gg=_sc[g];for(var tn in gg){var tk2=teamKeyMap[tn.toUpperCase()]||tn;if(s[tk2]){s[tk2].gf+=(gg[tn].pf||0);s[tk2].gs+=(gg[tn].ps||0);};}})}catch(e){}}
+
+  var sorted = squadre.slice().sort(function(a, b) {
+    var diff = (s[b].pt || 0) - (s[a].pt || 0);
+    if (diff !== 0) return diff;
+    var gdA = (s[a].gf || 0) - (s[a].gs || 0);
+    var gdB = (s[b].gf || 0) - (s[b].gs || 0);
+    return gdB - gdA;
   });
-  return {standings: s, sorted: sorted, giocate: giocate};
+
+  return { standings: s, sorted: sorted, giocate: giocate };
+}
+
+function genericRenderClassifica(torneoKey, legaKey) {
+  if (!torneoKey) torneoKey = window._currentTourneyKey || 'slim';
+  if (!legaKey) legaKey = (typeof currentLeagueKey !== 'undefined' ? currentLeagueKey : 'it');
+
+  var containerId = (torneoKey === 'slim') ? 'slim-classifica-body' : (torneoKey === 'tsm') ? 'tsm-classifica-body' : torneoKey + '-classifica-body';
+  var el = document.getElementById(containerId);
+  if (!el) return;
+
+  var res = genericCalcStandings(torneoKey, legaKey);
+  var s = res.standings; var sorted = res.sorted; var giocate = res.giocate;
+
+  var logosRaw = {};
+  if(typeof FANTASY_LOGOS_ALL!=='undefined') logosRaw=Object.assign(logosRaw,FANTASY_LOGOS_ALL);
+  if(typeof FANTASY_LOGOS!=='undefined') logosRaw=Object.assign(logosRaw,FANTASY_LOGOS);
+  var logos = {};
+  Object.keys(logosRaw).forEach(function(k){ logos[k.toUpperCase()]=logosRaw[k]; });
+
+  el.innerHTML = sorted.map(function(team, i) {
+    var pos = i+1; var t = s[team]; var g = t.v+t.p+t.s;
+    var logo = logos[team.toUpperCase()] || '';
+    var logoHtml = logo ? '<img src="'+logo+'" style="width:22px;height:22px;object-fit:contain;border-radius:3px;margin-right:7px;flex-shrink:0">' : '<div style="width:22px;height:22px;margin-right:7px;flex-shrink:0"></div>';
+    var dot = pos===1?'#f59e0b':pos===2?'#9ca3af':pos===3?'#cd7c3a':'var(--border2)';
+    return '<tr style="border-bottom:1px solid var(--border)">'
+      +'<td style="padding:7px 10px;font-family:\'Bebas Neue\';font-size:16px;color:var(--text);width:26px;text-align:center">'+pos+'</td>'
+      +'<td style="width:10px"><div style="width:7px;height:7px;border-radius:50%;background:'+dot+'"></div></td>'
+      +'<td style="padding:5px 8px"><div style="display:flex;align-items:center">'+logoHtml+'<span style="font-weight:700;font-size:12px">'+_teamCase(team)+'</span></div></td>'
+      +'<td style="text-align:center;font-size:11px;color:var(--text2);width:26px">'+g+'</td>'
+      +'<td style="text-align:center;font-size:11px;color:#10b981;width:26px">'+t.v+'</td>'
+      +'<td style="text-align:center;font-size:11px;color:var(--text2);width:26px">'+t.p+'</td>'
+      +'<td style="text-align:center;font-size:11px;color:#ef4444;width:26px">'+t.s+'</td>'
+      +'<td style="text-align:center;font-size:11px;color:#f59e0b;width:28px">'+(t.gf||0)+'</td>'
+      +'<td style="text-align:center;font-size:11px;color:var(--text3);width:28px">'+(t.gs||0)+'</td>'
+      +'<td style="text-align:center;font-size:11px;color:var(--text2);font-weight:700;width:30px">'+((t.gf||0)-(t.gs||0)>0?'+':'')+((t.gf||0)-(t.gs||0))+'</td>'
+      +'<td style="text-align:center;font-family:\'Bebas Neue\';font-size:17px;color:var(--green);width:36px">'+t.pt+'</td>'
+      +'<td style="text-align:center;font-size:10px;color:var(--text3);width:40px">'+(t.totalPts||0).toFixed(1)+'</td>'
+      +'</tr>';
+  }).join('');
+
+  var gLabelId = (torneoKey === 'slim') ? 'slim-giornata-label' : (torneoKey === 'tsm') ? 'tsm-giornata-label' : torneoKey + '-giornata-label';
+  var gEl = document.getElementById(gLabelId);
+  if (gEl) gEl.textContent = 'Giornata ' + giocate + ' / ' + (torneoKey === 'slim' ? SLIM_TOTAL_GIORNATE : TSM_TOTAL_GIORNATE);
+
+  var penNote = sorted.filter(function(t){return s[t].penalita>0;});
+  var noteId = (torneoKey === 'slim') ? 'slim-classifica-note' : (torneoKey === 'tsm') ? 'tsm-classifica-note' : torneoKey + '-classifica-note';
+  var noteEl = document.getElementById(noteId);
+  if (noteEl) {
+    noteEl.innerHTML = penNote.length ? '<div style="padding:8px 10px;font-size:10px;color:#ef4444">'+penNote.map(function(t){return'* '+_teamCase(t)+': -'+s[t].penalita+' pt di penalità';}).join('<br>')+'</div>' : '';
+  }
+  if (penNote.length && el) {
+    penNote.forEach(function(t) {
+      el.querySelectorAll('tr').forEach(function(row) {
+        var nc = row.querySelector('td:nth-child(3) span');
+        if (nc && nc.textContent === _teamCase(t)) { nc.textContent = _teamCase(t)+' *'; nc.style.color='#ef4444'; }
+      });
+    });
+  }
+}
+
+function genericRenderMulte(torneoKey, legaKey) {
+  if (!torneoKey) torneoKey = window._currentTourneyKey || 'slim';
+  if (!legaKey) legaKey = (typeof currentLeagueKey !== 'undefined' ? currentLeagueKey : 'it');
+
+  var containerId = (torneoKey === 'slim') ? 'slim-multe-body' : (torneoKey === 'tsm') ? 'tsm-multe-body' : torneoKey + '-multe-body';
+  var el = document.getElementById(containerId);
+  if (!el) return;
+
+  var squadre = (torneoKey === 'slim') ? SLIM_TEAMS : (torneoKey === 'tsm') ? ((typeof TSM_TEAMS_IT !== 'undefined' && TSM_TEAMS_IT.length) ? TSM_TEAMS_IT : SLIM_TEAMS) : JSON.parse(localStorage.getItem('adm_squadre_'+torneoKey)||'[]');
+  var multeKey = torneoKey + '_multe_' + legaKey;
+  var stored = localStorage.getItem(multeKey);
+  var data = stored ? JSON.parse(stored) : {};
+
+  var h = '';
+  squadre.forEach(function(team) {
+    var d = data[team] || data[team.toUpperCase()] || {richiami:0, penalita:0, multe:0, ultima:'—'};
+    var hasIssue = d.richiami>0 || d.penalita>0 || d.multe>0;
+    var cR = d.richiami>0 ? '#f59e0b' : 'var(--text2)';
+    var cP = d.penalita>0 ? '#ef4444' : 'var(--text2)';
+    var cM = d.multe>0    ? '#ef4444' : 'var(--text2)';
+    var _fl=(typeof FANTASY_LOGOS!=='undefined'&&FANTASY_LOGOS[team])?'<img src="'+FANTASY_LOGOS[team]+'" style="width:14px;height:14px;object-fit:contain;margin-right:4px;vertical-align:middle">':'';
+    h += '<tr style="border-bottom:1px solid var(--border)">';
+    h += '<td style="padding:4px 6px;font-weight:700;font-size:10px;word-break:break-word;white-space:normal;max-width:90px">'+_fl+team+'</td>';
+    h += '<td style="padding:4px 4px;text-align:center"><span style="font-size:12px;color:'+cR+'">'+d.richiami+'</span></td>';
+    h += '<td style="padding:4px 4px;text-align:center"><span style="font-size:12px;color:'+cP+'">'+d.penalita+'</span></td>';
+    h += '<td style="padding:4px 4px;text-align:center"><span style="font-size:12px;color:'+cM+'">'+d.multe+'</span></td>';
+    h += '<td style="padding:9px 10px;text-align:center">'+(hasIssue?'<span style="display:inline-flex;align-items:center;gap:2px;padding:2px 5px;border-radius:20px;font-size:8px;font-weight:800;background:rgba(239,68,68,.1);color:#ef4444;border:1px solid rgba(239,68,68,.2)">⚠️</span>':'<span style="display:inline-flex;align-items:center;gap:2px;padding:2px 5px;border-radius:20px;font-size:8px;font-weight:800;background:rgba(16,185,129,.1);color:#10b981;border:1px solid rgba(16,185,129,.2)">✅</span>')+'</td></tr>';
+  });
+  el.innerHTML = h;
+}
+
+function genericRenderSponsorUser(torneoKey, legaKey) {
+  if (!torneoKey) torneoKey = window._currentTourneyKey || 'slim';
+  if (!legaKey) legaKey = (typeof currentLeagueKey !== 'undefined' ? currentLeagueKey : 'it');
+
+  var containerId = (torneoKey === 'slim') ? 'slim-sponsor-cards' : (torneoKey === 'tsm') ? 'tsm-sponsor-cards' : torneoKey + '-sponsor-cards';
+  var container = document.getElementById(containerId);
+  if (!container) return;
+
+  var squadre = (torneoKey === 'slim') ? SLIM_TEAMS : (torneoKey === 'tsm') ? ((typeof TSM_TEAMS_IT !== 'undefined' && TSM_TEAMS_IT.length) ? TSM_TEAMS_IT : SLIM_TEAMS) : JSON.parse(localStorage.getItem('adm_squadre_'+torneoKey)||'[]');
+  var sponsorKey = torneoKey + '_sponsor_' + legaKey;
+  var stored = localStorage.getItem(sponsorKey);
+  var sponsorData = stored ? JSON.parse(stored) : {};
+
+  container.innerHTML = squadre.map(function(team) {
+    var sp = sponsorData[team] || sponsorData[team.toUpperCase()] || {sponsor:'', logo:''};
+    var logo = (typeof FANTASY_LOGOS !== 'undefined' && FANTASY_LOGOS[team]) ? FANTASY_LOGOS[team] : '';
+    return '<div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin-bottom:8px">'
+      +'<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">'
+      +'<div style="flex:1"><div style="display:flex;align-items:center;gap:6px;font-weight:700;font-size:13px">'+(logo?'<img src="'+logo+'" style="width:20px;height:20px;object-fit:contain">':'')+_teamCase(team)+'</div></div>'
+      +'<div style="font-size:11px;color:var(--text2)">Sponsor</div>'
+      +'</div>'
+      +(sp.logo?'<div style="margin-bottom:8px"><img src="'+sp.logo+'" style="max-width:100%;height:auto;border-radius:6px;max-height:60px;object-fit:contain"></div>':'')
+      +'<div style="font-size:12px;color:var(--text);font-weight:600">'+(sp.sponsor||'—')+'</div>'
+      +'</div>';
+  }).join('');
+}
+
+function genericRenderCalendario(torneoKey, legaKey) {
+  if (!torneoKey) torneoKey = window._currentTourneyKey || 'slim';
+  if (!legaKey) legaKey = (typeof currentLeagueKey !== 'undefined' ? currentLeagueKey : 'it');
+
+  var containerId = (torneoKey === 'slim') ? 'slim-calendario-body' : (torneoKey === 'tsm') ? 'tsm-calendario-body' : torneoKey + '-calendario-body';
+  var _schRaw = localStorage.getItem('adm_cal_schedule_' + torneoKey + '_' + legaKey);
+  var _schP = _schRaw ? (function(){try{return JSON.parse(_schRaw);}catch(e){return null;}})() : null;
+  var _schN = _schP ? Object.keys(_schP.giornate || _schP).length : 0;
+  var _calNums = Object.keys(genericGetCalendar(torneoKey, legaKey)).map(Number).filter(function(n){return n>0;});
+  var _nG = _schN > 0 ? _schN : (torneoKey !== 'slim' ? (_calNums.length > 0 ? Math.max.apply(null, _calNums) : 30) : (typeof SLIM_TOTAL_GIORNATE !== 'undefined' ? SLIM_TOTAL_GIORNATE : 36));
+  var _teams = admGetTeams(torneoKey, legaKey);
+  if (!_teams.length) {
+    _teams = (torneoKey === 'slim') ? SLIM_TEAMS : (torneoKey === 'tsm') ? ((typeof TSM_TEAMS_IT !== 'undefined' && TSM_TEAMS_IT.length) ? TSM_TEAMS_IT : SLIM_TEAMS) : [];
+  }
+  calRenderGeneric(torneoKey, legaKey, containerId, _nG, _teams, 'genericRenderCalendario');
+}
+
+function slimGetCalendar() {
+  var _tk = window._currentTourneyKey || 'slim';
+  var _lk = (typeof currentLeagueKey !== 'undefined' ? currentLeagueKey : 'it');
+  if (_tk !== 'slim') return genericGetCalendar(_tk, _lk);
+  return genericGetCalendar('slim', _lk);
+}
+function slimGetStadio() {
+  var _tk = window._currentTourneyKey || 'slim';
+  var _lk = (typeof currentLeagueKey !== 'undefined' ? currentLeagueKey : 'it');
+  if (_tk !== 'slim') return genericGetStadio(_tk, _lk);
+  return genericGetStadio('slim', _lk);
+}
+function slimCalcStandings() {
+  var _tk = window._currentTourneyKey || 'slim';
+  var _lk = (typeof currentLeagueKey !== 'undefined' ? currentLeagueKey : 'it');
+  if (_tk !== 'slim') return genericCalcStandings(_tk, _lk);
+  return genericCalcStandings('slim', _lk);
 }
 
 function showPage(id){document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});var pg=document.getElementById('page-'+id);if(!pg){return;}pg.classList.add('active');window.scrollTo(0,0);}
@@ -4401,136 +4556,23 @@ function tsmRenderTable() {
 }
 
 function tsmGetCalendar() {
-  var raw = localStorage.getItem('tsm_calendar_it');
-  if (raw) return JSON.parse(raw);
-  return TSM_INITIAL_CALENDAR_IT || {};
+  return genericGetCalendar('tsm', 'it');
 }
 
 function tsmGetStadio() {
-  var raw = localStorage.getItem('tsm_stadio_it');
-  if (raw) return JSON.parse(raw);
-  return TSM_INITIAL_STADIO_IT || {};
+  return genericGetStadio('tsm', 'it');
 }
 
 function tsmCalcStandings() {
-  var _tsmCalLk=(typeof currentLeagueKey!=='undefined'?currentLeagueKey:'it').replace(/^tsm_/,'');
-  var _tsmCalRaw=localStorage.getItem('adm_cal_tsm_'+_tsmCalLk);
-  var cal=_tsmCalRaw?(function(){try{return JSON.parse(_tsmCalRaw);}catch(e){return{};}}()):{};
-  var stadio = tsmGetStadio();
-  var _stRC = localStorage.getItem('adm_stadio_table_tsm') || localStorage.getItem('adm_stadio_table_global');
-  var ST = (_stRC ? (function(){try{return JSON.parse(_stRC);}catch(e){return null;}})() : null) || TSM_STADIO_TABLE_IT || {};
-  var s = {};
-  // Usa TSM_TEAMS_IT se disponibile, altronde SLIM_TEAMS
-  var tsmTeams = (typeof TSM_TEAMS_IT !== 'undefined' && TSM_TEAMS_IT.length) ? TSM_TEAMS_IT : SLIM_TEAMS;
-  // Mappa lookup case-insensitive
-  var teamKeyMap = {};
-  tsmTeams.forEach(function(t) {
-    s[t] = {v:0,p:0,s:0,pt:0,cr:0,gf:0,gs:0,totalPts:0};
-    teamKeyMap[t.toUpperCase()] = t;
-  });
-  var giocate = 0;
-  for (var g in cal) {
-    var hasData = Object.values(cal[g]).some(function(v){return v;});
-    if (!hasData) continue;
-    giocate++;
-    for (var teamRaw in cal[g]) {
-      var team = teamKeyMap[teamRaw.toUpperCase()] || teamRaw;
-      var res = cal[g][teamRaw];
-      if (!res || !s[team]) continue;
-      var lv = stadio[team] || stadio[team.toUpperCase()] || 1;
-      var st = ST[String(lv)] || {};
-      if (res==='VC'||res==='VF'||res==='V') {
-        s[team].v++; s[team].pt+=3;
-        if (res==='VC') s[team].cr += (st.cr_vittoria||0);
-      } else if (res==='PC'||res==='PF'||res==='P') {
-        s[team].p++; s[team].pt+=1;
-        if (res==='PC') s[team].cr += (st.cr_pareggio||0);
-      } else if (res==='SC'||res==='SF'||res==='S') {
-        s[team].s++;
-        if (res==='SC') s[team].cr += (st.cr_sconfitta||0);
-      }
-    }
-  }
-  // Penalità TSM
-  var _tsmMulRaw2 = localStorage.getItem('tsm_multe_it');
-  var _tsmMulData2 = _tsmMulRaw2 ? JSON.parse(_tsmMulRaw2) : {};
-  tsmTeams.forEach(function(t) {
-    var md = _tsmMulData2[t] || _tsmMulData2[t.toUpperCase()] || {};
-    var pen = parseInt(md.penalita) || 0;
-    if (pen > 0) { s[t].pt -= pen; s[t].penalita = pen; }
-  });
-  var _tsmLk=(typeof currentLeagueKey!=='undefined'?currentLeagueKey:'it').replace(/^tsm_/,'');
-  var _tsmPtsRaw=localStorage.getItem('adm_cal_pts_tsm_'+_tsmLk);
-  if(_tsmPtsRaw){try{var _tsmPts=JSON.parse(_tsmPtsRaw);Object.keys(_tsmPts).forEach(function(gk){Object.keys(_tsmPts[gk]).forEach(function(tn){var tk2=teamKeyMap[tn.toUpperCase()]||tn;if(s[tk2])s[tk2].totalPts+=(_tsmPts[gk][tn]||0);});});}catch(e){}}
-  var _tsmScRaw=localStorage.getItem('adm_cal_score_tsm_'+_tsmLk);
-  var _tsmScData=_tsmScRaw?(function(){try{return JSON.parse(_tsmScRaw);}catch(e){return{};}}()):{};
-  var _tsmSchRaw=localStorage.getItem('adm_cal_schedule_tsm_'+_tsmLk);
-  var _tsmSchP=_tsmSchRaw?(function(){try{return JSON.parse(_tsmSchRaw);}catch(e){return null;}})():null;
-  var _tsmSchG=_tsmSchP?(_tsmSchP.giornate||_tsmSchP):{};
-  Object.keys(_tsmScData).forEach(function(gk){var schG=_tsmSchG[gk]||[];schG.forEach(function(m){var hK=(m.h||'').toUpperCase();var aK=(m.a||'').toUpperCase();var scK=Object.keys(_tsmScData[gk]).find(function(k){return k.toUpperCase()===hK;});if(!scK)return;var pts=(_tsmScData[gk][scK]||'').split('-');if(pts.length<2)return;var gh=parseInt(pts[0])||0;var ga=parseInt(pts[1])||0;var hT=teamKeyMap[hK]||hK;var aT=teamKeyMap[aK]||aK;if(s[hT]){s[hT].gf+=gh;s[hT].gs+=ga;}if(s[aT]){s[aT].gf+=ga;s[aT].gs+=gh;}});});
-  var sorted = tsmTeams.slice().sort(function(a,b){
-    if (s[b].pt !== s[a].pt) return s[b].pt - s[a].pt;
-    if (s[b].totalPts !== s[a].totalPts) return s[b].totalPts - s[a].totalPts;
-    return s[b].v - s[a].v;
-  });
-  return {standings: s, sorted: sorted, giocate: giocate};
+  return genericCalcStandings('tsm', 'it');
 }
 
 function tsmRenderCalendario() {
-  var _tsmTeams = (typeof TSM_TEAMS_IT !== 'undefined' && TSM_TEAMS_IT.length) ? TSM_TEAMS_IT : (typeof SLIM_TEAMS !== 'undefined' ? SLIM_TEAMS : []);
-  var _schRaw = localStorage.getItem('adm_cal_schedule_tsm_it');
-  var _schP = _schRaw ? (function(){try{return JSON.parse(_schRaw);}catch(e){return null;}})() : null;
-  var _schN = _schP ? Object.keys(_schP.giornate || _schP).length : 0;
-  var _nG = _schN > 0 ? _schN : (typeof TSM_TOTAL_GIORNATE !== 'undefined' ? TSM_TOTAL_GIORNATE : 36);
-  calRenderGeneric('tsm', 'it', 'tsm-calendario-body', _nG, _tsmTeams, 'tsmRenderCalendario');
+  genericRenderCalendario('tsm', 'it');
 }
 
 function tsmRenderClassifica() {
-  var el = document.getElementById('tsm-classifica-body'); if(!el) return;
-  var res = tsmCalcStandings();
-  var s = res.standings; var sorted = res.sorted; var giocate = res.giocate;
-  var logos = {};
-  if (typeof FANTASY_LOGOS !== 'undefined') Object.keys(FANTASY_LOGOS).forEach(function(k){ logos[k.toUpperCase()]=FANTASY_LOGOS[k]; });
-  el.innerHTML = sorted.map(function(team, i) {
-    var pos = i+1; var t = s[team]; var g = t.v+t.p+t.s;
-    var logo = logos[team.toUpperCase()] || '';
-    var logoHtml = logo
-      ? '<img src="'+logo+'" style="width:22px;height:22px;object-fit:contain;border-radius:3px;margin-right:7px;flex-shrink:0">'
-      : '<div style="width:22px;height:22px;margin-right:7px;flex-shrink:0"></div>';
-    var dot = pos===1?'#f59e0b':pos===2?'#9ca3af':pos===3?'#cd7c3a':'var(--border2)';
-    return '<tr style="border-bottom:1px solid var(--border)">'
-      +'<td style="padding:7px 10px;font-family:\'Bebas Neue\';font-size:16px;color:var(--text);width:26px;text-align:center">'+pos+'</td>'
-      +'<td style="width:10px"><div style="width:7px;height:7px;border-radius:50%;background:'+dot+'"></div></td>'
-      +'<td style="padding:5px 8px"><div style="display:flex;align-items:center">'+logoHtml+'<span style="font-weight:700;font-size:12px">'+_teamCase(team)+'</span></div></td>'
-      +'<td style="text-align:center;font-size:11px;color:var(--text2);width:26px">'+g+'</td>'
-      +'<td style="text-align:center;font-size:11px;color:#10b981;width:26px">'+t.v+'</td>'
-      +'<td style="text-align:center;font-size:11px;color:var(--text2);width:26px">'+t.p+'</td>'
-      +'<td style="text-align:center;font-size:11px;color:#ef4444;width:26px">'+t.s+'</td>'
-      +'<td style="text-align:center;font-size:11px;color:#f59e0b;width:28px">'+(t.gf||0)+'</td>'
-      +'<td style="text-align:center;font-size:11px;color:var(--text3);width:28px">'+(t.gs||0)+'</td>'
-      +'<td style="text-align:center;font-size:11px;color:var(--text2);font-weight:700;width:30px">'+((t.gf||0)-(t.gs||0)>0?'+':'')+((t.gf||0)-(t.gs||0))+'</td>'
-      +'<td style="text-align:center;font-family:\'Bebas Neue\';font-size:17px;color:var(--green);width:36px">'+t.pt+'</td>'
-      +'<td style="text-align:center;font-size:10px;color:var(--text3);width:40px">'+(t.totalPts||0).toFixed(1)+'</td>'
-      +'</tr>';
-  }).join('');
-  var gEl = document.getElementById('tsm-giornata-label');
-  if (gEl) gEl.textContent = 'Giornata '+giocate+' / '+TSM_TOTAL_GIORNATE;
-  // Note penalità
-  var penNote = sorted.filter(function(t){return s[t].penalita>0;});
-  var noteEl = document.getElementById('tsm-classifica-note');
-  if (noteEl) {
-    noteEl.innerHTML = penNote.length
-      ? '<div style="padding:8px 10px;font-size:10px;color:#ef4444">'+penNote.map(function(t){return '* '+_teamCase(t)+': -'+s[t].penalita+' pt di penalità';}).join('<br>')+'</div>'
-      : '';
-  }
-  if (penNote.length && el) {
-    penNote.forEach(function(t) {
-      el.querySelectorAll('tr').forEach(function(row) {
-        var nc = row.querySelector('td:nth-child(3) span');
-        if (nc && nc.textContent === _teamCase(t)) { nc.textContent = _teamCase(t)+' *'; nc.style.color='#ef4444'; }
-      });
-    });
-  }
+  genericRenderClassifica('tsm', 'it');
 }
 
 function tsmRenderStadio() {
@@ -5147,7 +5189,7 @@ function gsPing() {
                       var _sec = _ap.querySelector('.section.active');
                       var _sid = _sec ? _sec.id.replace(/^s-/,'') : '';
                       if (_sid === 'rose' && typeof buildTeamsGrid === 'function') { buildTeamsGrid(); if (typeof updateHeader === 'function') updateHeader(); }
-                      else if (_sid === 'classifica' && typeof slimRenderClassifica === 'function') slimRenderClassifica();
+                      else if (_sid === 'classifica' && true) genericRenderClassifica('slim');
                       else if (_sid === 'stadio') genericRenderStadio(window._currentTourneyKey || 'slim');
                     }, 300);
                   });
@@ -5231,8 +5273,8 @@ function gsPing() {
               // Re-render calendario se attivo
               if (window._currentTourneyKey===_tk && (typeof currentLeagueKey==='undefined'||currentLeagueKey===_lk)) {
                 var _apC=document.querySelector('.page.active');var _scC=_apC?_apC.querySelector('.section.active'):null;var _siC=_scC?_scC.id:'';
-                if(_siC==='s-calendario'&&typeof slimRenderCalendario==='function')slimRenderCalendario();
-                if(_siC==='tsm-s-calendario'&&typeof tsmRenderCalendario==='function')tsmRenderCalendario();
+                if(_siC==='s-calendario')genericRenderCalendario('slim');
+                if(_siC==='tsm-s-calendario')genericRenderCalendario('tsm');
               }
             });
             gsLoadKey('adm_cal_'+_tk+'_'+_lk, function(val) {
@@ -11584,115 +11626,21 @@ function doLogin(){
 
 function slimGetCalendar() {
   var _tk = window._currentTourneyKey || 'slim';
-  // Tornei non-slim: usa la chiave impostata da enterLeague, non sovrascrivere
-  if (_tk !== 'slim') {
-    var key = window._currentLeagueCalKey;
-    if (key) { var r = localStorage.getItem(key); if (r) { try { return JSON.parse(r); } catch(e){} } }
-    return {};
-  }
-  // Slim: logica originale
-  var lkCur = (typeof currentLeagueKey !== 'undefined' ? currentLeagueKey : 'it');
-  window._currentLeagueCalKey = (lkCur === 'it') ? 'slim_calendar' : 'slim_calendar_' + lkCur;
-  var key = window._currentLeagueCalKey;
-  var lk = key.replace('slim_calendar_','');
-  var torneo = 'slim';
-  var raw = localStorage.getItem(key);
-  if (raw) return JSON.parse(raw);
-  var admKey = 'adm_cal_'+torneo+'_'+(lk==='slim_calendar'?'it':lk);
-  var admRaw = localStorage.getItem(admKey);
-  if (admRaw) {
-    try {
-      var parsed = JSON.parse(admRaw);
-      localStorage.setItem(key, admRaw); return parsed;
-    } catch(e) {}
-  }
-  if (key !== 'slim_calendar' && typeof ALL_SEASON_DATA !== 'undefined') {
-    if (ALL_SEASON_DATA[lk]) return ALL_SEASON_DATA[lk].calendario || {};
-  }
-  return SLIM_INITIAL_CALENDAR;
+  var _lk = (typeof currentLeagueKey !== 'undefined' ? currentLeagueKey : 'it');
+  if (_tk !== 'slim') return genericGetCalendar(_tk, _lk);
+  return genericGetCalendar('slim', _lk);
 }
 function slimGetStadio() {
   var _tk = window._currentTourneyKey || 'slim';
-  // Tornei non-slim: usa la chiave impostata da enterLeague
-  if (_tk !== 'slim') {
-    var key = window._currentLeagueStaKey;
-    if (key) { var r = localStorage.getItem(key); if (r) { try { return JSON.parse(r); } catch(e){} } }
-    return {};
-  }
-  // Slim: logica originale
-  var lkCur = (typeof currentLeagueKey !== 'undefined' ? currentLeagueKey : 'it');
-  window._currentLeagueStaKey = (lkCur === 'it') ? 'slim_stadio' : 'slim_stadio_' + lkCur;
-  var key = window._currentLeagueStaKey;
-  var raw = localStorage.getItem(key);
-  if (raw) return JSON.parse(raw);
-  if (key !== 'slim_stadio' && typeof ALL_SEASON_DATA !== 'undefined') {
-    var lk = key.replace('slim_stadio_','');
-    if (ALL_SEASON_DATA[lk]) return ALL_SEASON_DATA[lk].stadio || {};
-  }
-  return SLIM_INITIAL_STADIO;
+  var _lk = (typeof currentLeagueKey !== 'undefined' ? currentLeagueKey : 'it');
+  if (_tk !== 'slim') return genericGetStadio(_tk, _lk);
+  return genericGetStadio('slim', _lk);
 }
 function slimCalcStandings() {
   var _tk = window._currentTourneyKey || 'slim';
-  var _slimCalLk=(typeof currentLeagueKey!=='undefined'?currentLeagueKey:'it');
-  var _slimCalRaw=localStorage.getItem('adm_cal_'+_tk+'_'+_slimCalLk);
-  var cal=_slimCalRaw?(function(){try{return JSON.parse(_slimCalRaw);}catch(e){return{};}}()):{};
-  var stadio = slimGetStadio();
-  var _stSlimR = localStorage.getItem('adm_stadio_table_'+_tk);
-  var _STslim = (_stSlimR ? (function(){try{return JSON.parse(_stSlimR);}catch(e){return null;}})() : null) || SLIM_STADIO_TABLE || {};
-  var multeKey = _tk + '_multe_' + (typeof currentLeagueKey !== 'undefined' ? currentLeagueKey : 'it');
-  var multeRaw = localStorage.getItem(multeKey);
-  var multeData = multeRaw ? JSON.parse(multeRaw) : {};
-  var s = {};
-  var teamKeyMap = {};
-  SLIM_TEAMS.forEach(function(t) {
-    s[t]={v:0,vf:0,p:0,s:0,pt:0,cr:0,gf:0,gs:0,penalita:0,totalPts:0};
-    teamKeyMap[t.toUpperCase()] = t;
-  });
-  var giocate = 0;
-  for (var g in cal) {
-    var hasData = Object.values(cal[g]).some(function(v){return v;});
-    if (!hasData) continue;
-    giocate++;
-    for (var team in cal[g]) {
-      var res = cal[g][team];
-      // Normalizza chiave: BARI -> Bari
-      var tk = teamKeyMap[team] || teamKeyMap[team.toUpperCase()] || team;
-      if (!res || !s[tk]) continue;
-      var team = tk;
-      var lv = stadio[team] || stadio[team.toUpperCase()] || 1;
-      var st = _STslim[String(lv)] || {};
-      if (res==='VC'||res==='VF'||res==='V') {
-        s[team].v++; s[team].pt+=3;
-        if (res==='VC') { s[team].cr += (st.cr_vittoria||0); }
-      } else if (res==='PC'||res==='PF'||res==='P') {
-        s[team].p++; s[team].pt+=1;
-        if (res==='PC') { s[team].cr += (st.cr_pareggio||0); }
-      } else if (res==='SC'||res==='SF'||res==='S') {
-        s[team].s++;
-        if (res==='SC') { s[team].cr += (st.cr_sconfitta||0); }
-      }
-    }
-  }
-  SLIM_TEAMS.forEach(function(t) {
-    var md = multeData[t] || multeData[t.toUpperCase()] || {};
-    var pen = parseInt(md.penalita) || 0;
-    if (pen > 0) { s[t].pt -= pen; s[t].penalita = pen; }
-  });
-  var _slimPtsRaw=localStorage.getItem('adm_cal_pts_'+_tk+'_'+(typeof currentLeagueKey!=='undefined'?currentLeagueKey:'it'));
-  if(_slimPtsRaw){try{var _slimPts=JSON.parse(_slimPtsRaw);Object.keys(_slimPts).forEach(function(gk){Object.keys(_slimPts[gk]).forEach(function(tn){var tk2=teamKeyMap[tn.toUpperCase()]||tn;if(s[tk2])s[tk2].totalPts+=(_slimPts[gk][tn]||0);});});}catch(e){}}
-  var _slimLkSc=(typeof currentLeagueKey!=='undefined'?currentLeagueKey:'it');
-  var _slimScRaw=localStorage.getItem('adm_cal_score_'+_tk+'_'+_slimLkSc);
-  var _slimScData=_slimScRaw?(function(){try{return JSON.parse(_slimScRaw);}catch(e){return{};}}()):{};
-  var _slimSchRaw=localStorage.getItem('adm_cal_schedule_'+_tk+'_'+_slimLkSc);
-  var _slimSchP=_slimSchRaw?(function(){try{return JSON.parse(_slimSchRaw);}catch(e){return null;}})():null;
-  var _slimSchG=_slimSchP?(_slimSchP.giornate||_slimSchP):{};
-  Object.keys(_slimScData).forEach(function(gk){var schG=_slimSchG[gk]||[];schG.forEach(function(m){var hK=(m.h||'').toUpperCase();var aK=(m.a||'').toUpperCase();var scK=Object.keys(_slimScData[gk]).find(function(k){return k.toUpperCase()===hK;});if(!scK)return;var pts=(_slimScData[gk][scK]||'').split('-');if(pts.length<2)return;var gh=parseInt(pts[0])||0;var ga=parseInt(pts[1])||0;var hT=teamKeyMap[hK]||hK;var aT=teamKeyMap[aK]||aK;if(s[hT]){s[hT].gf+=gh;s[hT].gs+=ga;}if(s[aT]){s[aT].gf+=ga;s[aT].gs+=gh;}});});
-  var sorted = SLIM_TEAMS.slice().sort(function(a,b){
-    if (s[b].pt !== s[a].pt) return s[b].pt - s[a].pt;
-    if (s[b].totalPts !== s[a].totalPts) return s[b].totalPts - s[a].totalPts;
-    return s[b].v - s[a].v;
-  });
-  return {standings: s, sorted: sorted, giocate: giocate};
+  var _lk = (typeof currentLeagueKey !== 'undefined' ? currentLeagueKey : 'it');
+  if (_tk !== 'slim') return genericCalcStandings(_tk, _lk);
+  return genericCalcStandings('slim', _lk);
 }
 
 function showPage(id){document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});var pg=document.getElementById('page-'+id);if(!pg){return;}pg.classList.add('active');window.scrollTo(0,0);}
@@ -12258,136 +12206,23 @@ function tsmRenderTable() {
 }
 
 function tsmGetCalendar() {
-  var raw = localStorage.getItem('tsm_calendar_it');
-  if (raw) return JSON.parse(raw);
-  return TSM_INITIAL_CALENDAR_IT || {};
+  return genericGetCalendar('tsm', 'it');
 }
 
 function tsmGetStadio() {
-  var raw = localStorage.getItem('tsm_stadio_it');
-  if (raw) return JSON.parse(raw);
-  return TSM_INITIAL_STADIO_IT || {};
+  return genericGetStadio('tsm', 'it');
 }
 
 function tsmCalcStandings() {
-  var _tsmCalLk=(typeof currentLeagueKey!=='undefined'?currentLeagueKey:'it').replace(/^tsm_/,'');
-  var _tsmCalRaw=localStorage.getItem('adm_cal_tsm_'+_tsmCalLk);
-  var cal=_tsmCalRaw?(function(){try{return JSON.parse(_tsmCalRaw);}catch(e){return{};}}()):{};
-  var stadio = tsmGetStadio();
-  var _stRC = localStorage.getItem('adm_stadio_table_tsm') || localStorage.getItem('adm_stadio_table_global');
-  var ST = (_stRC ? (function(){try{return JSON.parse(_stRC);}catch(e){return null;}})() : null) || TSM_STADIO_TABLE_IT || {};
-  var s = {};
-  // Usa TSM_TEAMS_IT se disponibile, altronde SLIM_TEAMS
-  var tsmTeams = (typeof TSM_TEAMS_IT !== 'undefined' && TSM_TEAMS_IT.length) ? TSM_TEAMS_IT : SLIM_TEAMS;
-  // Mappa lookup case-insensitive
-  var teamKeyMap = {};
-  tsmTeams.forEach(function(t) {
-    s[t] = {v:0,p:0,s:0,pt:0,cr:0,gf:0,gs:0,totalPts:0};
-    teamKeyMap[t.toUpperCase()] = t;
-  });
-  var giocate = 0;
-  for (var g in cal) {
-    var hasData = Object.values(cal[g]).some(function(v){return v;});
-    if (!hasData) continue;
-    giocate++;
-    for (var teamRaw in cal[g]) {
-      var team = teamKeyMap[teamRaw.toUpperCase()] || teamRaw;
-      var res = cal[g][teamRaw];
-      if (!res || !s[team]) continue;
-      var lv = stadio[team] || stadio[team.toUpperCase()] || 1;
-      var st = ST[String(lv)] || {};
-      if (res==='VC'||res==='VF'||res==='V') {
-        s[team].v++; s[team].pt+=3;
-        if (res==='VC') s[team].cr += (st.cr_vittoria||0);
-      } else if (res==='PC'||res==='PF'||res==='P') {
-        s[team].p++; s[team].pt+=1;
-        if (res==='PC') s[team].cr += (st.cr_pareggio||0);
-      } else if (res==='SC'||res==='SF'||res==='S') {
-        s[team].s++;
-        if (res==='SC') s[team].cr += (st.cr_sconfitta||0);
-      }
-    }
-  }
-  // Penalità TSM
-  var _tsmMulRaw2 = localStorage.getItem('tsm_multe_it');
-  var _tsmMulData2 = _tsmMulRaw2 ? JSON.parse(_tsmMulRaw2) : {};
-  tsmTeams.forEach(function(t) {
-    var md = _tsmMulData2[t] || _tsmMulData2[t.toUpperCase()] || {};
-    var pen = parseInt(md.penalita) || 0;
-    if (pen > 0) { s[t].pt -= pen; s[t].penalita = pen; }
-  });
-  var _tsmLk=(typeof currentLeagueKey!=='undefined'?currentLeagueKey:'it').replace(/^tsm_/,'');
-  var _tsmPtsRaw=localStorage.getItem('adm_cal_pts_tsm_'+_tsmLk);
-  if(_tsmPtsRaw){try{var _tsmPts=JSON.parse(_tsmPtsRaw);Object.keys(_tsmPts).forEach(function(gk){Object.keys(_tsmPts[gk]).forEach(function(tn){var tk2=teamKeyMap[tn.toUpperCase()]||tn;if(s[tk2])s[tk2].totalPts+=(_tsmPts[gk][tn]||0);});});}catch(e){}}
-  var _tsmScRaw=localStorage.getItem('adm_cal_score_tsm_'+_tsmLk);
-  var _tsmScData=_tsmScRaw?(function(){try{return JSON.parse(_tsmScRaw);}catch(e){return{};}}()):{};
-  var _tsmSchRaw=localStorage.getItem('adm_cal_schedule_tsm_'+_tsmLk);
-  var _tsmSchP=_tsmSchRaw?(function(){try{return JSON.parse(_tsmSchRaw);}catch(e){return null;}})():null;
-  var _tsmSchG=_tsmSchP?(_tsmSchP.giornate||_tsmSchP):{};
-  Object.keys(_tsmScData).forEach(function(gk){var schG=_tsmSchG[gk]||[];schG.forEach(function(m){var hK=(m.h||'').toUpperCase();var aK=(m.a||'').toUpperCase();var scK=Object.keys(_tsmScData[gk]).find(function(k){return k.toUpperCase()===hK;});if(!scK)return;var pts=(_tsmScData[gk][scK]||'').split('-');if(pts.length<2)return;var gh=parseInt(pts[0])||0;var ga=parseInt(pts[1])||0;var hT=teamKeyMap[hK]||hK;var aT=teamKeyMap[aK]||aK;if(s[hT]){s[hT].gf+=gh;s[hT].gs+=ga;}if(s[aT]){s[aT].gf+=ga;s[aT].gs+=gh;}});});
-  var sorted = tsmTeams.slice().sort(function(a,b){
-    if (s[b].pt !== s[a].pt) return s[b].pt - s[a].pt;
-    if (s[b].totalPts !== s[a].totalPts) return s[b].totalPts - s[a].totalPts;
-    return s[b].v - s[a].v;
-  });
-  return {standings: s, sorted: sorted, giocate: giocate};
+  return genericCalcStandings('tsm', 'it');
 }
 
 function tsmRenderCalendario() {
-  var _tsmTeams = (typeof TSM_TEAMS_IT !== 'undefined' && TSM_TEAMS_IT.length) ? TSM_TEAMS_IT : (typeof SLIM_TEAMS !== 'undefined' ? SLIM_TEAMS : []);
-  var _schRaw = localStorage.getItem('adm_cal_schedule_tsm_it');
-  var _schP = _schRaw ? (function(){try{return JSON.parse(_schRaw);}catch(e){return null;}})() : null;
-  var _schN = _schP ? Object.keys(_schP.giornate || _schP).length : 0;
-  var _nG = _schN > 0 ? _schN : (typeof TSM_TOTAL_GIORNATE !== 'undefined' ? TSM_TOTAL_GIORNATE : 36);
-  calRenderGeneric('tsm', 'it', 'tsm-calendario-body', _nG, _tsmTeams, 'tsmRenderCalendario');
+  genericRenderCalendario('tsm', 'it');
 }
 
 function tsmRenderClassifica() {
-  var el = document.getElementById('tsm-classifica-body'); if(!el) return;
-  var res = tsmCalcStandings();
-  var s = res.standings; var sorted = res.sorted; var giocate = res.giocate;
-  var logos = {};
-  if (typeof FANTASY_LOGOS !== 'undefined') Object.keys(FANTASY_LOGOS).forEach(function(k){ logos[k.toUpperCase()]=FANTASY_LOGOS[k]; });
-  el.innerHTML = sorted.map(function(team, i) {
-    var pos = i+1; var t = s[team]; var g = t.v+t.p+t.s;
-    var logo = logos[team.toUpperCase()] || '';
-    var logoHtml = logo
-      ? '<img src="'+logo+'" style="width:22px;height:22px;object-fit:contain;border-radius:3px;margin-right:7px;flex-shrink:0">'
-      : '<div style="width:22px;height:22px;margin-right:7px;flex-shrink:0"></div>';
-    var dot = pos===1?'#f59e0b':pos===2?'#9ca3af':pos===3?'#cd7c3a':'var(--border2)';
-    return '<tr style="border-bottom:1px solid var(--border)">'
-      +'<td style="padding:7px 10px;font-family:\'Bebas Neue\';font-size:16px;color:var(--text);width:26px;text-align:center">'+pos+'</td>'
-      +'<td style="width:10px"><div style="width:7px;height:7px;border-radius:50%;background:'+dot+'"></div></td>'
-      +'<td style="padding:5px 8px"><div style="display:flex;align-items:center">'+logoHtml+'<span style="font-weight:700;font-size:12px">'+_teamCase(team)+'</span></div></td>'
-      +'<td style="text-align:center;font-size:11px;color:var(--text2);width:26px">'+g+'</td>'
-      +'<td style="text-align:center;font-size:11px;color:#10b981;width:26px">'+t.v+'</td>'
-      +'<td style="text-align:center;font-size:11px;color:var(--text2);width:26px">'+t.p+'</td>'
-      +'<td style="text-align:center;font-size:11px;color:#ef4444;width:26px">'+t.s+'</td>'
-      +'<td style="text-align:center;font-size:11px;color:#f59e0b;width:28px">'+(t.gf||0)+'</td>'
-      +'<td style="text-align:center;font-size:11px;color:var(--text3);width:28px">'+(t.gs||0)+'</td>'
-      +'<td style="text-align:center;font-size:11px;color:var(--text2);font-weight:700;width:30px">'+((t.gf||0)-(t.gs||0)>0?'+':'')+((t.gf||0)-(t.gs||0))+'</td>'
-      +'<td style="text-align:center;font-family:\'Bebas Neue\';font-size:17px;color:var(--green);width:36px">'+t.pt+'</td>'
-      +'<td style="text-align:center;font-size:10px;color:var(--text3);width:40px">'+(t.totalPts||0).toFixed(1)+'</td>'
-      +'</tr>';
-  }).join('');
-  var gEl = document.getElementById('tsm-giornata-label');
-  if (gEl) gEl.textContent = 'Giornata '+giocate+' / '+TSM_TOTAL_GIORNATE;
-  // Note penalità
-  var penNote = sorted.filter(function(t){return s[t].penalita>0;});
-  var noteEl = document.getElementById('tsm-classifica-note');
-  if (noteEl) {
-    noteEl.innerHTML = penNote.length
-      ? '<div style="padding:8px 10px;font-size:10px;color:#ef4444">'+penNote.map(function(t){return '* '+_teamCase(t)+': -'+s[t].penalita+' pt di penalità';}).join('<br>')+'</div>'
-      : '';
-  }
-  if (penNote.length && el) {
-    penNote.forEach(function(t) {
-      el.querySelectorAll('tr').forEach(function(row) {
-        var nc = row.querySelector('td:nth-child(3) span');
-        if (nc && nc.textContent === _teamCase(t)) { nc.textContent = _teamCase(t)+' *'; nc.style.color='#ef4444'; }
-      });
-    });
-  }
+  genericRenderClassifica('tsm', 'it');
 }
 
 function tsmRenderStadio() {
