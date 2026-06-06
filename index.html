@@ -1,4 +1,4 @@
-<!-- build:20260606_1321 -->
+<!-- build:20260606_1329 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260606_1321';
+  var BUILD='20260606_1329';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
@@ -5069,8 +5069,8 @@ function gsPing() {
               var _apSt = document.querySelector('.page.active');
               if (_apSt) {
                 var _secSt = _apSt.querySelector('.section.active');
-                if (_secSt && _secSt.id === 's-stadio' && typeof slimRenderStadio === 'function') slimRenderStadio();
-                if (_secSt && _secSt.id === 'tsm-s-stadio' && typeof tsmRenderStadio === 'function') tsmRenderStadio();
+                if (_secSt && _secSt.id === 's-stadio') genericRenderStadio('slim');
+                if (_secSt && _secSt.id === 'tsm-s-stadio') genericRenderStadio('tsm');
               }
               // Re-render tabella admin se visibile
               var _admTb = document.getElementById('adm-s-tablestadio');
@@ -5148,7 +5148,7 @@ function gsPing() {
                       var _sid = _sec ? _sec.id.replace(/^s-/,'') : '';
                       if (_sid === 'rose' && typeof buildTeamsGrid === 'function') { buildTeamsGrid(); if (typeof updateHeader === 'function') updateHeader(); }
                       else if (_sid === 'classifica' && typeof slimRenderClassifica === 'function') slimRenderClassifica();
-                      else if (_sid === 'stadio' && typeof slimRenderStadio === 'function') slimRenderStadio();
+                      else if (_sid === 'stadio') genericRenderStadio(window._currentTourneyKey || 'slim');
                     }, 300);
                   });
                 })(sq);
@@ -10892,6 +10892,79 @@ function slimRenderCalendario() {
   var _teams = admGetTeams(_t, _l);
   if (!_teams.length && typeof SLIM_TEAMS !== 'undefined') _teams = SLIM_TEAMS;
   calRenderGeneric(_t, _l, 'slim-calendario-body', _nG, _teams, 'slimRenderCalendario');
+}
+function genericRenderStadio(torneoKey, legaKey) {
+  if (!torneoKey) torneoKey = window._currentTourneyKey || 'slim';
+  if (!legaKey) legaKey = window.currentLeagueKey || 'it';
+  var containerEl = null;
+  if (torneoKey === 'slim') containerEl = document.getElementById('slim-stadio-body');
+  else if (torneoKey === 'tsm') containerEl = document.getElementById('tsm-stadio-body');
+  else containerEl = document.getElementById(torneoKey+'-stadio-body');
+  if (!containerEl) return;
+
+  var stadio = null;
+  var squadre = null;
+  var calcFunc = null;
+  var _ST = null;
+
+  if (torneoKey === 'slim') {
+    stadio = slimGetStadio();
+    squadre = SLIM_TEAMS||[];
+    calcFunc = slimCalcStandings;
+    var _stR = localStorage.getItem('adm_stadio_table_slim');
+    _ST = (_stR ? (function(){try{return JSON.parse(_stR);}catch(e){return null;}})() : null) || SLIM_STADIO_TABLE || {};
+  } else if (torneoKey === 'tsm') {
+    stadio = tsmGetStadio();
+    squadre = (typeof TSM_TEAMS_IT !== 'undefined' && TSM_TEAMS_IT.length) ? TSM_TEAMS_IT : SLIM_TEAMS || [];
+    calcFunc = tsmCalcStandings;
+    var _stG = localStorage.getItem('adm_stadio_table_tsm') || localStorage.getItem('adm_stadio_table_global');
+    _ST = (_stG ? (function(){try{return JSON.parse(_stG);}catch(e){return null;}})() : null) || TSM_STADIO_TABLE_IT || {};
+  } else {
+    var cfgKey = 'adm_config_'+torneoKey;
+    var config = JSON.parse(localStorage.getItem(cfgKey) || '{}');
+    stadio = {};
+    Object.keys(localStorage).forEach(function(k) {
+      if (k.startsWith('adm_stadio_'+torneoKey)) {
+        var v = JSON.parse(localStorage.getItem(k)||'{}');
+        Object.assign(stadio, v);
+      }
+    });
+    var teamsKey = 'adm_squadre_'+torneoKey;
+    squadre = JSON.parse(localStorage.getItem(teamsKey)||'[]');
+    calcFunc = null;
+    var _stGlobal = localStorage.getItem('adm_stadio_table_'+torneoKey);
+    _ST = (_stGlobal ? JSON.parse(_stGlobal) : {});
+  }
+
+  if (!stadio) stadio = {};
+  if (!_ST) _ST = {};
+
+  var stadioN = {};
+  Object.keys(stadio).forEach(function(k) { stadioN[k] = stadio[k]; stadioN[k.toUpperCase()] = stadio[k]; });
+  stadio = stadioN;
+
+  var _lvK = Object.keys(_ST).sort(function(a,b){return +a-+b;});
+  var _tbl = '<div style="margin-bottom:12px">'
+    +'<button onclick="var n=this.nextElementSibling;n.style.display=n.style.display==\'none\'?\'block\':\'none\'" style="padding:5px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;color:var(--text2);font-size:11px;font-weight:700;cursor:pointer">&#128202; Tabella Stadio</button>'
+    +'<div style="display:none;margin-top:8px;overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:11px">'
+    +'<thead><tr style="background:var(--bg2);font-size:9px;font-weight:800;text-transform:uppercase;color:var(--text3)">'
+    +'<th style="padding:6px 8px;text-align:left">Lv</th><th style="padding:6px 8px;text-align:left">Nome</th>'
+    +'<th style="padding:6px 8px;text-align:center">Posti</th>'
+    +'<th style="padding:6px 8px;text-align:center;color:#10b981">V cr</th>'
+    +'<th style="padding:6px 8px;text-align:center;color:#3b82f6">P cr</th>'
+    +'<th style="padding:6px 8px;text-align:center;color:#ef4444">S cr</th>'
+    +'</tr></thead><tbody>'
+    +_lvK.map(function(lv){var s=_ST[lv]||{};return '<tr style="border-bottom:1px solid var(--border)"><td style="padding:6px 8px;font-family:\'Bebas Neue\',sans-serif;font-size:14px;color:#f59e0b">'+lv+'</td><td style="padding:6px 8px;color:var(--text2);font-style:italic">'+(s.nome||'—')+'</td><td style="padding:6px 8px;text-align:center;color:var(--text2)">'+(s.posti||'—')+'</td><td style="padding:6px 8px;text-align:center;color:#10b981;font-weight:700">+'+(s.cr_vittoria||0)+'</td><td style="padding:6px 8px;text-align:center;color:#3b82f6;font-weight:700">+'+(s.cr_pareggio||0)+'</td><td style="padding:6px 8px;text-align:center;color:#ef4444;font-weight:700">'+(s.cr_sconfitta||0)+'</td></tr>';}).join('')
+    +'</tbody></table></div></div>';
+
+  var res = calcFunc ? calcFunc() : {standings: {}};
+  containerEl.innerHTML = _tbl + squadre.slice().sort(function(a,b){return a.localeCompare(b);}).map(function(team){
+    var lv = stadio[team] || stadio[team.toUpperCase()] || 1;
+    var st = _ST[String(lv)] || {};
+    var cr = (res.standings[team]||{}).cr || 0;
+    var pct = Math.round(lv/8*100);
+    return '<div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin-bottom:8px"><div style="display:flex;align-items:center;gap:10px;margin-bottom:8px"><div style="display:flex;align-items:center;gap:6px;font-weight:700;font-size:13px;flex:1">'+((typeof FANTASY_LOGOS!=='undefined'&&FANTASY_LOGOS[team])?'<img src="'+FANTASY_LOGOS[team]+'" style="width:20px;height:20px;object-fit:contain">':'')+_teamCase(team)+'</div><div style="font-family:\'Bebas Neue\';font-size:20px;color:#f59e0b">Lv '+lv+(st.nome?' — '+st.nome:'')+'</div><div style="font-family:\'Bebas Neue\';font-size:18px;color:#10b981">'+cr.toFixed(1)+' cr</div></div><div style="height:4px;background:var(--bg2);border-radius:2px;margin-bottom:8px"><div style="height:4px;background:linear-gradient(90deg,#10b981,#f59e0b);border-radius:2px;width:'+pct+'%"></div></div><div style="display:flex;gap:12px;font-size:10px;color:var(--text2)"><span>Posti: <b style="color:var(--text)">'+(st.posti||'--')+'</b></span><span>V: <b style="color:#10b981">+'+(st.cr_vittoria||0)+' cr</b></span><span>P: <b style="color:#3b82f6">+'+(st.cr_pareggio||0)+' cr</b></span><span>S: <b style="color:#ef4444">'+(st.cr_sconfitta||0)+' cr</b></span></div></div>';
+  }).join('');
 }
 function slimRenderStadio(){var el=document.getElementById('slim-stadio-body');if(!el)return;var stadio=slimGetStadio();
   var _tk=window._currentTourneyKey||'slim';
@@ -17041,6 +17114,79 @@ function slimRenderCalendario() {
   var _teams = admGetTeams(_t, _l);
   if (!_teams.length && typeof SLIM_TEAMS !== 'undefined') _teams = SLIM_TEAMS;
   calRenderGeneric(_t, _l, 'slim-calendario-body', _nG, _teams, 'slimRenderCalendario');
+}
+function genericRenderStadio(torneoKey, legaKey) {
+  if (!torneoKey) torneoKey = window._currentTourneyKey || 'slim';
+  if (!legaKey) legaKey = window.currentLeagueKey || 'it';
+  var containerEl = null;
+  if (torneoKey === 'slim') containerEl = document.getElementById('slim-stadio-body');
+  else if (torneoKey === 'tsm') containerEl = document.getElementById('tsm-stadio-body');
+  else containerEl = document.getElementById(torneoKey+'-stadio-body');
+  if (!containerEl) return;
+
+  var stadio = null;
+  var squadre = null;
+  var calcFunc = null;
+  var _ST = null;
+
+  if (torneoKey === 'slim') {
+    stadio = slimGetStadio();
+    squadre = SLIM_TEAMS||[];
+    calcFunc = slimCalcStandings;
+    var _stR = localStorage.getItem('adm_stadio_table_slim');
+    _ST = (_stR ? (function(){try{return JSON.parse(_stR);}catch(e){return null;}})() : null) || SLIM_STADIO_TABLE || {};
+  } else if (torneoKey === 'tsm') {
+    stadio = tsmGetStadio();
+    squadre = (typeof TSM_TEAMS_IT !== 'undefined' && TSM_TEAMS_IT.length) ? TSM_TEAMS_IT : SLIM_TEAMS || [];
+    calcFunc = tsmCalcStandings;
+    var _stG = localStorage.getItem('adm_stadio_table_tsm') || localStorage.getItem('adm_stadio_table_global');
+    _ST = (_stG ? (function(){try{return JSON.parse(_stG);}catch(e){return null;}})() : null) || TSM_STADIO_TABLE_IT || {};
+  } else {
+    var cfgKey = 'adm_config_'+torneoKey;
+    var config = JSON.parse(localStorage.getItem(cfgKey) || '{}');
+    stadio = {};
+    Object.keys(localStorage).forEach(function(k) {
+      if (k.startsWith('adm_stadio_'+torneoKey)) {
+        var v = JSON.parse(localStorage.getItem(k)||'{}');
+        Object.assign(stadio, v);
+      }
+    });
+    var teamsKey = 'adm_squadre_'+torneoKey;
+    squadre = JSON.parse(localStorage.getItem(teamsKey)||'[]');
+    calcFunc = null;
+    var _stGlobal = localStorage.getItem('adm_stadio_table_'+torneoKey);
+    _ST = (_stGlobal ? JSON.parse(_stGlobal) : {});
+  }
+
+  if (!stadio) stadio = {};
+  if (!_ST) _ST = {};
+
+  var stadioN = {};
+  Object.keys(stadio).forEach(function(k) { stadioN[k] = stadio[k]; stadioN[k.toUpperCase()] = stadio[k]; });
+  stadio = stadioN;
+
+  var _lvK = Object.keys(_ST).sort(function(a,b){return +a-+b;});
+  var _tbl = '<div style="margin-bottom:12px">'
+    +'<button onclick="var n=this.nextElementSibling;n.style.display=n.style.display==\'none\'?\'block\':\'none\'" style="padding:5px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;color:var(--text2);font-size:11px;font-weight:700;cursor:pointer">&#128202; Tabella Stadio</button>'
+    +'<div style="display:none;margin-top:8px;overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:11px">'
+    +'<thead><tr style="background:var(--bg2);font-size:9px;font-weight:800;text-transform:uppercase;color:var(--text3)">'
+    +'<th style="padding:6px 8px;text-align:left">Lv</th><th style="padding:6px 8px;text-align:left">Nome</th>'
+    +'<th style="padding:6px 8px;text-align:center">Posti</th>'
+    +'<th style="padding:6px 8px;text-align:center;color:#10b981">V cr</th>'
+    +'<th style="padding:6px 8px;text-align:center;color:#3b82f6">P cr</th>'
+    +'<th style="padding:6px 8px;text-align:center;color:#ef4444">S cr</th>'
+    +'</tr></thead><tbody>'
+    +_lvK.map(function(lv){var s=_ST[lv]||{};return '<tr style="border-bottom:1px solid var(--border)"><td style="padding:6px 8px;font-family:\'Bebas Neue\',sans-serif;font-size:14px;color:#f59e0b">'+lv+'</td><td style="padding:6px 8px;color:var(--text2);font-style:italic">'+(s.nome||'—')+'</td><td style="padding:6px 8px;text-align:center;color:var(--text2)">'+(s.posti||'—')+'</td><td style="padding:6px 8px;text-align:center;color:#10b981;font-weight:700">+'+(s.cr_vittoria||0)+'</td><td style="padding:6px 8px;text-align:center;color:#3b82f6;font-weight:700">+'+(s.cr_pareggio||0)+'</td><td style="padding:6px 8px;text-align:center;color:#ef4444;font-weight:700">'+(s.cr_sconfitta||0)+'</td></tr>';}).join('')
+    +'</tbody></table></div></div>';
+
+  var res = calcFunc ? calcFunc() : {standings: {}};
+  containerEl.innerHTML = _tbl + squadre.slice().sort(function(a,b){return a.localeCompare(b);}).map(function(team){
+    var lv = stadio[team] || stadio[team.toUpperCase()] || 1;
+    var st = _ST[String(lv)] || {};
+    var cr = (res.standings[team]||{}).cr || 0;
+    var pct = Math.round(lv/8*100);
+    return '<div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin-bottom:8px"><div style="display:flex;align-items:center;gap:10px;margin-bottom:8px"><div style="display:flex;align-items:center;gap:6px;font-weight:700;font-size:13px;flex:1">'+((typeof FANTASY_LOGOS!=='undefined'&&FANTASY_LOGOS[team])?'<img src="'+FANTASY_LOGOS[team]+'" style="width:20px;height:20px;object-fit:contain">':'')+_teamCase(team)+'</div><div style="font-family:\'Bebas Neue\';font-size:20px;color:#f59e0b">Lv '+lv+(st.nome?' — '+st.nome:'')+'</div><div style="font-family:\'Bebas Neue\';font-size:18px;color:#10b981">'+cr.toFixed(1)+' cr</div></div><div style="height:4px;background:var(--bg2);border-radius:2px;margin-bottom:8px"><div style="height:4px;background:linear-gradient(90deg,#10b981,#f59e0b);border-radius:2px;width:'+pct+'%"></div></div><div style="display:flex;gap:12px;font-size:10px;color:var(--text2)"><span>Posti: <b style="color:var(--text)">'+(st.posti||'--')+'</b></span><span>V: <b style="color:#10b981">+'+(st.cr_vittoria||0)+' cr</b></span><span>P: <b style="color:#3b82f6">+'+(st.cr_pareggio||0)+' cr</b></span><span>S: <b style="color:#ef4444">'+(st.cr_sconfitta||0)+' cr</b></span></div></div>';
+  }).join('');
 }
 function slimRenderStadio(){var el=document.getElementById('slim-stadio-body');if(!el)return;var stadio=slimGetStadio();
   var _tk=window._currentTourneyKey||'slim';
