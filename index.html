@@ -1,4 +1,4 @@
-<!-- build:20260606_0736 -->
+<!-- build:20260606_0742 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260606_0736';
+  var BUILD='20260606_0742';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -4765,7 +4765,6 @@ function _gsCallImpl(params, callback) {
     timedOut = true;
     delete window[cbName];
     if(script && script.parentNode) document.body.removeChild(script);
-    console.error('[gsCall] TIMEOUT:', params.action);
     if(callback) callback(new Error('JSONP timeout'), null);
   }, 10000);
 
@@ -4775,7 +4774,6 @@ function _gsCallImpl(params, callback) {
     clearTimeout(timeoutId);
     delete window[cbName];
     if(script && script.parentNode) document.body.removeChild(script);
-    console.log('[gsCall] SUCCESS:', params.action, data);
     if(callback) callback(null, data);
   };
 
@@ -4793,10 +4791,8 @@ function _gsCallImpl(params, callback) {
     clearTimeout(timeoutId);
     delete window[cbName];
     document.body.removeChild(script);
-    console.error('[gsCall] ERROR:', params.action);
     if(callback) callback(new Error('JSONP request failed'), null);
   };
-  console.log('[gsCall] Chiamando:', params.action, 'callback=' + cbName);
   document.body.appendChild(script);
 }
 
@@ -4909,7 +4905,6 @@ function gsPing() {
     var lbl = document.getElementById('gs-status-admin-label');
     if (lbl) { lbl.textContent=label; lbl.style.color=GS_ONLINE?'#10b981':'var(--text3)'; }
     if (!GS_ONLINE) {
-      console.log('GSheets offline o non raggiungibile - uso localStorage');
     }
     // Aggiorna contatori dashboard
     setTimeout(function(){ updateDashboardCounters(); updateLogosTornei(); }, 500);
@@ -7421,7 +7416,6 @@ function admSaveMulteEl(el) {
 }
 
 function showAdminSection(id, el) {
-  console.log('[showAdminSection] id=' + id);
   if (!id) return;
   document.querySelectorAll('.adm-section').forEach(function(s){ s.style.display='none'; });
   var sec = document.getElementById('adm-s-'+id);
@@ -7464,10 +7458,7 @@ function showAdminSection(id, el) {
   var _nsw=document.getElementById('adm-rose-new-sq-wrap'); if(_nsw) _nsw.style.display='none';
   if (id==='tornei') admRenderTornei();
   if (id==='utenti') {
-    console.log('[showAdminSection] Entrando nel blocco utenti');
-    console.log('[admInit] Caricando utenti da GSheets...');
     gsCall({action:'getUtenti'}, function(err, data) {
-      console.log('[admInit] Risposta getUtenti:', {err: err, ok: data && data.ok, count: data && data.data && data.data.length});
       if (!err && data && data.ok && data.data) {
         ADMIN_USERS = data.data;
         localStorage.setItem('admin_users', JSON.stringify(ADMIN_USERS));
@@ -7477,7 +7468,6 @@ function showAdminSection(id, el) {
       }
       // Carica anche richieste pendenti
       gsCall({action:'getPendingRequests'}, function(e2, d2) {
-        console.log('[admInit] Risposta getPendingRequests:', {err: e2, ok: d2 && d2.ok, count: d2 && d2.data && d2.data.length});
         if (!e2 && d2 && d2.ok) {
           localStorage.setItem('_pendingRequests', JSON.stringify(d2.data || []));
         }
@@ -7515,7 +7505,6 @@ function showAdminSection(id, el) {
 }
 
 function admInitPage() {
-  console.log('[admInitPage] Inizializzazione admin');
   showAdminSection('utenti', document.getElementById('adm-nav-utenti'));
 }
 
