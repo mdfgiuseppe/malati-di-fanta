@@ -1,4 +1,4 @@
-<!-- build:20260606_0757 -->
+<!-- build:20260606_0800 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260606_0757';
+  var BUILD='20260606_0800';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
@@ -10915,8 +10915,8 @@ document.addEventListener('DOMContentLoaded',function(){
       } catch(e) {}
     });
   })();
-  // Ping Google Sheets per verificare connessione
-  gsPing();
+  // DISABILITATO: Ping Google Sheets per verificare connessione
+  // gsPing();
   // Carica logo principale app da localStorage/GSheets
   var _logoMain = localStorage.getItem('adm_logo_main');
   if (_logoMain) _applyLogoMain(_logoMain);
@@ -10925,7 +10925,7 @@ document.addEventListener('DOMContentLoaded',function(){
     var _u = localStorage.getItem('adm_logo_torneo_'+k);
     if (_u) { var _p=document.getElementById('adm-logo-torneo-'+k+'-prev'); if(_p) _p.src=_u; }
   });
-  updateLogosTornei();
+  // DISABILITATO: updateLogosTornei();
   if (typeof applyTorneoColors === 'function') applyTorneoColors();
   if (typeof gsLoadKey === 'function') {
     gsLoadKey('adm_logo_main', function(val) {
@@ -17016,8 +17016,8 @@ document.addEventListener('DOMContentLoaded',function(){
       } catch(e) {}
     });
   })();
-  // Ping Google Sheets per verificare connessione
-  gsPing();
+  // DISABILITATO: Ping Google Sheets per verificare connessione
+  // gsPing();
   // Carica logo principale app da localStorage/GSheets
   var _logoMain = localStorage.getItem('adm_logo_main');
   if (_logoMain) _applyLogoMain(_logoMain);
@@ -17026,7 +17026,7 @@ document.addEventListener('DOMContentLoaded',function(){
     var _u = localStorage.getItem('adm_logo_torneo_'+k);
     if (_u) { var _p=document.getElementById('adm-logo-torneo-'+k+'-prev'); if(_p) _p.src=_u; }
   });
-  updateLogosTornei();
+  // DISABILITATO: updateLogosTornei();
   if (typeof applyTorneoColors === 'function') applyTorneoColors();
   if (typeof gsLoadKey === 'function') {
     gsLoadKey('adm_logo_main', function(val) {
