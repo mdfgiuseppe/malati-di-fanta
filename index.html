@@ -1,4 +1,4 @@
-<!-- build:20260606_0800 -->
+<!-- build:20260606_1143 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260606_0800';
+  var BUILD='20260606_1143';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
@@ -10915,8 +10915,8 @@ document.addEventListener('DOMContentLoaded',function(){
       } catch(e) {}
     });
   })();
-  // DISABILITATO: Ping Google Sheets per verificare connessione
-  // gsPing();
+    // Ping Google Sheets per verificare connessione
+  gsPing();
   // Carica logo principale app da localStorage/GSheets
   var _logoMain = localStorage.getItem('adm_logo_main');
   if (_logoMain) _applyLogoMain(_logoMain);
@@ -17016,8 +17016,8 @@ document.addEventListener('DOMContentLoaded',function(){
       } catch(e) {}
     });
   })();
-  // DISABILITATO: Ping Google Sheets per verificare connessione
-  // gsPing();
+    // Ping Google Sheets per verificare connessione
+  gsPing();
   // Carica logo principale app da localStorage/GSheets
   var _logoMain = localStorage.getItem('adm_logo_main');
   if (_logoMain) _applyLogoMain(_logoMain);
