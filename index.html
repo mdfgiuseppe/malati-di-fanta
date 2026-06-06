@@ -1,4 +1,4 @@
-<!-- build:20260606_1652 -->
+<!-- build:20260606_1703 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260606_1652';
+  var BUILD='20260606_1703';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
@@ -5030,11 +5030,11 @@ function gsPing() {
           }
         });
       });
-      // Carica tutte le chiavi per ogni torneo e lega (rose, crediti, stadio, sponsor, infermeria)
-      var _at = JSON.parse(localStorage.getItem('admin_tornei')||'[]');
-      // Aggiungi tornei di default se admin_tornei è vuoto
-      if (!_at.length) _at = [{key:'slim',leghe:[{key:'it'}]},{key:'tsm',leghe:[{key:'it'}]}];
-      var _roseKeys = [];
+      // LAZY LOADING: disabilitato caricamento batch all'avvio - carica dati solo quando apri sezione admin
+      // var _at = JSON.parse(localStorage.getItem('admin_tornei')||'[]');
+      // if (!_at.length) _at = [{key:'slim',leghe:[{key:'it'}]},{key:'tsm',leghe:[{key:'it'}]}];
+      // var _roseKeys = [];
+      /*
       _at.forEach(function(t) {
         // Stagione corrente
         gsLoadKey('stagione_corrente_'+t.key, function(val) {
@@ -5243,6 +5243,7 @@ function gsPing() {
           })(t.key, l.key);
         });
       });
+      */
     }
     // ──────────────────────────────────────────────────────────────────
   });
@@ -8828,6 +8829,43 @@ function admLoadRoseSquadre() {
   if (wrap) wrap.style.display = (torneoKey && legaKey) ? 'flex' : 'none';
   var inp = document.getElementById('adm-rose-new-sq-inp');
   if (inp) inp.value = '';
+  // Carica lazy i dati delle rose per questo torneo/lega
+  if (torneoKey && legaKey && GS_ONLINE) admLazyLoadRoseData(torneoKey, legaKey);
+}
+function admLazyLoadRoseData(torneoKey, legaKey) {
+  var roseKey = 'adm_rose_'+torneoKey+'_'+legaKey;
+  gsLoadKey(roseKey, function(val) {
+    if (val === null || val === undefined) return;
+    var str = typeof val === 'string' ? val : JSON.stringify(val);
+    localStorage.setItem(roseKey, str);
+    if (torneoKey === 'slim' && legaKey === 'it') {
+      localStorage.setItem('adm_rose_slim_it', str);
+      try {
+        var parsed = typeof val === 'string' ? JSON.parse(val) : val;
+        if (typeof TEAMS_ROSE !== 'undefined') Object.keys(parsed).forEach(function(sq){ TEAMS_ROSE[sq]=parsed[sq]; });
+        if (typeof window._TEAMS_ROSE_IT !== 'undefined') Object.keys(parsed).forEach(function(sq){ window._TEAMS_ROSE_IT[sq]=parsed[sq]; });
+      } catch(e) {}
+    }
+    if (torneoKey === 'tsm' && legaKey === 'it') {
+      try {
+        var parsed = typeof val === 'string' ? JSON.parse(val) : val;
+        if (typeof TSM_ROSE_IT !== 'undefined') Object.keys(parsed).forEach(function(sq){ TSM_ROSE_IT[sq]=parsed[sq]; });
+      } catch(e) {}
+    }
+  });
+  // Carica crediti base
+  gsLoadKey('adm_crediti_base_'+torneoKey+'_'+legaKey, function(val) {
+    if (val === null) return;
+    var str = typeof val === 'string' ? val : JSON.stringify(val);
+    localStorage.setItem('adm_crediti_base_'+torneoKey+'_'+legaKey, str);
+    try { syncCreditiToUser(torneoKey, legaKey, typeof val==='string'?JSON.parse(val):val); } catch(e) {}
+  });
+  // Carica infermeria
+  gsLoadKey('adm_infermeria_'+torneoKey+'_'+legaKey, function(val) {
+    if (val === null) return;
+    var str = typeof val === 'string' ? val : JSON.stringify(val);
+    localStorage.setItem('adm_infermeria_'+torneoKey+'_'+legaKey, str);
+  });
 }
 function admGetTeams(torneoKey, legaKey) {
   if (torneoKey==='slim') {
