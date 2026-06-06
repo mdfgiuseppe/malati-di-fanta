@@ -1,4 +1,4 @@
-<!-- build:20260606_1230 -->
+<!-- build:20260606_1244 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260606_1230';
+  var BUILD='20260606_1244';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
@@ -1060,6 +1060,13 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
       <!-- Sottotitolo -->
       <div id="lega-dash-subtitle" style="position:relative;z-index:2;font-size:clamp(9px,2.5vw,11px);font-weight:800;letter-spacing:clamp(2px,1vw,4px);text-transform:uppercase;color:#10b981">Fantacalcio Manageriale · Modalità Mantra</div>
 
+      <!-- Campione -->
+      <div id="lega-dash-campione" style="position:relative;z-index:2;margin-top:clamp(24px,6vw,40px);text-align:center;display:none">
+        <div style="font-size:clamp(9px,2.5vw,11px);font-weight:800;letter-spacing:clamp(2px,1vw,4px);text-transform:uppercase;color:#10b981;margin-bottom:clamp(10px,3vw,16px)">Campione</div>
+        <img id="lega-dash-campione-logo" src="" style="width:clamp(60px,20vw,100px);height:clamp(60px,20vw,100px);object-fit:contain;margin-bottom:clamp(10px,2vw,16px);display:block;margin-left:auto;margin-right:auto">
+        <div id="lega-dash-campione-nome" style="font-size:clamp(14px,4vw,20px);font-weight:700;color:var(--text)">—</div>
+      </div>
+
     </div>
 
     <style>
@@ -1468,6 +1475,13 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 
       <!-- Sottotitolo -->
       <div style="position:relative;z-index:2;font-size:clamp(9px,2.5vw,11px);font-weight:800;letter-spacing:clamp(2px,1vw,4px);text-transform:uppercase;color:#10b981">Fantacalcio Manageriale · Modalità Classic</div>
+
+      <!-- Campione -->
+      <div id="tsm-lega-dash-campione" style="position:relative;z-index:2;margin-top:clamp(24px,6vw,40px);text-align:center;display:none">
+        <div style="font-size:clamp(9px,2.5vw,11px);font-weight:800;letter-spacing:clamp(2px,1vw,4px);text-transform:uppercase;color:#10b981;margin-bottom:clamp(10px,3vw,16px)">Campione</div>
+        <img id="tsm-lega-dash-campione-logo" src="" style="width:clamp(60px,20vw,100px);height:clamp(60px,20vw,100px);object-fit:contain;margin-bottom:clamp(10px,2vw,16px);display:block;margin-left:auto;margin-right:auto">
+        <div id="tsm-lega-dash-campione-nome" style="font-size:clamp(14px,4vw,20px);font-weight:700;color:var(--text)">—</div>
+      </div>
 
     </div>
 
@@ -4107,6 +4121,32 @@ function _updateLegaDashboard(leagueKey) {
   if (bcLogoEl && _logoFinal) bcLogoEl.src = _logoFinal;
   var lgLogoEl = document.getElementById('league-logo');
   if (lgLogoEl && _logoFinal) lgLogoEl.src = _logoFinal;
+  // Campione
+  var _campEl = document.getElementById(_admTK==='tsm'?'tsm-lega-dash-campione':'lega-dash-campione');
+  if (_campEl) {
+    var _standRes = (_admTK === 'tsm' && typeof tsmCalcStandings === 'function') ? tsmCalcStandings() : ((typeof slimCalcStandings === 'function') ? slimCalcStandings() : null);
+    if (_standRes && _standRes.sorted && _standRes.sorted.length > 0 && _standRes.giocate > 0) {
+      var _totGiornate = TSM_TOTAL_GIORNATE || 38;
+      if (_admTK === 'slim') {
+        var _slimCalRaw = localStorage.getItem('adm_cal_'+_admTK+'_'+_realLK);
+        var _slimCal = _slimCalRaw ? (function(){try{return JSON.parse(_slimCalRaw);}catch(e){return{};}})() : {};
+        _totGiornate = Object.keys(_slimCal).filter(function(g){return Object.values(_slimCal[g]||{}).some(function(v){return v;});}).length || 38;
+      }
+      if (_standRes.giocate >= _totGiornate) {
+        var _campTeam = _standRes.sorted[0];
+        var _campLogo = FANTASY_LOGOS[_campTeam] || FANTASY_LOGOS[_campTeam.toUpperCase()] || '';
+        var _campLogoEl = document.getElementById(_admTK==='tsm'?'tsm-lega-dash-campione-logo':'lega-dash-campione-logo');
+        var _campNomeEl = document.getElementById(_admTK==='tsm'?'tsm-lega-dash-campione-nome':'lega-dash-campione-nome');
+        if (_campLogoEl && _campLogo) _campLogoEl.src = _campLogo;
+        if (_campNomeEl) _campNomeEl.textContent = _campTeam;
+        _campEl.style.display = 'block';
+      } else {
+        _campEl.style.display = 'none';
+      }
+    } else {
+      _campEl.style.display = 'none';
+    }
+  }
 }
 
 
@@ -11843,6 +11883,32 @@ function _updateLegaDashboard(leagueKey) {
   if (bcLogoEl && _logoFinal) bcLogoEl.src = _logoFinal;
   var lgLogoEl = document.getElementById('league-logo');
   if (lgLogoEl && _logoFinal) lgLogoEl.src = _logoFinal;
+  // Campione
+  var _campEl = document.getElementById(_admTK==='tsm'?'tsm-lega-dash-campione':'lega-dash-campione');
+  if (_campEl) {
+    var _standRes = (_admTK === 'tsm' && typeof tsmCalcStandings === 'function') ? tsmCalcStandings() : ((typeof slimCalcStandings === 'function') ? slimCalcStandings() : null);
+    if (_standRes && _standRes.sorted && _standRes.sorted.length > 0 && _standRes.giocate > 0) {
+      var _totGiornate = TSM_TOTAL_GIORNATE || 38;
+      if (_admTK === 'slim') {
+        var _slimCalRaw = localStorage.getItem('adm_cal_'+_admTK+'_'+_realLK);
+        var _slimCal = _slimCalRaw ? (function(){try{return JSON.parse(_slimCalRaw);}catch(e){return{};}})() : {};
+        _totGiornate = Object.keys(_slimCal).filter(function(g){return Object.values(_slimCal[g]||{}).some(function(v){return v;});}).length || 38;
+      }
+      if (_standRes.giocate >= _totGiornate) {
+        var _campTeam = _standRes.sorted[0];
+        var _campLogo = FANTASY_LOGOS[_campTeam] || FANTASY_LOGOS[_campTeam.toUpperCase()] || '';
+        var _campLogoEl = document.getElementById(_admTK==='tsm'?'tsm-lega-dash-campione-logo':'lega-dash-campione-logo');
+        var _campNomeEl = document.getElementById(_admTK==='tsm'?'tsm-lega-dash-campione-nome':'lega-dash-campione-nome');
+        if (_campLogoEl && _campLogo) _campLogoEl.src = _campLogo;
+        if (_campNomeEl) _campNomeEl.textContent = _campTeam;
+        _campEl.style.display = 'block';
+      } else {
+        _campEl.style.display = 'none';
+      }
+    } else {
+      _campEl.style.display = 'none';
+    }
+  }
 }
 
 
