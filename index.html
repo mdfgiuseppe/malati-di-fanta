@@ -1,4 +1,4 @@
-<!-- build:20260606_1318 -->
+<!-- build:20260606_1319 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260606_1318';
+  var BUILD='20260606_1319';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
@@ -4555,7 +4555,9 @@ function tsmRenderStadio() {
     +_lvK.map(function(lv){var s=ST[lv]||{};return '<tr style="border-bottom:1px solid var(--border)"><td style="padding:6px 8px;font-family:\'Bebas Neue\',sans-serif;font-size:14px;color:#f59e0b">'+lv+'</td><td style="padding:6px 8px;color:var(--text2);font-style:italic">'+(s.nome||'—')+'</td><td style="padding:6px 8px;text-align:center;color:var(--text2)">'+(s.posti||'—')+'</td><td style="padding:6px 8px;text-align:center;color:#10b981;font-weight:700">+'+(s.cr_vittoria||0)+'</td><td style="padding:6px 8px;text-align:center;color:#3b82f6;font-weight:700">+'+(s.cr_pareggio||0)+'</td><td style="padding:6px 8px;text-align:center;color:#ef4444;font-weight:700">'+(s.cr_sconfitta||0)+'</td></tr>';}).join('')
     +'</tbody></table></div></div>';
   el.innerHTML = _tbl + tsmTeams3.slice().sort(function(a,b){
-    return (stadio[b]||stadio[b.toUpperCase()]||1)-(stadio[a]||stadio[a.toUpperCase()]||1);
+    var lvDiff = (stadio[b]||stadio[b.toUpperCase()]||1)-(stadio[a]||stadio[a.toUpperCase()]||1);
+    if(lvDiff!==0) return lvDiff;
+    return a.localeCompare(b);
   }).map(function(team){
     var lv = stadio[team] || stadio[team.toUpperCase()] || 1;
     var st = ST[String(lv)] || {};
@@ -12337,7 +12339,9 @@ function tsmRenderStadio() {
     +_lvK.map(function(lv){var s=ST[lv]||{};return '<tr style="border-bottom:1px solid var(--border)"><td style="padding:6px 8px;font-family:\'Bebas Neue\',sans-serif;font-size:14px;color:#f59e0b">'+lv+'</td><td style="padding:6px 8px;color:var(--text2);font-style:italic">'+(s.nome||'—')+'</td><td style="padding:6px 8px;text-align:center;color:var(--text2)">'+(s.posti||'—')+'</td><td style="padding:6px 8px;text-align:center;color:#10b981;font-weight:700">+'+(s.cr_vittoria||0)+'</td><td style="padding:6px 8px;text-align:center;color:#3b82f6;font-weight:700">+'+(s.cr_pareggio||0)+'</td><td style="padding:6px 8px;text-align:center;color:#ef4444;font-weight:700">'+(s.cr_sconfitta||0)+'</td></tr>';}).join('')
     +'</tbody></table></div></div>';
   el.innerHTML = _tbl + tsmTeams3.slice().sort(function(a,b){
-    return (stadio[b]||stadio[b.toUpperCase()]||1)-(stadio[a]||stadio[a.toUpperCase()]||1);
+    var lvDiff = (stadio[b]||stadio[b.toUpperCase()]||1)-(stadio[a]||stadio[a.toUpperCase()]||1);
+    if(lvDiff!==0) return lvDiff;
+    return a.localeCompare(b);
   }).map(function(team){
     var lv = stadio[team] || stadio[team.toUpperCase()] || 1;
     var st = ST[String(lv)] || {};
