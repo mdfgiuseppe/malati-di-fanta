@@ -1,4 +1,4 @@
-<!-- build:20260606_0752 -->
+<!-- build:20260606_0757 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,16 +9,10 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260606_0752';
+  var BUILD='20260606_0757';
   var stored=localStorage.getItem('_mdf_build');
-  if(stored && stored!==BUILD){
-    localStorage.setItem('_mdf_build',BUILD);
-    var clean=location.pathname+'?v='+BUILD;
-    location.replace(clean);
-  } else {
-    localStorage.setItem('_mdf_build',BUILD);
-    if(location.search) history.replaceState(null,'',location.pathname);
-  }
+  localStorage.setItem('_mdf_build',BUILD);
+  if(location.search) history.replaceState(null,'',location.pathname);
   if('serviceWorker' in navigator){
     window.addEventListener('load',function(){
       navigator.serviceWorker.register('/malati-di-fanta/sw.js',{scope:'/malati-di-fanta/',updateViaCache:'none'})
