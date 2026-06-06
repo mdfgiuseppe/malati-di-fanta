@@ -1,4 +1,4 @@
-<!-- build:20260606_0749 -->
+<!-- build:20260606_0752 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260606_0749';
+  var BUILD='20260606_0752';
   var stored=localStorage.getItem('_mdf_build');
   if(stored && stored!==BUILD){
     localStorage.setItem('_mdf_build',BUILD);
@@ -3001,11 +3001,11 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
     </div>
     <div style="padding:24px">
       <div style="margin-bottom:14px">
-        <label style="display:block;font-size:10px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--text2);margin-bottom:6px">Email o Username</label>
+        <label for="login-user" style="display:block;font-size:10px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--text2);margin-bottom:6px">Email o Username</label>
         <input id="login-user" type="text" autocomplete="username" placeholder="es. marco.rossi" style="width:100%;padding:10px 12px;background:var(--bg2);border:1.5px solid var(--border2);border-radius:9px;color:var(--text);font-family:'Barlow',sans-serif;font-size:13px;outline:none;transition:border .2s" onfocus="this.style.borderColor='#10b981'" onblur="this.style.borderColor='var(--border2)'" onkeydown="if(event.key==='Enter')doLogin()">
       </div>
       <div style="margin-bottom:20px">
-        <label style="display:block;font-size:10px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--text2);margin-bottom:6px">Password</label>
+        <label for="login-pass" style="display:block;font-size:10px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--text2);margin-bottom:6px">Password</label>
         <div style="position:relative">
           <input id="login-pass" type="password" autocomplete="current-password" placeholder="••••••••" style="width:100%;padding:10px 40px 10px 12px;background:var(--bg2);border:1.5px solid var(--border2);border-radius:9px;color:var(--text);font-family:'Barlow',sans-serif;font-size:13px;outline:none;transition:border .2s" onfocus="this.style.borderColor='#10b981'" onblur="this.style.borderColor='var(--border2)'" onkeydown="if(event.key==='Enter')doLogin()">
           <div onclick="var i=document.getElementById('login-pass');i.type=i.type==='password'?'text':'password';this.textContent=i.type==='password'?'👁':'🙈'" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);cursor:pointer;color:var(--text2);font-size:16px;user-select:none">👁</div>
