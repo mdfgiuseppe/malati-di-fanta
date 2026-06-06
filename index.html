@@ -1,4 +1,4 @@
-<!-- build:20260606_1338 -->
+<!-- build:20260606_1652 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260606_1338';
+  var BUILD='20260606_1652';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
@@ -4734,10 +4734,10 @@ function modSelLegaChange() {
 var GS_URL = 'https://script.google.com/macros/s/AKfycbx0E-fnzINJJRNnPlC3xc9vSArFIxwPNfsT_US6D6vZBQ_UkQG_-I9xA9m5X0nD1o51/exec';
 var GS_ONLINE = false; // diventa true dopo il primo ping riuscito
 
-// Throttling: max 15 richieste simultanee (aumentato per permettere caricamento utenti/richieste pendenti)
+// Throttling: max 50 richieste simultanee (letture sono safe, no conflitti di lock)
 var _gsQueue = [];
 var _gsInFlight = 0;
-var _gsMaxConcurrent = 15;
+var _gsMaxConcurrent = 50;
 
 function _gsProcessQueue() {
   if(_gsInFlight >= _gsMaxConcurrent || _gsQueue.length === 0) return;
@@ -4760,8 +4760,8 @@ var _gsCallbacks = {};
 var _gsCallId = 0;
 
 function gsCall(params, callback) {
-  // Se priority (saveKey) o se poche richieste in coda, fai subito
-  var isPriority = params.action && params.action.indexOf('save') === 0;
+  // Se priority (saveKey, rose amministratore) o se poche richieste in coda, fai subito
+  var isPriority = params.action && (params.action.indexOf('save') === 0 || params.key && params.key.indexOf('adm_rose_') === 0);
   if(isPriority || (_gsInFlight < _gsMaxConcurrent && _gsQueue.length === 0)) {
     _gsInFlight++;
     var wrappedCallback = function(err, data) {
@@ -4781,13 +4781,13 @@ function _gsCallImpl(params, callback) {
   var cbName = 'gsCb_' + Math.random().toString(36).substr(2, 9);
   var timedOut = false;
 
-  // Timeout di 10 secondi
+  // Timeout di 30 secondi (GSheet può essere lento, soprattutto con carichi alti)
   var timeoutId = setTimeout(function() {
     timedOut = true;
     delete window[cbName];
     if(script && script.parentNode) document.body.removeChild(script);
     if(callback) callback(new Error('JSONP timeout'), null);
-  }, 10000);
+  }, 30000);
 
   // Salva il callback nella finestra globale
   window[cbName] = function(data) {
