@@ -1,4 +1,4 @@
-<!-- build:20260606_1703 -->
+<!-- build:20260607_0822 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260606_1703';
+  var BUILD='20260607_0822';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
@@ -10539,7 +10539,21 @@ function enterLeague(tournament, leagueKey) {
       TEAMS_ROSE = JSON.parse(JSON.stringify(window._TEAMS_ROSE_IT));
     }
     // Se GSheets è online, scarica sempre la versione aggiornata (con scadenze e modifiche)
+    // IMPORTANTE: se localStorage è vuoto (es. dopo hard reset), carica SUBITO da GSheet per sincronizzare
     if (GS_ONLINE && typeof gsLoadKey === 'function') {
+      var _priority = !_roseStored ? true : false;
+      if (_priority) {
+        gsCall({action:'getKey', key:'adm_rose_slim_it'}, function(err, data) {
+          if (!err && data && data.ok && data.data) {
+            try {
+              var parsed = typeof data.data === 'string' ? JSON.parse(data.data) : data.data;
+              localStorage.setItem('adm_rose_slim_it', JSON.stringify(parsed));
+              TEAMS_ROSE = parsed;
+              if (typeof window._TEAMS_ROSE_IT !== 'undefined') window._TEAMS_ROSE_IT = parsed;
+            } catch(e) {}
+          }
+        });
+      }
       gsLoadKey('adm_rose_slim_it', function(val) {
         if (val === null) return;
         try {
@@ -16463,7 +16477,21 @@ function enterLeague(tournament, leagueKey) {
       TEAMS_ROSE = JSON.parse(JSON.stringify(window._TEAMS_ROSE_IT));
     }
     // Se GSheets è online, scarica sempre la versione aggiornata (con scadenze e modifiche)
+    // IMPORTANTE: se localStorage è vuoto (es. dopo hard reset), carica SUBITO da GSheet per sincronizzare
     if (GS_ONLINE && typeof gsLoadKey === 'function') {
+      var _priority = !_roseStored ? true : false;
+      if (_priority) {
+        gsCall({action:'getKey', key:'adm_rose_slim_it'}, function(err, data) {
+          if (!err && data && data.ok && data.data) {
+            try {
+              var parsed = typeof data.data === 'string' ? JSON.parse(data.data) : data.data;
+              localStorage.setItem('adm_rose_slim_it', JSON.stringify(parsed));
+              TEAMS_ROSE = parsed;
+              if (typeof window._TEAMS_ROSE_IT !== 'undefined') window._TEAMS_ROSE_IT = parsed;
+            } catch(e) {}
+          }
+        });
+      }
       gsLoadKey('adm_rose_slim_it', function(val) {
         if (val === null) return;
         try {
