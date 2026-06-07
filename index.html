@@ -1,4 +1,4 @@
-<!-- build:20260607_0822 -->
+<!-- build:20260607_0828 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260607_0822';
+  var BUILD='20260607_0828';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
@@ -4781,13 +4781,13 @@ function _gsCallImpl(params, callback) {
   var cbName = 'gsCb_' + Math.random().toString(36).substr(2, 9);
   var timedOut = false;
 
-  // Timeout di 30 secondi (GSheet può essere lento, soprattutto con carichi alti)
+  // Timeout di 15 secondi (fallisce veloce se GSheet non risponde, usa fallback da localStorage)
   var timeoutId = setTimeout(function() {
     timedOut = true;
     delete window[cbName];
     if(script && script.parentNode) document.body.removeChild(script);
     if(callback) callback(new Error('JSONP timeout'), null);
-  }, 30000);
+  }, 15000);
 
   // Salva il callback nella finestra globale
   window[cbName] = function(data) {
@@ -8868,18 +8868,19 @@ function admLazyLoadRoseData(torneoKey, legaKey) {
   });
 }
 function admGetTeams(torneoKey, legaKey) {
+  // PRIORITA': carica PRIMA da localStorage (aggiornato dopo HR), poi fallback a memoria
+  try {
+    var _rose = JSON.parse(localStorage.getItem('adm_rose_'+torneoKey+'_'+legaKey)||'{}');
+    var _teams = Object.keys(_rose).sort();
+    if (_teams.length) return _teams;
+  } catch(e) {}
+
   if (torneoKey==='slim') {
     if (legaKey==='it') return (typeof SLIM_TEAMS_IT!=='undefined') ? SLIM_TEAMS_IT : Object.keys(TEAMS_ROSE||{}).sort();
     if (typeof ALL_LEAGUES_DATA!=='undefined' && ALL_LEAGUES_DATA[legaKey]) return Object.keys(ALL_LEAGUES_DATA[legaKey].teams||{}).sort();
     if (typeof ALL_SEASON_DATA!=='undefined' && ALL_SEASON_DATA[legaKey]) return ALL_SEASON_DATA[legaKey].teams || [];
   }
   if (torneoKey==='tsm' && legaKey==='it') return (typeof TSM_TEAMS_IT!=='undefined') ? TSM_TEAMS_IT : [];
-  // Fallback: leghe dinamiche da localStorage
-  try {
-    var _rose = JSON.parse(localStorage.getItem('adm_rose_'+torneoKey+'_'+legaKey)||'{}');
-    var _teams = Object.keys(_rose).sort();
-    if (_teams.length) return _teams;
-  } catch(e) {}
   return [];
 }
 function admLoadRosaGiocatori() {
@@ -15196,18 +15197,19 @@ function admCsEditLogo(ki) {
   if (btn) { btn.textContent = url ? '✅ Logo impostato' : '🖼 Logo'; btn.style.color = url ? '#10b981' : '#8b5cf6'; btn.style.borderColor = url ? 'rgba(16,185,129,.3)' : 'rgba(139,92,246,.2)'; btn.style.background = url ? 'rgba(16,185,129,.1)' : 'rgba(139,92,246,.1)'; }
 }
 function admGetTeams(torneoKey, legaKey) {
+  // PRIORITA': carica PRIMA da localStorage (aggiornato dopo HR), poi fallback a memoria
+  try {
+    var _rose = JSON.parse(localStorage.getItem('adm_rose_'+torneoKey+'_'+legaKey)||'{}');
+    var _teams = Object.keys(_rose).sort();
+    if (_teams.length) return _teams;
+  } catch(e) {}
+
   if (torneoKey==='slim') {
     if (legaKey==='it') return (typeof SLIM_TEAMS_IT!=='undefined') ? SLIM_TEAMS_IT : Object.keys(TEAMS_ROSE||{}).sort();
     if (typeof ALL_LEAGUES_DATA!=='undefined' && ALL_LEAGUES_DATA[legaKey]) return Object.keys(ALL_LEAGUES_DATA[legaKey].teams||{}).sort();
     if (typeof ALL_SEASON_DATA!=='undefined' && ALL_SEASON_DATA[legaKey]) return ALL_SEASON_DATA[legaKey].teams || [];
   }
   if (torneoKey==='tsm' && legaKey==='it') return (typeof TSM_TEAMS_IT!=='undefined') ? TSM_TEAMS_IT : [];
-  // Fallback: leghe dinamiche da localStorage
-  try {
-    var _rose = JSON.parse(localStorage.getItem('adm_rose_'+torneoKey+'_'+legaKey)||'{}');
-    var _teams = Object.keys(_rose).sort();
-    if (_teams.length) return _teams;
-  } catch(e) {}
   return [];
 }
 function admGetPlayers(torneoKey, legaKey, squadra) {
