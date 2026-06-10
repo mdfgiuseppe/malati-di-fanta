@@ -1,4 +1,4 @@
-<!-- build:20260610_1841 -->
+<!-- build:20260610_1844 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260610_1841';
+  var BUILD='20260610_1844';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
@@ -4814,10 +4814,10 @@ function _gsCallImpl(params, callback) {
     document.body.removeChild(script);
     if(callback) callback(new Error('JSONP request failed'), null);
   };
-  // Delay minimo per garantire che il callback sia registrato prima che GSheet lo chiami
+  // Delay di 5ms per garantire che il callback sia registrato prima che GSheet lo chiami
   setTimeout(function() {
-    document.body.appendChild(script);
-  }, 0);
+    if(!timedOut) document.body.appendChild(script);
+  }, 5);
 }
 
 // Ping al caricamento per verificare connessione
