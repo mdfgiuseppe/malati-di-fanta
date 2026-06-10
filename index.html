@@ -1,4 +1,4 @@
-<!-- build:20260610_1921 -->
+<!-- build:20260610_1922 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260610_1921';
+  var BUILD='20260610_1922';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
@@ -6805,17 +6805,22 @@ function admToggleSelect(sel, type) {
   var el = document.getElementById(bodyId);
   var oldValue = sel.value;
 
+  console.log('[toggle] onmousedown:', type, 'oldValue:', oldValue);
+
   // Delay per permettere al select di aggiornare il valore
   setTimeout(function() {
     var newValue = sel.value;
+    console.log('[toggle] dopo delay:', type, 'oldValue:', oldValue, 'newValue:', newValue);
 
     // Se il valore non è cambiato, l'utente ha cliccato lo stesso valore
     if(oldValue === newValue && newValue) {
+      console.log('[toggle] -> deselezionando (stesso valore)');
       sel.value = '';
       window[lastKey] = '';
       if(el) el.innerHTML = '';
     } else if(newValue !== oldValue && newValue) {
       // Il valore è cambiato - salva e carica l'editor
+      console.log('[toggle] -> caricando editor (nuovo valore)');
       window[lastKey] = newValue;
       if(type === 'coppa') {
         admLoadCoppaEditor();
@@ -6824,6 +6829,7 @@ function admToggleSelect(sel, type) {
       }
     } else if(!newValue) {
       // Deselezionato - pulisci
+      console.log('[toggle] -> pulisci (vuoto)');
       window[lastKey] = '';
       if(el) el.innerHTML = '';
     }
