@@ -1,4 +1,4 @@
-<!-- build:20260610_1825 -->
+<!-- build:20260610_1839 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260610_1825';
+  var BUILD='20260610_1839';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
@@ -6796,10 +6796,14 @@ function admAddCoppa() {
 }
 
 function admLoadCoppaEditor() {
+  var sel = document.getElementById('adm-cop-coppa');
   var torneoKey = document.getElementById('adm-cop-torneo').value;
-  var coppaKey = document.getElementById('adm-cop-coppa').value;
+  var coppaKey = sel.value;
   var elCfg = document.getElementById('adm-cop-config-body');
   var elEd = document.getElementById('adm-cop-editor-body');
+  // Toggle: se clicchi di nuovo sulla stessa coppa, deseleziona
+  if(window._lastCoppaKey === coppaKey && coppaKey) { sel.value=''; window._lastCoppaKey=null; if(elCfg)elCfg.innerHTML=''; if(elEd)elEd.innerHTML=''; return; }
+  window._lastCoppaKey = coppaKey;
   if(elEd) elEd.innerHTML='';
   if(!elCfg||!torneoKey||!coppaKey){if(elCfg)elCfg.innerHTML='';return;}
   var config = admGetCoppeConfig(torneoKey);
@@ -6842,6 +6846,9 @@ function admLoadQualifPanel() {
   var qiStr = _selQF ? _selQF.value : '';
   var el = document.getElementById('adm-qualif-config-body');
   if(!el) return;
+  // Toggle: se clicchi di nuovo sulla stessa qualificazione, deseleziona
+  if(window._lastQualifKey === qiStr && qiStr) { _selQF.value=''; window._lastQualifKey=null; el.innerHTML=''; return; }
+  window._lastQualifKey = qiStr;
   if(!torneoKey||qiStr===''){el.innerHTML='';return;}
   admRenderQualifList(torneoKey,parseInt(qiStr));
 }
