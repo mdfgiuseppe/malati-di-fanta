@@ -1,4 +1,4 @@
-<!-- build:20260610_2123 -->
+<!-- build:20260610_2124 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260610_2123';
+  var BUILD='20260610_2124';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
@@ -6443,7 +6443,7 @@ function admToggleQualifClassifica(torneoKey,qi){
   console.log('[qualif-classifica] Primo elemento ranking:', ranking[0]);
   ranking.forEach(function(r,idx){
     if(idx===0)console.log('[qualif-classifica] Elemento 0:', r);
-    h+='<tr style="border-bottom:1px solid var(--border);background:'+(idx%2===0?'rgba(255,255,255,.02)':'transparent')+'"><td style="padding:6px">'+(idx+1)+'</td><td style="padding:6px">'+r.squadra+'</td><td style="padding:6px;text-align:right">'+r.punti+'</td><td style="padding:6px;text-align:center;display:flex;gap:4px;justify-content:center">';
+    h+='<tr style="border-bottom:1px solid var(--border);background:'+(idx%2===0?'rgba(255,255,255,.02)':'transparent')+'"><td style="padding:6px">'+(idx+1)+'</td><td style="padding:6px">'+r.squadra+'</td><td style="padding:6px;text-align:right">'+r.pt+'</td><td style="padding:6px;text-align:center;display:flex;gap:4px;justify-content:center">';
     if(idx>0)h+='<button onclick="admMoveQualifRanking(\''+torneoKey+'\','+qi+','+idx+',-1)" style="background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.2);color:#3b82f6;border-radius:4px;padding:2px 6px;font-size:10px;cursor:pointer">↑</button>';
     if(idx<ranking.length-1)h+='<button onclick="admMoveQualifRanking(\''+torneoKey+'\','+qi+','+idx+',1)" style="background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.2);color:#3b82f6;border-radius:4px;padding:2px 6px;font-size:10px;cursor:pointer">↓</button>';
     h+='</td></tr>';
@@ -13320,7 +13320,7 @@ function admToggleQualifClassifica(torneoKey,qi){
   console.log('[qualif-classifica] Primo elemento ranking:', ranking[0]);
   ranking.forEach(function(r,idx){
     if(idx===0)console.log('[qualif-classifica] Elemento 0:', r);
-    h+='<tr style="border-bottom:1px solid var(--border);background:'+(idx%2===0?'rgba(255,255,255,.02)':'transparent')+'"><td style="padding:6px">'+(idx+1)+'</td><td style="padding:6px">'+r.squadra+'</td><td style="padding:6px;text-align:right">'+r.punti+'</td><td style="padding:6px;text-align:center;display:flex;gap:4px;justify-content:center">';
+    h+='<tr style="border-bottom:1px solid var(--border);background:'+(idx%2===0?'rgba(255,255,255,.02)':'transparent')+'"><td style="padding:6px">'+(idx+1)+'</td><td style="padding:6px">'+r.squadra+'</td><td style="padding:6px;text-align:right">'+r.pt+'</td><td style="padding:6px;text-align:center;display:flex;gap:4px;justify-content:center">';
     if(idx>0)h+='<button onclick="admMoveQualifRanking(\''+torneoKey+'\','+qi+','+idx+',-1)" style="background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.2);color:#3b82f6;border-radius:4px;padding:2px 6px;font-size:10px;cursor:pointer">↑</button>';
     if(idx<ranking.length-1)h+='<button onclick="admMoveQualifRanking(\''+torneoKey+'\','+qi+','+idx+',1)" style="background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.2);color:#3b82f6;border-radius:4px;padding:2px 6px;font-size:10px;cursor:pointer">↓</button>';
     h+='</td></tr>';
