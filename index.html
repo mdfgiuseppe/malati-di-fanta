@@ -1,4 +1,4 @@
-<!-- build:20260610_1951 -->
+<!-- build:20260610_1953 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260610_1951';
+  var BUILD='20260610_1953';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
@@ -6817,9 +6817,9 @@ function admToggleSelect(sel, type) {
   var lastValue = window[lastKey];
   console.log('[toggle] blur:', type, 'focusValue:', focusValue, 'currentValue:', currentValue, 'lastValue:', lastValue);
 
-  // Se il valore è lo stesso di quando il dropdown si è aperto AND è lo stesso che avevamo aperto prima
+  // Se il valore non è cambiato (focusValue === currentValue) AND era già selezionato prima (lastValue === focusValue)
   // = l'utente ha riselezionato la stessa opzione -> toggle OFF (deseleziona)
-  if(focusValue && focusValue === currentValue && lastValue === currentValue && currentValue) {
+  if(focusValue && focusValue === currentValue && lastValue === focusValue && currentValue) {
     console.log('[toggle] OFF: deselezionando (riselezionato stesso valore)');
     sel.value = '';
     window[lastKey] = '';
@@ -6827,6 +6827,10 @@ function admToggleSelect(sel, type) {
   } else if(currentValue && currentValue !== focusValue) {
     // Il valore è cambiato - onchange ha già mostrato l'editor, salva il valore
     console.log('[toggle] ON: nuovo valore', currentValue);
+    window[lastKey] = currentValue;
+  } else if(currentValue && !lastValue) {
+    // Primo click su un valore - salva per il prossimo toggle
+    console.log('[toggle] FIRST: primo click su', currentValue);
     window[lastKey] = currentValue;
   }
   window[focusKey] = null;
