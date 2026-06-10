@@ -1,4 +1,4 @@
-<!-- build:20260610_1953 -->
+<!-- build:20260610_2052 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260610_1953';
+  var BUILD='20260610_2052';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
@@ -5363,6 +5363,7 @@ function _gsFlushPending() {
 }
 function gsSaveKey(key, data) {
   var val = typeof data === 'string' ? data : JSON.stringify(data);
+  console.log('[gsSaveKey]', key, 'GS_ONLINE:', GS_ONLINE);
   if (!GS_ONLINE) { _gsMarkPending(key); return; }
   gsPost({action:'saveKey', key:key, data:val}, null);
 }
@@ -6361,7 +6362,9 @@ function admEditQualifLogo(torneoKey,qi){
   if(url===null)return;
   url=url.trim();
   if(typeof _normalizeImgUrl==='function')url=_normalizeImgUrl(url);
-  c[qi].logo=url;admSaveQualifConfig(torneoKey,c);
+  c[qi].logo=url;
+  console.log('[qualif-logo] Salvando:', {torneoKey, qi, url, gs_online: window.GS_ONLINE});
+  admSaveQualifConfig(torneoKey,c);
   var btn=document.getElementById('adm-qualif-logo-btn-'+torneoKey+'-'+qi);
   if(btn){btn.textContent=url?'✅ Logo impostato':'🖼 Logo';btn.style.color=url?'#10b981':'#8b5cf6';btn.style.borderColor=url?'rgba(16,185,129,.3)':'rgba(139,92,246,.2)';btn.style.background=url?'rgba(16,185,129,.1)':'rgba(139,92,246,.1)';}
   if(typeof initCoppaLogos==='function')initCoppaLogos();
@@ -13188,7 +13191,9 @@ function admEditQualifLogo(torneoKey,qi){
   if(url===null)return;
   url=url.trim();
   if(typeof _normalizeImgUrl==='function')url=_normalizeImgUrl(url);
-  c[qi].logo=url;admSaveQualifConfig(torneoKey,c);
+  c[qi].logo=url;
+  console.log('[qualif-logo] Salvando:', {torneoKey, qi, url, gs_online: window.GS_ONLINE});
+  admSaveQualifConfig(torneoKey,c);
   var btn=document.getElementById('adm-qualif-logo-btn-'+torneoKey+'-'+qi);
   if(btn){btn.textContent=url?'✅ Logo impostato':'🖼 Logo';btn.style.color=url?'#10b981':'#8b5cf6';btn.style.borderColor=url?'rgba(16,185,129,.3)':'rgba(139,92,246,.2)';btn.style.background=url?'rgba(16,185,129,.1)':'rgba(139,92,246,.1)';}
   if(typeof initCoppaLogos==='function')initCoppaLogos();
