@@ -1,4 +1,4 @@
-<!-- build:20260610_2109 -->
+<!-- build:20260610_2111 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260610_2109';
+  var BUILD='20260610_2111';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
@@ -6424,13 +6424,17 @@ function admDeleteQualif(torneoKey,qi){
 function admTriggerQualifImport(torneoKey,qi){var inp=document.getElementById('adm-qualif-file-input');if(!inp)return;inp.dataset.t=torneoKey;inp.dataset.qi=qi;inp.value='';inp.click();}
 function admOnQualifFileChange(inp){var t=inp.dataset.t,qi=+inp.dataset.qi,file=inp.files[0];if(!file)return;admProcessFormationsXlsx(t,qi,file);}
 function admToggleQualifClassifica(torneoKey,qi){
+  console.log('[qualif-classifica] Aprendo:', {torneoKey, qi});
   var el=document.getElementById('qcf-'+torneoKey+'-'+qi);
+  console.log('[qualif-classifica] Element found:', !!el);
   if(!el)return;
   if(el.innerHTML.trim()){el.innerHTML='';return;}
   var mData=_getQualifData(torneoKey,qi);
   var mGs=Object.keys(mData).map(Number).sort(function(a,b){return a-b;});
+  console.log('[qualif-classifica] Giornate caricate:', mGs);
   if(!mGs.length){el.innerHTML='<div style="color:var(--text3);font-size:12px;padding:8px">Nessuna giornata importata</div>';return;}
   var ranking=_qualifComputeRankingUpTo(torneoKey,qi,mGs[mGs.length-1]);
+  console.log('[qualif-classifica] Ranking:', ranking);
   if(!ranking.length){el.innerHTML='<div style="color:var(--text3);font-size:12px;padding:8px">Errore nel calcolo della classifica</div>';return;}
   var h='<div style="font-size:11px"><table style="width:100%;border-collapse:collapse">';
   h+='<thead><tr style="border-bottom:1px solid var(--border)"><th style="padding:6px;text-align:left;color:var(--text3);font-weight:700;font-size:10px">POS</th><th style="padding:6px;text-align:left;color:var(--text3);font-weight:700;font-size:10px">SQUADRA</th><th style="padding:6px;text-align:right;color:var(--text3);font-weight:700;font-size:10px">PT.</th><th style="padding:6px;text-align:center;color:var(--text3);font-weight:700;font-size:10px">AZIONI</th></tr></thead>';
@@ -13294,13 +13298,17 @@ function admDeleteQualif(torneoKey,qi){
 function admTriggerQualifImport(torneoKey,qi){var inp=document.getElementById('adm-qualif-file-input');if(!inp)return;inp.dataset.t=torneoKey;inp.dataset.qi=qi;inp.value='';inp.click();}
 function admOnQualifFileChange(inp){var t=inp.dataset.t,qi=+inp.dataset.qi,file=inp.files[0];if(!file)return;admProcessFormationsXlsx(t,qi,file);}
 function admToggleQualifClassifica(torneoKey,qi){
+  console.log('[qualif-classifica] Aprendo:', {torneoKey, qi});
   var el=document.getElementById('qcf-'+torneoKey+'-'+qi);
+  console.log('[qualif-classifica] Element found:', !!el);
   if(!el)return;
   if(el.innerHTML.trim()){el.innerHTML='';return;}
   var mData=_getQualifData(torneoKey,qi);
   var mGs=Object.keys(mData).map(Number).sort(function(a,b){return a-b;});
+  console.log('[qualif-classifica] Giornate caricate:', mGs);
   if(!mGs.length){el.innerHTML='<div style="color:var(--text3);font-size:12px;padding:8px">Nessuna giornata importata</div>';return;}
   var ranking=_qualifComputeRankingUpTo(torneoKey,qi,mGs[mGs.length-1]);
+  console.log('[qualif-classifica] Ranking:', ranking);
   if(!ranking.length){el.innerHTML='<div style="color:var(--text3);font-size:12px;padding:8px">Errore nel calcolo della classifica</div>';return;}
   var h='<div style="font-size:11px"><table style="width:100%;border-collapse:collapse">';
   h+='<thead><tr style="border-bottom:1px solid var(--border)"><th style="padding:6px;text-align:left;color:var(--text3);font-weight:700;font-size:10px">POS</th><th style="padding:6px;text-align:left;color:var(--text3);font-weight:700;font-size:10px">SQUADRA</th><th style="padding:6px;text-align:right;color:var(--text3);font-weight:700;font-size:10px">PT.</th><th style="padding:6px;text-align:center;color:var(--text3);font-weight:700;font-size:10px">AZIONI</th></tr></thead>';
