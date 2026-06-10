@@ -1,4 +1,4 @@
-<!-- build:20260610_2118 -->
+<!-- build:20260610_2120 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260610_2118';
+  var BUILD='20260610_2120';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
@@ -6429,7 +6429,7 @@ function admToggleQualifClassifica(torneoKey,qi){
   console.log('[qualif-classifica] Element found:', !!el);
   if(!el)return;
   if(el.innerHTML.trim()){el.innerHTML='';return;}
-  var mData=_getQualifData(torneoKey,qi);
+  var mData=_getQualifManual(torneoKey,qi);
   console.log('[qualif-classifica] mData completo:', mData);
   var mGs=Object.keys(mData).map(Number).sort(function(a,b){return a-b;});
   console.log('[qualif-classifica] Giornate caricate:', mGs);
@@ -6450,7 +6450,7 @@ function admToggleQualifClassifica(torneoKey,qi){
   el.innerHTML=h;
 }
 function admMoveQualifRanking(torneoKey,qi,idx,direction){
-  var mData=_getQualifData(torneoKey,qi);
+  var mData=_getQualifManual(torneoKey,qi);
   var mGs=Object.keys(mData).map(Number).sort(function(a,b){return a-b;});
   if(!mGs.length)return;
   var ranking=_qualifComputeRankingUpTo(torneoKey,qi,mGs[mGs.length-1]);
@@ -6460,7 +6460,7 @@ function admMoveQualifRanking(torneoKey,qi,idx,direction){
   var temp=ranking[idx];ranking[idx]=ranking[newIdx];ranking[newIdx]=temp;
   var lastGiornata=mGs[mGs.length-1];
   mData[lastGiornata]=ranking.map(function(r){return r.squadra;});
-  _saveQualifData(torneoKey,qi,mData);
+  _saveQualifManual(torneoKey,qi,mData);
   admToggleQualifClassifica(torneoKey,qi);admToggleQualifClassifica(torneoKey,qi);
 }
 function admProcessQualifXlsx(torneoKey,qi,file){
@@ -13304,7 +13304,7 @@ function admToggleQualifClassifica(torneoKey,qi){
   console.log('[qualif-classifica] Element found:', !!el);
   if(!el)return;
   if(el.innerHTML.trim()){el.innerHTML='';return;}
-  var mData=_getQualifData(torneoKey,qi);
+  var mData=_getQualifManual(torneoKey,qi);
   console.log('[qualif-classifica] mData completo:', mData);
   var mGs=Object.keys(mData).map(Number).sort(function(a,b){return a-b;});
   console.log('[qualif-classifica] Giornate caricate:', mGs);
@@ -13325,7 +13325,7 @@ function admToggleQualifClassifica(torneoKey,qi){
   el.innerHTML=h;
 }
 function admMoveQualifRanking(torneoKey,qi,idx,direction){
-  var mData=_getQualifData(torneoKey,qi);
+  var mData=_getQualifManual(torneoKey,qi);
   var mGs=Object.keys(mData).map(Number).sort(function(a,b){return a-b;});
   if(!mGs.length)return;
   var ranking=_qualifComputeRankingUpTo(torneoKey,qi,mGs[mGs.length-1]);
@@ -13335,7 +13335,7 @@ function admMoveQualifRanking(torneoKey,qi,idx,direction){
   var temp=ranking[idx];ranking[idx]=ranking[newIdx];ranking[newIdx]=temp;
   var lastGiornata=mGs[mGs.length-1];
   mData[lastGiornata]=ranking.map(function(r){return r.squadra;});
-  _saveQualifData(torneoKey,qi,mData);
+  _saveQualifManual(torneoKey,qi,mData);
   admToggleQualifClassifica(torneoKey,qi);admToggleQualifClassifica(torneoKey,qi);
 }
 function admProcessQualifXlsx(torneoKey,qi,file){
