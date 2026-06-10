@@ -1,4 +1,4 @@
-<!-- build:20260610_2124 -->
+<!-- build:20260610_2126 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260610_2124';
+  var BUILD='20260610_2126';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
@@ -6428,7 +6428,8 @@ function admToggleQualifClassifica(torneoKey,qi){
   var el=document.getElementById('qcf-'+torneoKey+'-'+qi);
   console.log('[qualif-classifica] Element found:', !!el);
   if(!el)return;
-  if(el.innerHTML.trim()){el.innerHTML='';return;}
+  if(el.style.display!=='none'){el.style.display='none';el.innerHTML='';return;}
+  el.style.display='block';
   var mData=_getQualifManual(torneoKey,qi);
   console.log('[qualif-classifica] mData completo:', mData);
   var mGs=Object.keys(mData).map(Number).sort(function(a,b){return a-b;});
@@ -13305,7 +13306,8 @@ function admToggleQualifClassifica(torneoKey,qi){
   var el=document.getElementById('qcf-'+torneoKey+'-'+qi);
   console.log('[qualif-classifica] Element found:', !!el);
   if(!el)return;
-  if(el.innerHTML.trim()){el.innerHTML='';return;}
+  if(el.style.display!=='none'){el.style.display='none';el.innerHTML='';return;}
+  el.style.display='block';
   var mData=_getQualifManual(torneoKey,qi);
   console.log('[qualif-classifica] mData completo:', mData);
   var mGs=Object.keys(mData).map(Number).sort(function(a,b){return a-b;});
