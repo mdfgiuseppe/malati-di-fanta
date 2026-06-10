@@ -1,4 +1,4 @@
-<!-- build:20260610_1844 -->
+<!-- build:20260610_1847 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260610_1844';
+  var BUILD='20260610_1847';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
@@ -6805,8 +6805,14 @@ function admLoadCoppaEditor() {
   var elCfg = document.getElementById('adm-cop-config-body');
   var elEd = document.getElementById('adm-cop-editor-body');
   // Toggle: se clicchi di nuovo sulla stessa coppa, deseleziona
-  if(window._lastCoppaKey === coppaKey && coppaKey) { sel.value=''; window._lastCoppaKey=null; if(elCfg)elCfg.innerHTML=''; if(elEd)elEd.innerHTML=''; return; }
-  window._lastCoppaKey = coppaKey;
+  if(sel._lastValue === coppaKey && coppaKey) {
+    sel.value='';
+    sel._lastValue = '';
+    if(elCfg) elCfg.innerHTML='';
+    if(elEd) elEd.innerHTML='';
+    return;
+  }
+  sel._lastValue = coppaKey;
   if(elEd) elEd.innerHTML='';
   if(!elCfg||!torneoKey||!coppaKey){if(elCfg)elCfg.innerHTML='';return;}
   var config = admGetCoppeConfig(torneoKey);
@@ -6850,8 +6856,13 @@ function admLoadQualifPanel() {
   var el = document.getElementById('adm-qualif-config-body');
   if(!el) return;
   // Toggle: se clicchi di nuovo sulla stessa qualificazione, deseleziona
-  if(window._lastQualifKey === qiStr && qiStr) { _selQF.value=''; window._lastQualifKey=null; el.innerHTML=''; return; }
-  window._lastQualifKey = qiStr;
+  if(_selQF._lastValue === qiStr && qiStr) {
+    _selQF.value = '';
+    _selQF._lastValue = '';
+    el.innerHTML = '';
+    return;
+  }
+  _selQF._lastValue = qiStr;
   if(!torneoKey||qiStr===''){el.innerHTML='';return;}
   admRenderQualifList(torneoKey,parseInt(qiStr));
 }
