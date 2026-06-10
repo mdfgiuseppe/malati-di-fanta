@@ -1,4 +1,4 @@
-<!-- build:20260610_1913 -->
+<!-- build:20260610_1921 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260610_1913';
+  var BUILD='20260610_1921';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
@@ -3528,10 +3528,10 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
         <select id="adm-cop-torneo" onchange="admLoadCoppeTorneo()" style="padding:8px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;outline:none">
           <option value="">-- Seleziona Torneo --</option>
         </select>
-        <select id="adm-qualif-select" onchange="admLoadQualifPanel()" onclick="admToggleSelect(this, 'qualif')" style="padding:8px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;outline:none">
+        <select id="adm-qualif-select" onmousedown="admToggleSelect(this, 'qualif')" style="padding:8px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;outline:none">
           <option value="">-- Seleziona Qualificazione --</option>
         </select>
-        <select id="adm-cop-coppa" onchange="admLoadCoppaEditor()" onclick="admToggleSelect(this, 'coppa')" style="padding:8px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;outline:none">
+        <select id="adm-cop-coppa" onmousedown="admToggleSelect(this, 'coppa')" style="padding:8px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;outline:none">
           <option value="">-- Seleziona Coppa --</option>
         </select>
         <button id="adm-cop-add-btn" onclick="admAddCoppa()" style="display:none;padding:8px 14px;background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.2);color:#10b981;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer">+ Nuova Coppa</button>
@@ -6799,21 +6799,35 @@ function admAddCoppa() {
 }
 
 function admToggleSelect(sel, type) {
-  // Toggle: se il valore è lo stesso della volta precedente, deseleziona
+  // Toggle: click una volta = mostra, click due volte = nascondi
   var lastKey = type === 'coppa' ? '_lastCoppaValue' : '_lastQualifValue';
   var bodyId = type === 'coppa' ? 'adm-cop-config-body' : 'adm-qualif-config-body';
   var el = document.getElementById(bodyId);
+  var oldValue = sel.value;
 
-  // Se è lo stesso valore, deseleziona e nascondi
-  if(window[lastKey] === sel.value && sel.value) {
-    sel.value = '';
-    window[lastKey] = '';
-    if(el) el.innerHTML = '';
-    return;
-  }
+  // Delay per permettere al select di aggiornare il valore
+  setTimeout(function() {
+    var newValue = sel.value;
 
-  // Altrimenti salva il valore per il prossimo click
-  window[lastKey] = sel.value;
+    // Se il valore non è cambiato, l'utente ha cliccato lo stesso valore
+    if(oldValue === newValue && newValue) {
+      sel.value = '';
+      window[lastKey] = '';
+      if(el) el.innerHTML = '';
+    } else if(newValue !== oldValue && newValue) {
+      // Il valore è cambiato - salva e carica l'editor
+      window[lastKey] = newValue;
+      if(type === 'coppa') {
+        admLoadCoppaEditor();
+      } else {
+        admLoadQualifPanel();
+      }
+    } else if(!newValue) {
+      // Deselezionato - pulisci
+      window[lastKey] = '';
+      if(el) el.innerHTML = '';
+    }
+  }, 10);
 }
 function admLoadCoppaEditor() {
   var sel = document.getElementById('adm-cop-coppa');
