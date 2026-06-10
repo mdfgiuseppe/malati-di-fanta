@@ -1,4 +1,4 @@
-<!-- build:20260610_1944 -->
+<!-- build:20260610_1948 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260610_1944';
+  var BUILD='20260610_1948';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
@@ -6809,8 +6809,8 @@ function admToggleSelect(sel, type) {
   setTimeout(function() {
     var newValue = sel.value;
 
-    // Se il valore non è cambiato (secondo click sullo stesso valore)
-    if(oldValue === newValue && newValue && window[lastKey] === newValue) {
+    // Se il valore non è cambiato (clicchi la stessa opzione già selezionata)
+    if(oldValue === newValue && newValue) {
       console.log('[toggle] OFF: deselezionando');
       sel.value = '';
       window[lastKey] = '';
