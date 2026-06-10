@@ -1,4 +1,4 @@
-<!-- build:20260610_1922 -->
+<!-- build:20260610_1925 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260610_1922';
+  var BUILD='20260610_1925';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
@@ -6799,41 +6799,45 @@ function admAddCoppa() {
 }
 
 function admToggleSelect(sel, type) {
-  // Toggle: click una volta = mostra, click due volte = nascondi
+  // Toggle con doppio click: traccia i click con mousedown
+  var clickKey = type === 'coppa' ? '_coppaLastClick' : '_qualifLastClick';
+  var timerKey = type === 'coppa' ? '_coppaClickTimer' : '_qualifClickTimer';
   var lastKey = type === 'coppa' ? '_lastCoppaValue' : '_lastQualifValue';
   var bodyId = type === 'coppa' ? 'adm-cop-config-body' : 'adm-qualif-config-body';
   var el = document.getElementById(bodyId);
-  var oldValue = sel.value;
+  var currentValue = sel.value;
+  var now = Date.now();
 
-  console.log('[toggle] onmousedown:', type, 'oldValue:', oldValue);
+  console.log('[toggle] mousedown:', type, 'currentValue:', currentValue, 'lastClick:', window[clickKey], 'deltaTime:', window[clickKey] ? now - window[clickKey] : 'N/A');
 
-  // Delay per permettere al select di aggiornare il valore
-  setTimeout(function() {
+  // Se il secondo click è entro 300ms e il valore è lo stesso, toggle OFF
+  if(window[clickKey] && (now - window[clickKey]) < 300 && window[lastKey] === currentValue && currentValue) {
+    console.log('[toggle] -> toggle OFF (doppio click)');
+    sel.value = '';
+    window[lastKey] = '';
+    window[clickKey] = null;
+    if(el) el.innerHTML = '';
+    clearTimeout(window[timerKey]);
+    return;
+  }
+
+  // Altrimenti, salva il click e aspetta il prossimo
+  window[clickKey] = now;
+  clearTimeout(window[timerKey]);
+
+  // Dopo 300ms, esegui il caricamento dell'editor
+  window[timerKey] = setTimeout(function() {
     var newValue = sel.value;
-    console.log('[toggle] dopo delay:', type, 'oldValue:', oldValue, 'newValue:', newValue);
-
-    // Se il valore non è cambiato, l'utente ha cliccato lo stesso valore
-    if(oldValue === newValue && newValue) {
-      console.log('[toggle] -> deselezionando (stesso valore)');
-      sel.value = '';
-      window[lastKey] = '';
-      if(el) el.innerHTML = '';
-    } else if(newValue !== oldValue && newValue) {
-      // Il valore è cambiato - salva e carica l'editor
-      console.log('[toggle] -> caricando editor (nuovo valore)');
+    console.log('[toggle] -> toggle ON (dopo delay, newValue:', newValue + ')');
+    if(newValue) {
       window[lastKey] = newValue;
       if(type === 'coppa') {
         admLoadCoppaEditor();
       } else {
         admLoadQualifPanel();
       }
-    } else if(!newValue) {
-      // Deselezionato - pulisci
-      console.log('[toggle] -> pulisci (vuoto)');
-      window[lastKey] = '';
-      if(el) el.innerHTML = '';
     }
-  }, 10);
+  }, 300);
 }
 function admLoadCoppaEditor() {
   var sel = document.getElementById('adm-cop-coppa');
