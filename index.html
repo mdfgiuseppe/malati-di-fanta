@@ -1,4 +1,4 @@
-<!-- build:20260610_2111 -->
+<!-- build:20260610_2118 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260610_2111';
+  var BUILD='20260610_2118';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
@@ -6430,6 +6430,7 @@ function admToggleQualifClassifica(torneoKey,qi){
   if(!el)return;
   if(el.innerHTML.trim()){el.innerHTML='';return;}
   var mData=_getQualifData(torneoKey,qi);
+  console.log('[qualif-classifica] mData completo:', mData);
   var mGs=Object.keys(mData).map(Number).sort(function(a,b){return a-b;});
   console.log('[qualif-classifica] Giornate caricate:', mGs);
   if(!mGs.length){el.innerHTML='<div style="color:var(--text3);font-size:12px;padding:8px">Nessuna giornata importata</div>';return;}
@@ -13304,6 +13305,7 @@ function admToggleQualifClassifica(torneoKey,qi){
   if(!el)return;
   if(el.innerHTML.trim()){el.innerHTML='';return;}
   var mData=_getQualifData(torneoKey,qi);
+  console.log('[qualif-classifica] mData completo:', mData);
   var mGs=Object.keys(mData).map(Number).sort(function(a,b){return a-b;});
   console.log('[qualif-classifica] Giornate caricate:', mGs);
   if(!mGs.length){el.innerHTML='<div style="color:var(--text3);font-size:12px;padding:8px">Nessuna giornata importata</div>';return;}
