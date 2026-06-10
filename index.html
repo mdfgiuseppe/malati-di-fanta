@@ -1,4 +1,4 @@
-<!-- build:20260610_1907 -->
+<!-- build:20260610_1913 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260610_1907';
+  var BUILD='20260610_1913';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
@@ -6799,26 +6799,21 @@ function admAddCoppa() {
 }
 
 function admToggleSelect(sel, type) {
-  var now = Date.now();
+  // Toggle: se il valore è lo stesso della volta precedente, deseleziona
   var lastKey = type === 'coppa' ? '_lastCoppaValue' : '_lastQualifValue';
-  var lastClick = type === 'coppa' ? '_lastCoppaClick' : '_lastQualifClick';
+  var bodyId = type === 'coppa' ? 'adm-cop-config-body' : 'adm-qualif-config-body';
+  var el = document.getElementById(bodyId);
 
-  // Controlla se è lo stesso valore cliccato entro 300ms
-  if(window[lastKey] === sel.value && sel.value && window[lastClick] && (now - window[lastClick] < 300)) {
+  // Se è lo stesso valore, deseleziona e nascondi
+  if(window[lastKey] === sel.value && sel.value) {
     sel.value = '';
-    window[lastKey] = null;
-    window[lastClick] = null;
-    // Nascondi il body
-    var bodyId = type === 'coppa' ? 'adm-cop-config-body' : 'adm-qualif-config-body';
-    var el = document.getElementById(bodyId);
+    window[lastKey] = '';
     if(el) el.innerHTML = '';
     return;
   }
-  // Salva il valore per il prossimo click
+
+  // Altrimenti salva il valore per il prossimo click
   window[lastKey] = sel.value;
-  window[lastClick] = now;
-  // Reset dopo 300ms
-  setTimeout(function() { window[lastClick] = null; }, 300);
 }
 function admLoadCoppaEditor() {
   var sel = document.getElementById('adm-cop-coppa');
