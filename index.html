@@ -1,4 +1,4 @@
-<!-- build:20260610_1948 -->
+<!-- build:20260610_1951 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260610_1948';
+  var BUILD='20260610_1951';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
@@ -3528,10 +3528,10 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
         <select id="adm-cop-torneo" onchange="admLoadCoppeTorneo()" style="padding:8px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;outline:none">
           <option value="">-- Seleziona Torneo --</option>
         </select>
-        <select id="adm-qualif-select" onchange="admLoadQualifPanel()" onmousedown="admToggleSelect(this, 'qualif')" style="padding:8px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;outline:none">
+        <select id="adm-qualif-select" onchange="admLoadQualifPanel()" onfocus="admSelectFocus(this, 'qualif')" onblur="admToggleSelect(this, 'qualif')" style="padding:8px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;outline:none">
           <option value="">-- Seleziona Qualificazione --</option>
         </select>
-        <select id="adm-cop-coppa" onchange="admLoadCoppaEditor()" onmousedown="admToggleSelect(this, 'coppa')" style="padding:8px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;outline:none">
+        <select id="adm-cop-coppa" onchange="admLoadCoppaEditor()" onfocus="admSelectFocus(this, 'coppa')" onblur="admToggleSelect(this, 'coppa')" style="padding:8px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;outline:none">
           <option value="">-- Seleziona Coppa --</option>
         </select>
         <button id="adm-cop-add-btn" onclick="admAddCoppa()" style="display:none;padding:8px 14px;background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.2);color:#10b981;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer">+ Nuova Coppa</button>
@@ -6798,29 +6798,38 @@ function admAddCoppa() {
   admLoadCoppeTorneo();
 }
 
+function admSelectFocus(sel, type) {
+  // Salva il valore quando il dropdown si apre (focus)
+  var focusKey = type === 'coppa' ? '_coppaFocusValue' : '_qualifFocusValue';
+  window[focusKey] = sel.value;
+  console.log('[toggle] focus:', type, 'savedValue:', window[focusKey]);
+}
+
 function admToggleSelect(sel, type) {
-  // Toggle: secondo click sullo stesso valore = deseleziona
+  // Toggle: deseleziona se il dropdown si chiude e il valore è lo stesso (stesso valore riselezionato)
+  var focusKey = type === 'coppa' ? '_coppaFocusValue' : '_qualifFocusValue';
   var lastKey = type === 'coppa' ? '_lastCoppaValue' : '_lastQualifValue';
   var bodyId = type === 'coppa' ? 'adm-cop-config-body' : 'adm-qualif-config-body';
   var el = document.getElementById(bodyId);
-  var oldValue = sel.value;
+  var currentValue = sel.value;
+  var focusValue = window[focusKey];
 
-  // Dopo 50ms, controlla se il valore è cambiato
-  setTimeout(function() {
-    var newValue = sel.value;
+  var lastValue = window[lastKey];
+  console.log('[toggle] blur:', type, 'focusValue:', focusValue, 'currentValue:', currentValue, 'lastValue:', lastValue);
 
-    // Se il valore non è cambiato (clicchi la stessa opzione già selezionata)
-    if(oldValue === newValue && newValue) {
-      console.log('[toggle] OFF: deselezionando');
-      sel.value = '';
-      window[lastKey] = '';
-      if(el) el.innerHTML = '';
-    } else if(newValue !== oldValue && newValue) {
-      // Il valore è cambiato - salva per il prossimo toggle
-      console.log('[toggle] ON: nuovo valore', newValue);
-      window[lastKey] = newValue;
-    }
-  }, 50);
+  // Se il valore è lo stesso di quando il dropdown si è aperto AND è lo stesso che avevamo aperto prima
+  // = l'utente ha riselezionato la stessa opzione -> toggle OFF (deseleziona)
+  if(focusValue && focusValue === currentValue && lastValue === currentValue && currentValue) {
+    console.log('[toggle] OFF: deselezionando (riselezionato stesso valore)');
+    sel.value = '';
+    window[lastKey] = '';
+    if(el) el.innerHTML = '';
+  } else if(currentValue && currentValue !== focusValue) {
+    // Il valore è cambiato - onchange ha già mostrato l'editor, salva il valore
+    console.log('[toggle] ON: nuovo valore', currentValue);
+    window[lastKey] = currentValue;
+  }
+  window[focusKey] = null;
 }
 function admLoadCoppaEditor() {
   var sel = document.getElementById('adm-cop-coppa');
