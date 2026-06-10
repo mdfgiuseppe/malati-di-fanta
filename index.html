@@ -1,4 +1,4 @@
-<!-- build:20260610_1847 -->
+<!-- build:20260610_1857 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260610_1847';
+  var BUILD='20260610_1857';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
@@ -6804,15 +6804,20 @@ function admLoadCoppaEditor() {
   var coppaKey = sel.value;
   var elCfg = document.getElementById('adm-cop-config-body');
   var elEd = document.getElementById('adm-cop-editor-body');
-  // Toggle: se clicchi di nuovo sulla stessa coppa, deseleziona
-  if(sel._lastValue === coppaKey && coppaKey) {
-    sel.value='';
-    sel._lastValue = '';
-    if(elCfg) elCfg.innerHTML='';
-    if(elEd) elEd.innerHTML='';
+  // Toggle: se clicchi di nuovo entro 300ms sulla stessa coppa, deseleziona
+  var now = Date.now();
+  if(window._lastCoppaClick && window._lastCoppaValue === coppaKey && coppaKey && (now - window._lastCoppaClick < 300)) {
+    sel.value = '';
+    window._lastCoppaValue = null;
+    window._lastCoppaClick = null;
+    if(elCfg) elCfg.innerHTML = '';
+    if(elEd) elEd.innerHTML = '';
     return;
   }
-  sel._lastValue = coppaKey;
+  window._lastCoppaClick = now;
+  window._lastCoppaValue = coppaKey;
+  // Reset dopo 300ms
+  setTimeout(function() { window._lastCoppaClick = null; }, 300);
   if(elEd) elEd.innerHTML='';
   if(!elCfg||!torneoKey||!coppaKey){if(elCfg)elCfg.innerHTML='';return;}
   var config = admGetCoppeConfig(torneoKey);
@@ -6855,14 +6860,19 @@ function admLoadQualifPanel() {
   var qiStr = _selQF ? _selQF.value : '';
   var el = document.getElementById('adm-qualif-config-body');
   if(!el) return;
-  // Toggle: se clicchi di nuovo sulla stessa qualificazione, deseleziona
-  if(_selQF._lastValue === qiStr && qiStr) {
+  // Toggle: se clicchi di nuovo entro 300ms sulla stessa qualificazione, deseleziona
+  var now = Date.now();
+  if(window._lastQualifClick && window._lastQualifValue === qiStr && qiStr && (now - window._lastQualifClick < 300)) {
     _selQF.value = '';
-    _selQF._lastValue = '';
+    window._lastQualifValue = null;
+    window._lastQualifClick = null;
     el.innerHTML = '';
     return;
   }
-  _selQF._lastValue = qiStr;
+  window._lastQualifClick = now;
+  window._lastQualifValue = qiStr;
+  // Reset dopo 300ms
+  setTimeout(function() { window._lastQualifClick = null; }, 300);
   if(!torneoKey||qiStr===''){el.innerHTML='';return;}
   admRenderQualifList(torneoKey,parseInt(qiStr));
 }
