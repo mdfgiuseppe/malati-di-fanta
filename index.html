@@ -1,4 +1,4 @@
-<!-- build:20260607_1759 -->
+<!-- build:20260610_1825 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260607_1759';
+  var BUILD='20260610_1825';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
@@ -8865,6 +8865,30 @@ function admLazyLoadRoseData(torneoKey, legaKey) {
     if (val === null) return;
     var str = typeof val === 'string' ? val : JSON.stringify(val);
     localStorage.setItem('adm_infermeria_'+torneoKey+'_'+legaKey, str);
+  });
+  // Carica loghi squadre fantasy (da GSheet)
+  gsLoadKey(roseKey, function(val) {
+    if (val === null || val === undefined) return;
+    try {
+      var parsed = typeof val === 'string' ? JSON.parse(val) : val;
+      Object.keys(parsed).forEach(function(sq) {
+        var logoKey = 'adm_logo_'+torneoKey+'_'+legaKey+'_'+sq;
+        gsLoadKey(logoKey, function(v) {
+          if (!v) return;
+          localStorage.setItem(logoKey, v);
+          var _nv = typeof _normalizeImgUrl === 'function' ? _normalizeImgUrl(v) : v;
+          if (typeof FANTASY_LOGOS !== 'undefined') { FANTASY_LOGOS[sq] = _nv; FANTASY_LOGOS[sq.toUpperCase()] = _nv; }
+        });
+      });
+      // Carica logo INFERMERIA
+      var infKey = 'adm_logo_'+torneoKey+'_'+legaKey+'_INFERMERIA';
+      gsLoadKey(infKey, function(v) {
+        if (!v) return;
+        localStorage.setItem(infKey, v);
+        var _nv = typeof _normalizeImgUrl === 'function' ? _normalizeImgUrl(v) : v;
+        if (typeof FANTASY_LOGOS !== 'undefined') FANTASY_LOGOS['INFERMERIA'] = _nv;
+      });
+    } catch(e) {}
   });
 }
 function admGetTeams(torneoKey, legaKey) {
