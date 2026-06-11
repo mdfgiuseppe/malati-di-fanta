@@ -1,4 +1,4 @@
-<!-- build:20260611_2144 -->
+<!-- build:20260611_2145 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260611_2144';
+  var BUILD='20260611_2145';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
@@ -5384,6 +5384,27 @@ function gsLoadKey(key, callback) {
     if(callback) callback(res.data);
   });
 }
+function _startAutoSync(){
+  setInterval(function(){
+    if(!GS_ONLINE)return;
+    var keys=[];
+    for(var i=0;i<localStorage.length;i++){
+      var k=localStorage.key(i);
+      if(k&&(k.includes('adm_qualif_manual_')||k.includes('_squadre_')||k.includes('_risultati_'))){
+        keys.push(k);
+      }
+    }
+    keys.forEach(function(k){
+      gsLoadKey(k,function(data){
+        if(data){
+          localStorage.setItem(k,data);
+          if(k.includes('qualif'))admLoadQualifPanel();
+        }
+      });
+    });
+  },15000);
+}
+if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',_startAutoSync);}else{_startAutoSync();}
 // ──────────────────────────────────────────────────────────────────
 
 function _teamCase(name) {
