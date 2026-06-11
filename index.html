@@ -1,4 +1,4 @@
-<!-- build:20260611_1345 -->
+<!-- build:20260611_1355 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260611_1345';
+  var BUILD='20260611_1355';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
@@ -6335,6 +6335,8 @@ function admRenderQualifList(torneoKey,_onlyQi){
         +'<button onclick="admTriggerQualifImport(\''+torneoKey+'\','+qi+')" style="background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.2);color:#f59e0b;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer">📥 Importa giornata</button>'
         +'<button onclick="admToggleQualifManual(\''+torneoKey+'\','+qi+')" style="background:rgba(99,102,241,.1);border:1px solid rgba(99,102,241,.2);color:#818cf8;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer">📝 Inserimento manuale</button>'
         +'<button onclick="admToggleQualifClassifica(\''+torneoKey+'\','+qi+')" style="background:rgba(139,92,246,.1);border:1px solid rgba(139,92,246,.2);color:#8b5cf6;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer">📊 Modifica classifica</button>'
+        +'<button onclick="admDeleteLastQualifGiornata(\''+torneoKey+'\','+qi+')" style="background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);color:#ef4444;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer">🗑 Annulla ultima</button>'
+        +'<button onclick="admClearAllQualifGiornate(\''+torneoKey+'\','+qi+')" style="background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.3);color:#dc2626;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer">🔄 Azzerare tutto</button>'
         +(_mGs.length?'<span style="font-size:11px;color:var(--text3)">Giornate: '+_mGs.join(', ')+' / '+(q.giornate_totali||12)+'</span>':'<span style="font-size:11px;color:var(--text3)">Nessuna giornata inserita</span>')
         +'</div>'
         +'<div id="qmf-'+torneoKey+'-'+qi+'" style="display:none;padding:6px 14px 10px;border-top:1px solid var(--border)">'
@@ -6354,6 +6356,8 @@ function admRenderQualifList(torneoKey,_onlyQi){
         +'<button onclick="admTriggerQualifImport(\''+torneoKey+'\','+qi+')" style="background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.2);color:#f59e0b;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer">📥 Importa giornata</button>'
         +'<button onclick="admToggleQualifManual(\''+torneoKey+'\','+qi+')" style="background:rgba(99,102,241,.1);border:1px solid rgba(99,102,241,.2);color:#818cf8;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer">📝 Inserimento manuale</button>'
         +'<button onclick="admToggleQualifClassifica(\''+torneoKey+'\','+qi+')" style="background:rgba(139,92,246,.1);border:1px solid rgba(139,92,246,.2);color:#8b5cf6;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer">📊 Modifica classifica</button>'
+        +'<button onclick="admDeleteLastQualifGiornata(\''+torneoKey+'\','+qi+')" style="background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);color:#ef4444;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer">🗑 Annulla ultima</button>'
+        +'<button onclick="admClearAllQualifGiornate(\''+torneoKey+'\','+qi+')" style="background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.3);color:#dc2626;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer">🔄 Azzerare tutto</button>'
         +(_mGs.length?'<span style="font-size:11px;color:var(--text3)">Giornate: '+_mGs.join(', ')+' / '+(q.giornate_totali||12)+'</span>':'<span style="font-size:11px;color:var(--text3)">Nessuna giornata importata</span>')
         +'</div>'
         +'<div id="qmf-'+torneoKey+'-'+qi+'" style="display:none;padding:6px 14px 10px;border-top:1px solid var(--border)">'
@@ -6525,6 +6529,21 @@ function admSaveQualifManual(torneoKey,qi){
   if(existing[giornata]&&!confirm('Giornata '+giornata+' già presente. Sovrascrivere?'))return;
   existing[giornata]=items;_saveQualifManual(torneoKey,qi,existing);
   admLoadQualifPanel();alert('✅ Giornata '+giornata+' salvata ('+items.length+' squadre)');
+}
+function admDeleteLastQualifGiornata(torneoKey,qi){
+  var mData=_getQualifManual(torneoKey,qi);
+  var mGs=Object.keys(mData).map(Number).sort(function(a,b){return a-b;});
+  if(!mGs.length){alert('Nessuna giornata da eliminare');return;}
+  var lastGiornata=mGs[mGs.length-1];
+  if(!confirm('Eliminare la giornata '+lastGiornata+'?'))return;
+  delete mData[lastGiornata];
+  _saveQualifManual(torneoKey,qi,mData);
+  admLoadQualifPanel();alert('✅ Giornata '+lastGiornata+' eliminata');
+}
+function admClearAllQualifGiornate(torneoKey,qi){
+  if(!confirm('Azzerare completamente tutte le giornate? Questa azione non è reversibile.'))return;
+  _saveQualifManual(torneoKey,qi,{});
+  admLoadQualifPanel();alert('✅ Tutti i dati eliminati');
 }
 function admProcessFormationsXlsx(torneoKey,qi,file){
   function _doProcess(){
@@ -13215,6 +13234,8 @@ function admRenderQualifList(torneoKey,_onlyQi){
         +'<button onclick="admTriggerQualifImport(\''+torneoKey+'\','+qi+')" style="background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.2);color:#f59e0b;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer">📥 Importa giornata</button>'
         +'<button onclick="admToggleQualifManual(\''+torneoKey+'\','+qi+')" style="background:rgba(99,102,241,.1);border:1px solid rgba(99,102,241,.2);color:#818cf8;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer">📝 Inserimento manuale</button>'
         +'<button onclick="admToggleQualifClassifica(\''+torneoKey+'\','+qi+')" style="background:rgba(139,92,246,.1);border:1px solid rgba(139,92,246,.2);color:#8b5cf6;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer">📊 Modifica classifica</button>'
+        +'<button onclick="admDeleteLastQualifGiornata(\''+torneoKey+'\','+qi+')" style="background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);color:#ef4444;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer">🗑 Annulla ultima</button>'
+        +'<button onclick="admClearAllQualifGiornate(\''+torneoKey+'\','+qi+')" style="background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.3);color:#dc2626;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer">🔄 Azzerare tutto</button>'
         +(_mGs.length?'<span style="font-size:11px;color:var(--text3)">Giornate: '+_mGs.join(', ')+' / '+(q.giornate_totali||12)+'</span>':'<span style="font-size:11px;color:var(--text3)">Nessuna giornata inserita</span>')
         +'</div>'
         +'<div id="qmf-'+torneoKey+'-'+qi+'" style="display:none;padding:6px 14px 10px;border-top:1px solid var(--border)">'
@@ -13234,6 +13255,8 @@ function admRenderQualifList(torneoKey,_onlyQi){
         +'<button onclick="admTriggerQualifImport(\''+torneoKey+'\','+qi+')" style="background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.2);color:#f59e0b;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer">📥 Importa giornata</button>'
         +'<button onclick="admToggleQualifManual(\''+torneoKey+'\','+qi+')" style="background:rgba(99,102,241,.1);border:1px solid rgba(99,102,241,.2);color:#818cf8;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer">📝 Inserimento manuale</button>'
         +'<button onclick="admToggleQualifClassifica(\''+torneoKey+'\','+qi+')" style="background:rgba(139,92,246,.1);border:1px solid rgba(139,92,246,.2);color:#8b5cf6;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer">📊 Modifica classifica</button>'
+        +'<button onclick="admDeleteLastQualifGiornata(\''+torneoKey+'\','+qi+')" style="background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);color:#ef4444;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer">🗑 Annulla ultima</button>'
+        +'<button onclick="admClearAllQualifGiornate(\''+torneoKey+'\','+qi+')" style="background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.3);color:#dc2626;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer">🔄 Azzerare tutto</button>'
         +(_mGs.length?'<span style="font-size:11px;color:var(--text3)">Giornate: '+_mGs.join(', ')+' / '+(q.giornate_totali||12)+'</span>':'<span style="font-size:11px;color:var(--text3)">Nessuna giornata importata</span>')
         +'</div>'
         +'<div id="qmf-'+torneoKey+'-'+qi+'" style="display:none;padding:6px 14px 10px;border-top:1px solid var(--border)">'
@@ -13405,6 +13428,21 @@ function admSaveQualifManual(torneoKey,qi){
   if(existing[giornata]&&!confirm('Giornata '+giornata+' già presente. Sovrascrivere?'))return;
   existing[giornata]=items;_saveQualifManual(torneoKey,qi,existing);
   admLoadQualifPanel();alert('✅ Giornata '+giornata+' salvata ('+items.length+' squadre)');
+}
+function admDeleteLastQualifGiornata(torneoKey,qi){
+  var mData=_getQualifManual(torneoKey,qi);
+  var mGs=Object.keys(mData).map(Number).sort(function(a,b){return a-b;});
+  if(!mGs.length){alert('Nessuna giornata da eliminare');return;}
+  var lastGiornata=mGs[mGs.length-1];
+  if(!confirm('Eliminare la giornata '+lastGiornata+'?'))return;
+  delete mData[lastGiornata];
+  _saveQualifManual(torneoKey,qi,mData);
+  admLoadQualifPanel();alert('✅ Giornata '+lastGiornata+' eliminata');
+}
+function admClearAllQualifGiornate(torneoKey,qi){
+  if(!confirm('Azzerare completamente tutte le giornate? Questa azione non è reversibile.'))return;
+  _saveQualifManual(torneoKey,qi,{});
+  admLoadQualifPanel();alert('✅ Tutti i dati eliminati');
 }
 function admProcessFormationsXlsx(torneoKey,qi,file){
   function _doProcess(){
