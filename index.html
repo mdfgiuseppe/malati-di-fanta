@@ -1,4 +1,4 @@
-<!-- build:20260611_2131 -->
+<!-- build:20260611_2142 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260611_2131';
+  var BUILD='20260611_2142';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
@@ -6748,9 +6748,10 @@ function openQualif(torneoKey,qi){
   }
   var _nb='border-radius:8px;padding:6px 14px;font-size:12px;font-weight:700;cursor:pointer;transition:all .2s;background:var(--bg2);border:1px solid var(--border);color:var(--text2)';
   var _gb='border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer;background:var(--bg2);border:1px solid var(--border);color:var(--text2)';
-  html+='<div style="display:flex;gap:8px;margin-bottom:8px">'
+  html+='<div style="display:flex;gap:8px;margin-bottom:8px;align-items:center;flex-wrap:wrap">'
     +'<button id="qnbtn-cal-'+torneoKey+'-'+qi+'" onclick="_toggleQualifNav(\'cal\',\''+torneoKey+'\','+qi+')" style="'+_nb+'">📅 Calendario</button>'
     +'<button id="qnbtn-cls-'+torneoKey+'-'+qi+'" onclick="_toggleQualifNav(\'cls\',\''+torneoKey+'\','+qi+')" style="'+_nb+'">🏆 Classifica</button>'
+    +'<button onclick="window.location.reload()" style="'+_nb+'">🔃 Ricalcola</button>'
     +'</div>';
   html+='<div id="qnsub-cal-'+torneoKey+'-'+qi+'" style="display:none;gap:6px;flex-wrap:wrap;margin-bottom:10px">';
   mSortedGs.forEach(function(g){html+='<button onclick="_openQualifCalGiornata(\''+torneoKey+'\','+qi+','+g+')" id="qncbtn-cal-'+torneoKey+'-'+qi+'-'+g+'" style="'+_gb+'">G'+g+'</button>';});
@@ -13678,9 +13679,10 @@ function openQualif(torneoKey,qi){
   }
   var _nb='border-radius:8px;padding:6px 14px;font-size:12px;font-weight:700;cursor:pointer;transition:all .2s;background:var(--bg2);border:1px solid var(--border);color:var(--text2)';
   var _gb='border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer;background:var(--bg2);border:1px solid var(--border);color:var(--text2)';
-  html+='<div style="display:flex;gap:8px;margin-bottom:8px">'
+  html+='<div style="display:flex;gap:8px;margin-bottom:8px;align-items:center;flex-wrap:wrap">'
     +'<button id="qnbtn-cal-'+torneoKey+'-'+qi+'" onclick="_toggleQualifNav(\'cal\',\''+torneoKey+'\','+qi+')" style="'+_nb+'">📅 Calendario</button>'
     +'<button id="qnbtn-cls-'+torneoKey+'-'+qi+'" onclick="_toggleQualifNav(\'cls\',\''+torneoKey+'\','+qi+')" style="'+_nb+'">🏆 Classifica</button>'
+    +'<button onclick="window.location.reload()" style="'+_nb+'">🔃 Ricalcola</button>'
     +'</div>';
   html+='<div id="qnsub-cal-'+torneoKey+'-'+qi+'" style="display:none;gap:6px;flex-wrap:wrap;margin-bottom:10px">';
   mSortedGs.forEach(function(g){html+='<button onclick="_openQualifCalGiornata(\''+torneoKey+'\','+qi+','+g+')" id="qncbtn-cal-'+torneoKey+'-'+qi+'-'+g+'" style="'+_gb+'">G'+g+'</button>';});
