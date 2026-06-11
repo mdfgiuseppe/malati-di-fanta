@@ -6777,7 +6777,6 @@ function openQualif(torneoKey,qi){
   html+='<div style="display:flex;gap:8px;margin-bottom:8px;align-items:center;flex-wrap:wrap">'
     +'<button id="qnbtn-cal-'+torneoKey+'-'+qi+'" onclick="_toggleQualifNav(\'cal\',\''+torneoKey+'\','+qi+')" style="'+_nb+'">📅 Calendario</button>'
     +'<button id="qnbtn-cls-'+torneoKey+'-'+qi+'" onclick="_toggleQualifNav(\'cls\',\''+torneoKey+'\','+qi+')" style="'+_nb+'">🏆 Classifica</button>'
-    +'<button onclick="window.location.reload()" style="'+_nb+'">🔃 Ricalcola</button>'
     +'</div>';
   html+='<div id="qnsub-cal-'+torneoKey+'-'+qi+'" style="display:none;gap:6px;flex-wrap:wrap;margin-bottom:10px">';
   mSortedGs.forEach(function(g){html+='<button onclick="_openQualifCalGiornata(\''+torneoKey+'\','+qi+','+g+')" id="qncbtn-cal-'+torneoKey+'-'+qi+'-'+g+'" style="'+_gb+'">G'+g+'</button>';});
@@ -13712,7 +13711,6 @@ function openQualif(torneoKey,qi){
   html+='<div style="display:flex;gap:8px;margin-bottom:8px;align-items:center;flex-wrap:wrap">'
     +'<button id="qnbtn-cal-'+torneoKey+'-'+qi+'" onclick="_toggleQualifNav(\'cal\',\''+torneoKey+'\','+qi+')" style="'+_nb+'">📅 Calendario</button>'
     +'<button id="qnbtn-cls-'+torneoKey+'-'+qi+'" onclick="_toggleQualifNav(\'cls\',\''+torneoKey+'\','+qi+')" style="'+_nb+'">🏆 Classifica</button>'
-    +'<button onclick="window.location.reload()" style="'+_nb+'">🔃 Ricalcola</button>'
     +'</div>';
   html+='<div id="qnsub-cal-'+torneoKey+'-'+qi+'" style="display:none;gap:6px;flex-wrap:wrap;margin-bottom:10px">';
   mSortedGs.forEach(function(g){html+='<button onclick="_openQualifCalGiornata(\''+torneoKey+'\','+qi+','+g+')" id="qncbtn-cal-'+torneoKey+'-'+qi+'-'+g+'" style="'+_gb+'">G'+g+'</button>';});
