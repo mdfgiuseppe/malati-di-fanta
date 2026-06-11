@@ -1,4 +1,4 @@
-<!-- build:20260611_1338 -->
+<!-- build:20260611_1344 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260611_1338';
+  var BUILD='20260611_1344';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
@@ -5388,7 +5388,12 @@ function gsLoadKey(key, callback) {
 
 function _teamCase(name) {
   if (!name) return name;
-  if (name.replace(/\s+/g,' ').trim().toUpperCase() === 'RB LIPSIA') return 'RB Lipsia';
+  var upper = name.replace(/\s+/g,' ').trim().toUpperCase();
+  if (upper === 'RB LIPSIA') return 'RB Lipsia';
+  if (upper === 'AZ ALKMAAR') return 'AZ Alkmaar';
+  if (upper === 'PSV EINDHOVEN') return 'PSV Eindhoven';
+  if (upper === 'OS BELENENSES') return 'OS Belenenses';
+  if (upper === 'PARIS FC') return 'Paris FC';
   return name.split(' ').map(function(w){ return w ? w.charAt(0).toUpperCase()+w.slice(1).toLowerCase() : w; }).join(' ');
 }
 
