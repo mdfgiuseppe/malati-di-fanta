@@ -1,4 +1,4 @@
-<!-- build:20260611_2145 -->
+<!-- build:20260611_2150 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260611_2145';
+  var BUILD='20260611_2150';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
@@ -5404,7 +5404,8 @@ function _startAutoSync(){
     });
   },15000);
 }
-if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',_startAutoSync);}else{_startAutoSync();}
+// DISABILITATO TEMPORANEAMENTE - causava perdita dati
+// if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',_startAutoSync);}else{_startAutoSync();}
 // ──────────────────────────────────────────────────────────────────
 
 function _teamCase(name) {
