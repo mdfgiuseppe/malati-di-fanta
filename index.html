@@ -1,4 +1,4 @@
-<!-- build:20260611_2046 -->
+<!-- build:20260611_2115 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260611_2046';
+  var BUILD='20260611_2115';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
@@ -6450,17 +6450,22 @@ function admToggleQualifClassifica(torneoKey,qi){
   console.log('[qualif-classifica] Ranking:', ranking);
   if(!ranking.length){el.innerHTML='<div style="color:var(--text3);font-size:12px;padding:8px">Errore nel calcolo della classifica</div>';return;}
   var h='<div style="font-size:11px"><table style="width:100%;border-collapse:collapse">';
-  h+='<thead><tr style="border-bottom:1px solid var(--border)"><th style="padding:6px;text-align:left;color:var(--text3);font-weight:700;font-size:10px">POS</th><th style="padding:6px;text-align:left;color:var(--text3);font-weight:700;font-size:10px">SQUADRA</th><th style="padding:6px;text-align:right;color:var(--text3);font-weight:700;font-size:10px">PT.</th><th style="padding:6px;text-align:center;color:var(--text3);font-weight:700;font-size:10px">AZIONI</th></tr></thead>';
+  h+='<thead><tr style="border-bottom:1px solid var(--border)"><th style="padding:6px;text-align:left;color:var(--text3);font-weight:700;font-size:10px">POS</th><th style="padding:6px;text-align:left;color:var(--text3);font-weight:700;font-size:10px">SQUADRA</th><th style="padding:6px;text-align:right;color:var(--text3);font-weight:700;font-size:10px">PT.</th><th style="padding:6px;text-align:right;color:var(--text3);font-weight:700;font-size:10px">GF</th><th style="padding:6px;text-align:right;color:var(--text3);font-weight:700;font-size:10px">GS</th><th style="padding:6px;text-align:right;color:var(--text3);font-weight:700;font-size:10px">DR</th><th style="padding:6px;text-align:center;color:var(--text3);font-weight:700;font-size:10px">AZIONI</th></tr></thead>';
   h+='<tbody>';
   console.log('[qualif-classifica] Primo elemento ranking:', ranking[0]);
   ranking.forEach(function(r,idx){
     if(idx===0)console.log('[qualif-classifica] Elemento 0:', r);
-    h+='<tr style="border-bottom:1px solid var(--border);background:'+(idx%2===0?'rgba(255,255,255,.02)':'transparent')+'"><td style="padding:6px">'+(idx+1)+'</td><td style="padding:6px">'+_teamCase(r.squadra)+'</td><td style="padding:6px;text-align:right">'+r.pt+'</td><td style="padding:6px;text-align:center;display:flex;gap:4px;justify-content:center">';
+    var dr=(r.gf||0)-(r.gs||0);
+    h+='<tr style="border-bottom:1px solid var(--border);background:'+(idx%2===0?'rgba(255,255,255,.02)':'transparent')+'"><td style="padding:6px">'+(idx+1)+'</td><td style="padding:6px">'+_teamCase(r.squadra)+'</td><td style="padding:6px;text-align:right">'+r.pt+'</td><td style="padding:6px;text-align:right">'+(r.gf||0)+'</td><td style="padding:6px;text-align:right">'+(r.gs||0)+'</td><td style="padding:6px;text-align:right;color:'+(dr>0?'#10b981':dr<0?'#ef4444':'var(--text3)')+'">'+dr+'</td><td style="padding:6px;text-align:center;display:flex;gap:4px;justify-content:center">';
     if(idx>0)h+='<button onclick="admMoveQualifRanking(\''+torneoKey+'\','+qi+','+idx+',-1)" style="background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.2);color:#3b82f6;border-radius:4px;padding:2px 6px;font-size:10px;cursor:pointer">↑</button>';
     if(idx<ranking.length-1)h+='<button onclick="admMoveQualifRanking(\''+torneoKey+'\','+qi+','+idx+',1)" style="background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.2);color:#3b82f6;border-radius:4px;padding:2px 6px;font-size:10px;cursor:pointer">↓</button>';
     h+='</td></tr>';
   });
   h+='</tbody></table></div>';
+  h+='<div style="padding:10px 0;display:flex;gap:8px;flex-wrap:wrap">';
+  h+='<button onclick="admSaveQualifRankingOrder(\''+torneoKey+'\','+qi+')" style="background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.2);color:#10b981;border-radius:6px;padding:6px 12px;font-size:11px;font-weight:700;cursor:pointer">💾 Salva ordine</button>';
+  h+='<span style="font-size:10px;color:var(--text3);padding:6px 0">L\'ordine verrà sincronizzato</span>';
+  h+='</div>';
   el.innerHTML=h;
 }
 function _getQualifRankingOverride(torneoKey,qi){var s=localStorage.getItem('adm_qualif_ranking_override_'+torneoKey+'_'+qi);if(!s)return[];try{return JSON.parse(s);}catch(e){return[];}}
@@ -6492,15 +6497,16 @@ function admProcessQualifXlsx(torneoKey,qi,file){
         var headerIdx=-1;
         for(var i=0;i<rows.length;i++){if(rows[i].some(function(c){return c&&String(c).toLowerCase().includes('squadra');})){headerIdx=i;break;}}
         if(headerIdx<0){alert('Colonna "Squadra" non trovata');return;}
-        var headers=rows[headerIdx],colS=-1,colG=-1,colPt=-1;
+        var headers=rows[headerIdx],colS=-1,colG=-1,colPt=-1,colGF=-1,colGS=-1;
         headers.forEach(function(h,idx){var hs=String(h||'').trim().toLowerCase();
-          if(hs.includes('squadra'))colS=idx;else if(hs==='g')colG=idx;else if(hs.includes('pt')||hs.includes('punt')||hs.includes('total'))colPt=idx;});
+          if(hs.includes('squadra'))colS=idx;else if(hs==='g')colG=idx;else if(hs.includes('pt')||hs.includes('punt')||hs.includes('total'))colPt=idx;
+          else if(hs.includes('gf')||hs.includes('fatti')||hs.includes('for'))colGF=idx;else if(hs.includes('gs')||hs.includes('subiti')||hs.includes('against'))colGS=idx;});
         if(colS<0||colPt<0){alert('Colonne Squadra o Pt. Totali non trovate');return;}
         var giornata=null,ranking=[];
         for(var r=headerIdx+1;r<rows.length;r++){
           var row=rows[r],squadra=String(row[colS]||'').trim();if(!squadra)continue;
           if(giornata===null&&colG>=0)giornata=parseInt(row[colG])||null;
-          ranking.push({squadra:squadra,pt:parseFloat(String(row[colPt]||'').replace(',','.'))||0});
+          ranking.push({squadra:squadra,pt:parseFloat(String(row[colPt]||'').replace(',','.'))||0,gf:colGF>=0?parseFloat(String(row[colGF]||'').replace(',','.'))||0:0,gs:colGS>=0?parseFloat(String(row[colGS]||'').replace(',','.'))||0:0});
         }
         if(!giornata||!ranking.length){alert('Nessun dato trovato');return;}
         var existing=_getQualifData(torneoKey,qi);
@@ -6550,6 +6556,13 @@ function admClearAllQualifGiornate(torneoKey,qi){
   _saveQualifManual(torneoKey,qi,{});
   localStorage.removeItem('adm_qualif_ranking_override_'+torneoKey+'_'+qi);
   admLoadQualifPanel();alert('✅ Tutti i dati eliminati');
+}
+function admSaveQualifRankingOrder(torneoKey,qi){
+  var override=_getQualifRankingOverride(torneoKey,qi);
+  if(!override.length){alert('Nessun ordine personalizzato da salvare');return;}
+  var key='adm_qualif_ranking_override_'+torneoKey+'_'+qi;
+  gsSaveKey(key,JSON.stringify(override));
+  alert('✅ Ordine personalizzato sincronizzato');
 }
 function admProcessFormationsXlsx(torneoKey,qi,file){
   function _doProcess(){
@@ -6609,9 +6622,9 @@ function _qualifComputeRankingUpTo(torneoKey,qi,upToG){
     gs.forEach(function(g){mData[g].forEach(function(item,i){acc[item.squadra]=(acc[item.squadra]||0)+(f1T[i]||0);});});
     return Object.keys(acc).map(function(sq){return{squadra:sq,pt:acc[sq]};}).sort(function(a,b){return b.pt-a.pt;});
   } else {
-    var ptAcc={};
-    gs.forEach(function(g){mData[g].forEach(function(item){ptAcc[item.squadra]=(ptAcc[item.squadra]||0)+item.pt;});});
-    return Object.keys(ptAcc).map(function(sq){return{squadra:sq,pt:ptAcc[sq]};}).sort(function(a,b){return b.pt-a.pt;});
+    var ptAcc={},gfAcc={},gsAcc={};
+    gs.forEach(function(g){mData[g].forEach(function(item){ptAcc[item.squadra]=(ptAcc[item.squadra]||0)+item.pt;gfAcc[item.squadra]=(gfAcc[item.squadra]||0)+(item.gf||0);gsAcc[item.squadra]=(gsAcc[item.squadra]||0)+(item.gs||0);});});
+    return Object.keys(ptAcc).map(function(sq){return{squadra:sq,pt:ptAcc[sq],gf:gfAcc[sq]||0,gs:gsAcc[sq]||0};}).sort(function(a,b){return b.pt-a.pt||b.gf-b.gs-(a.gf-a.gs);});
   }
 }
 function _qualifBuildTable(ranking,zoneMap,ptLabel){
@@ -13357,17 +13370,22 @@ function admToggleQualifClassifica(torneoKey,qi){
   console.log('[qualif-classifica] Ranking:', ranking);
   if(!ranking.length){el.innerHTML='<div style="color:var(--text3);font-size:12px;padding:8px">Errore nel calcolo della classifica</div>';return;}
   var h='<div style="font-size:11px"><table style="width:100%;border-collapse:collapse">';
-  h+='<thead><tr style="border-bottom:1px solid var(--border)"><th style="padding:6px;text-align:left;color:var(--text3);font-weight:700;font-size:10px">POS</th><th style="padding:6px;text-align:left;color:var(--text3);font-weight:700;font-size:10px">SQUADRA</th><th style="padding:6px;text-align:right;color:var(--text3);font-weight:700;font-size:10px">PT.</th><th style="padding:6px;text-align:center;color:var(--text3);font-weight:700;font-size:10px">AZIONI</th></tr></thead>';
+  h+='<thead><tr style="border-bottom:1px solid var(--border)"><th style="padding:6px;text-align:left;color:var(--text3);font-weight:700;font-size:10px">POS</th><th style="padding:6px;text-align:left;color:var(--text3);font-weight:700;font-size:10px">SQUADRA</th><th style="padding:6px;text-align:right;color:var(--text3);font-weight:700;font-size:10px">PT.</th><th style="padding:6px;text-align:right;color:var(--text3);font-weight:700;font-size:10px">GF</th><th style="padding:6px;text-align:right;color:var(--text3);font-weight:700;font-size:10px">GS</th><th style="padding:6px;text-align:right;color:var(--text3);font-weight:700;font-size:10px">DR</th><th style="padding:6px;text-align:center;color:var(--text3);font-weight:700;font-size:10px">AZIONI</th></tr></thead>';
   h+='<tbody>';
   console.log('[qualif-classifica] Primo elemento ranking:', ranking[0]);
   ranking.forEach(function(r,idx){
     if(idx===0)console.log('[qualif-classifica] Elemento 0:', r);
-    h+='<tr style="border-bottom:1px solid var(--border);background:'+(idx%2===0?'rgba(255,255,255,.02)':'transparent')+'"><td style="padding:6px">'+(idx+1)+'</td><td style="padding:6px">'+_teamCase(r.squadra)+'</td><td style="padding:6px;text-align:right">'+r.pt+'</td><td style="padding:6px;text-align:center;display:flex;gap:4px;justify-content:center">';
+    var dr=(r.gf||0)-(r.gs||0);
+    h+='<tr style="border-bottom:1px solid var(--border);background:'+(idx%2===0?'rgba(255,255,255,.02)':'transparent')+'"><td style="padding:6px">'+(idx+1)+'</td><td style="padding:6px">'+_teamCase(r.squadra)+'</td><td style="padding:6px;text-align:right">'+r.pt+'</td><td style="padding:6px;text-align:right">'+(r.gf||0)+'</td><td style="padding:6px;text-align:right">'+(r.gs||0)+'</td><td style="padding:6px;text-align:right;color:'+(dr>0?'#10b981':dr<0?'#ef4444':'var(--text3)')+'">'+dr+'</td><td style="padding:6px;text-align:center;display:flex;gap:4px;justify-content:center">';
     if(idx>0)h+='<button onclick="admMoveQualifRanking(\''+torneoKey+'\','+qi+','+idx+',-1)" style="background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.2);color:#3b82f6;border-radius:4px;padding:2px 6px;font-size:10px;cursor:pointer">↑</button>';
     if(idx<ranking.length-1)h+='<button onclick="admMoveQualifRanking(\''+torneoKey+'\','+qi+','+idx+',1)" style="background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.2);color:#3b82f6;border-radius:4px;padding:2px 6px;font-size:10px;cursor:pointer">↓</button>';
     h+='</td></tr>';
   });
   h+='</tbody></table></div>';
+  h+='<div style="padding:10px 0;display:flex;gap:8px;flex-wrap:wrap">';
+  h+='<button onclick="admSaveQualifRankingOrder(\''+torneoKey+'\','+qi+')" style="background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.2);color:#10b981;border-radius:6px;padding:6px 12px;font-size:11px;font-weight:700;cursor:pointer">💾 Salva ordine</button>';
+  h+='<span style="font-size:10px;color:var(--text3);padding:6px 0">L\'ordine verrà sincronizzato</span>';
+  h+='</div>';
   el.innerHTML=h;
 }
 function _getQualifRankingOverride(torneoKey,qi){var s=localStorage.getItem('adm_qualif_ranking_override_'+torneoKey+'_'+qi);if(!s)return[];try{return JSON.parse(s);}catch(e){return[];}}
@@ -13399,15 +13417,16 @@ function admProcessQualifXlsx(torneoKey,qi,file){
         var headerIdx=-1;
         for(var i=0;i<rows.length;i++){if(rows[i].some(function(c){return c&&String(c).toLowerCase().includes('squadra');})){headerIdx=i;break;}}
         if(headerIdx<0){alert('Colonna "Squadra" non trovata');return;}
-        var headers=rows[headerIdx],colS=-1,colG=-1,colPt=-1;
+        var headers=rows[headerIdx],colS=-1,colG=-1,colPt=-1,colGF=-1,colGS=-1;
         headers.forEach(function(h,idx){var hs=String(h||'').trim().toLowerCase();
-          if(hs.includes('squadra'))colS=idx;else if(hs==='g')colG=idx;else if(hs.includes('pt')||hs.includes('punt')||hs.includes('total'))colPt=idx;});
+          if(hs.includes('squadra'))colS=idx;else if(hs==='g')colG=idx;else if(hs.includes('pt')||hs.includes('punt')||hs.includes('total'))colPt=idx;
+          else if(hs.includes('gf')||hs.includes('fatti')||hs.includes('for'))colGF=idx;else if(hs.includes('gs')||hs.includes('subiti')||hs.includes('against'))colGS=idx;});
         if(colS<0||colPt<0){alert('Colonne Squadra o Pt. Totali non trovate');return;}
         var giornata=null,ranking=[];
         for(var r=headerIdx+1;r<rows.length;r++){
           var row=rows[r],squadra=String(row[colS]||'').trim();if(!squadra)continue;
           if(giornata===null&&colG>=0)giornata=parseInt(row[colG])||null;
-          ranking.push({squadra:squadra,pt:parseFloat(String(row[colPt]||'').replace(',','.'))||0});
+          ranking.push({squadra:squadra,pt:parseFloat(String(row[colPt]||'').replace(',','.'))||0,gf:colGF>=0?parseFloat(String(row[colGF]||'').replace(',','.'))||0:0,gs:colGS>=0?parseFloat(String(row[colGS]||'').replace(',','.'))||0:0});
         }
         if(!giornata||!ranking.length){alert('Nessun dato trovato');return;}
         var existing=_getQualifData(torneoKey,qi);
@@ -13457,6 +13476,13 @@ function admClearAllQualifGiornate(torneoKey,qi){
   _saveQualifManual(torneoKey,qi,{});
   localStorage.removeItem('adm_qualif_ranking_override_'+torneoKey+'_'+qi);
   admLoadQualifPanel();alert('✅ Tutti i dati eliminati');
+}
+function admSaveQualifRankingOrder(torneoKey,qi){
+  var override=_getQualifRankingOverride(torneoKey,qi);
+  if(!override.length){alert('Nessun ordine personalizzato da salvare');return;}
+  var key='adm_qualif_ranking_override_'+torneoKey+'_'+qi;
+  gsSaveKey(key,JSON.stringify(override));
+  alert('✅ Ordine personalizzato sincronizzato');
 }
 function admProcessFormationsXlsx(torneoKey,qi,file){
   function _doProcess(){
@@ -13516,9 +13542,9 @@ function _qualifComputeRankingUpTo(torneoKey,qi,upToG){
     gs.forEach(function(g){mData[g].forEach(function(item,i){acc[item.squadra]=(acc[item.squadra]||0)+(f1T[i]||0);});});
     return Object.keys(acc).map(function(sq){return{squadra:sq,pt:acc[sq]};}).sort(function(a,b){return b.pt-a.pt;});
   } else {
-    var ptAcc={};
-    gs.forEach(function(g){mData[g].forEach(function(item){ptAcc[item.squadra]=(ptAcc[item.squadra]||0)+item.pt;});});
-    return Object.keys(ptAcc).map(function(sq){return{squadra:sq,pt:ptAcc[sq]};}).sort(function(a,b){return b.pt-a.pt;});
+    var ptAcc={},gfAcc={},gsAcc={};
+    gs.forEach(function(g){mData[g].forEach(function(item){ptAcc[item.squadra]=(ptAcc[item.squadra]||0)+item.pt;gfAcc[item.squadra]=(gfAcc[item.squadra]||0)+(item.gf||0);gsAcc[item.squadra]=(gsAcc[item.squadra]||0)+(item.gs||0);});});
+    return Object.keys(ptAcc).map(function(sq){return{squadra:sq,pt:ptAcc[sq],gf:gfAcc[sq]||0,gs:gsAcc[sq]||0};}).sort(function(a,b){return b.pt-a.pt||b.gf-b.gs-(a.gf-a.gs);});
   }
 }
 function _qualifBuildTable(ranking,zoneMap,ptLabel){
