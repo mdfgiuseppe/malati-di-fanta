@@ -1,4 +1,4 @@
-<!-- build:20260611_2142 -->
+<!-- build:20260611_2144 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260611_2142';
+  var BUILD='20260611_2144';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
@@ -6711,6 +6711,8 @@ function _openQualifClassGiornata(torneoKey,qi,g){
     if(bs){bs.style.background=gg===g?'rgba(16,185,129,.15)':'var(--bg2)';bs.style.borderColor=gg===g?'#10b981':'var(--border)';bs.style.color=gg===g?'#10b981':'var(--text2)';}
   });
   var ranking=_qualifComputeRankingUpTo(torneoKey,qi,g);
+  var overrideStr=localStorage.getItem('adm_qualif_ranking_override_'+torneoKey+'_'+qi);
+  if(overrideStr){try{var override=JSON.parse(overrideStr);if(override.length===ranking.length){ranking=override.map(function(sq){var r=ranking.find(function(x){return x.squadra===sq;});return r||{squadra:sq,pt:0,gf:0,gs:0};});}}catch(e){}}
   var coppeConfig=admGetCoppeConfig(torneoKey),zones=q.zones||[],zoneMap={},pos=1;
   zones.forEach(function(z){var cc=coppeConfig.find(function(x){return x.key===z.coppaKey;});if(cc&&z.posti>0){zoneMap[z.coppaKey]={from:pos,to:pos+z.posti-1,color:z.color||cc.color,label:cc.label};pos+=z.posti;}});
   var zoneLegend='';
@@ -6731,6 +6733,8 @@ function openQualif(torneoKey,qi){
   var content=document.getElementById(_idPfx+'bracket-content');
   if(!panel||!title||!content)return;
   var configs=admGetQualifConfig(torneoKey),q=configs[qi];if(!q)return;
+  var overrideKey='adm_qualif_ranking_override_'+torneoKey+'_'+qi;
+  gsLoadKey(overrideKey,function(data){if(data){localStorage.setItem(overrideKey,data);}});
   var mData=_getQualifManual(torneoKey,qi);
   var mSortedGs=Object.keys(mData).map(Number).sort(function(a,b){return a-b;});
   if(hub)hub.style.display='none';
@@ -13642,6 +13646,8 @@ function _openQualifClassGiornata(torneoKey,qi,g){
     if(bs){bs.style.background=gg===g?'rgba(16,185,129,.15)':'var(--bg2)';bs.style.borderColor=gg===g?'#10b981':'var(--border)';bs.style.color=gg===g?'#10b981':'var(--text2)';}
   });
   var ranking=_qualifComputeRankingUpTo(torneoKey,qi,g);
+  var overrideStr=localStorage.getItem('adm_qualif_ranking_override_'+torneoKey+'_'+qi);
+  if(overrideStr){try{var override=JSON.parse(overrideStr);if(override.length===ranking.length){ranking=override.map(function(sq){var r=ranking.find(function(x){return x.squadra===sq;});return r||{squadra:sq,pt:0,gf:0,gs:0};});}}catch(e){}}
   var coppeConfig=admGetCoppeConfig(torneoKey),zones=q.zones||[],zoneMap={},pos=1;
   zones.forEach(function(z){var cc=coppeConfig.find(function(x){return x.key===z.coppaKey;});if(cc&&z.posti>0){zoneMap[z.coppaKey]={from:pos,to:pos+z.posti-1,color:z.color||cc.color,label:cc.label};pos+=z.posti;}});
   var zoneLegend='';
@@ -13662,6 +13668,8 @@ function openQualif(torneoKey,qi){
   var content=document.getElementById(_idPfx+'bracket-content');
   if(!panel||!title||!content)return;
   var configs=admGetQualifConfig(torneoKey),q=configs[qi];if(!q)return;
+  var overrideKey='adm_qualif_ranking_override_'+torneoKey+'_'+qi;
+  gsLoadKey(overrideKey,function(data){if(data){localStorage.setItem(overrideKey,data);}});
   var mData=_getQualifManual(torneoKey,qi);
   var mSortedGs=Object.keys(mData).map(Number).sort(function(a,b){return a-b;});
   if(hub)hub.style.display='none';
