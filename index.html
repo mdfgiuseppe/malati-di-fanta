@@ -1,4 +1,4 @@
-<!-- build:20260611_1344 -->
+<!-- build:20260611_1345 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260611_1344';
+  var BUILD='20260611_1345';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
@@ -6433,7 +6433,7 @@ function admToggleQualifClassifica(torneoKey,qi){
   var el=document.getElementById('qcf-'+torneoKey+'-'+qi);
   console.log('[qualif-classifica] Element found:', !!el);
   if(!el)return;
-  if(el.style.display!=='none'){el.style.display='none';el.innerHTML='';return;}
+  if(el.style.display!=='none'){el.style.display='none';return;}
   el.style.display='block';
   var mData=_getQualifManual(torneoKey,qi);
   console.log('[qualif-classifica] mData completo:', mData);
@@ -13313,7 +13313,7 @@ function admToggleQualifClassifica(torneoKey,qi){
   var el=document.getElementById('qcf-'+torneoKey+'-'+qi);
   console.log('[qualif-classifica] Element found:', !!el);
   if(!el)return;
-  if(el.style.display!=='none'){el.style.display='none';el.innerHTML='';return;}
+  if(el.style.display!=='none'){el.style.display='none';return;}
   el.style.display='block';
   var mData=_getQualifManual(torneoKey,qi);
   console.log('[qualif-classifica] mData completo:', mData);
