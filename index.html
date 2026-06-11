@@ -1,4 +1,4 @@
-<!-- build:20260611_2150 -->
+<!-- build:20260611_2156 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260611_2150';
+  var BUILD='20260611_2156';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
@@ -9572,6 +9572,7 @@ function admLoadCalBody() {
     +'<button onclick="document.getElementById(\'adm-cal-res-file\').click()" style="padding:5px 12px;background:rgba(16,185,129,.15);border:1px solid rgba(16,185,129,.3);border-radius:6px;color:#10b981;font-size:12px;font-weight:700;cursor:pointer">⚽ Importa Giornata</button>'
     +'<input type="file" id="adm-cal-res-file" accept=".xlsx" style="display:none" onchange="admProcessGiornataXlsx(this)">'
     +'<button onclick="admAzzeraRisultatiCal()" style="padding:5px 12px;background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.3);border-radius:6px;color:#ef4444;font-size:12px;font-weight:700;cursor:pointer">🗑 Azzera</button>'
+    +'<button onclick="admLoadCalBody()" style="padding:5px 12px;background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.2);border-radius:6px;color:#3b82f6;font-size:12px;font-weight:700;cursor:pointer">🔃 Ricalcola</button>'
     +'</div>';
   var h;
   if (view === 'calendario') {
@@ -15801,6 +15802,7 @@ function admLoadCalBody() {
     +'<button onclick="document.getElementById(\'adm-cal-res-file\').click()" style="padding:5px 12px;background:rgba(16,185,129,.15);border:1px solid rgba(16,185,129,.3);border-radius:6px;color:#10b981;font-size:12px;font-weight:700;cursor:pointer">⚽ Importa Giornata</button>'
     +'<input type="file" id="adm-cal-res-file" accept=".xlsx" style="display:none" onchange="admProcessGiornataXlsx(this)">'
     +'<button onclick="admAzzeraRisultatiCal()" style="padding:5px 12px;background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.3);border-radius:6px;color:#ef4444;font-size:12px;font-weight:700;cursor:pointer">🗑 Azzera</button>'
+    +'<button onclick="admLoadCalBody()" style="padding:5px 12px;background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.2);border-radius:6px;color:#3b82f6;font-size:12px;font-weight:700;cursor:pointer">🔃 Ricalcola</button>'
     +'</div>';
   var h;
   if (view === 'calendario') {
