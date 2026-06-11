@@ -1,4 +1,4 @@
-<!-- build:20260611_2126 -->
+<!-- build:20260611_2131 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260611_2126';
+  var BUILD='20260611_2131';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
@@ -6337,6 +6337,7 @@ function admRenderQualifList(torneoKey,_onlyQi){
         +'<button onclick="admToggleQualifClassifica(\''+torneoKey+'\','+qi+')" style="background:rgba(139,92,246,.1);border:1px solid rgba(139,92,246,.2);color:#8b5cf6;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer">📊 Modifica classifica</button>'
         +'<button onclick="admDeleteLastQualifGiornata(\''+torneoKey+'\','+qi+')" style="background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);color:#ef4444;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer">🗑 Annulla ultima</button>'
         +'<button onclick="admClearAllQualifGiornate(\''+torneoKey+'\','+qi+')" style="background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.3);color:#dc2626;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer">🔄 Azzerare tutto</button>'
+        +'<button onclick="admRecalcQualif(\''+torneoKey+'\','+qi+')" style="background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.2);color:#3b82f6;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer">🔃 Ricalcola</button>'
         +(_mGs.length?'<span style="font-size:11px;color:var(--text3)">Giornate: '+_mGs.join(', ')+' / '+(q.giornate_totali||12)+'</span>':'<span style="font-size:11px;color:var(--text3)">Nessuna giornata inserita</span>')
         +'</div>'
         +'<div id="qmf-'+torneoKey+'-'+qi+'" style="display:none;padding:6px 14px 10px;border-top:1px solid var(--border)">'
@@ -6564,6 +6565,14 @@ function admSaveQualifRankingOrder(torneoKey,qi){
   var key='adm_qualif_ranking_override_'+torneoKey+'_'+qi;
   gsSaveKey(key,JSON.stringify(override));
   alert('✅ Ordine personalizzato sincronizzato');
+}
+function admRecalcQualif(torneoKey,qi){
+  var mData=_getQualifManual(torneoKey,qi);
+  var mGs=Object.keys(mData).map(Number).sort(function(a,b){return a-b;});
+  if(!mGs.length){alert('Nessuna giornata da ricalcolare');return;}
+  console.log('[qualif-recalc] Ricalcolando', mGs.length, 'giornate');
+  admLoadQualifPanel();
+  alert('✅ Dati ricalcolati: '+mGs.length+' giornate');
 }
 function admProcessFormationsXlsx(torneoKey,qi,file){
   function _doProcess(){
@@ -13258,6 +13267,7 @@ function admRenderQualifList(torneoKey,_onlyQi){
         +'<button onclick="admToggleQualifClassifica(\''+torneoKey+'\','+qi+')" style="background:rgba(139,92,246,.1);border:1px solid rgba(139,92,246,.2);color:#8b5cf6;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer">📊 Modifica classifica</button>'
         +'<button onclick="admDeleteLastQualifGiornata(\''+torneoKey+'\','+qi+')" style="background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);color:#ef4444;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer">🗑 Annulla ultima</button>'
         +'<button onclick="admClearAllQualifGiornate(\''+torneoKey+'\','+qi+')" style="background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.3);color:#dc2626;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer">🔄 Azzerare tutto</button>'
+        +'<button onclick="admRecalcQualif(\''+torneoKey+'\','+qi+')" style="background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.2);color:#3b82f6;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer">🔃 Ricalcola</button>'
         +(_mGs.length?'<span style="font-size:11px;color:var(--text3)">Giornate: '+_mGs.join(', ')+' / '+(q.giornate_totali||12)+'</span>':'<span style="font-size:11px;color:var(--text3)">Nessuna giornata inserita</span>')
         +'</div>'
         +'<div id="qmf-'+torneoKey+'-'+qi+'" style="display:none;padding:6px 14px 10px;border-top:1px solid var(--border)">'
@@ -13485,6 +13495,14 @@ function admSaveQualifRankingOrder(torneoKey,qi){
   var key='adm_qualif_ranking_override_'+torneoKey+'_'+qi;
   gsSaveKey(key,JSON.stringify(override));
   alert('✅ Ordine personalizzato sincronizzato');
+}
+function admRecalcQualif(torneoKey,qi){
+  var mData=_getQualifManual(torneoKey,qi);
+  var mGs=Object.keys(mData).map(Number).sort(function(a,b){return a-b;});
+  if(!mGs.length){alert('Nessuna giornata da ricalcolare');return;}
+  console.log('[qualif-recalc] Ricalcolando', mGs.length, 'giornate');
+  admLoadQualifPanel();
+  alert('✅ Dati ricalcolati: '+mGs.length+' giornate');
 }
 function admProcessFormationsXlsx(torneoKey,qi,file){
   function _doProcess(){
