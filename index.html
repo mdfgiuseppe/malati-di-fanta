@@ -1,4 +1,4 @@
-<!-- build:20260610_2126 -->
+<!-- build:20260611_1337 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260610_2126';
+  var BUILD='20260611_1337';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
@@ -6453,13 +6453,15 @@ function admToggleQualifClassifica(torneoKey,qi){
   el.innerHTML=h;
 }
 function admMoveQualifRanking(torneoKey,qi,idx,direction){
+  console.log('[qualif-move] Spostando:', {torneoKey, qi, idx, direction});
   var mData=_getQualifManual(torneoKey,qi);
   var mGs=Object.keys(mData).map(Number).sort(function(a,b){return a-b;});
-  if(!mGs.length)return;
+  if(!mGs.length){console.log('[qualif-move] Nessuna giornata');return;}
   var ranking=_qualifComputeRankingUpTo(torneoKey,qi,mGs[mGs.length-1]);
-  if(idx<0||idx>=ranking.length)return;
+  if(idx<0||idx>=ranking.length){console.log('[qualif-move] Indice non valido');return;}
   var newIdx=idx+direction;
-  if(newIdx<0||newIdx>=ranking.length)return;
+  if(newIdx<0||newIdx>=ranking.length){console.log('[qualif-move] Nuovo indice non valido');return;}
+  console.log('[qualif-move] Scambiando posizioni', idx, 'e', newIdx);
   var temp=ranking[idx];ranking[idx]=ranking[newIdx];ranking[newIdx]=temp;
   var lastGiornata=mGs[mGs.length-1];
   mData[lastGiornata]=ranking.map(function(r){return r.squadra;});
@@ -13331,13 +13333,15 @@ function admToggleQualifClassifica(torneoKey,qi){
   el.innerHTML=h;
 }
 function admMoveQualifRanking(torneoKey,qi,idx,direction){
+  console.log('[qualif-move] Spostando:', {torneoKey, qi, idx, direction});
   var mData=_getQualifManual(torneoKey,qi);
   var mGs=Object.keys(mData).map(Number).sort(function(a,b){return a-b;});
-  if(!mGs.length)return;
+  if(!mGs.length){console.log('[qualif-move] Nessuna giornata');return;}
   var ranking=_qualifComputeRankingUpTo(torneoKey,qi,mGs[mGs.length-1]);
-  if(idx<0||idx>=ranking.length)return;
+  if(idx<0||idx>=ranking.length){console.log('[qualif-move] Indice non valido');return;}
   var newIdx=idx+direction;
-  if(newIdx<0||newIdx>=ranking.length)return;
+  if(newIdx<0||newIdx>=ranking.length){console.log('[qualif-move] Nuovo indice non valido');return;}
+  console.log('[qualif-move] Scambiando posizioni', idx, 'e', newIdx);
   var temp=ranking[idx];ranking[idx]=ranking[newIdx];ranking[newIdx]=temp;
   var lastGiornata=mGs[mGs.length-1];
   mData[lastGiornata]=ranking.map(function(r){return r.squadra;});
