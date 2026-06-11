@@ -1,4 +1,4 @@
-<!-- build:20260611_2031 -->
+<!-- build:20260611_2044 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260611_2031';
+  var BUILD='20260611_2044';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
@@ -6445,6 +6445,8 @@ function admToggleQualifClassifica(torneoKey,qi){
   console.log('[qualif-classifica] Giornate caricate:', mGs);
   if(!mGs.length){el.innerHTML='<div style="color:var(--text3);font-size:12px;padding:8px">Nessuna giornata importata</div>';return;}
   var ranking=_qualifComputeRankingUpTo(torneoKey,qi,mGs[mGs.length-1]);
+  var override=_getQualifRankingOverride(torneoKey,qi);
+  if(override.length===ranking.length){ranking=override.map(function(sq){var r=ranking.find(function(x){return x.squadra===sq;});return r||{squadra:sq,pt:0};});}
   console.log('[qualif-classifica] Ranking:', ranking);
   if(!ranking.length){el.innerHTML='<div style="color:var(--text3);font-size:12px;padding:8px">Errore nel calcolo della classifica</div>';return;}
   var h='<div style="font-size:11px"><table style="width:100%;border-collapse:collapse">';
@@ -6461,20 +6463,20 @@ function admToggleQualifClassifica(torneoKey,qi){
   h+='</tbody></table></div>';
   el.innerHTML=h;
 }
+function _getQualifRankingOverride(torneoKey,qi){var s=localStorage.getItem('adm_qualif_ranking_override_'+torneoKey+'_'+qi);if(!s)return[];try{return JSON.parse(s);}catch(e){return[];}}
+function _saveQualifRankingOverride(torneoKey,qi,order){var s=JSON.stringify(order);localStorage.setItem('adm_qualif_ranking_override_'+torneoKey+'_'+qi,s);}
 function admMoveQualifRanking(torneoKey,qi,idx,direction){
   console.log('[qualif-move] Spostando:', {torneoKey, qi, idx, direction});
-  var mData=_getQualifManual(torneoKey,qi);
-  var mGs=Object.keys(mData).map(Number).sort(function(a,b){return a-b;});
-  if(!mGs.length){console.log('[qualif-move] Nessuna giornata');return;}
-  var ranking=_qualifComputeRankingUpTo(torneoKey,qi,mGs[mGs.length-1]);
+  var ranking=_qualifComputeRankingUpTo(torneoKey,qi);
+  var override=_getQualifRankingOverride(torneoKey,qi);
+  if(override.length===ranking.length){ranking=override.map(function(sq){var r=ranking.find(function(x){return x.squadra===sq;});return r||{squadra:sq,pt:0};});}
   if(idx<0||idx>=ranking.length){console.log('[qualif-move] Indice non valido');return;}
   var newIdx=idx+direction;
   if(newIdx<0||newIdx>=ranking.length){console.log('[qualif-move] Nuovo indice non valido');return;}
   console.log('[qualif-move] Scambiando posizioni', idx, 'e', newIdx);
   var temp=ranking[idx];ranking[idx]=ranking[newIdx];ranking[newIdx]=temp;
-  var lastGiornata=mGs[mGs.length-1];
-  mData[lastGiornata]=ranking.map(function(r){return r.squadra;});
-  _saveQualifManual(torneoKey,qi,mData);
+  var newOrder=ranking.map(function(r){return r.squadra;});
+  _saveQualifRankingOverride(torneoKey,qi,newOrder);
   admToggleQualifClassifica(torneoKey,qi);admToggleQualifClassifica(torneoKey,qi);
 }
 function admProcessQualifXlsx(torneoKey,qi,file){
@@ -6543,6 +6545,7 @@ function admDeleteLastQualifGiornata(torneoKey,qi){
 function admClearAllQualifGiornate(torneoKey,qi){
   if(!confirm('Azzerare completamente tutte le giornate? Questa azione non è reversibile.'))return;
   _saveQualifManual(torneoKey,qi,{});
+  localStorage.removeItem('adm_qualif_ranking_override_'+torneoKey+'_'+qi);
   admLoadQualifPanel();alert('✅ Tutti i dati eliminati');
 }
 function admProcessFormationsXlsx(torneoKey,qi,file){
@@ -13346,6 +13349,8 @@ function admToggleQualifClassifica(torneoKey,qi){
   console.log('[qualif-classifica] Giornate caricate:', mGs);
   if(!mGs.length){el.innerHTML='<div style="color:var(--text3);font-size:12px;padding:8px">Nessuna giornata importata</div>';return;}
   var ranking=_qualifComputeRankingUpTo(torneoKey,qi,mGs[mGs.length-1]);
+  var override=_getQualifRankingOverride(torneoKey,qi);
+  if(override.length===ranking.length){ranking=override.map(function(sq){var r=ranking.find(function(x){return x.squadra===sq;});return r||{squadra:sq,pt:0};});}
   console.log('[qualif-classifica] Ranking:', ranking);
   if(!ranking.length){el.innerHTML='<div style="color:var(--text3);font-size:12px;padding:8px">Errore nel calcolo della classifica</div>';return;}
   var h='<div style="font-size:11px"><table style="width:100%;border-collapse:collapse">';
@@ -13362,20 +13367,20 @@ function admToggleQualifClassifica(torneoKey,qi){
   h+='</tbody></table></div>';
   el.innerHTML=h;
 }
+function _getQualifRankingOverride(torneoKey,qi){var s=localStorage.getItem('adm_qualif_ranking_override_'+torneoKey+'_'+qi);if(!s)return[];try{return JSON.parse(s);}catch(e){return[];}}
+function _saveQualifRankingOverride(torneoKey,qi,order){var s=JSON.stringify(order);localStorage.setItem('adm_qualif_ranking_override_'+torneoKey+'_'+qi,s);}
 function admMoveQualifRanking(torneoKey,qi,idx,direction){
   console.log('[qualif-move] Spostando:', {torneoKey, qi, idx, direction});
-  var mData=_getQualifManual(torneoKey,qi);
-  var mGs=Object.keys(mData).map(Number).sort(function(a,b){return a-b;});
-  if(!mGs.length){console.log('[qualif-move] Nessuna giornata');return;}
-  var ranking=_qualifComputeRankingUpTo(torneoKey,qi,mGs[mGs.length-1]);
+  var ranking=_qualifComputeRankingUpTo(torneoKey,qi);
+  var override=_getQualifRankingOverride(torneoKey,qi);
+  if(override.length===ranking.length){ranking=override.map(function(sq){var r=ranking.find(function(x){return x.squadra===sq;});return r||{squadra:sq,pt:0};});}
   if(idx<0||idx>=ranking.length){console.log('[qualif-move] Indice non valido');return;}
   var newIdx=idx+direction;
   if(newIdx<0||newIdx>=ranking.length){console.log('[qualif-move] Nuovo indice non valido');return;}
   console.log('[qualif-move] Scambiando posizioni', idx, 'e', newIdx);
   var temp=ranking[idx];ranking[idx]=ranking[newIdx];ranking[newIdx]=temp;
-  var lastGiornata=mGs[mGs.length-1];
-  mData[lastGiornata]=ranking.map(function(r){return r.squadra;});
-  _saveQualifManual(torneoKey,qi,mData);
+  var newOrder=ranking.map(function(r){return r.squadra;});
+  _saveQualifRankingOverride(torneoKey,qi,newOrder);
   admToggleQualifClassifica(torneoKey,qi);admToggleQualifClassifica(torneoKey,qi);
 }
 function admProcessQualifXlsx(torneoKey,qi,file){
@@ -13444,6 +13449,7 @@ function admDeleteLastQualifGiornata(torneoKey,qi){
 function admClearAllQualifGiornate(torneoKey,qi){
   if(!confirm('Azzerare completamente tutte le giornate? Questa azione non è reversibile.'))return;
   _saveQualifManual(torneoKey,qi,{});
+  localStorage.removeItem('adm_qualif_ranking_override_'+torneoKey+'_'+qi);
   admLoadQualifPanel();alert('✅ Tutti i dati eliminati');
 }
 function admProcessFormationsXlsx(torneoKey,qi,file){
