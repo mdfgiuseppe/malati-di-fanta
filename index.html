@@ -1,4 +1,4 @@
-<!-- build:20260612_1910 -->
+<!-- build:20260612_2056 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260612_1910';
+  var BUILD='20260612_2056';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
@@ -9757,7 +9757,7 @@ function admCalSaveScoreAndClose(g,t,l){
   });
   Object.keys(matchMap).forEach(function(hKey){
     var sh=matchMap[hKey].h;var sa=matchMap[hKey].a;
-    if(sh!==''&&sa!=='')scores[String(g)][hKey]=sh+'-'+sa;
+    if(sh!==''&&sa!==''){var gf=parseInt(sh)||0,gs=parseInt(sa)||0;scores[String(g)][hKey]={pf:gf,ps:gs};}
   });
   localStorage.setItem(scKey,JSON.stringify(scores));
   gsSaveKey(scKey,JSON.stringify(scores));
