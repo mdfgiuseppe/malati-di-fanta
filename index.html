@@ -1,4 +1,4 @@
-<!-- build:20260612_1909 -->
+<!-- build:20260612_1910 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260612_1909';
+  var BUILD='20260612_1910';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
@@ -7035,6 +7035,7 @@ function admLoadCoppaEditor() {
   h+='<button onclick="admTriggerCoppaImport(\''+torneoKey+'\',\''+coppaKey+'\')" style="background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.2);color:#3b82f6;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer">&#128229; Importa Risultati</button>';
   h+='<button onclick="admToggleBracketEditor()" style="background:rgba(107,114,128,.15);border:1px solid rgba(107,114,128,.3);color:var(--text);border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer">&#9998; Modifica Bracket</button>';
   h+='<button onclick="admLoadCoppeTorneo()" style="background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.2);color:#3b82f6;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer">🔄 Ricalcola</button>';
+  h+='<button onclick="var k=\'adm_qualif_manual_'+torneoKey+'_\'+document.querySelector(\'select[data-ck]\').value;gsLoadKey(k,function(d){if(d){localStorage.setItem(k,d);admLoadCoppeTorneo();alert(\'✅ Sincronizzato\');}});return false;" style="background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.2);color:#10b981;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer">⬇️ Sincronizza GSheet</button>';
   h+='</div></div>';
   elCfg.innerHTML=h;
 }
