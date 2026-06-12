@@ -1,4 +1,4 @@
-<!-- build:20260612_2149 -->
+<!-- build:20260612_2237 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260612_2149';
+  var BUILD='20260612_2237';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
@@ -4321,7 +4321,10 @@ function _updateLegaDashboard(leagueKey) {
       var _calRaw = localStorage.getItem('adm_cal_'+_admTK+'_'+_realLK);
       var _cal = _calRaw ? (function(){try{return JSON.parse(_calRaw);}catch(e){return{};}})() : {};
       var _totGiornate = Object.keys(_cal).filter(function(g){return Object.values(_cal[g]||{}).some(function(v){return v;});}).length || 0;
-      var _totAttese = (_admTK==='tsm'?36:36);
+      var _schRaw = localStorage.getItem('adm_cal_schedule_'+_admTK+'_'+_realLK);
+      var _schP = _schRaw ? (function(){try{return JSON.parse(_schRaw);}catch(e){return null;}})() : null;
+      var _schN = _schP ? Object.keys(_schP.giornate||_schP).length : 0;
+      var _totAttese = _schN > 0 ? _schN : (_admTK==='tsm'?(typeof TSM_TOTAL_GIORNATE!=='undefined'?TSM_TOTAL_GIORNATE:36):(typeof SLIM_TOTAL_GIORNATE!=='undefined'?SLIM_TOTAL_GIORNATE:36));
       if (_totGiornate === _totAttese) {
         var _campTeam = _standRes.sorted[0];
         var _campLogo = FANTASY_LOGOS[_campTeam] || FANTASY_LOGOS[_campTeam.toUpperCase()] || '';
@@ -12178,7 +12181,10 @@ function _updateLegaDashboard(leagueKey) {
       var _calRaw = localStorage.getItem('adm_cal_'+_admTK+'_'+_realLK);
       var _cal = _calRaw ? (function(){try{return JSON.parse(_calRaw);}catch(e){return{};}})() : {};
       var _totGiornate = Object.keys(_cal).filter(function(g){return Object.values(_cal[g]||{}).some(function(v){return v;});}).length || 0;
-      var _totAttese = (_admTK==='tsm'?36:36);
+      var _schRaw = localStorage.getItem('adm_cal_schedule_'+_admTK+'_'+_realLK);
+      var _schP = _schRaw ? (function(){try{return JSON.parse(_schRaw);}catch(e){return null;}})() : null;
+      var _schN = _schP ? Object.keys(_schP.giornate||_schP).length : 0;
+      var _totAttese = _schN > 0 ? _schN : (_admTK==='tsm'?(typeof TSM_TOTAL_GIORNATE!=='undefined'?TSM_TOTAL_GIORNATE:36):(typeof SLIM_TOTAL_GIORNATE!=='undefined'?SLIM_TOTAL_GIORNATE:36));
       if (_totGiornate === _totAttese) {
         var _campTeam = _standRes.sorted[0];
         var _campLogo = FANTASY_LOGOS[_campTeam] || FANTASY_LOGOS[_campTeam.toUpperCase()] || '';
