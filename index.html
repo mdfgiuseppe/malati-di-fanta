@@ -1,4 +1,4 @@
-<!-- build:20260612_2058 -->
+<!-- build:20260612_2110 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260612_2058';
+  var BUILD='20260612_2110';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
@@ -9605,7 +9605,8 @@ function admLoadCalBody() {
             var rH=_gk(gio,m.h),rA=_gk(gio,m.a);
             var _symScore=(rH==='VC'||rH==='V')?'1-0':(rH==='PC'||rH==='P')?'1-1':(rH==='SC'||rH==='S')?'0-1':(rA==='VF'||rA==='V')?'0-1':(rA==='PF'||rA==='P')?'1-1':(rA==='SF'||rA==='S')?'1-0':null;
             var _scG=typeof _scores!=='undefined'&&_scores&&_scores[String(g)];var _scK=_scG&&Object.keys(_scG).find(function(k){return k.toUpperCase()===(m.h||'').toUpperCase();});
-            var score=(_scK&&_scG[_scK])||_symScore;
+            var _rawScore=(_scK&&_scG[_scK])||_symScore;
+            var score=(typeof _rawScore==='object'&&_rawScore&&_rawScore.pf!==undefined)?(_rawScore.pf+'-'+_rawScore.ps):_rawScore;
             var scoreC=_symScore?(_symScore==='1-0'?'#10b981':_symScore==='1-1'?'#3b82f6':'#ef4444'):'var(--text3)';
             h+='<div style="display:grid;grid-template-columns:1fr 40px 1fr;align-items:center;gap:4px;padding:1px 0">'
               +'<span style="display:flex;align-items:center;justify-content:flex-end;font-size:11px;font-weight:700">'+_teamCase(m.h||'')+'</span>'
@@ -10015,7 +10016,8 @@ function calRenderGeneric(t, l, bodyId, nG, teams, callbackFn) {
             var rH=_gk(gio,m.h),rA=_gk(gio,m.a);
             var _symScore=(rH==='VC'||rH==='V')?'1-0':(rH==='PC'||rH==='P')?'1-1':(rH==='SC'||rH==='S')?'0-1':(rA==='VF'||rA==='V')?'0-1':(rA==='PF'||rA==='P')?'1-1':(rA==='SF'||rA==='S')?'1-0':null;
             var _scG=typeof _scores!=='undefined'&&_scores&&_scores[String(g)];var _scK=_scG&&Object.keys(_scG).find(function(k){return k.toUpperCase()===(m.h||'').toUpperCase();});
-            var score=(_scK&&_scG[_scK])||_symScore;
+            var _rawScore=(_scK&&_scG[_scK])||_symScore;
+            var score=(typeof _rawScore==='object'&&_rawScore&&_rawScore.pf!==undefined)?(_rawScore.pf+'-'+_rawScore.ps):_rawScore;
             var scoreC=_symScore?(_symScore==='1-0'?'#10b981':_symScore==='1-1'?'#3b82f6':'#ef4444'):'var(--text3)';
             var lH=_logos[(m.h||'').toUpperCase()]?'<img src="'+_logos[(m.h||'').toUpperCase()]+'" style="width:13px;height:13px;object-fit:contain;flex-shrink:0;margin-right:3px">':'';
             var lA=_logos[(m.a||'').toUpperCase()]?'<img src="'+_logos[(m.a||'').toUpperCase()]+'" style="width:13px;height:13px;object-fit:contain;flex-shrink:0;margin-left:3px">':'';
@@ -15836,7 +15838,8 @@ function admLoadCalBody() {
             var rH=_gk(gio,m.h),rA=_gk(gio,m.a);
             var _symScore=(rH==='VC'||rH==='V')?'1-0':(rH==='PC'||rH==='P')?'1-1':(rH==='SC'||rH==='S')?'0-1':(rA==='VF'||rA==='V')?'0-1':(rA==='PF'||rA==='P')?'1-1':(rA==='SF'||rA==='S')?'1-0':null;
             var _scG=typeof _scores!=='undefined'&&_scores&&_scores[String(g)];var _scK=_scG&&Object.keys(_scG).find(function(k){return k.toUpperCase()===(m.h||'').toUpperCase();});
-            var score=(_scK&&_scG[_scK])||_symScore;
+            var _rawScore=(_scK&&_scG[_scK])||_symScore;
+            var score=(typeof _rawScore==='object'&&_rawScore&&_rawScore.pf!==undefined)?(_rawScore.pf+'-'+_rawScore.ps):_rawScore;
             var scoreC=_symScore?(_symScore==='1-0'?'#10b981':_symScore==='1-1'?'#3b82f6':'#ef4444'):'var(--text3)';
             h+='<div style="display:grid;grid-template-columns:1fr 40px 1fr;align-items:center;gap:4px;padding:1px 0">'
               +'<span style="display:flex;align-items:center;justify-content:flex-end;font-size:11px;font-weight:700">'+_teamCase(m.h||'')+'</span>'
