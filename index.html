@@ -1,4 +1,4 @@
-<!-- build:20260612_2110 -->
+<!-- build:20260612_2149 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260612_2110';
+  var BUILD='20260612_2149';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
@@ -4320,8 +4320,9 @@ function _updateLegaDashboard(leagueKey) {
     if (_standRes && _standRes.sorted && _standRes.sorted.length > 0 && _standRes.giocate > 0) {
       var _calRaw = localStorage.getItem('adm_cal_'+_admTK+'_'+_realLK);
       var _cal = _calRaw ? (function(){try{return JSON.parse(_calRaw);}catch(e){return{};}})() : {};
-      var _totGiornate = Object.keys(_cal).filter(function(g){return Object.values(_cal[g]||{}).some(function(v){return v;});}).length || 1;
-      if (_standRes.giocate >= _totGiornate) {
+      var _totGiornate = Object.keys(_cal).filter(function(g){return Object.values(_cal[g]||{}).some(function(v){return v;});}).length || 0;
+      var _totAttese = (_admTK==='tsm'?36:36);
+      if (_totGiornate === _totAttese) {
         var _campTeam = _standRes.sorted[0];
         var _campLogo = FANTASY_LOGOS[_campTeam] || FANTASY_LOGOS[_campTeam.toUpperCase()] || '';
         var _campLogoEl = document.getElementById(_admTK==='tsm'?'tsm-lega-dash-campione-logo':'lega-dash-campione-logo');
@@ -12176,8 +12177,9 @@ function _updateLegaDashboard(leagueKey) {
     if (_standRes && _standRes.sorted && _standRes.sorted.length > 0 && _standRes.giocate > 0) {
       var _calRaw = localStorage.getItem('adm_cal_'+_admTK+'_'+_realLK);
       var _cal = _calRaw ? (function(){try{return JSON.parse(_calRaw);}catch(e){return{};}})() : {};
-      var _totGiornate = Object.keys(_cal).filter(function(g){return Object.values(_cal[g]||{}).some(function(v){return v;});}).length || 1;
-      if (_standRes.giocate >= _totGiornate) {
+      var _totGiornate = Object.keys(_cal).filter(function(g){return Object.values(_cal[g]||{}).some(function(v){return v;});}).length || 0;
+      var _totAttese = (_admTK==='tsm'?36:36);
+      if (_totGiornate === _totAttese) {
         var _campTeam = _standRes.sorted[0];
         var _campLogo = FANTASY_LOGOS[_campTeam] || FANTASY_LOGOS[_campTeam.toUpperCase()] || '';
         var _campLogoEl = document.getElementById(_admTK==='tsm'?'tsm-lega-dash-campione-logo':'lega-dash-campione-logo');
