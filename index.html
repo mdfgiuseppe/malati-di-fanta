@@ -1,4 +1,4 @@
-<!-- build:20260613_2207 -->
+<!-- build:20260613_2305 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260613_2207';
+  var BUILD='20260613_2305';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
@@ -6143,6 +6143,16 @@ function _qualifGetSeedOrder(numTeams){
   if(numTeams===16)return[[0,15],[8,7],[4,11],[5,10],[2,13],[6,9],[3,12],[1,14]];
   var pairs=[];for(var i=0;i<numTeams/2;i++)pairs.push([i,numTeams-1-i]);return pairs;
 }
+function _generateRoundsFromTeamCount(numTeams){
+  var roundNames=['Sedicesimi','Ottavi','Quarti','Semifinali','Finale'];
+  var rounds=[];
+  var numRounds=Math.log2(numTeams)-1;
+  for(var i=0;i<numRounds;i++){
+    rounds.push(roundNames[4-numRounds+i]);
+  }
+  rounds.push('Finale');
+  return rounds;
+}
 function admGenBracketFromQualif(torneoKey,coppaKey){
   var config=admGetCoppeConfig(torneoKey);
   var coppa=config.find(function(c){return c.key===coppaKey;});
@@ -6158,9 +6168,10 @@ function admGenBracketFromQualif(torneoKey,coppaKey){
   var ranking=_qualifComputeRankingUpTo(torneoKey,qi,mGs[mGs.length-1]);
   if(ranking.length<2){alert('Non abbastanza squadre in classifica.');return;}
   var teams=ranking.map(function(r){return r.squadra;});
-  var numTeams=coppa.teams||8;
+  var zoneData=(qualif.zones||[]).find(function(z){return z.coppaKey===coppaKey;});
+  var numTeams=zoneData?zoneData.posti:8;
   var numMatches=numTeams/2;
-  var rounds=coppa.rounds||['Quarti','Semifinali','Finale'];
+  var rounds=_generateRoundsFromTeamCount(numTeams);
   function _rk(lbl){var m={'Ottavi':'ottavi','Quarti':'quarti','Semifinali':'semifinali','Finale':'finale','Sedicesimi':'sedicesimi'};return m[lbl]||lbl.toLowerCase().replace(/[^a-z]/g,'_');}
   var firstRoundKey=_rk(rounds[0]);
   var seedOrder=_qualifGetSeedOrder(numTeams);
