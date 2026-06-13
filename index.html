@@ -1,4 +1,4 @@
-<!-- build:20260613_2310 -->
+<!-- build:20260613_2315 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260613_2310';
+  var BUILD='20260613_2315';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
@@ -6956,6 +6956,7 @@ function admDeleteLastCoppaGiornata(torneoKey, coppaKey){
   if(!rounds.length){alert('Nessun dato da eliminare');return;}
   var lastRound=rounds[rounds.length-1];
   if(data[lastRound]&&data[lastRound].length){
+    if(!confirm('Eliminare l\'ultimo match del round '+lastRound+'?'))return;
     data[lastRound].pop();
     if(data[lastRound].length===0) delete data[lastRound];
     admSaveCoppaData(torneoKey,coppaKey,data);
@@ -13937,6 +13938,7 @@ function admDeleteLastCoppaGiornata(torneoKey, coppaKey){
   if(!rounds.length){alert('Nessun dato da eliminare');return;}
   var lastRound=rounds[rounds.length-1];
   if(data[lastRound]&&data[lastRound].length){
+    if(!confirm('Eliminare l\'ultimo match del round '+lastRound+'?'))return;
     data[lastRound].pop();
     if(data[lastRound].length===0) delete data[lastRound];
     admSaveCoppaData(torneoKey,coppaKey,data);
