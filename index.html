@@ -1,4 +1,4 @@
-<!-- build:20260613_0814 -->
+<!-- build:20260613_2107 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260613_0814';
+  var BUILD='20260613_2107';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
@@ -6806,11 +6806,15 @@ function openQualif(torneoKey,qi){
   html+='<div id="qnsub-cal-'+torneoKey+'-'+qi+'" style="display:none;gap:6px;flex-wrap:wrap;margin-bottom:10px">';
   mSortedGs.forEach(function(g){html+='<button onclick="_openQualifCalGiornata(\''+torneoKey+'\','+qi+','+g+')" id="qncbtn-cal-'+torneoKey+'-'+qi+'-'+g+'" style="'+_gb+'">G'+g+'</button>';});
   html+='</div>';
-  html+='<div id="qnsub-cls-'+torneoKey+'-'+qi+'" style="display:none;gap:6px;flex-wrap:wrap;margin-bottom:10px">';
+  html+='<div id="qnsub-cls-'+torneoKey+'-'+qi+'" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px">';
   mSortedGs.forEach(function(g){html+='<button onclick="_openQualifClassGiornata(\''+torneoKey+'\','+qi+','+g+')" id="qncbtn-cls-'+torneoKey+'-'+qi+'-'+g+'" style="'+_gb+'">G'+g+'</button>';});
   html+='</div>';
   html+='<div id="qndetail-'+torneoKey+'-'+qi+'"></div>';
   content.innerHTML=html;
+  var calBtn=document.getElementById('qnbtn-cal-'+torneoKey+'-'+qi);
+  var clsBtn=document.getElementById('qnbtn-cls-'+torneoKey+'-'+qi);
+  if(clsBtn) { clsBtn.style.background='rgba(245,158,11,.15)'; clsBtn.style.borderColor='#f59e0b'; clsBtn.style.color='#f59e0b'; }
+  if(calBtn) { calBtn.style.background='var(--bg2)'; calBtn.style.borderColor='var(--border)'; calBtn.style.color='var(--text2)'; }
   _openQualifClassGiornata(torneoKey,qi,mSortedGs[mSortedGs.length-1]);
 }
 function admRenderCoppeList(torneoKey) {
@@ -13768,11 +13772,15 @@ function openQualif(torneoKey,qi){
   html+='<div id="qnsub-cal-'+torneoKey+'-'+qi+'" style="display:none;gap:6px;flex-wrap:wrap;margin-bottom:10px">';
   mSortedGs.forEach(function(g){html+='<button onclick="_openQualifCalGiornata(\''+torneoKey+'\','+qi+','+g+')" id="qncbtn-cal-'+torneoKey+'-'+qi+'-'+g+'" style="'+_gb+'">G'+g+'</button>';});
   html+='</div>';
-  html+='<div id="qnsub-cls-'+torneoKey+'-'+qi+'" style="display:none;gap:6px;flex-wrap:wrap;margin-bottom:10px">';
+  html+='<div id="qnsub-cls-'+torneoKey+'-'+qi+'" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px">';
   mSortedGs.forEach(function(g){html+='<button onclick="_openQualifClassGiornata(\''+torneoKey+'\','+qi+','+g+')" id="qncbtn-cls-'+torneoKey+'-'+qi+'-'+g+'" style="'+_gb+'">G'+g+'</button>';});
   html+='</div>';
   html+='<div id="qndetail-'+torneoKey+'-'+qi+'"></div>';
   content.innerHTML=html;
+  var calBtn=document.getElementById('qnbtn-cal-'+torneoKey+'-'+qi);
+  var clsBtn=document.getElementById('qnbtn-cls-'+torneoKey+'-'+qi);
+  if(clsBtn) { clsBtn.style.background='rgba(245,158,11,.15)'; clsBtn.style.borderColor='#f59e0b'; clsBtn.style.color='#f59e0b'; }
+  if(calBtn) { calBtn.style.background='var(--bg2)'; calBtn.style.borderColor='var(--border)'; calBtn.style.color='var(--text2)'; }
   _openQualifClassGiornata(torneoKey,qi,mSortedGs[mSortedGs.length-1]);
 }
 function admRenderCoppeList(torneoKey) {
