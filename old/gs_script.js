@@ -109,8 +109,8 @@ function handleRequest(e) {
   }
 
   var json = JSON.stringify(result);
-  var out = cbName ? cbName + '(' + json + ')' : json;
-  var mime = cbName ? ContentService.MimeType.JAVASCRIPT : ContentService.MimeType.JSON;
+  var out = (cbName && typeof cbName === 'string' && cbName.length > 0) ? cbName + '(' + json + ')' : json;
+  var mime = (cbName && typeof cbName === 'string' && cbName.length > 0) ? ContentService.MimeType.JAVASCRIPT : ContentService.MimeType.JSON;
   var output = ContentService.createTextOutput(out).setMimeType(mime);
   output.addHeader('Access-Control-Allow-Origin', '*');
   output.addHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE');
