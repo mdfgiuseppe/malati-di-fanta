@@ -1,4 +1,4 @@
-<!-- build:20260613_2343 -->
+<!-- build:20260613_2347 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260613_2343';
+  var BUILD='20260613_2347';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
@@ -6860,9 +6860,8 @@ function admRenderCoppeList(torneoKey) {
       +'</div>';
     var _qualifCfgs=admGetQualifConfig(torneoKey);
     if(_qualifCfgs.length){
-      var _lqQi=(c.qualifQi!==undefined&&c.qualifQi!==null)?c.qualifQi:'';
       var _qSel='<select data-t="'+torneoKey+'" data-ck="'+c.key+'" onchange="admUpdateCoppaQualifLink(this)" style="padding:3px 8px;background:var(--bg2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:11px;outline:none"><option value="">— Qualificazione —</option>';
-      _qualifCfgs.forEach(function(q,qi){_qSel+='<option value="'+qi+'"'+(_lqQi!==''&&parseInt(_lqQi)===qi?' selected':'')+'>'+q.name+'</option>';});
+      _qualifCfgs.forEach(function(q,qi){_qSel+='<option value="'+qi+'">'+q.name+'</option>';});
       _qSel+='</select>';
       h+='<div style="padding:0 14px 10px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">'+_qSel
         +'<button onclick="admGenBracketFromQualif(\''+torneoKey+'\',\''+c.key+'\')" style="background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.2);color:#10b981;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer">📊 Genera accoppiamenti</button>'
@@ -13842,9 +13841,8 @@ function admRenderCoppeList(torneoKey) {
       +'</div>';
     var _qualifCfgs=admGetQualifConfig(torneoKey);
     if(_qualifCfgs.length){
-      var _lqQi=(c.qualifQi!==undefined&&c.qualifQi!==null)?c.qualifQi:'';
       var _qSel='<select data-t="'+torneoKey+'" data-ck="'+c.key+'" onchange="admUpdateCoppaQualifLink(this)" style="padding:3px 8px;background:var(--bg2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:11px;outline:none"><option value="">— Qualificazione —</option>';
-      _qualifCfgs.forEach(function(q,qi){_qSel+='<option value="'+qi+'"'+(_lqQi!==''&&parseInt(_lqQi)===qi?' selected':'')+'>'+q.name+'</option>';});
+      _qualifCfgs.forEach(function(q,qi){_qSel+='<option value="'+qi+'">'+q.name+'</option>';});
       _qSel+='</select>';
       h+='<div style="padding:0 14px 10px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">'+_qSel
         +'<button onclick="admGenBracketFromQualif(\''+torneoKey+'\',\''+c.key+'\')" style="background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.2);color:#10b981;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer">📊 Genera accoppiamenti</button>'
