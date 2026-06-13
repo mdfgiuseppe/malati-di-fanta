@@ -1,4 +1,4 @@
-<!-- build:20260612_2239 -->
+<!-- build:20260613_0757 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260612_2239';
+  var BUILD='20260613_0757';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
@@ -3833,6 +3833,10 @@ function genericCalcStandings(torneoKey, legaKey) {
   var sorted = squadre.slice().sort(function(a, b) {
     var diff = (s[b].pt || 0) - (s[a].pt || 0);
     if (diff !== 0) return diff;
+    var diffPts = (s[b].totalPts || 0) - (s[a].totalPts || 0);
+    if (diffPts !== 0) return diffPts;
+    var diffGF = (s[b].gf || 0) - (s[a].gf || 0);
+    if (diffGF !== 0) return diffGF;
     var gdA = (s[a].gf || 0) - (s[a].gs || 0);
     var gdB = (s[b].gf || 0) - (s[b].gs || 0);
     return gdB - gdA;
