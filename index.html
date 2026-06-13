@@ -1,4 +1,4 @@
-<!-- build:20260613_0757 -->
+<!-- build:20260613_0814 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260613_0757';
+  var BUILD='20260613_0814';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
@@ -4130,6 +4130,23 @@ function updateDashboardCounters() {
   } catch(e) {}
 }
 
+function syncLeagueClubCount(torneoKey, legaKey) {
+  try {
+    var roseKey = 'adm_rose_' + torneoKey + '_' + legaKey;
+    var rose = JSON.parse(localStorage.getItem(roseKey) || '{}');
+    var clubCount = Object.keys(rose).length;
+
+    if (typeof LEAGUES_DATA !== 'undefined' && LEAGUES_DATA[torneoKey]) {
+      var legaObj = LEAGUES_DATA[torneoKey].leghe.find(function(l) {
+        return l.key === legaKey || l.key === torneoKey + '_' + legaKey;
+      });
+      if (legaObj) {
+        legaObj.clubs = clubCount;
+      }
+    }
+  } catch(e) {}
+}
+
 // Sincronizza LEAGUES_DATA con leghe aggiunte in admin_tornei
 try {
   var _at = JSON.parse(localStorage.getItem('admin_tornei') || 'null');
@@ -7972,6 +7989,7 @@ function admWizardConfirm() {
     var rose = {};
     squadre.forEach(function(s){ rose[s] = []; });
     localStorage.setItem('adm_rose_'+_wzData.key+'_'+lega.key, JSON.stringify(rose));
+    syncLeagueClubCount(_wzData.key, lega.key);
     // Calendario vuoto
     var cal = {};
     for (var g=1; g<=_wzData.giornate; g++) {
@@ -8469,6 +8487,7 @@ function admAddLegaConfirm(ti, legaKey, legaLabel, giornate, nSquadre, crediti) 
   }
   localStorage.setItem('adm_rose_'+torneo.key+'_'+legaKey, JSON.stringify(rose));
   localStorage.setItem('adm_rose_import_'+torneo.key+'_'+legaKey, JSON.stringify(rose));
+  syncLeagueClubCount(torneo.key, legaKey);
   localStorage.setItem('adm_crediti_base_'+torneo.key+'_'+legaKey, JSON.stringify(cr)); syncCreditiToUser(torneo.key, legaKey, cr);
   localStorage.setItem('adm_cal_'+torneo.key+'_'+legaKey, JSON.stringify(cal));
 
@@ -11989,6 +12008,23 @@ function updateDashboardCounters() {
   } catch(e) {}
 }
 
+function syncLeagueClubCount(torneoKey, legaKey) {
+  try {
+    var roseKey = 'adm_rose_' + torneoKey + '_' + legaKey;
+    var rose = JSON.parse(localStorage.getItem(roseKey) || '{}');
+    var clubCount = Object.keys(rose).length;
+
+    if (typeof LEAGUES_DATA !== 'undefined' && LEAGUES_DATA[torneoKey]) {
+      var legaObj = LEAGUES_DATA[torneoKey].leghe.find(function(l) {
+        return l.key === legaKey || l.key === torneoKey + '_' + legaKey;
+      });
+      if (legaObj) {
+        legaObj.clubs = clubCount;
+      }
+    }
+  } catch(e) {}
+}
+
 // Sincronizza LEAGUES_DATA con leghe aggiunte in admin_tornei
 try {
   var _at = JSON.parse(localStorage.getItem('admin_tornei') || 'null');
@@ -14700,6 +14736,7 @@ function admWizardConfirm() {
     var rose = {};
     squadre.forEach(function(s){ rose[s] = []; });
     localStorage.setItem('adm_rose_'+_wzData.key+'_'+lega.key, JSON.stringify(rose));
+    syncLeagueClubCount(_wzData.key, lega.key);
     // Calendario vuoto
     var cal = {};
     for (var g=1; g<=_wzData.giornate; g++) {
@@ -15008,6 +15045,7 @@ function admAddLegaConfirm(ti, legaKey, legaLabel, giornate, nSquadre, crediti) 
   }
   localStorage.setItem('adm_rose_'+torneo.key+'_'+legaKey, JSON.stringify(rose));
   localStorage.setItem('adm_rose_import_'+torneo.key+'_'+legaKey, JSON.stringify(rose));
+  syncLeagueClubCount(torneo.key, legaKey);
   localStorage.setItem('adm_crediti_base_'+torneo.key+'_'+legaKey, JSON.stringify(cr)); syncCreditiToUser(torneo.key, legaKey, cr);
   localStorage.setItem('adm_cal_'+torneo.key+'_'+legaKey, JSON.stringify(cal));
 
@@ -15382,6 +15420,7 @@ function admConfirmImport(){
   var _roseKey='adm_rose_'+tk+'_'+lk;
   localStorage.setItem(_roseKey, JSON.stringify(sk));
   localStorage.setItem('adm_rose_import_'+tk+'_'+lk, JSON.stringify(sk));
+  syncLeagueClubCount(tk, lk);
   gsSaveKey(_roseKey, JSON.stringify(sk));
   // Aggiorna variabili runtime in-memoria per refresh UI immediato
   if(tk==='slim'&&lk==='it'){Object.keys(sk).forEach(function(s){TEAMS_ROSE[s]=sk[s];});}
