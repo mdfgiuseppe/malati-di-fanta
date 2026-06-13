@@ -1,4 +1,4 @@
-<!-- build:20260613_2107 -->
+<!-- build:20260613_2114 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260613_2107';
+  var BUILD='20260613_2114';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
@@ -6750,7 +6750,7 @@ function _openQualifClassGiornata(torneoKey,qi,g){
   var det=document.getElementById('qndetail-'+torneoKey+'-'+qi);if(!det)return;
   var c=admGetQualifConfig(torneoKey),q=c[qi];if(!q)return;
   var mData=_getQualifManual(torneoKey,qi);
-  var mSortedGs=Object.keys(mData).map(Number).sort(function(a,b){return a-b;});
+  var mSortedGs=Object.keys(mData).filter(function(g){var giornata=mData[g];return Array.isArray(giornata)&&giornata.some(function(item){return item&&item.squadra;});}).map(Number).sort(function(a,b){return a-b;});
   mSortedGs.forEach(function(gg){
     var bc=document.getElementById('qncbtn-cal-'+torneoKey+'-'+qi+'-'+gg);
     var bs=document.getElementById('qncbtn-cls-'+torneoKey+'-'+qi+'-'+gg);
@@ -6783,7 +6783,7 @@ function openQualif(torneoKey,qi){
   var overrideKey='adm_qualif_ranking_override_'+torneoKey+'_'+qi;
   gsLoadKey(overrideKey,function(data){if(data){localStorage.setItem(overrideKey,data);}});
   var mData=_getQualifManual(torneoKey,qi);
-  var mSortedGs=Object.keys(mData).map(Number).sort(function(a,b){return a-b;});
+  var mSortedGs=Object.keys(mData).filter(function(g){var giornata=mData[g];return Array.isArray(giornata)&&giornata.some(function(item){return item&&item.squadra;});}).map(Number).sort(function(a,b){return a-b;});
   if(hub)hub.style.display='none';
   panel.style.display='block';
   var _qc=q.color||'#f59e0b';
@@ -13716,7 +13716,7 @@ function _openQualifClassGiornata(torneoKey,qi,g){
   var det=document.getElementById('qndetail-'+torneoKey+'-'+qi);if(!det)return;
   var c=admGetQualifConfig(torneoKey),q=c[qi];if(!q)return;
   var mData=_getQualifManual(torneoKey,qi);
-  var mSortedGs=Object.keys(mData).map(Number).sort(function(a,b){return a-b;});
+  var mSortedGs=Object.keys(mData).filter(function(g){var giornata=mData[g];return Array.isArray(giornata)&&giornata.some(function(item){return item&&item.squadra;});}).map(Number).sort(function(a,b){return a-b;});
   mSortedGs.forEach(function(gg){
     var bc=document.getElementById('qncbtn-cal-'+torneoKey+'-'+qi+'-'+gg);
     var bs=document.getElementById('qncbtn-cls-'+torneoKey+'-'+qi+'-'+gg);
@@ -13749,7 +13749,7 @@ function openQualif(torneoKey,qi){
   var overrideKey='adm_qualif_ranking_override_'+torneoKey+'_'+qi;
   gsLoadKey(overrideKey,function(data){if(data){localStorage.setItem(overrideKey,data);}});
   var mData=_getQualifManual(torneoKey,qi);
-  var mSortedGs=Object.keys(mData).map(Number).sort(function(a,b){return a-b;});
+  var mSortedGs=Object.keys(mData).filter(function(g){var giornata=mData[g];return Array.isArray(giornata)&&giornata.some(function(item){return item&&item.squadra;});}).map(Number).sort(function(a,b){return a-b;});
   if(hub)hub.style.display='none';
   panel.style.display='block';
   var _qc=q.color||'#f59e0b';
