@@ -1,4 +1,4 @@
-<!-- build:20260614_0008 -->
+<!-- build:20260614_0011 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260614_0008';
+  var BUILD='20260614_0011';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
@@ -6166,6 +6166,8 @@ function admGenBracketFromQualif(torneoKey,coppaKey){
   var mGs=Object.keys(mData).map(Number).sort(function(a,b){return a-b;});
   if(!mGs.length){alert('Nessuna giornata nella qualificazione.');return;}
   var ranking=_qualifComputeRankingUpTo(torneoKey,qi,mGs[mGs.length-1]);
+  var override=_getQualifRankingOverride(torneoKey,qi);
+  if(override.length===ranking.length){ranking=override.map(function(sq){var r=ranking.find(function(x){return x.squadra===sq;});return r||{squadra:sq,pt:0};});}
   if(ranking.length<2){alert('Non abbastanza squadre in classifica.');return;}
   var teams=ranking.map(function(r){return r.squadra;});
   var zoneData=(qualif.zones||[]).find(function(z){return z.coppaKey===coppaKey;});
