@@ -1,4 +1,4 @@
-<!-- build:20260613_2347 -->
+<!-- build:20260613_2352 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260613_2347';
+  var BUILD='20260613_2352';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
@@ -6580,7 +6580,7 @@ function admProcessQualifXlsx(torneoKey,qi,file){
   s.onload=_doProcess;s.onerror=function(){alert('Errore caricamento libreria xlsx.');};document.head.appendChild(s);
 }
 function _getQualifManual(torneoKey,qi){var s=localStorage.getItem('adm_qualif_manual_'+torneoKey+'_'+qi);if(!s)return{};try{var data=JSON.parse(s);for(var g in data){if(Array.isArray(data[g])){data[g]=data[g].map(function(item){if(!item.gf)item.gf=0;if(!item.gs)item.gs=0;return item;});}}return data;}catch(e){return{};}}
-function _saveQualifManual(torneoKey,qi,data){var s=JSON.stringify(data);localStorage.setItem('adm_qualif_manual_'+torneoKey+'_'+qi,s);gsSaveKey('adm_qualif_manual_'+torneoKey+'_'+qi,s);}
+function _saveQualifManual(torneoKey,qi,data){var s=JSON.stringify(data);localStorage.setItem('adm_qualif_manual_'+torneoKey+'_'+qi,s);}
 function admToggleQualifManual(torneoKey,qi){var el=document.getElementById('qmf-'+torneoKey+'-'+qi);if(!el)return;el.style.display=el.style.display==='none'?'block':'none';}
 function admSaveQualifManual(torneoKey,qi){
   var gEl=document.getElementById('qmfg-'+torneoKey+'-'+qi);
@@ -13561,7 +13561,7 @@ function admProcessQualifXlsx(torneoKey,qi,file){
   s.onload=_doProcess;s.onerror=function(){alert('Errore caricamento libreria xlsx.');};document.head.appendChild(s);
 }
 function _getQualifManual(torneoKey,qi){var s=localStorage.getItem('adm_qualif_manual_'+torneoKey+'_'+qi);if(!s)return{};try{var data=JSON.parse(s);for(var g in data){if(Array.isArray(data[g])){data[g]=data[g].map(function(item){if(!item.gf)item.gf=0;if(!item.gs)item.gs=0;return item;});}}return data;}catch(e){return{};}}
-function _saveQualifManual(torneoKey,qi,data){var s=JSON.stringify(data);localStorage.setItem('adm_qualif_manual_'+torneoKey+'_'+qi,s);gsSaveKey('adm_qualif_manual_'+torneoKey+'_'+qi,s);}
+function _saveQualifManual(torneoKey,qi,data){var s=JSON.stringify(data);localStorage.setItem('adm_qualif_manual_'+torneoKey+'_'+qi,s);}
 function admToggleQualifManual(torneoKey,qi){var el=document.getElementById('qmf-'+torneoKey+'-'+qi);if(!el)return;el.style.display=el.style.display==='none'?'block':'none';}
 function admSaveQualifManual(torneoKey,qi){
   var gEl=document.getElementById('qmfg-'+torneoKey+'-'+qi);
