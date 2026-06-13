@@ -1,4 +1,4 @@
-<!-- build:20260613_2114 -->
+<!-- build:20260613_2117 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260613_2114';
+  var BUILD='20260613_2117';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
@@ -6790,7 +6790,7 @@ function openQualif(torneoKey,qi){
   title.textContent=q.name;
   title.style.color=_qc;
   var html='<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px">'
-    +'<span style="font-size:12px;color:var(--text2)">Giornate: <strong>'+mSortedGs.length+'</strong> / '+(q.giornate_totali||12)+'</span>'
+    +(mSortedGs.length?'<span style="font-size:12px;color:var(--text2)">Giornate: '+mSortedGs.join(', ')+' / '+(q.giornate_totali||12)+'</span>':'<span style="font-size:12px;color:var(--text2)">Nessuna giornata ancora importata</span>')
     +'<span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;background:'+(q.tipo==='f1'?'rgba(245,158,11,.15)':'rgba(99,102,241,.15)')+';color:'+(q.tipo==='f1'?'#f59e0b':'#818cf8')+'">Modalità: '+(q.tipo==='f1'?'Formula 1':'Pt. Totale')+'</span>'
     +'</div>';
   if(!mSortedGs.length){
@@ -13756,7 +13756,7 @@ function openQualif(torneoKey,qi){
   title.textContent=q.name;
   title.style.color=_qc;
   var html='<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px">'
-    +'<span style="font-size:12px;color:var(--text2)">Giornate: <strong>'+mSortedGs.length+'</strong> / '+(q.giornate_totali||12)+'</span>'
+    +(mSortedGs.length?'<span style="font-size:12px;color:var(--text2)">Giornate: '+mSortedGs.join(', ')+' / '+(q.giornate_totali||12)+'</span>':'<span style="font-size:12px;color:var(--text2)">Nessuna giornata ancora importata</span>')
     +'<span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;background:'+(q.tipo==='f1'?'rgba(245,158,11,.15)':'rgba(99,102,241,.15)')+';color:'+(q.tipo==='f1'?'#f59e0b':'#818cf8')+'">Modalità: '+(q.tipo==='f1'?'Formula 1':'Pt. Totale')+'</span>'
     +'</div>';
   if(!mSortedGs.length){
