@@ -1,4 +1,4 @@
-<!-- build:20260613_2120 -->
+<!-- build:20260613_2117 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260613_2120';
+  var BUILD='20260613_2117';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
@@ -6793,8 +6793,6 @@ function openQualif(torneoKey,qi){
     +(mSortedGs.length?'<span style="font-size:12px;color:var(--text2)">Giornate: '+mSortedGs.join(', ')+' / '+(q.giornate_totali||12)+'</span>':'<span style="font-size:12px;color:var(--text2)">Nessuna giornata ancora importata</span>')
     +'<span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;background:'+(q.tipo==='f1'?'rgba(245,158,11,.15)':'rgba(99,102,241,.15)')+';color:'+(q.tipo==='f1'?'#f59e0b':'#818cf8')+'">Modalità: '+(q.tipo==='f1'?'Formula 1':'Pt. Totale')+'</span>'
     +'</div>';
-  var _gb='border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer;background:var(--bg2);border:1px solid var(--border);color:var(--text2)';
-  if(mSortedGs.length){html+='<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px">';mSortedGs.forEach(function(g){html+='<button onclick="_openQualifClassGiornata(\''+torneoKey+'\','+qi+','+g+')" style="'+_gb+'">G'+g+'</button>';});html+='</div>';}
   if(!mSortedGs.length){
     html+='<div style="text-align:center;padding:60px 20px;color:var(--text3);font-size:13px">Nessuna giornata ancora importata</div>';
     content.innerHTML=html;return;
@@ -13761,8 +13759,6 @@ function openQualif(torneoKey,qi){
     +(mSortedGs.length?'<span style="font-size:12px;color:var(--text2)">Giornate: '+mSortedGs.join(', ')+' / '+(q.giornate_totali||12)+'</span>':'<span style="font-size:12px;color:var(--text2)">Nessuna giornata ancora importata</span>')
     +'<span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;background:'+(q.tipo==='f1'?'rgba(245,158,11,.15)':'rgba(99,102,241,.15)')+';color:'+(q.tipo==='f1'?'#f59e0b':'#818cf8')+'">Modalità: '+(q.tipo==='f1'?'Formula 1':'Pt. Totale')+'</span>'
     +'</div>';
-  var _gb='border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer;background:var(--bg2);border:1px solid var(--border);color:var(--text2)';
-  if(mSortedGs.length){html+='<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px">';mSortedGs.forEach(function(g){html+='<button onclick="_openQualifClassGiornata(\''+torneoKey+'\','+qi+','+g+')" style="'+_gb+'">G'+g+'</button>';});html+='</div>';}
   if(!mSortedGs.length){
     html+='<div style="text-align:center;padding:60px 20px;color:var(--text3);font-size:13px">Nessuna giornata ancora importata</div>';
     content.innerHTML=html;return;
