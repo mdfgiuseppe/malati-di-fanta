@@ -1,4 +1,4 @@
-<!-- build:20260614_0917 -->
+<!-- build:20260614_0924 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260614_0917';
+  var BUILD='20260614_0924';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
@@ -6534,7 +6534,7 @@ function admToggleQualifClassifica(torneoKey,qi){
   if(localData){_renderClassifica();}
   else{gsLoadKey(key, function(gsData){if(gsData){localStorage.setItem(key, gsData);}_renderClassifica();});}
 }
-function _getQualifRankingOverride(torneoKey,qi){var s=localStorage.getItem('adm_qualif_ranking_override_'+torneoKey+'_'+qi);if(!s)return[];try{return JSON.parse(s);}catch(e){return[];}}
+function _getQualifRankingOverride(torneoKey,qi){var s=localStorage.getItem('adm_qualif_ranking_override_'+torneoKey+'_'+qi);if(!s)return[];try{return JSON.parse(s);}catch(e){return s.split(',').map(function(x){return x.trim();});}}
 function _saveQualifRankingOverride(torneoKey,qi,order){var s=JSON.stringify(order);localStorage.setItem('adm_qualif_ranking_override_'+torneoKey+'_'+qi,s);}
 function admMoveQualifRanking(torneoKey,qi,idx,direction){
   console.log('[qualif-move] Spostando:', {torneoKey, qi, idx, direction});
@@ -13518,7 +13518,7 @@ function admToggleQualifClassifica(torneoKey,qi){
   if(localData){_renderClassifica();}
   else{gsLoadKey(key, function(gsData){if(gsData){localStorage.setItem(key, gsData);}_renderClassifica();});}
 }
-function _getQualifRankingOverride(torneoKey,qi){var s=localStorage.getItem('adm_qualif_ranking_override_'+torneoKey+'_'+qi);if(!s)return[];try{return JSON.parse(s);}catch(e){return[];}}
+function _getQualifRankingOverride(torneoKey,qi){var s=localStorage.getItem('adm_qualif_ranking_override_'+torneoKey+'_'+qi);if(!s)return[];try{return JSON.parse(s);}catch(e){return s.split(',').map(function(x){return x.trim();});}}
 function _saveQualifRankingOverride(torneoKey,qi,order){var s=JSON.stringify(order);localStorage.setItem('adm_qualif_ranking_override_'+torneoKey+'_'+qi,s);}
 function admMoveQualifRanking(torneoKey,qi,idx,direction){
   console.log('[qualif-move] Spostando:', {torneoKey, qi, idx, direction});
