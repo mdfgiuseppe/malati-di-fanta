@@ -1,4 +1,4 @@
-<!-- build:20260614_2137 -->
+<!-- build:20260614_2138 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260614_2137';
+  var BUILD='20260614_2138';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
@@ -6219,7 +6219,7 @@ function admProcessCoppaXlsx(torneoKey,coppaKey,file){
         var a=(row[6]||'').toString().trim();
         if(!h||!a||!resStr)return;
         if(/giornata|squadra|formazioni/i.test(h))return;
-        var m=resStr.match(/^(\d+)-(\d+)$/);
+        var m=resStr.match(/^(\d+)\s*-\s*(\d+)$/);
         if(!m)return;
         var rh=parseInt(m[1]),ra=parseInt(m[2]);
         matches.push({h:h,a:a,rh:rh,ra:ra});
