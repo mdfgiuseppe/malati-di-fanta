@@ -1,4 +1,4 @@
-<!-- build:20260614_2147 -->
+<!-- build:20260614_2152 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260614_2147';
+  var BUILD='20260614_2152';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
@@ -6211,6 +6211,7 @@ function admProcessCoppaXlsx(torneoKey,coppaKey,file){
       var ws=wb.Sheets[wb.SheetNames[0]];
       var rows=XLSX.utils.sheet_to_json(ws,{header:1,defval:''});
       var data=admGetCoppaData(torneoKey,coppaKey);
+      console.log('Dati caricati dal localStorage:', data);
       var matches=[];
       rows.forEach(function(row,ridx){
         if(ridx<3)return;
@@ -6234,6 +6235,7 @@ function admProcessCoppaXlsx(torneoKey,coppaKey,file){
             var aMatch=(imported.h.toUpperCase()===match.a.toUpperCase()&&imported.a.toUpperCase()===match.h.toUpperCase());
             var isReturnLeg=(match.rh1!==undefined&&match.ra1!==undefined);
             if(hMatch){
+              console.log('hMatch trovato:', imported.h, 'vs', imported.a, 'isReturnLeg:', isReturnLeg, 'match before:', JSON.stringify(match));
               if(!isReturnLeg){match.rh1=imported.rh;match.ra1=imported.ra;}
               else{match.rh2=imported.rh;match.ra2=imported.ra;var hTot=match.rh1+match.rh2,aTot=match.ra1+match.ra2;
                 if(hTot===aTot){
@@ -6251,6 +6253,7 @@ function admProcessCoppaXlsx(torneoKey,coppaKey,file){
                 }
               }
             } else if(aMatch){
+              console.log('aMatch trovato:', imported.h, 'vs', imported.a, 'isReturnLeg:', isReturnLeg, 'match before:', JSON.stringify(match));
               if(!isReturnLeg){match.rh1=imported.ra;match.ra1=imported.rh;}
               else{match.rh2=imported.ra;match.ra2=imported.rh;var hTot=match.rh1+match.rh2,aTot=match.ra1+match.ra2;
                 if(hTot===aTot){
