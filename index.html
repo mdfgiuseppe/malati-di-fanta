@@ -1,4 +1,4 @@
-<!-- build:20260614_0924 -->
+<!-- build:20260614_1930 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260614_0924';
+  var BUILD='20260614_1930';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
@@ -6774,7 +6774,7 @@ function _openQualifClassGiornata(torneoKey,qi,g){
   });
   var ranking=_qualifComputeRankingUpTo(torneoKey,qi,g);
   var overrideStr=localStorage.getItem('adm_qualif_ranking_override_'+torneoKey+'_'+qi);
-  if(overrideStr){try{var override=JSON.parse(overrideStr);if(override.length===ranking.length){ranking=override.map(function(sq){var r=ranking.find(function(x){return x.squadra===sq;});return r||{squadra:sq,pt:0,gf:0,gs:0};});}}catch(e){}}
+  if(overrideStr){try{var override=JSON.parse(overrideStr);if(!Array.isArray(override))override=overrideStr.split(',').map(function(x){return x.trim();});if(override.length===ranking.length){ranking=override.map(function(sq){var r=ranking.find(function(x){return x.squadra===sq;});return r||{squadra:sq,pt:0,gf:0,gs:0};});}}catch(e){}}
   var coppeConfig=admGetCoppeConfig(torneoKey),zones=q.zones||[],zoneMap={},pos=1;
   zones.forEach(function(z){var cc=coppeConfig.find(function(x){return x.key===z.coppaKey;});if(cc&&z.posti>0){zoneMap[z.coppaKey]={from:pos,to:pos+z.posti-1,color:z.color||cc.color,label:cc.label};pos+=z.posti;}});
   var zoneLegend='';
@@ -13758,7 +13758,7 @@ function _openQualifClassGiornata(torneoKey,qi,g){
   });
   var ranking=_qualifComputeRankingUpTo(torneoKey,qi,g);
   var overrideStr=localStorage.getItem('adm_qualif_ranking_override_'+torneoKey+'_'+qi);
-  if(overrideStr){try{var override=JSON.parse(overrideStr);if(override.length===ranking.length){ranking=override.map(function(sq){var r=ranking.find(function(x){return x.squadra===sq;});return r||{squadra:sq,pt:0,gf:0,gs:0};});}}catch(e){}}
+  if(overrideStr){try{var override=JSON.parse(overrideStr);if(!Array.isArray(override))override=overrideStr.split(',').map(function(x){return x.trim();});if(override.length===ranking.length){ranking=override.map(function(sq){var r=ranking.find(function(x){return x.squadra===sq;});return r||{squadra:sq,pt:0,gf:0,gs:0};});}}catch(e){}}
   var coppeConfig=admGetCoppeConfig(torneoKey),zones=q.zones||[],zoneMap={},pos=1;
   zones.forEach(function(z){var cc=coppeConfig.find(function(x){return x.key===z.coppaKey;});if(cc&&z.posti>0){zoneMap[z.coppaKey]={from:pos,to:pos+z.posti-1,color:z.color||cc.color,label:cc.label};pos+=z.posti;}});
   var zoneLegend='';
