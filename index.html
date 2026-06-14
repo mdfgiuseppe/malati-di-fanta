@@ -1,4 +1,4 @@
-<!-- build:20260614_2138 -->
+<!-- build:20260614_2140 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260614_2138';
+  var BUILD='20260614_2140';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
@@ -6225,10 +6225,6 @@ function admProcessCoppaXlsx(torneoKey,coppaKey,file){
         matches.push({h:h,a:a,rh:rh,ra:ra});
       });
       if(!matches.length){alert('Nessun risultato trovato. Verifica il formato del file.');return;}
-      var config=admGetCoppeConfig(torneoKey),coppa=config.find(function(x){return x.key===coppaKey;});
-      if(!coppa||!coppa.qualifQi){alert('Coppa non collegata a qualificazione. Configura prima.');return;}
-      var qualifConfigs=admGetQualifConfig(torneoKey),qualif=qualifConfigs[coppa.qualifQi];
-      if(!qualif){alert('Qualificazione non trovata.');return;}
       var isFirstLeg=!Object.keys(data).some(function(round){return data[round]&&data[round].some(function(m){return m.rh2!==undefined;});});
       matches.forEach(function(imported){
         for(var round in data){
