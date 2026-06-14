@@ -1,4 +1,4 @@
-<!-- build:20260614_2113 -->
+<!-- build:20260614_2134 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260614_2113';
+  var BUILD='20260614_2134';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
@@ -6211,53 +6211,74 @@ function admProcessCoppaXlsx(torneoKey,coppaKey,file){
       var ws=wb.Sheets[wb.SheetNames[0]];
       var rows=XLSX.utils.sheet_to_json(ws,{header:1,defval:''});
       var data=admGetCoppaData(torneoKey,coppaKey);
-      var currentPhase=null;
-      var phaseMatches={};
-      rows.forEach(function(row){
-        var hasNum=row.some(function(v){return typeof v==='number';});
-        if(!hasNum){
-          for(var ci=0;ci<row.length;ci++){
-            var cell=(row[ci]||'').toString().trim();
-            if(/quarti/i.test(cell)){currentPhase='quarti';return;}
-            if(/semifinali/i.test(cell)){currentPhase='semifinali';return;}
-            if(/finale/i.test(cell)&&!/semi/i.test(cell)&&!/quarti/i.test(cell)){currentPhase='finale';return;}
-          }
-        }
-        if(!currentPhase)return;
+      var matches=[];
+      rows.forEach(function(row,ridx){
+        if(ridx<3)return;
         var h=(row[0]||'').toString().trim();
-        var a=(row[3]||'').toString().trim();
-        if(!h||!a)return;
-        if(/giornata/i.test(h)||/squadra/i.test(h))return;
-        var andRes=(row[4]||'').toString().trim();
-        var m1=andRes.match(/^(\d+)-(\d+)$/);
-        if(!m1)return;
-        var rh1=parseInt(m1[1]),ra1=parseInt(m1[2]);
-        if(currentPhase==='finale'){
-          if(!phaseMatches[currentPhase])phaseMatches[currentPhase]=[];
-          phaseMatches[currentPhase].push({h:h,a:a,rh:rh1,ra:ra1});
-        } else {
-          var ritRes=(row[10]||'').toString().trim();
-          var m2=ritRes.match(/^(\d+)-(\d+)$/);
-          var ra2='',rh2='',esito='';
-          if(m2){
-            ra2=parseInt(m2[1]);rh2=parseInt(m2[2]);
-            var hTot=rh1+rh2,aTot=ra1+ra2;
-            var winner=hTot>aTot?h:aTot>hTot?a:'';
-            esito=(winner?_teamCase(winner)+' avanza (':'  ')+hTot+'-'+aTot+(winner?')':'');
+        var resStr=(row[3]||'').toString().trim();
+        var a=(row[8]||'').toString().trim();
+        if(!h||!a||!resStr)return;
+        if(/giornata|squadra|formazioni/i.test(h))return;
+        var m=resStr.match(/^(\d+)-(\d+)$/);
+        if(!m)return;
+        var rh=parseInt(m[1]),ra=parseInt(m[2]);
+        matches.push({h:h,a:a,rh:rh,ra:ra});
+      });
+      if(!matches.length){alert('Nessun risultato trovato. Verifica il formato del file.');return;}
+      var config=admGetCoppeConfig(torneoKey),coppa=config.find(function(x){return x.key===coppaKey;});
+      if(!coppa||!coppa.qualifQi){alert('Coppa non collegata a qualificazione. Configura prima.');return;}
+      var qualifConfigs=admGetQualifConfig(torneoKey),qualif=qualifConfigs[coppa.qualifQi];
+      if(!qualif){alert('Qualificazione non trovata.');return;}
+      var isFirstLeg=!Object.keys(data).some(function(round){return data[round]&&data[round].some(function(m){return m.rh2!==undefined;});});
+      matches.forEach(function(imported){
+        for(var round in data){
+          if(!data[round])continue;
+          for(var i=0;i<data[round].length;i++){
+            var match=data[round][i];
+            var hMatch=(imported.h.toUpperCase()===match.h.toUpperCase()&&imported.a.toUpperCase()===match.a.toUpperCase());
+            var aMatch=(imported.h.toUpperCase()===match.a.toUpperCase()&&imported.a.toUpperCase()===match.h.toUpperCase());
+            if(hMatch){
+              if(isFirstLeg){match.rh1=imported.rh;match.ra1=imported.ra;}
+              else{match.rh2=imported.rh;match.ra2=imported.ra;var hTot=match.rh1+match.rh2,aTot=match.ra1+match.ra2;
+                if(hTot===aTot){
+                  var dtsInput=prompt('Pareggio gol totali ('+hTot+'-'+aTot+'). Inserisci risultato dts/dcr (es: 2-1 dts):','');
+                  if(!dtsInput)return;
+                  var dtsM=dtsInput.match(/^(\d+)-(\d+)\s+(dts|dcr)$/i);
+                  if(!dtsM){alert('Formato non valido. Usa: 2-1 dts o 5-4 dcr');return;}
+                  var dtsRh=parseInt(dtsM[1]),dtsRa=parseInt(dtsM[2]),tipo=dtsM[3].toLowerCase();
+                  match.dts={rh:dtsRh,ra:dtsRa,tipo:tipo};
+                  var winner=dtsRh>dtsRa?match.h:match.a;
+                  match.esito=_teamCase(winner)+' avanza ('+hTot+'-'+aTot+' dts '+dtsRh+'-'+dtsRa+' '+tipo+')';
+                } else {
+                  var winner=hTot>aTot?match.h:match.a;
+                  match.esito=_teamCase(winner)+' avanza ('+hTot+'-'+aTot+')';
+                }
+              }
+            } else if(aMatch){
+              if(isFirstLeg){match.rh1=imported.ra;match.ra1=imported.rh;}
+              else{match.rh2=imported.ra;match.ra2=imported.rh;var hTot=match.rh1+match.rh2,aTot=match.ra1+match.ra2;
+                if(hTot===aTot){
+                  var dtsInput=prompt('Pareggio gol totali ('+hTot+'-'+aTot+'). Inserisci risultato dts/dcr (es: 2-1 dts):','');
+                  if(!dtsInput)return;
+                  var dtsM=dtsInput.match(/^(\d+)-(\d+)\s+(dts|dcr)$/i);
+                  if(!dtsM){alert('Formato non valido. Usa: 2-1 dts o 5-4 dcr');return;}
+                  var dtsRh=parseInt(dtsM[1]),dtsRa=parseInt(dtsM[2]),tipo=dtsM[3].toLowerCase();
+                  match.dts={rh:dtsRh,ra:dtsRa,tipo:tipo};
+                  var winner=dtsRh>dtsRa?match.a:match.h;
+                  match.esito=_teamCase(winner)+' avanza ('+hTot+'-'+aTot+' dts '+dtsRh+'-'+dtsRa+' '+tipo+')';
+                } else {
+                  var winner=hTot>aTot?match.h:match.a;
+                  match.esito=_teamCase(winner)+' avanza ('+hTot+'-'+aTot+')';
+                }
+              }
+            }
           }
-          if(!phaseMatches[currentPhase])phaseMatches[currentPhase]=[];
-          phaseMatches[currentPhase].push({h:h,a:a,rh1:rh1,ra1:ra1,rh2:rh2,ra2:ra2,esito:esito});
         }
       });
-      var found=Object.keys(phaseMatches);
-      if(!found.length){alert('Nessun risultato trovato. Verifica che il file sia nel formato corretto (Quarti/Semifinali/Finale con risultati A-B).');return;}
-      var alreadyPresent=found.filter(function(ph){return data[ph]&&data[ph].length;});
-      if(alreadyPresent.length&&!confirm('I seguenti turni sono già presenti e verranno sovrascritti:\n'+alreadyPresent.join(', ')+'\n\nContinuare?'))return;
-      Object.keys(phaseMatches).forEach(function(ph){data[ph]=phaseMatches[ph];});
       admSaveCoppaData(torneoKey,coppaKey,data);
       if(typeof COPPA_DATA!=='undefined')COPPA_DATA[coppaKey]=data;
       var msg=document.createElement('div');
-      msg.textContent='✅ Importati: '+found.join(', ')+' ('+found.reduce(function(s,k){return s+phaseMatches[k].length;},0)+' partite)';
+      msg.textContent='✅ Importati '+(isFirstLeg?'andata':'ritorno')+' ('+matches.length+' partite)';
       msg.style.cssText='position:fixed;bottom:20px;right:20px;background:#3b82f6;color:#fff;padding:10px 18px;border-radius:10px;font-size:12px;font-weight:700;z-index:9999';
       document.body.appendChild(msg);setTimeout(function(){msg.remove();},3000);
     };
