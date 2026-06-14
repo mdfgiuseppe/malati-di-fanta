@@ -1,4 +1,4 @@
-<!-- build:20260614_2140 -->
+<!-- build:20260614_2147 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260614_2140';
+  var BUILD='20260614_2147';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
@@ -6225,7 +6225,6 @@ function admProcessCoppaXlsx(torneoKey,coppaKey,file){
         matches.push({h:h,a:a,rh:rh,ra:ra});
       });
       if(!matches.length){alert('Nessun risultato trovato. Verifica il formato del file.');return;}
-      var isFirstLeg=!Object.keys(data).some(function(round){return data[round]&&data[round].some(function(m){return m.rh2!==undefined;});});
       matches.forEach(function(imported){
         for(var round in data){
           if(!data[round])continue;
@@ -6233,8 +6232,9 @@ function admProcessCoppaXlsx(torneoKey,coppaKey,file){
             var match=data[round][i];
             var hMatch=(imported.h.toUpperCase()===match.h.toUpperCase()&&imported.a.toUpperCase()===match.a.toUpperCase());
             var aMatch=(imported.h.toUpperCase()===match.a.toUpperCase()&&imported.a.toUpperCase()===match.h.toUpperCase());
+            var isReturnLeg=(match.rh1!==undefined&&match.ra1!==undefined);
             if(hMatch){
-              if(isFirstLeg){match.rh1=imported.rh;match.ra1=imported.ra;}
+              if(!isReturnLeg){match.rh1=imported.rh;match.ra1=imported.ra;}
               else{match.rh2=imported.rh;match.ra2=imported.ra;var hTot=match.rh1+match.rh2,aTot=match.ra1+match.ra2;
                 if(hTot===aTot){
                   var dtsInput=prompt('Pareggio gol totali ('+hTot+'-'+aTot+'). Inserisci risultato dts/dcr (es: 2-1 dts):','');
@@ -6251,7 +6251,7 @@ function admProcessCoppaXlsx(torneoKey,coppaKey,file){
                 }
               }
             } else if(aMatch){
-              if(isFirstLeg){match.rh1=imported.ra;match.ra1=imported.rh;}
+              if(!isReturnLeg){match.rh1=imported.ra;match.ra1=imported.rh;}
               else{match.rh2=imported.ra;match.ra2=imported.rh;var hTot=match.rh1+match.rh2,aTot=match.ra1+match.ra2;
                 if(hTot===aTot){
                   var dtsInput=prompt('Pareggio gol totali ('+hTot+'-'+aTot+'). Inserisci risultato dts/dcr (es: 2-1 dts):','');
