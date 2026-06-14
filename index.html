@@ -1,4 +1,4 @@
-<!-- build:20260614_0011 -->
+<!-- build:20260614_0903 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260614_0011';
+  var BUILD='20260614_0903';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
@@ -6620,9 +6620,7 @@ function admClearAllQualifGiornate(torneoKey,qi){
 function admSaveQualifRankingOrder(torneoKey,qi){
   var override=_getQualifRankingOverride(torneoKey,qi);
   if(!override.length){alert('Nessun ordine personalizzato da salvare');return;}
-  var key='adm_qualif_ranking_override_'+torneoKey+'_'+qi;
-  gsSaveKey(key,JSON.stringify(override));
-  alert('✅ Ordine personalizzato sincronizzato');
+  alert('✅ Ordine personalizzato salvato');
 }
 function admRecalcQualif(torneoKey,qi){
   var mData=_getQualifManual(torneoKey,qi);
@@ -13600,9 +13598,7 @@ function admClearAllQualifGiornate(torneoKey,qi){
 function admSaveQualifRankingOrder(torneoKey,qi){
   var override=_getQualifRankingOverride(torneoKey,qi);
   if(!override.length){alert('Nessun ordine personalizzato da salvare');return;}
-  var key='adm_qualif_ranking_override_'+torneoKey+'_'+qi;
-  gsSaveKey(key,JSON.stringify(override));
-  alert('✅ Ordine personalizzato sincronizzato');
+  alert('✅ Ordine personalizzato salvato');
 }
 function admRecalcQualif(torneoKey,qi){
   var mData=_getQualifManual(torneoKey,qi);
