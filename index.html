@@ -1,4 +1,4 @@
-<!-- build:20260615_2059 -->
+<!-- build:20260615_2102 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260615_2059';
+  var BUILD='20260615_2102';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
@@ -6155,6 +6155,7 @@ function _generateRoundsFromTeamCount(numTeams){
 }
 function admGenBracketCheckQualif(torneoKey,coppaKey){
   var sel=document.getElementById('adm-qualif-select-'+coppaKey);
+  console.log('Select:', sel, 'Value:', sel ? sel.value : 'null');
   if(!sel||sel.value===''){alert('Seleziona una qualificazione dal menu.');return;}
   var qi=parseInt(sel.value);
   admGenBracketFromQualifDirect(torneoKey,coppaKey,qi);
