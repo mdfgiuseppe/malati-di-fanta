@@ -1,4 +1,4 @@
-<!-- build:20260615_2137 -->
+<!-- build:20260615_2138 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260615_2137';
+  var BUILD='20260615_2138';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
@@ -6241,6 +6241,7 @@ function admProcessCoppaXlsx(torneoKey,coppaKey,file){
           if(!data[round])continue;
           for(var i=0;i<data[round].length;i++){
             var match=data[round][i];
+            if(!imported.h||!imported.a)continue;
             var hMatch=match.h&&match.a&&(imported.h.toUpperCase()===match.h.toUpperCase()&&imported.a.toUpperCase()===match.a.toUpperCase());
             var aMatch=match.h&&match.a&&(imported.h.toUpperCase()===match.a.toUpperCase()&&imported.a.toUpperCase()===match.h.toUpperCase());
             var hPartialMatch=match.h&&!match.a&&imported.h.toUpperCase()===match.h.toUpperCase();
