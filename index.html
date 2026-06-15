@@ -1,4 +1,4 @@
-<!-- build:20260614_2152 -->
+<!-- build:20260615_1940 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260614_2152';
+  var BUILD='20260615_1940';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
@@ -6239,7 +6239,7 @@ function admProcessCoppaXlsx(torneoKey,coppaKey,file){
               if(!isReturnLeg){match.rh1=imported.rh;match.ra1=imported.ra;}
               else{match.rh2=imported.rh;match.ra2=imported.ra;var hTot=match.rh1+match.rh2,aTot=match.ra1+match.ra2;
                 if(hTot===aTot){
-                  var dtsInput=prompt('Pareggio gol totali ('+hTot+'-'+aTot+'). Inserisci risultato dts/dcr (es: 2-1 dts):','');
+                  var dtsInput=prompt(_teamCase(match.h)+' vs '+_teamCase(match.a)+' - Pareggio gol totali ('+hTot+'-'+aTot+'). Inserisci risultato dts/dcr (es: 2-1 dts):','');
                   if(!dtsInput)return;
                   var dtsM=dtsInput.match(/^(\d+)-(\d+)\s+(dts|dcr)$/i);
                   if(!dtsM){alert('Formato non valido. Usa: 2-1 dts o 5-4 dcr');return;}
@@ -6257,7 +6257,7 @@ function admProcessCoppaXlsx(torneoKey,coppaKey,file){
               if(!isReturnLeg){match.rh1=imported.ra;match.ra1=imported.rh;}
               else{match.rh2=imported.ra;match.ra2=imported.rh;var hTot=match.rh1+match.rh2,aTot=match.ra1+match.ra2;
                 if(hTot===aTot){
-                  var dtsInput=prompt('Pareggio gol totali ('+hTot+'-'+aTot+'). Inserisci risultato dts/dcr (es: 2-1 dts):','');
+                  var dtsInput=prompt(_teamCase(match.h)+' vs '+_teamCase(match.a)+' - Pareggio gol totali ('+hTot+'-'+aTot+'). Inserisci risultato dts/dcr (es: 2-1 dts):','');
                   if(!dtsInput)return;
                   var dtsM=dtsInput.match(/^(\d+)-(\d+)\s+(dts|dcr)$/i);
                   if(!dtsM){alert('Formato non valido. Usa: 2-1 dts o 5-4 dcr');return;}
