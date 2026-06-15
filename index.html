@@ -1,4 +1,4 @@
-<!-- build:20260615_2052 -->
+<!-- build:20260615_2059 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260615_2052';
+  var BUILD='20260615_2059';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
@@ -6220,6 +6220,7 @@ function admProcessCoppaXlsx(torneoKey,coppaKey,file){
       var ws=wb.Sheets[wb.SheetNames[0]];
       var rows=XLSX.utils.sheet_to_json(ws,{header:1,defval:''});
       var data=admGetCoppaData(torneoKey,coppaKey);
+      localStorage.setItem('adm_coppa_data_undo_'+torneoKey+'_'+coppaKey,JSON.stringify(data));
       var matches=[];
       rows.forEach(function(row,ridx){
         if(ridx<3)return;
@@ -7003,17 +7004,13 @@ function admEditCoppaTrofeo(torneoKey, coppaKey) {
 }
 
 function admDeleteLastCoppaGiornata(torneoKey, coppaKey){
-  var data=admGetCoppaData(torneoKey,coppaKey);
-  var rounds=Object.keys(data);
-  if(!rounds.length){alert('Nessun dato da eliminare');return;}
-  var lastRound=rounds[rounds.length-1];
-  if(data[lastRound]&&data[lastRound].length){
-    if(!confirm('Eliminare l\'ultimo match del round '+lastRound+'?'))return;
-    data[lastRound].pop();
-    if(data[lastRound].length===0) delete data[lastRound];
-    admSaveCoppaData(torneoKey,coppaKey,data);
-    admLoadCoppeTorneo();alert('✅ Ultimo match eliminato');
-  }
+  var undoData=localStorage.getItem('adm_coppa_data_undo_'+torneoKey+'_'+coppaKey);
+  if(!undoData){alert('Nessun import da annullare');return;}
+  if(!confirm('Annullare l\'ultimo import?'))return;
+  var data=JSON.parse(undoData);
+  admSaveCoppaData(torneoKey,coppaKey,data);
+  localStorage.removeItem('adm_coppa_data_undo_'+torneoKey+'_'+coppaKey);
+  admLoadCoppeTorneo();alert('✅ Ultimo import annullato');
 }
 function admClearAllCoppaGiornate(torneoKey,coppaKey){
   if(!confirm('Azzerare completamente tutti i dati della coppa? Questa azione non è reversibile.'))return;
@@ -13992,17 +13989,13 @@ function admEditCoppaTrofeo(torneoKey, coppaKey) {
 }
 
 function admDeleteLastCoppaGiornata(torneoKey, coppaKey){
-  var data=admGetCoppaData(torneoKey,coppaKey);
-  var rounds=Object.keys(data);
-  if(!rounds.length){alert('Nessun dato da eliminare');return;}
-  var lastRound=rounds[rounds.length-1];
-  if(data[lastRound]&&data[lastRound].length){
-    if(!confirm('Eliminare l\'ultimo match del round '+lastRound+'?'))return;
-    data[lastRound].pop();
-    if(data[lastRound].length===0) delete data[lastRound];
-    admSaveCoppaData(torneoKey,coppaKey,data);
-    admLoadCoppeTorneo();alert('✅ Ultimo match eliminato');
-  }
+  var undoData=localStorage.getItem('adm_coppa_data_undo_'+torneoKey+'_'+coppaKey);
+  if(!undoData){alert('Nessun import da annullare');return;}
+  if(!confirm('Annullare l\'ultimo import?'))return;
+  var data=JSON.parse(undoData);
+  admSaveCoppaData(torneoKey,coppaKey,data);
+  localStorage.removeItem('adm_coppa_data_undo_'+torneoKey+'_'+coppaKey);
+  admLoadCoppeTorneo();alert('✅ Ultimo import annullato');
 }
 function admClearAllCoppaGiornate(torneoKey,coppaKey){
   if(!confirm('Azzerare completamente tutti i dati della coppa? Questa azione non è reversibile.'))return;
