@@ -1,4 +1,4 @@
-<!-- build:20260615_2135 -->
+<!-- build:20260615_2137 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260615_2135';
+  var BUILD='20260615_2137';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
@@ -6241,8 +6241,10 @@ function admProcessCoppaXlsx(torneoKey,coppaKey,file){
           if(!data[round])continue;
           for(var i=0;i<data[round].length;i++){
             var match=data[round][i];
-            var hMatch=match.h&&imported.h.toUpperCase()===match.h.toUpperCase()&&match.a&&imported.a.toUpperCase()===match.a.toUpperCase();
-            var aMatch=match.h&&imported.h.toUpperCase()===match.a.toUpperCase()&&match.a&&imported.a.toUpperCase()===match.h.toUpperCase();
+            var hMatch=match.h&&match.a&&(imported.h.toUpperCase()===match.h.toUpperCase()&&imported.a.toUpperCase()===match.a.toUpperCase());
+            var aMatch=match.h&&match.a&&(imported.h.toUpperCase()===match.a.toUpperCase()&&imported.a.toUpperCase()===match.h.toUpperCase());
+            var hPartialMatch=match.h&&!match.a&&imported.h.toUpperCase()===match.h.toUpperCase();
+            if(hMatch||aMatch||hPartialMatch){
             var isReturnLeg=(match.rh1!==undefined&&match.ra1!==undefined);
             if(hMatch){
               if(!isReturnLeg){match.rh1=imported.rh;match.ra1=imported.ra;}
@@ -6282,8 +6284,27 @@ function admProcessCoppaXlsx(torneoKey,coppaKey,file){
                   match.esito=_teamCase(winner)+' avanza ('+hTot+'-'+aTot+')';
                 }
               }
+            } else if(hPartialMatch){
+              match.a=imported.a;
+              if(!isReturnLeg){match.rh1=imported.rh;match.ra1=imported.ra;}
+              else{match.rh2=imported.rh;match.ra2=imported.ra;var hTot=match.rh1+match.rh2,aTot=match.ra1+match.ra2;
+                if(hTot===aTot){
+                  var dtsInput=prompt(_teamCase(match.h)+' vs '+_teamCase(match.a)+' - Pareggio gol totali ('+hTot+'-'+aTot+'). Inserisci risultato dts/dcr (es: 2-1 dts):','');
+                  if(!dtsInput)return;
+                  var dtsM=dtsInput.match(/^(\d+)-(\d+)\s+(dts|dcr)$/i);
+                  if(!dtsM){alert('Formato non valido. Usa: 2-1 dts o 5-4 dcr');return;}
+                  var dtsRh=parseInt(dtsM[1]),dtsRa=parseInt(dtsM[2]),tipo=dtsM[3].toLowerCase();
+                  match.dts={rh:dtsRh,ra:dtsRa,tipo:tipo};
+                  var winner=dtsRh>dtsRa?match.h:match.a;
+                  match.winner=winner;
+                  match.esito=_teamCase(winner)+' avanza ('+hTot+'-'+aTot+' dts '+dtsRh+'-'+dtsRa+' '+tipo+')';
+                } else {
+                  var winner=hTot>aTot?match.h:match.a;
+                  match.winner=winner;
+                  match.esito=_teamCase(winner)+' avanza ('+hTot+'-'+aTot+')';
+                }
+              }
             }
-          }
         }
       });
       var roundOrder=['sedicesimi','ottavi','quarti','semifinali','finale'];
