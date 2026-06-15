@@ -1,4 +1,4 @@
-<!-- build:20260615_2107 -->
+<!-- build:20260615_2131 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260615_2107';
+  var BUILD='20260615_2131';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
@@ -6274,6 +6274,7 @@ function admProcessCoppaXlsx(torneoKey,coppaKey,file){
                   var dtsRh=parseInt(dtsM[1]),dtsRa=parseInt(dtsM[2]),tipo=dtsM[3].toLowerCase();
                   match.dts={rh:dtsRh,ra:dtsRa,tipo:tipo};
                   var winner=dtsRh>dtsRa?match.a:match.h;
+                  match.winner=winner;
                   match.esito=_teamCase(winner)+' avanza ('+hTot+'-'+aTot+' dts '+dtsRh+'-'+dtsRa+' '+tipo+')';
                 } else {
                   var winner=hTot>aTot?match.h:match.a;
