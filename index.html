@@ -1,4 +1,4 @@
-<!-- build:20260615_2104 -->
+<!-- build:20260615_2107 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260615_2104';
+  var BUILD='20260615_2107';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
@@ -6255,9 +6255,11 @@ function admProcessCoppaXlsx(torneoKey,coppaKey,file){
                   var dtsRh=parseInt(dtsM[1]),dtsRa=parseInt(dtsM[2]),tipo=dtsM[3].toLowerCase();
                   match.dts={rh:dtsRh,ra:dtsRa,tipo:tipo};
                   var winner=dtsRh>dtsRa?match.h:match.a;
+                  match.winner=winner;
                   match.esito=_teamCase(winner)+' avanza ('+hTot+'-'+aTot+' dts '+dtsRh+'-'+dtsRa+' '+tipo+')';
                 } else {
                   var winner=hTot>aTot?match.h:match.a;
+                  match.winner=winner;
                   match.esito=_teamCase(winner)+' avanza ('+hTot+'-'+aTot+')';
                 }
               }
@@ -6275,6 +6277,7 @@ function admProcessCoppaXlsx(torneoKey,coppaKey,file){
                   match.esito=_teamCase(winner)+' avanza ('+hTot+'-'+aTot+' dts '+dtsRh+'-'+dtsRa+' '+tipo+')';
                 } else {
                   var winner=hTot>aTot?match.h:match.a;
+                  match.winner=winner;
                   match.esito=_teamCase(winner)+' avanza ('+hTot+'-'+aTot+')';
                 }
               }
@@ -6290,7 +6293,7 @@ function admProcessCoppaXlsx(torneoKey,coppaKey,file){
         if(!data[nextRound])data[nextRound]=[];
         data[currentRound].forEach(function(match,i){
           if(!match.esito)return;
-          var winner=match.esito.split(' ')[0];
+          var winner=match.winner||match.esito.split(' ')[0];
           var nextMatchIdx=Math.floor(i/2);
           var isSecondMatch=(i%2===1);
           if(!data[nextRound][nextMatchIdx])data[nextRound][nextMatchIdx]={};
