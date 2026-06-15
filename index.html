@@ -1,4 +1,4 @@
-<!-- build:20260615_2007 -->
+<!-- build:20260615_2052 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260615_2007';
+  var BUILD='20260615_2052';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
@@ -6279,6 +6279,22 @@ function admProcessCoppaXlsx(torneoKey,coppaKey,file){
             }
           }
         }
+      });
+      var roundOrder=['sedicesimi','ottavi','quarti','semifinali','finale'];
+      roundOrder.forEach(function(currentRound,idx){
+        if(!data[currentRound])return;
+        var nextRound=roundOrder[idx+1];
+        if(!nextRound)return;
+        if(!data[nextRound])data[nextRound]=[];
+        data[currentRound].forEach(function(match,i){
+          if(!match.esito)return;
+          var winner=match.esito.split(' ')[0];
+          var nextMatchIdx=Math.floor(i/2);
+          var isSecondMatch=(i%2===1);
+          if(!data[nextRound][nextMatchIdx])data[nextRound][nextMatchIdx]={};
+          if(isSecondMatch){data[nextRound][nextMatchIdx].a=winner;}
+          else{data[nextRound][nextMatchIdx].h=winner;}
+        });
       });
       admSaveCoppaData(torneoKey,coppaKey,data);
       if(typeof COPPA_DATA!=='undefined')COPPA_DATA[coppaKey]=data;
