@@ -1,4 +1,4 @@
-<!-- build:20260616_2208 -->
+<!-- build:20260616_2209 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260616_2208';
+  var BUILD='20260616_2209';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
@@ -11792,7 +11792,9 @@ function buildBracket(key) {
       if (isSingle) {
         html += buildMatchCard(m.h||'', m.a||'', m.rh||'', m.ra||'', color, isSingle);
       } else if (isLastRound) {
-        html += buildMatchCard(m.h||'', m.a||'', m.rh||'', m.ra||'', color, isSingle);
+        var finalH = m.rh!==undefined ? m.rh : ((m.rh1||0)+(m.rh2||0));
+        var finalA = m.ra!==undefined ? m.ra : ((m.ra1||0)+(m.ra2||0));
+        html += buildMatchCard(m.h||'', m.a||'', finalH, finalA, color, isSingle);
       } else {
         html += buildMatchCardDouble(m, color);
       }
@@ -11808,7 +11810,7 @@ function buildBracket(key) {
       html += '<div style="text-align:center;padding:10px 6px 8px;font-size:9px;font-weight:800;letter-spacing:1.5px;color:'+color+';border-bottom:2px solid '+color+'33;margin-bottom:10px">SQUADRA CAMPIONE</div>';
       html += '<div style="flex:1;display:flex;align-items:center;justify-content:center;padding:0 6px">';
       var champion = data.vincitore || '';
-      if(!champion && data.finale && data.finale.length){var _f=data.finale[0];if(_f.rh>_f.ra)champion=_f.h;else if(_f.ra>_f.rh)champion=_f.a;}
+      if(!champion && data.finale && data.finale.length){var _f=data.finale[0];var fh=_f.rh!==undefined?_f.rh:(_f.rh1+_f.rh2);var fa=_f.ra!==undefined?_f.ra:(_f.ra1+_f.ra2);if(fh>fa)champion=_f.h;else if(fa>fh)champion=_f.a;}
       var trophyImg = (typeof COPPA_TROPHIES!=='undefined' && COPPA_TROPHIES[key])
         ? '<img src="'+COPPA_TROPHIES[key]+'" style="width:100px;height:100px;object-fit:contain;display:block;margin:0 auto 10px;filter:drop-shadow(0 6px 20px '+color+'99)">'
         : '<div style="font-size:40px;margin-bottom:10px">🏆</div>';
@@ -17891,7 +17893,9 @@ function buildBracket(key) {
       if (isSingle) {
         html += buildMatchCard(m.h||'', m.a||'', m.rh||'', m.ra||'', color, isSingle);
       } else if (isLastRound) {
-        html += buildMatchCard(m.h||'', m.a||'', m.rh||'', m.ra||'', color, isSingle);
+        var finalH = m.rh!==undefined ? m.rh : ((m.rh1||0)+(m.rh2||0));
+        var finalA = m.ra!==undefined ? m.ra : ((m.ra1||0)+(m.ra2||0));
+        html += buildMatchCard(m.h||'', m.a||'', finalH, finalA, color, isSingle);
       } else {
         html += buildMatchCardDouble(m, color);
       }
@@ -17907,7 +17911,7 @@ function buildBracket(key) {
       html += '<div style="text-align:center;padding:10px 6px 8px;font-size:9px;font-weight:800;letter-spacing:1.5px;color:'+color+';border-bottom:2px solid '+color+'33;margin-bottom:10px">SQUADRA CAMPIONE</div>';
       html += '<div style="flex:1;display:flex;align-items:center;justify-content:center;padding:0 6px">';
       var champion = data.vincitore || '';
-      if(!champion && data.finale && data.finale.length){var _f=data.finale[0];if(_f.rh>_f.ra)champion=_f.h;else if(_f.ra>_f.rh)champion=_f.a;}
+      if(!champion && data.finale && data.finale.length){var _f=data.finale[0];var fh=_f.rh!==undefined?_f.rh:(_f.rh1+_f.rh2);var fa=_f.ra!==undefined?_f.ra:(_f.ra1+_f.ra2);if(fh>fa)champion=_f.h;else if(fa>fh)champion=_f.a;}
       var trophyImg = (typeof COPPA_TROPHIES!=='undefined' && COPPA_TROPHIES[key])
         ? '<img src="'+COPPA_TROPHIES[key]+'" style="width:100px;height:100px;object-fit:contain;display:block;margin:0 auto 10px;filter:drop-shadow(0 6px 20px '+color+'99)">'
         : '<div style="font-size:40px;margin-bottom:10px">🏆</div>';
