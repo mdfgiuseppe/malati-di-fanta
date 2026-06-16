@@ -1,4 +1,4 @@
-<!-- build:20260616_2207 -->
+<!-- build:20260616_2208 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260616_2207';
+  var BUILD='20260616_2208';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
@@ -6240,6 +6240,7 @@ function admProcessCoppaXlsx(torneoKey,coppaKey,file){
       matches.forEach(function(imported){
         for(var round in data){
           if(!data[round])continue;
+          var isFinal=(round==='finale');
           for(var i=0;i<data[round].length;i++){
             var match=data[round][i];
             if(!imported.h||!imported.a)continue;
@@ -6247,9 +6248,9 @@ function admProcessCoppaXlsx(torneoKey,coppaKey,file){
             var aMatch=match.h&&match.a&&(imported.h.toUpperCase()===match.a.toUpperCase()&&imported.a.toUpperCase()===match.h.toUpperCase());
             var hPartialMatch=match.h&&!match.a&&imported.h.toUpperCase()===match.h.toUpperCase();
             if(hMatch||aMatch||hPartialMatch){
-            var isReturnLeg=(match.rh1!==undefined&&match.ra1!==undefined);
+            var isReturnLeg=!isFinal&&(match.rh1!==undefined&&match.ra1!==undefined);
             if(hMatch){
-              if(!isReturnLeg){match.rh1=imported.rh;match.ra1=imported.ra;}
+              if(!isReturnLeg){if(isFinal){match.rh=imported.rh;match.ra=imported.ra;}else{match.rh1=imported.rh;match.ra1=imported.ra;}}
               else{match.rh2=imported.rh;match.ra2=imported.ra;var hTot=match.rh1+match.rh2,aTot=match.ra1+match.ra2;
                 if(hTot===aTot){
                   var dtsInput=prompt(_teamCase(match.h)+' vs '+_teamCase(match.a)+' - Pareggio gol totali ('+hTot+'-'+aTot+'). Inserisci risultato dts/dcr (es: 2-1 dts):','');
@@ -6268,7 +6269,7 @@ function admProcessCoppaXlsx(torneoKey,coppaKey,file){
                 }
               }
             } else if(aMatch){
-              if(!isReturnLeg){match.rh1=imported.ra;match.ra1=imported.rh;}
+              if(!isReturnLeg){if(isFinal){match.rh=imported.ra;match.ra=imported.rh;}else{match.rh1=imported.ra;match.ra1=imported.rh;}}
               else{match.rh2=imported.ra;match.ra2=imported.rh;var hTot=match.rh1+match.rh2,aTot=match.ra1+match.ra2;
                 if(hTot===aTot){
                   var dtsInput=prompt(_teamCase(match.h)+' vs '+_teamCase(match.a)+' - Pareggio gol totali ('+hTot+'-'+aTot+'). Inserisci risultato dts/dcr (es: 2-1 dts):','');
@@ -11791,9 +11792,7 @@ function buildBracket(key) {
       if (isSingle) {
         html += buildMatchCard(m.h||'', m.a||'', m.rh||'', m.ra||'', color, isSingle);
       } else if (isLastRound) {
-        var totalH = (m.rh1||0) + (m.rh2||0);
-        var totalA = (m.ra1||0) + (m.ra2||0);
-        html += buildMatchCard(m.h||'', m.a||'', totalH, totalA, color, isSingle);
+        html += buildMatchCard(m.h||'', m.a||'', m.rh||'', m.ra||'', color, isSingle);
       } else {
         html += buildMatchCardDouble(m, color);
       }
@@ -17892,9 +17891,7 @@ function buildBracket(key) {
       if (isSingle) {
         html += buildMatchCard(m.h||'', m.a||'', m.rh||'', m.ra||'', color, isSingle);
       } else if (isLastRound) {
-        var totalH = (m.rh1||0) + (m.rh2||0);
-        var totalA = (m.ra1||0) + (m.ra2||0);
-        html += buildMatchCard(m.h||'', m.a||'', totalH, totalA, color, isSingle);
+        html += buildMatchCard(m.h||'', m.a||'', m.rh||'', m.ra||'', color, isSingle);
       } else {
         html += buildMatchCardDouble(m, color);
       }
