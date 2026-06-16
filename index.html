@@ -1,4 +1,4 @@
-<!-- build:20260616_2000 -->
+<!-- build:20260616_2124 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260616_2000';
+  var BUILD='20260616_2124';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
@@ -6222,6 +6222,7 @@ function admProcessCoppaXlsx(torneoKey,coppaKey,file){
       var rows=XLSX.utils.sheet_to_json(ws,{header:1,defval:''});
       var data=admGetCoppaData(torneoKey,coppaKey);
       localStorage.setItem('adm_coppa_data_undo_'+torneoKey+'_'+coppaKey,JSON.stringify(data));
+      console.log('Snapshot salvato per undo. Keys:', Object.keys(data));
       var matches=[];
       rows.forEach(function(row,ridx){
         if(ridx<3)return;
@@ -6276,7 +6277,7 @@ function admProcessCoppaXlsx(torneoKey,coppaKey,file){
                   if(!dtsM){alert('Formato non valido. Usa: 2-1 dts o 5-4 dcr');return;}
                   var dtsRh=parseInt(dtsM[1]),dtsRa=parseInt(dtsM[2]),tipo=dtsM[3].toLowerCase();
                   match.dts={rh:dtsRh,ra:dtsRa,tipo:tipo};
-                  var winner=dtsRh>dtsRa?match.a:match.h;
+                  var winner=dtsRh>dtsRa?match.h:match.a;
                   match.winner=winner;
                   match.esito=_teamCase(winner)+' avanza ('+hTot+'-'+aTot+' dts '+dtsRh+'-'+dtsRa+' '+tipo+')';
                 } else {
@@ -7034,6 +7035,7 @@ function admEditCoppaTrofeo(torneoKey, coppaKey) {
 
 function admDeleteLastCoppaGiornata(torneoKey, coppaKey){
   var undoData=localStorage.getItem('adm_coppa_data_undo_'+torneoKey+'_'+coppaKey);
+  console.log('Caricando undo data:', undoData ? 'trovato' : 'non trovato');
   if(!undoData){alert('Nessun import da annullare');return;}
   if(!confirm('Annullare l\'ultimo import?'))return;
   var data=JSON.parse(undoData);
@@ -14019,6 +14021,7 @@ function admEditCoppaTrofeo(torneoKey, coppaKey) {
 
 function admDeleteLastCoppaGiornata(torneoKey, coppaKey){
   var undoData=localStorage.getItem('adm_coppa_data_undo_'+torneoKey+'_'+coppaKey);
+  console.log('Caricando undo data:', undoData ? 'trovato' : 'non trovato');
   if(!undoData){alert('Nessun import da annullare');return;}
   if(!confirm('Annullare l\'ultimo import?'))return;
   var data=JSON.parse(undoData);
