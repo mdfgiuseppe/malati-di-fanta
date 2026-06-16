@@ -1,4 +1,4 @@
-<!-- build:20260616_2205 -->
+<!-- build:20260616_2207 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260616_2205';
+  var BUILD='20260616_2207';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
@@ -11790,6 +11790,10 @@ function buildBracket(key) {
       var m = matches[i] || {};
       if (isSingle) {
         html += buildMatchCard(m.h||'', m.a||'', m.rh||'', m.ra||'', color, isSingle);
+      } else if (isLastRound) {
+        var totalH = (m.rh1||0) + (m.rh2||0);
+        var totalA = (m.ra1||0) + (m.ra2||0);
+        html += buildMatchCard(m.h||'', m.a||'', totalH, totalA, color, isSingle);
       } else {
         html += buildMatchCardDouble(m, color);
       }
@@ -17887,6 +17891,10 @@ function buildBracket(key) {
       var m = matches[i] || {};
       if (isSingle) {
         html += buildMatchCard(m.h||'', m.a||'', m.rh||'', m.ra||'', color, isSingle);
+      } else if (isLastRound) {
+        var totalH = (m.rh1||0) + (m.rh2||0);
+        var totalA = (m.ra1||0) + (m.ra2||0);
+        html += buildMatchCard(m.h||'', m.a||'', totalH, totalA, color, isSingle);
       } else {
         html += buildMatchCardDouble(m, color);
       }
