@@ -1,4 +1,4 @@
-<!-- build:20260616_2124 -->
+<!-- build:20260616_2205 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260616_2124';
+  var BUILD='20260616_2205';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
@@ -11788,7 +11788,7 @@ function buildBracket(key) {
     html += '<div style="flex:1;display:flex;flex-direction:column;justify-content:space-around;gap:8px;padding:0 6px">';
     for (var i = 0; i < round.size; i++) {
       var m = matches[i] || {};
-      if (isLastRound || isSingle) {
+      if (isSingle) {
         html += buildMatchCard(m.h||'', m.a||'', m.rh||'', m.ra||'', color, isSingle);
       } else {
         html += buildMatchCardDouble(m, color);
@@ -17885,7 +17885,7 @@ function buildBracket(key) {
     html += '<div style="flex:1;display:flex;flex-direction:column;justify-content:space-around;gap:8px;padding:0 6px">';
     for (var i = 0; i < round.size; i++) {
       var m = matches[i] || {};
-      if (isLastRound || isSingle) {
+      if (isSingle) {
         html += buildMatchCard(m.h||'', m.a||'', m.rh||'', m.ra||'', color, isSingle);
       } else {
         html += buildMatchCardDouble(m, color);
