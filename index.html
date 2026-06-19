@@ -1,4 +1,4 @@
-<!-- build:20260619_1718 -->
+<!-- build:20260619_1721 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260619_1718';
+  var BUILD='20260619_1721';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
@@ -11748,10 +11748,10 @@ function openCoppa(key) {
   var color=_cfg.color||(typeof COPPA_COLORS!=='undefined'?COPPA_COLORS[key]:'')||'#f59e0b';
   title.textContent=_cfg.label||(typeof COPPA_LABELS!=='undefined'?COPPA_LABELS[key]:'')||key;
   title.style.color = color;
+  content.innerHTML = buildBracket(key);
   var _cTk=window._currentTourneyKey||'slim';
   var _dk='adm_coppa_data_'+_cTk+'_'+key;
   if(typeof gsLoadKey==='function'){gsLoadKey(_dk,function(v){if(v){var parsed=typeof v==='string'?JSON.parse(v):v;if(typeof COPPA_DATA!=='undefined')COPPA_DATA[key]=parsed;content.innerHTML = buildBracket(key);}});}
-  else{content.innerHTML = buildBracket(key);}
 }
 
 function closeBracket() {
@@ -17852,10 +17852,10 @@ function openCoppa(key) {
   var color=_cfg.color||(typeof COPPA_COLORS!=='undefined'?COPPA_COLORS[key]:'')||'#f59e0b';
   title.textContent=_cfg.label||(typeof COPPA_LABELS!=='undefined'?COPPA_LABELS[key]:'')||key;
   title.style.color = color;
+  content.innerHTML = buildBracket(key);
   var _cTk=window._currentTourneyKey||'slim';
   var _dk='adm_coppa_data_'+_cTk+'_'+key;
   if(typeof gsLoadKey==='function'){gsLoadKey(_dk,function(v){if(v){var parsed=typeof v==='string'?JSON.parse(v):v;if(typeof COPPA_DATA!=='undefined')COPPA_DATA[key]=parsed;content.innerHTML = buildBracket(key);}});}
-  else{content.innerHTML = buildBracket(key);}
 }
 
 function closeBracket() {
