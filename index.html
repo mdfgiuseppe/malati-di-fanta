@@ -1,4 +1,4 @@
-<!-- build:20260619_1721 -->
+<!-- build:20260619_1724 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260619_1721';
+  var BUILD='20260619_1724';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
@@ -11797,7 +11797,9 @@ function buildBracket(key) {
       } else if (isLastRound) {
         var finalH = m.rh!==undefined ? m.rh : ((m.rh1||0)+(m.rh2||0));
         var finalA = m.ra!==undefined ? m.ra : ((m.ra1||0)+(m.ra2||0));
-        html += buildMatchCard(m.h||'', m.a||'', finalH, finalA, color, isSingle);
+        var matchHtml = buildMatchCard(m.h||'', m.a||'', finalH, finalA, color, isSingle);
+        if(m.esito){matchHtml=matchHtml.replace('</div>','<div style="padding:3px 8px;font-size:9px;font-weight:700;color:#f59e0b;text-align:center">'+m.esito+'</div></div>');}
+        html += matchHtml;
       } else {
         html += buildMatchCardDouble(m, color);
       }
@@ -17901,7 +17903,9 @@ function buildBracket(key) {
       } else if (isLastRound) {
         var finalH = m.rh!==undefined ? m.rh : ((m.rh1||0)+(m.rh2||0));
         var finalA = m.ra!==undefined ? m.ra : ((m.ra1||0)+(m.ra2||0));
-        html += buildMatchCard(m.h||'', m.a||'', finalH, finalA, color, isSingle);
+        var matchHtml = buildMatchCard(m.h||'', m.a||'', finalH, finalA, color, isSingle);
+        if(m.esito){matchHtml=matchHtml.replace('</div>','<div style="padding:3px 8px;font-size:9px;font-weight:700;color:#f59e0b;text-align:center">'+m.esito+'</div></div>');}
+        html += matchHtml;
       } else {
         html += buildMatchCardDouble(m, color);
       }
