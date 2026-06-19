@@ -1,4 +1,4 @@
-<!-- build:20260616_2209 -->
+<!-- build:20260619_1702 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260616_2209';
+  var BUILD='20260619_1702';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
@@ -6250,7 +6250,7 @@ function admProcessCoppaXlsx(torneoKey,coppaKey,file){
             if(hMatch||aMatch||hPartialMatch){
             var isReturnLeg=!isFinal&&(match.rh1!==undefined&&match.ra1!==undefined);
             if(hMatch){
-              if(!isReturnLeg){if(isFinal){match.rh=imported.rh;match.ra=imported.ra;}else{match.rh1=imported.rh;match.ra1=imported.ra;}}
+              if(!isReturnLeg){if(isFinal){match.rh=imported.rh;match.ra=imported.ra;if(imported.rh===imported.ra){var dtsInput=prompt(_teamCase(match.h)+' vs '+_teamCase(match.a)+' - Pareggio ('+imported.rh+'-'+imported.ra+'). Inserisci risultato dts/dcr (es: 2-1 dts):','');if(!dtsInput)return;var dtsM=dtsInput.match(/^(\d+)-(\d+)\s+(dts|dcr)$/i);if(!dtsM){alert('Formato non valido. Usa: 2-1 dts o 5-4 dcr');return;}var dtsRh=parseInt(dtsM[1]),dtsRa=parseInt(dtsM[2]),tipo=dtsM[3].toLowerCase();match.dts={rh:dtsRh,ra:dtsRa,tipo:tipo};var winner=dtsRh>dtsRa?match.h:match.a;match.winner=winner;match.esito=_teamCase(winner)+' avanza ('+imported.rh+'-'+imported.ra+' dts '+dtsRh+'-'+dtsRa+' '+tipo+')';}else{var winner=imported.rh>imported.ra?match.h:match.a;match.winner=winner;match.esito=_teamCase(winner)+' avanza ('+imported.rh+'-'+imported.ra+')';}}else{match.rh1=imported.rh;match.ra1=imported.ra;}}
               else{match.rh2=imported.rh;match.ra2=imported.ra;var hTot=match.rh1+match.rh2,aTot=match.ra1+match.ra2;
                 if(hTot===aTot){
                   var dtsInput=prompt(_teamCase(match.h)+' vs '+_teamCase(match.a)+' - Pareggio gol totali ('+hTot+'-'+aTot+'). Inserisci risultato dts/dcr (es: 2-1 dts):','');
@@ -6269,7 +6269,7 @@ function admProcessCoppaXlsx(torneoKey,coppaKey,file){
                 }
               }
             } else if(aMatch){
-              if(!isReturnLeg){if(isFinal){match.rh=imported.ra;match.ra=imported.rh;}else{match.rh1=imported.ra;match.ra1=imported.rh;}}
+              if(!isReturnLeg){if(isFinal){match.rh=imported.ra;match.ra=imported.rh;if(imported.ra===imported.rh){var dtsInput=prompt(_teamCase(match.h)+' vs '+_teamCase(match.a)+' - Pareggio ('+imported.ra+'-'+imported.rh+'). Inserisci risultato dts/dcr (es: 2-1 dts):','');if(!dtsInput)return;var dtsM=dtsInput.match(/^(\d+)-(\d+)\s+(dts|dcr)$/i);if(!dtsM){alert('Formato non valido. Usa: 2-1 dts o 5-4 dcr');return;}var dtsRh=parseInt(dtsM[1]),dtsRa=parseInt(dtsM[2]),tipo=dtsM[3].toLowerCase();match.dts={rh:dtsRh,ra:dtsRa,tipo:tipo};var winner=dtsRh>dtsRa?match.h:match.a;match.winner=winner;match.esito=_teamCase(winner)+' avanza ('+imported.ra+'-'+imported.rh+' dts '+dtsRh+'-'+dtsRa+' '+tipo+')';}else{var winner=imported.ra>imported.rh?match.h:match.a;match.winner=winner;match.esito=_teamCase(winner)+' avanza ('+imported.ra+'-'+imported.rh+')';}}else{match.rh1=imported.ra;match.ra1=imported.rh;}}
               else{match.rh2=imported.ra;match.ra2=imported.rh;var hTot=match.rh1+match.rh2,aTot=match.ra1+match.ra2;
                 if(hTot===aTot){
                   var dtsInput=prompt(_teamCase(match.h)+' vs '+_teamCase(match.a)+' - Pareggio gol totali ('+hTot+'-'+aTot+'). Inserisci risultato dts/dcr (es: 2-1 dts):','');
