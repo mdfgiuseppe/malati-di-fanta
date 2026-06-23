@@ -1,4 +1,4 @@
-<!-- build:20260623_0914 -->
+<!-- build:20260623_0918 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260623_0914';
+  var BUILD='20260623_0918';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
@@ -4853,7 +4853,9 @@ function gsPing() {
       gsCall({action:'getPendingRequests'}, function(err, data) {
         if (!err && data && data.ok && data.data) {
           localStorage.setItem('_pendingRequests', JSON.stringify(data.data));
-          if(typeof admRenderUtenti==='function') admRenderUtenti();
+          setTimeout(function(){
+            if(typeof admRenderUtenti==='function') admRenderUtenti();
+          }, 300);
         }
       });
       // Flush salvataggi pendenti (salvati offline)
