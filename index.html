@@ -1,4 +1,4 @@
-<!-- build:20260619_1728 -->
+<!-- build:20260623_0914 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260619_1728';
+  var BUILD='20260623_0914';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
@@ -4849,6 +4849,13 @@ function gsPing() {
   gsCall({action:'ping'}, function(err, data) {
     GS_ONLINE = !err && data && data.ok;
     if (GS_ONLINE) {
+      // Carica richieste pendenti da Form Responses 1
+      gsCall({action:'getPendingRequests'}, function(err, data) {
+        if (!err && data && data.ok && data.data) {
+          localStorage.setItem('_pendingRequests', JSON.stringify(data.data));
+          if(typeof admRenderUtenti==='function') admRenderUtenti();
+        }
+      });
       // Flush salvataggi pendenti (salvati offline)
       if (typeof _gsFlushPending === 'function') _gsFlushPending();
       // Controlla richieste pendenti (solo se admin) + sync trofei locali → GSheets
