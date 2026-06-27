@@ -1,4 +1,4 @@
-<!-- build:20260627_0802 -->
+<!-- build:20260627_0807 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260627_0802';
+  var BUILD='20260627_0807';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
@@ -4755,7 +4755,7 @@ function modSelLegaChange() {
 // ═══════════════════════════════════════════════════════
 // GOOGLE SHEETS — Layer di sincronizzazione
 // ═══════════════════════════════════════════════════════
-var GS_URL = 'https://script.google.com/macros/s/AKfycbx0E-fnzINJJRNnPlC3xc9vSArFIxwPNfsT_US6D6vZBQ_UkQG_-I9xA9m5X0nD1o51/exec';
+var GS_URL = 'https://script.google.com/macros/s/AKfycbwQef_FPHSSCLYcl02RsXvUdBZdk1r1Oa8iONod6aZwPSCYLrESdrKH0Ih07dWkeDtr/exec';
 var GS_ONLINE = false; // diventa true dopo il primo ping riuscito
 
 // Throttling: max 50 richieste simultanee (letture sono safe, no conflitti di lock)
@@ -4849,10 +4849,10 @@ function gsPing() {
   gsCall({action:'ping'}, function(err, data) {
     GS_ONLINE = !err && data && data.ok;
     if (GS_ONLINE) {
-      // Carica richieste pendenti da Form Responses 1
-      gsCall({action:'getPendingRequests'}, function(err, data) {
-        if (!err && data && data.ok && data.data) {
-          localStorage.setItem('_pendingRequests', JSON.stringify(data.data));
+      // Carica richieste pendenti da Config
+      gsLoadKey('_pendingRequests', function(val) {
+        if (val) {
+          localStorage.setItem('_pendingRequests', typeof val === 'string' ? val : JSON.stringify(val));
           setTimeout(function(){
             if(typeof admRenderUtenti==='function') admRenderUtenti();
           }, 300);
