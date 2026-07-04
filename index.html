@@ -1,4 +1,4 @@
-<!-- build:20260704_1731 -->
+<!-- build:20260704_1837 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260704_1731';
+  var BUILD='20260704_1837';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
@@ -6870,8 +6870,13 @@ function _openQualifClassGiornata(torneoKey,qi,g){
     if(bs){bs.style.background=gg===g?'rgba(16,185,129,.15)':'var(--bg2)';bs.style.borderColor=gg===g?'#10b981':'var(--border)';bs.style.color=gg===g?'#10b981':'var(--text2)';}
   });
   var ranking=_qualifComputeRankingUpTo(torneoKey,qi,g);
-  var overrideStr=localStorage.getItem('adm_qualif_ranking_override_'+torneoKey+'_'+qi);
-  if(overrideStr){try{var override=JSON.parse(overrideStr);if(!Array.isArray(override))override=overrideStr.split(',').map(function(x){return x.trim();});console.log('[qualif] usando override, squadre:',override.slice(0,5).join(','));ranking=override.map(function(sq){var r=ranking.find(function(x){return x.squadra.toUpperCase()===sq.toUpperCase();});return r||{squadra:sq,pt:0,gf:0,gs:0};}).filter(function(x){return ranking.some(function(y){return y.squadra.toUpperCase()===x.squadra.toUpperCase();})});}catch(e){console.log('[qualif] errore override:',e);}}
+  var overrideKey='adm_qualif_ranking_override_'+torneoKey+'_'+qi;
+  var overrideStr=localStorage.getItem(overrideKey);
+  function applyOverride(){
+    if(overrideStr){try{var override=JSON.parse(overrideStr);if(!Array.isArray(override))override=overrideStr.split(',').map(function(x){return x.trim();});console.log('[qualif] usando override, squadre:',override.slice(0,5).join(','));ranking=override.map(function(sq){var r=ranking.find(function(x){return x.squadra.toUpperCase()===sq.toUpperCase();});return r||{squadra:sq,pt:0,gf:0,gs:0};}).filter(function(x){return ranking.some(function(y){return y.squadra.toUpperCase()===x.squadra.toUpperCase();})});var coppeConfig=admGetCoppeConfig(torneoKey),zones=q.zones||[],zoneMap={},pos=1;zones.forEach(function(z){var cc=coppeConfig.find(function(x){return x.key===z.coppaKey;});if(cc&&z.posti>0){zoneMap[z.coppaKey]={from:pos,to:pos+z.posti-1,color:z.color||cc.color,label:cc.label};pos+=z.posti;}});var zoneLegend='';zones.forEach(function(z){var zm=zoneMap[z.coppaKey];if(!zm)return;zoneLegend+='<span style="display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:700;color:'+zm.color+'"><span style="width:8px;height:8px;border-radius:50%;background:'+zm.color+';display:inline-block"></span>'+zm.label+' ('+zm.from+'-'+zm.to+')</span>';});var isLatest=!mSortedGs.length||g===mSortedGs[mSortedGs.length-1];var label='<div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:'+(zoneLegend?'4px':'8px')+'">🏆 Classifica '+(isLatest?'aggiornata ':'')+'dopo la giornata '+g+'</div>';if(zoneLegend)label+='<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px">'+zoneLegend+'</div>';det.innerHTML=label+_qualifBuildTable(ranking,zoneMap,q.tipo==='f1'?'Pt F1':'Pt. Totali');}catch(e){console.log('[qualif] errore override:',e);}}
+  }
+  if(overrideStr){applyOverride();}
+  else{gsLoadKey(overrideKey,function(v){if(v){overrideStr=v;localStorage.setItem(overrideKey,v);}applyOverride();});}
   var coppeConfig=admGetCoppeConfig(torneoKey),zones=q.zones||[],zoneMap={},pos=1;
   zones.forEach(function(z){var cc=coppeConfig.find(function(x){return x.key===z.coppaKey;});if(cc&&z.posti>0){zoneMap[z.coppaKey]={from:pos,to:pos+z.posti-1,color:z.color||cc.color,label:cc.label};pos+=z.posti;}});
   var zoneLegend='';
@@ -13865,8 +13870,13 @@ function _openQualifClassGiornata(torneoKey,qi,g){
     if(bs){bs.style.background=gg===g?'rgba(16,185,129,.15)':'var(--bg2)';bs.style.borderColor=gg===g?'#10b981':'var(--border)';bs.style.color=gg===g?'#10b981':'var(--text2)';}
   });
   var ranking=_qualifComputeRankingUpTo(torneoKey,qi,g);
-  var overrideStr=localStorage.getItem('adm_qualif_ranking_override_'+torneoKey+'_'+qi);
-  if(overrideStr){try{var override=JSON.parse(overrideStr);if(!Array.isArray(override))override=overrideStr.split(',').map(function(x){return x.trim();});console.log('[qualif] usando override, squadre:',override.slice(0,5).join(','));ranking=override.map(function(sq){var r=ranking.find(function(x){return x.squadra.toUpperCase()===sq.toUpperCase();});return r||{squadra:sq,pt:0,gf:0,gs:0};}).filter(function(x){return ranking.some(function(y){return y.squadra.toUpperCase()===x.squadra.toUpperCase();})});}catch(e){console.log('[qualif] errore override:',e);}}
+  var overrideKey='adm_qualif_ranking_override_'+torneoKey+'_'+qi;
+  var overrideStr=localStorage.getItem(overrideKey);
+  function applyOverride(){
+    if(overrideStr){try{var override=JSON.parse(overrideStr);if(!Array.isArray(override))override=overrideStr.split(',').map(function(x){return x.trim();});console.log('[qualif] usando override, squadre:',override.slice(0,5).join(','));ranking=override.map(function(sq){var r=ranking.find(function(x){return x.squadra.toUpperCase()===sq.toUpperCase();});return r||{squadra:sq,pt:0,gf:0,gs:0};}).filter(function(x){return ranking.some(function(y){return y.squadra.toUpperCase()===x.squadra.toUpperCase();})});var coppeConfig=admGetCoppeConfig(torneoKey),zones=q.zones||[],zoneMap={},pos=1;zones.forEach(function(z){var cc=coppeConfig.find(function(x){return x.key===z.coppaKey;});if(cc&&z.posti>0){zoneMap[z.coppaKey]={from:pos,to:pos+z.posti-1,color:z.color||cc.color,label:cc.label};pos+=z.posti;}});var zoneLegend='';zones.forEach(function(z){var zm=zoneMap[z.coppaKey];if(!zm)return;zoneLegend+='<span style="display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:700;color:'+zm.color+'"><span style="width:8px;height:8px;border-radius:50%;background:'+zm.color+';display:inline-block"></span>'+zm.label+' ('+zm.from+'-'+zm.to+')</span>';});var isLatest=!mSortedGs.length||g===mSortedGs[mSortedGs.length-1];var label='<div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:'+(zoneLegend?'4px':'8px')+'">🏆 Classifica '+(isLatest?'aggiornata ':'')+'dopo la giornata '+g+'</div>';if(zoneLegend)label+='<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px">'+zoneLegend+'</div>';det.innerHTML=label+_qualifBuildTable(ranking,zoneMap,q.tipo==='f1'?'Pt F1':'Pt. Totali');}catch(e){console.log('[qualif] errore override:',e);}}
+  }
+  if(overrideStr){applyOverride();}
+  else{gsLoadKey(overrideKey,function(v){if(v){overrideStr=v;localStorage.setItem(overrideKey,v);}applyOverride();});}
   var coppeConfig=admGetCoppeConfig(torneoKey),zones=q.zones||[],zoneMap={},pos=1;
   zones.forEach(function(z){var cc=coppeConfig.find(function(x){return x.key===z.coppaKey;});if(cc&&z.posti>0){zoneMap[z.coppaKey]={from:pos,to:pos+z.posti-1,color:z.color||cc.color,label:cc.label};pos+=z.posti;}});
   var zoneLegend='';
