@@ -1,4 +1,4 @@
-<!-- build:20260704_1723 -->
+<!-- build:20260704_1726 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260704_1723';
+  var BUILD='20260704_1726';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
@@ -4838,10 +4838,10 @@ function _gsCallImpl(params, callback) {
     document.body.removeChild(script);
     if(callback) callback(new Error('JSONP request failed'), null);
   };
-  // Delay di 100ms per garantire che il callback sia registrato prima che GSheet lo chiami
+  // Delay di 300ms per garantire che il callback sia registrato prima che GSheet lo chiami
   setTimeout(function() {
     if(!timedOut) document.body.appendChild(script);
-  }, 100);
+  }, 300);
 }
 
 // Ping al caricamento per verificare connessione
@@ -5016,8 +5016,8 @@ function gsPing() {
               gsLoadKey('adm_qualif_ranking_override_slim_'+index, function(v){ if(v) localStorage.setItem('adm_qualif_ranking_override_slim_'+index, typeof v==='string'?v:JSON.stringify(v)); });
             })(qi);
           }
-          // Ricarica UI qualificazioni e coppe dopo il caricamento (8s per attendere tutti i gsLoadKey even se GSheet è lento)
-          setTimeout(function(){ if(typeof initCoppaLogos==='function') initCoppaLogos(); }, 8000);
+          // Ricarica UI qualificazioni e coppe dopo il caricamento (10s per attendere tutti i gsLoadKey + delay callback)
+          setTimeout(function(){ if(typeof initCoppaLogos==='function') initCoppaLogos(); }, 10000);
           // Carica logo principale e trofei/crediti slim (indipendente da admin_tornei)
           gsLoadKey('adm_logo_main', function(v){ if(v){ localStorage.setItem('adm_logo_main',v); if(typeof _applyLogoMain==='function') _applyLogoMain(v); } });
           ['it','en','de','es','fr','pt','nl','tr'].forEach(function(lk) {
