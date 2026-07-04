@@ -1,4 +1,4 @@
-<!-- build:20260704_1656 -->
+<!-- build:20260704_1700 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260704_1656';
+  var BUILD='20260704_1700';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
@@ -6869,7 +6869,7 @@ function _openQualifClassGiornata(torneoKey,qi,g){
   });
   var ranking=_qualifComputeRankingUpTo(torneoKey,qi,g);
   var overrideStr=localStorage.getItem('adm_qualif_ranking_override_'+torneoKey+'_'+qi);
-  if(overrideStr){try{var override=JSON.parse(overrideStr);if(!Array.isArray(override))override=overrideStr.split(',').map(function(x){return x.trim();});ranking=override.map(function(sq){var r=ranking.find(function(x){return x.squadra===sq;});return r||{squadra:sq,pt:0,gf:0,gs:0};}).filter(function(x){return ranking.some(function(y){return y.squadra===x.squadra;});});}catch(e){}}
+  if(overrideStr){try{var override=JSON.parse(overrideStr);if(!Array.isArray(override))override=overrideStr.split(',').map(function(x){return x.trim();});ranking=override.map(function(sq){var r=ranking.find(function(x){return x.squadra.toUpperCase()===sq.toUpperCase();});return r||{squadra:sq,pt:0,gf:0,gs:0};}).filter(function(x){return ranking.some(function(y){return y.squadra.toUpperCase()===x.squadra.toUpperCase();});});}catch(e){}}
   var coppeConfig=admGetCoppeConfig(torneoKey),zones=q.zones||[],zoneMap={},pos=1;
   zones.forEach(function(z){var cc=coppeConfig.find(function(x){return x.key===z.coppaKey;});if(cc&&z.posti>0){zoneMap[z.coppaKey]={from:pos,to:pos+z.posti-1,color:z.color||cc.color,label:cc.label};pos+=z.posti;}});
   var zoneLegend='';
@@ -13864,7 +13864,7 @@ function _openQualifClassGiornata(torneoKey,qi,g){
   });
   var ranking=_qualifComputeRankingUpTo(torneoKey,qi,g);
   var overrideStr=localStorage.getItem('adm_qualif_ranking_override_'+torneoKey+'_'+qi);
-  if(overrideStr){try{var override=JSON.parse(overrideStr);if(!Array.isArray(override))override=overrideStr.split(',').map(function(x){return x.trim();});ranking=override.map(function(sq){var r=ranking.find(function(x){return x.squadra===sq;});return r||{squadra:sq,pt:0,gf:0,gs:0};}).filter(function(x){return ranking.some(function(y){return y.squadra===x.squadra;});});}catch(e){}}
+  if(overrideStr){try{var override=JSON.parse(overrideStr);if(!Array.isArray(override))override=overrideStr.split(',').map(function(x){return x.trim();});ranking=override.map(function(sq){var r=ranking.find(function(x){return x.squadra.toUpperCase()===sq.toUpperCase();});return r||{squadra:sq,pt:0,gf:0,gs:0};}).filter(function(x){return ranking.some(function(y){return y.squadra.toUpperCase()===x.squadra.toUpperCase();});});}catch(e){}}
   var coppeConfig=admGetCoppeConfig(torneoKey),zones=q.zones||[],zoneMap={},pos=1;
   zones.forEach(function(z){var cc=coppeConfig.find(function(x){return x.key===z.coppaKey;});if(cc&&z.posti>0){zoneMap[z.coppaKey]={from:pos,to:pos+z.posti-1,color:z.color||cc.color,label:cc.label};pos+=z.posti;}});
   var zoneLegend='';
