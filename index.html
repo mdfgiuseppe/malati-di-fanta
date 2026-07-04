@@ -1,4 +1,4 @@
-<!-- build:20260704_1642 -->
+<!-- build:20260704_1646 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260704_1642';
+  var BUILD='20260704_1646';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
@@ -6186,7 +6186,7 @@ function admGenBracketFromQualifDirect(torneoKey,coppaKey,qi){
   if(!mGs.length){alert('Nessuna giornata nella qualificazione.');return;}
   var ranking=_qualifComputeRankingUpTo(torneoKey,qi,mGs[mGs.length-1]);
   var override=_getQualifRankingOverride(torneoKey,qi);
-  if(override.length===ranking.length){ranking=override.map(function(sq){var r=ranking.find(function(x){return x.squadra===sq;});return r||{squadra:sq,pt:0};});}
+  ranking=override.map(function(sq){var r=ranking.find(function(x){return x.squadra===sq;});return r||{squadra:sq,pt:0};}).filter(function(x){return ranking.some(function(y){return y.squadra===x.squadra;});});
   if(ranking.length<2){alert('Non abbastanza squadre in classifica.');return;}
   var teams=ranking.map(function(r){return r.squadra;});
   var zoneData=(qualif.zones||[]).find(function(z){return z.coppaKey===coppaKey;});
@@ -6601,7 +6601,7 @@ function admToggleQualifClassifica(torneoKey,qi){
   function _renderClassifica(){
     var ranking=_qualifComputeRankingUpTo(torneoKey,qi,mGs[mGs.length-1]);
     var override=_getQualifRankingOverride(torneoKey,qi);
-    if(override.length===ranking.length){ranking=override.map(function(sq){var r=ranking.find(function(x){return x.squadra===sq;});return r||{squadra:sq,pt:0};});}
+    ranking=override.map(function(sq){var r=ranking.find(function(x){return x.squadra===sq;});return r||{squadra:sq,pt:0};}).filter(function(x){return ranking.some(function(y){return y.squadra===x.squadra;});});
     console.log('[qualif-classifica] Ranking:', ranking);
     if(!ranking.length){el.innerHTML='<div style="color:var(--text3);font-size:12px;padding:8px">Errore nel calcolo della classifica</div>';return;}
     var h='<div style="font-size:11px"><table style="width:100%;border-collapse:collapse">';
@@ -6634,7 +6634,7 @@ function admMoveQualifRanking(torneoKey,qi,idx,direction){
   if(!mGs.length){console.log('[qualif-move] Nessuna giornata');return;}
   var ranking=_qualifComputeRankingUpTo(torneoKey,qi,mGs[mGs.length-1]);
   var override=_getQualifRankingOverride(torneoKey,qi);
-  if(override.length===ranking.length){ranking=override.map(function(sq){var r=ranking.find(function(x){return x.squadra===sq;});return r||{squadra:sq,pt:0};});}
+  ranking=override.map(function(sq){var r=ranking.find(function(x){return x.squadra===sq;});return r||{squadra:sq,pt:0};}).filter(function(x){return ranking.some(function(y){return y.squadra===x.squadra;});});
   if(idx<0||idx>=ranking.length){console.log('[qualif-move] Indice non valido');return;}
   var newIdx=idx+direction;
   if(newIdx<0||newIdx>=ranking.length){console.log('[qualif-move] Nuovo indice non valido');return;}
@@ -13596,7 +13596,7 @@ function admToggleQualifClassifica(torneoKey,qi){
   function _renderClassifica(){
     var ranking=_qualifComputeRankingUpTo(torneoKey,qi,mGs[mGs.length-1]);
     var override=_getQualifRankingOverride(torneoKey,qi);
-    if(override.length===ranking.length){ranking=override.map(function(sq){var r=ranking.find(function(x){return x.squadra===sq;});return r||{squadra:sq,pt:0};});}
+    ranking=override.map(function(sq){var r=ranking.find(function(x){return x.squadra===sq;});return r||{squadra:sq,pt:0};}).filter(function(x){return ranking.some(function(y){return y.squadra===x.squadra;});});
     console.log('[qualif-classifica] Ranking:', ranking);
     if(!ranking.length){el.innerHTML='<div style="color:var(--text3);font-size:12px;padding:8px">Errore nel calcolo della classifica</div>';return;}
     var h='<div style="font-size:11px"><table style="width:100%;border-collapse:collapse">';
@@ -13629,7 +13629,7 @@ function admMoveQualifRanking(torneoKey,qi,idx,direction){
   if(!mGs.length){console.log('[qualif-move] Nessuna giornata');return;}
   var ranking=_qualifComputeRankingUpTo(torneoKey,qi,mGs[mGs.length-1]);
   var override=_getQualifRankingOverride(torneoKey,qi);
-  if(override.length===ranking.length){ranking=override.map(function(sq){var r=ranking.find(function(x){return x.squadra===sq;});return r||{squadra:sq,pt:0};});}
+  ranking=override.map(function(sq){var r=ranking.find(function(x){return x.squadra===sq;});return r||{squadra:sq,pt:0};}).filter(function(x){return ranking.some(function(y){return y.squadra===x.squadra;});});
   if(idx<0||idx>=ranking.length){console.log('[qualif-move] Indice non valido');return;}
   var newIdx=idx+direction;
   if(newIdx<0||newIdx>=ranking.length){console.log('[qualif-move] Nuovo indice non valido');return;}
