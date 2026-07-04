@@ -1,4 +1,4 @@
-<!-- build:20260704_1726 -->
+<!-- build:20260704_1731 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260704_1726';
+  var BUILD='20260704_1731';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
@@ -4830,17 +4830,19 @@ function _gsCallImpl(params, callback) {
 
   // Crea uno script tag per la richiesta JSONP
   var script = document.createElement('script');
-  script.src = GS_URL + '?' + urlParams;
   script.onerror = function() {
     if(timedOut) return;
     clearTimeout(timeoutId);
     delete window[cbName];
-    document.body.removeChild(script);
+    if(script && script.parentNode) document.body.removeChild(script);
     if(callback) callback(new Error('JSONP request failed'), null);
   };
-  // Delay di 300ms per garantire che il callback sia registrato prima che GSheet lo chiami
+  // Delay di 300ms PRIMA di assegnare src per garantire che il callback sia registrato prima che il caricamento inizi
   setTimeout(function() {
-    if(!timedOut) document.body.appendChild(script);
+    if(!timedOut) {
+      script.src = GS_URL + '?' + urlParams;
+      document.body.appendChild(script);
+    }
   }, 300);
 }
 
