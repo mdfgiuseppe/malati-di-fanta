@@ -1,4 +1,4 @@
-<!-- build:20260704_1841 -->
+<!-- build:20260705_1509 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260704_1841';
+  var BUILD='20260705_1509';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
@@ -6872,6 +6872,7 @@ function _openQualifClassGiornata(torneoKey,qi,g){
   var ranking=_qualifComputeRankingUpTo(torneoKey,qi,g);
   var overrideKey='adm_qualif_ranking_override_'+torneoKey+'_'+qi;
   var overrideStr=localStorage.getItem(overrideKey);
+  console.log('[qualif-load] key:', overrideKey, '| found:', !!overrideStr);
   function renderClassifica(){
     var useRanking=ranking;
     if(overrideStr){try{var override=JSON.parse(overrideStr);if(!Array.isArray(override))override=overrideStr.split(',').map(function(x){return x.trim();});console.log('[qualif] usando override, squadre:',override.slice(0,5).join(','));useRanking=override.map(function(sq){var r=ranking.find(function(x){return x.squadra.toUpperCase()===sq.toUpperCase();});return r||{squadra:sq,pt:0,gf:0,gs:0};}).filter(function(x){return ranking.some(function(y){return y.squadra.toUpperCase()===x.squadra.toUpperCase();})});}catch(e){console.log('[qualif] errore override:',e);}}
@@ -6884,8 +6885,8 @@ function _openQualifClassGiornata(torneoKey,qi,g){
     if(zoneLegend)label+='<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px">'+zoneLegend+'</div>';
     det.innerHTML=label+_qualifBuildTable(useRanking,zoneMap,q.tipo==='f1'?'Pt F1':'Pt. Totali');
   }
-  if(overrideStr){renderClassifica();}
-  else{gsLoadKey(overrideKey,function(v){if(v){overrideStr=v;localStorage.setItem(overrideKey,v);}renderClassifica();});}
+  if(overrideStr){console.log('[qualif-load] using cached override');renderClassifica();}
+  else{console.log('[qualif-load] loading from GSheet...');gsLoadKey(overrideKey,function(v){console.log('[qualif-load] GSheet returned:',v?'YES':'NO');if(v){overrideStr=v;localStorage.setItem(overrideKey,v);}renderClassifica();});}
 }
 function openQualif(torneoKey,qi){
   var _idPfx=(window._currentTourneyKey==='tsm')?'tsm-':'';
@@ -13870,6 +13871,7 @@ function _openQualifClassGiornata(torneoKey,qi,g){
   var ranking=_qualifComputeRankingUpTo(torneoKey,qi,g);
   var overrideKey='adm_qualif_ranking_override_'+torneoKey+'_'+qi;
   var overrideStr=localStorage.getItem(overrideKey);
+  console.log('[qualif-load] key:', overrideKey, '| found:', !!overrideStr);
   function renderClassifica(){
     var useRanking=ranking;
     if(overrideStr){try{var override=JSON.parse(overrideStr);if(!Array.isArray(override))override=overrideStr.split(',').map(function(x){return x.trim();});console.log('[qualif] usando override, squadre:',override.slice(0,5).join(','));useRanking=override.map(function(sq){var r=ranking.find(function(x){return x.squadra.toUpperCase()===sq.toUpperCase();});return r||{squadra:sq,pt:0,gf:0,gs:0};}).filter(function(x){return ranking.some(function(y){return y.squadra.toUpperCase()===x.squadra.toUpperCase();})});}catch(e){console.log('[qualif] errore override:',e);}}
@@ -13882,8 +13884,8 @@ function _openQualifClassGiornata(torneoKey,qi,g){
     if(zoneLegend)label+='<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px">'+zoneLegend+'</div>';
     det.innerHTML=label+_qualifBuildTable(useRanking,zoneMap,q.tipo==='f1'?'Pt F1':'Pt. Totali');
   }
-  if(overrideStr){renderClassifica();}
-  else{gsLoadKey(overrideKey,function(v){if(v){overrideStr=v;localStorage.setItem(overrideKey,v);}renderClassifica();});}
+  if(overrideStr){console.log('[qualif-load] using cached override');renderClassifica();}
+  else{console.log('[qualif-load] loading from GSheet...');gsLoadKey(overrideKey,function(v){console.log('[qualif-load] GSheet returned:',v?'YES':'NO');if(v){overrideStr=v;localStorage.setItem(overrideKey,v);}renderClassifica();});}
 }
 function openQualif(torneoKey,qi){
   var _idPfx=(window._currentTourneyKey==='tsm')?'tsm-':'';
