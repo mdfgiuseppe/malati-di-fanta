@@ -1,4 +1,4 @@
-const CACHE_VERSION = '20260705_1850';
+const CACHE_VERSION = '20260705_1855';
 const CACHE_NAME = 'mdf-' + CACHE_VERSION;
 
 self.addEventListener('install', () => self.skipWaiting());

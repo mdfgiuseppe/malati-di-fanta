@@ -1,4 +1,4 @@
-<!-- build:20260705_1850 -->
+<!-- build:20260705_1855 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260705_1850';
+  var BUILD='20260705_1855';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
@@ -30,6 +30,25 @@ function sbLoadKey(key,callback){supabase.from('data').select('value').eq('key',
 function sbSaveKey(key,value){supabase.from('data').select('id').eq('key',key).single().then(function(r){if(r.data){supabase.from('data').update({value:value,updated_at:new Date()}).eq('key',key).then(function(){console.log('[supabase] Updated:',key);});}else{supabase.from('data').insert([{key:key,value:value}]).then(function(){console.log('[supabase] Inserted:',key);});}}).catch(function(e){console.error('[supabase] Save error:',e);});}
 var gsLoadKey=sbLoadKey;
 var gsSaveKey=sbSaveKey;
+// Migrazione da localStorage a Supabase
+async function migrateLocalStorageToSupabase(){
+  var count=0;
+  var keysToMigrate=[];
+  for(var i=0;i<localStorage.length;i++){
+    var key=localStorage.key(i);
+    if(key.startsWith('adm_')||key.startsWith('user_')||key.startsWith('admin_')||key.startsWith('storico_')||key.startsWith('_pending')){
+      keysToMigrate.push(key);
+    }
+  }
+  console.log('[migrate] Found '+keysToMigrate.length+' keys to migrate');
+  for(var k of keysToMigrate){
+    var val=localStorage.getItem(k);
+    sbSaveKey(k,val);
+    count++;
+  }
+  console.log('[migrate] Migrated '+count+' keys to Supabase!');
+  alert('✅ Migrazione completata! '+count+' chiavi salvate su Supabase!');
+}
 </script>
 <meta name="theme-color" content="#10b981">
 <meta name="mobile-web-app-capable" content="yes">
