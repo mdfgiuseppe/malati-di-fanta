@@ -1,4 +1,4 @@
-<!-- build:20260705_1520 -->
+<!-- build:20260705_1850 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260705_1520';
+  var BUILD='20260705_1850';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
@@ -20,6 +20,16 @@
     });
   }
 })();
+</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+var SUPABASE_URL='https://ftwmxgajfvdpshgreatj.supabase.co';
+var SUPABASE_KEY='sb_publishable_EHUvU2C9a-z0x8Tw5_ggpQ_RLKoNvBE';
+var supabase=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+function sbLoadKey(key,callback){supabase.from('data').select('value').eq('key',key).single().then(function(r){if(r.error||!r.data){callback(null,null);}else{callback(null,r.data.value);}}).catch(function(e){console.error('[supabase] Load error:',e);callback(e,null);});}
+function sbSaveKey(key,value){supabase.from('data').select('id').eq('key',key).single().then(function(r){if(r.data){supabase.from('data').update({value:value,updated_at:new Date()}).eq('key',key).then(function(){console.log('[supabase] Updated:',key);});}else{supabase.from('data').insert([{key:key,value:value}]).then(function(){console.log('[supabase] Inserted:',key);});}}).catch(function(e){console.error('[supabase] Save error:',e);});}
+var gsLoadKey=sbLoadKey;
+var gsSaveKey=sbSaveKey;
 </script>
 <meta name="theme-color" content="#10b981">
 <meta name="mobile-web-app-capable" content="yes">
