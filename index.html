@@ -1,4 +1,4 @@
-<!-- build:20260705_1509 -->
+<!-- build:20260705_1520 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260705_1509';
+  var BUILD='20260705_1520';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
@@ -6934,8 +6934,9 @@ function openQualif(torneoKey,qi){
     _openQualifClassGiornata(torneoKey,qi,mSortedGs[mSortedGs.length-1]);
   }
   var localData=localStorage.getItem(overrideKey);
-  if(localData){_renderQualifDetail();}
-  else{gsLoadKey(overrideKey,function(data){if(data){localStorage.setItem(overrideKey,data);}_renderQualifDetail();});}
+  console.log('[openQualif] key:', overrideKey, '| cached:', !!localData);
+  if(localData){console.log('[openQualif] using cached');_renderQualifDetail();}
+  else{console.log('[openQualif] loading from GSheet...');gsLoadKey(overrideKey,function(data){console.log('[openQualif] GSheet returned:',data?'YES':'NO');if(data){localStorage.setItem(overrideKey,data);}console.log('[openQualif] calling _renderQualifDetail()');_renderQualifDetail();});}
 
 }
 function admRenderCoppeList(torneoKey) {
@@ -13933,8 +13934,9 @@ function openQualif(torneoKey,qi){
     _openQualifClassGiornata(torneoKey,qi,mSortedGs[mSortedGs.length-1]);
   }
   var localData=localStorage.getItem(overrideKey);
-  if(localData){_renderQualifDetail();}
-  else{gsLoadKey(overrideKey,function(data){if(data){localStorage.setItem(overrideKey,data);}_renderQualifDetail();});}
+  console.log('[openQualif] key:', overrideKey, '| cached:', !!localData);
+  if(localData){console.log('[openQualif] using cached');_renderQualifDetail();}
+  else{console.log('[openQualif] loading from GSheet...');gsLoadKey(overrideKey,function(data){console.log('[openQualif] GSheet returned:',data?'YES':'NO');if(data){localStorage.setItem(overrideKey,data);}console.log('[openQualif] calling _renderQualifDetail()');_renderQualifDetail();});}
 
 }
 function admRenderCoppeList(torneoKey) {
