@@ -1,4 +1,4 @@
-<!-- build:20260707_1852 -->
+<!-- build:20260707_1919 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260707_1852';
+  var BUILD='20260707_1919';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
@@ -24,8 +24,8 @@
 <script>
 var SUPABASE_URL='https://ftwmxgajfvdpshgreatj.supabase.co';
 var SUPABASE_KEY='sb_publishable_EHUvU2C9a-z0x8Tw5_ggpQ_RLKoNvBE';
-function sbLoadKey(key,callback){fetch(SUPABASE_URL+'/rest/v1/data?key=eq.'+encodeURIComponent(key)+'&select=value',{headers:{'apikey':SUPABASE_KEY,'Accept':'application/json'}}).then(r=>r.json()).then(d=>{callback(null,d.length>0?d[0].value:null);}).catch(e=>{callback(e,null);});}
-function sbSaveKey(key,value){fetch(SUPABASE_URL+'/rest/v1/data?key=eq.'+encodeURIComponent(key),{method:'GET',headers:{'apikey':SUPABASE_KEY}}).then(r=>r.json()).then(d=>{if(d.length>0){fetch(SUPABASE_URL+'/rest/v1/data?key=eq.'+encodeURIComponent(key),{method:'PATCH',headers:{'apikey':SUPABASE_KEY,'Content-Type':'application/json'},body:JSON.stringify({value:value,updated_at:new Date().toISOString()})}).then(r=>console.log('[supabase] Updated:',key));}else{fetch(SUPABASE_URL+'/rest/v1/data',{method:'POST',headers:{'apikey':SUPABASE_KEY,'Content-Type':'application/json'},body:JSON.stringify({key:key,value:value})}).then(r=>console.log('[supabase] Inserted:',key));}}).catch(e=>console.error('[supabase] Error:',e));}
+function sbLoadKey(key,callback){fetch(SUPABASE_URL+'/rest/v1/data?key=eq.'+encodeURIComponent(key)+'&select=value',{headers:{'Authorization':'Bearer '+SUPABASE_KEY,'Accept':'application/json'}}).then(r=>r.json()).then(d=>{callback(null,d.length>0?d[0].value:null);}).catch(e=>{callback(e,null);});}
+function sbSaveKey(key,value){fetch(SUPABASE_URL+'/rest/v1/data?key=eq.'+encodeURIComponent(key),{method:'GET',headers:{'Authorization':'Bearer '+SUPABASE_KEY}}).then(r=>r.json()).then(d=>{if(d.length>0){fetch(SUPABASE_URL+'/rest/v1/data?key=eq.'+encodeURIComponent(key),{method:'PATCH',headers:{'Authorization':'Bearer '+SUPABASE_KEY,'Content-Type':'application/json'},body:JSON.stringify({value:value,updated_at:new Date().toISOString()})}).then(r=>console.log('[supabase] Updated:',key));}else{fetch(SUPABASE_URL+'/rest/v1/data',{method:'POST',headers:{'Authorization':'Bearer '+SUPABASE_KEY,'Content-Type':'application/json'},body:JSON.stringify({key:key,value:value})}).then(r=>console.log('[supabase] Inserted:',key));}}).catch(e=>console.error('[supabase] Error:',e));}
 var gsLoadKey=sbLoadKey;
 var gsSaveKey=sbSaveKey;
 async function migrateLocalStorageToSupabase(){var count=0;var keysToMigrate=[];for(var i=0;i<localStorage.length;i++){var key=localStorage.key(i);if(key.startsWith('adm_')||key.startsWith('user_')||key.startsWith('admin_')||key.startsWith('storico_')||key.startsWith('_pending')){keysToMigrate.push(key);}}console.log('[migrate] Found '+keysToMigrate.length+' keys to migrate');for(var k of keysToMigrate){var val=localStorage.getItem(k);sbSaveKey(k,val);count++;}console.log('[migrate] Migrated '+count+' keys to Supabase!');alert('✅ Migrazione completata! '+count+' chiavi salvate su Supabase!');}
