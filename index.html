@@ -1,4 +1,4 @@
-<!-- build:20260705_1930 -->
+<!-- build:20260707_1852 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260705_1930';
+  var BUILD='20260707_1852';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
@@ -21,31 +21,15 @@
   }
 })();
 </script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 var SUPABASE_URL='https://ftwmxgajfvdpshgreatj.supabase.co';
 var SUPABASE_KEY='sb_publishable_EHUvU2C9a-z0x8Tw5_ggpQ_RLKoNvBE';
-var supabase=null;
-// Aspetta che Supabase sia caricato
-setTimeout(function(){
-  if(window.supabase){
-    supabase=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
-    console.log('[supabase] Inizializzato');
-  }
-},100);
-function sbLoadKey(key,callback){if(!supabase){callback(null,null);return;}supabase.from('data').select('value').eq('key',key).single().then(function(r){if(r.error||!r.data){callback(null,null);}else{callback(null,r.data.value);}}).catch(function(e){callback(e,null);});}
-function sbSaveKey(key,value){if(!supabase){return;}supabase.from('data').select('id').eq('key',key).single().then(function(r){if(r.data){supabase.from('data').update({value:value,updated_at:new Date()}).eq('key',key).then(function(){console.log('[supabase] Updated:',key);});}else{supabase.from('data').insert([{key:key,value:value}]).then(function(){console.log('[supabase] Inserted:',key);});}}).catch(function(e){console.error('[supabase] Save error:',e);});}
+function sbLoadKey(key,callback){fetch(SUPABASE_URL+'/rest/v1/data?key=eq.'+encodeURIComponent(key)+'&select=value',{headers:{'apikey':SUPABASE_KEY,'Accept':'application/json'}}).then(r=>r.json()).then(d=>{callback(null,d.length>0?d[0].value:null);}).catch(e=>{callback(e,null);});}
+function sbSaveKey(key,value){fetch(SUPABASE_URL+'/rest/v1/data?key=eq.'+encodeURIComponent(key),{method:'GET',headers:{'apikey':SUPABASE_KEY}}).then(r=>r.json()).then(d=>{if(d.length>0){fetch(SUPABASE_URL+'/rest/v1/data?key=eq.'+encodeURIComponent(key),{method:'PATCH',headers:{'apikey':SUPABASE_KEY,'Content-Type':'application/json'},body:JSON.stringify({value:value,updated_at:new Date().toISOString()})}).then(r=>console.log('[supabase] Updated:',key));}else{fetch(SUPABASE_URL+'/rest/v1/data',{method:'POST',headers:{'apikey':SUPABASE_KEY,'Content-Type':'application/json'},body:JSON.stringify({key:key,value:value})}).then(r=>console.log('[supabase] Inserted:',key));}}).catch(e=>console.error('[supabase] Error:',e));}
 var gsLoadKey=sbLoadKey;
 var gsSaveKey=sbSaveKey;
-async function migrateLocalStorageToSupabase(){
-  if(!supabase){alert('Aspetta un momento, Supabase sta caricando...');return;}
-  var count=0;var keysToMigrate=[];
-  for(var i=0;i<localStorage.length;i++){var key=localStorage.key(i);if(key.startsWith('adm_')||key.startsWith('user_')||key.startsWith('admin_')||key.startsWith('storico_')||key.startsWith('_pending')){keysToMigrate.push(key);}}
-  console.log('[migrate] Found '+keysToMigrate.length+' keys to migrate');
-  for(var k of keysToMigrate){var val=localStorage.getItem(k);sbSaveKey(k,val);count++;}
-  console.log('[migrate] Migrated '+count+' keys to Supabase!');
-  alert('✅ Migrazione completata! '+count+' chiavi salvate su Supabase!');
-}
+async function migrateLocalStorageToSupabase(){var count=0;var keysToMigrate=[];for(var i=0;i<localStorage.length;i++){var key=localStorage.key(i);if(key.startsWith('adm_')||key.startsWith('user_')||key.startsWith('admin_')||key.startsWith('storico_')||key.startsWith('_pending')){keysToMigrate.push(key);}}console.log('[migrate] Found '+keysToMigrate.length+' keys to migrate');for(var k of keysToMigrate){var val=localStorage.getItem(k);sbSaveKey(k,val);count++;}console.log('[migrate] Migrated '+count+' keys to Supabase!');alert('✅ Migrazione completata! '+count+' chiavi salvate su Supabase!');}
+console.log('[supabase] API ready');
 </script>
 <meta name="theme-color" content="#10b981">
 <meta name="mobile-web-app-capable" content="yes">
