@@ -1,4 +1,4 @@
-<!-- build:20260712_1140 -->
+<!-- build:20260712_1229 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,14 +9,13 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260712_1140';
+  var BUILD='20260712_1229';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
   if('serviceWorker' in navigator){
-    window.addEventListener('load',function(){
-      navigator.serviceWorker.register('/malati-di-fanta/sw.js',{scope:'/malati-di-fanta/',updateViaCache:'none'})
-        .then(function(reg){ setInterval(function(){ reg.update(); }, 120000); });
+    navigator.serviceWorker.getRegistrations().then(function(regs){
+      regs.forEach(function(reg){ reg.unregister(); });
     });
   }
 })();
