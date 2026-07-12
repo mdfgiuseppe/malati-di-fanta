@@ -1,4 +1,4 @@
-<!-- build:20260712_1743 -->
+<!-- build:20260712_1744 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260712_1743';
+  var BUILD='20260712_1744';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
@@ -4147,7 +4147,7 @@ function updateDashboardCounters() {
           var rose = {};
           try { rose = safeJSONParse(gsGetKey('adm_rose_'+t.key+'_'+l.key),'{}'); } catch(e){}
           if (Object.keys(rose).length) {
-            totalClub += Object.keys(rose).filter(function(s) { return s !== 'INFERMERIA'; }).length;
+            totalClub += Object.keys(rose).filter(function(s) { return s !== '_crediti' && s !== 'INFERMERIA'; }).length;
           } else if (_cfgN) {
             totalClub += _cfgN;
           } else {
@@ -4165,7 +4165,7 @@ function syncLeagueClubCount(torneoKey, legaKey) {
   try {
     var roseKey = 'adm_rose_' + torneoKey + '_' + legaKey;
     var rose = gsGetKey(roseKey) || {};
-    var clubCount = Object.keys(rose).filter(function(s) { return s !== 'INFERMERIA'; }).length;
+    var clubCount = Object.keys(rose).filter(function(s) { return s !== '_crediti' && s !== 'INFERMERIA'; }).length;
 
     if (typeof LEAGUES_DATA !== 'undefined' && LEAGUES_DATA[torneoKey]) {
       var legaObj = LEAGUES_DATA[torneoKey].leghe.find(function(l) {
@@ -12197,7 +12197,7 @@ function updateDashboardCounters() {
           var rose = {};
           try { rose = safeJSONParse(gsGetKey('adm_rose_'+t.key+'_'+l.key),'{}'); } catch(e){}
           if (Object.keys(rose).length) {
-            totalClub += Object.keys(rose).filter(function(s) { return s !== 'INFERMERIA'; }).length;
+            totalClub += Object.keys(rose).filter(function(s) { return s !== '_crediti' && s !== 'INFERMERIA'; }).length;
           } else if (_cfgN) {
             totalClub += _cfgN;
           } else {
@@ -12215,7 +12215,7 @@ function syncLeagueClubCount(torneoKey, legaKey) {
   try {
     var roseKey = 'adm_rose_' + torneoKey + '_' + legaKey;
     var rose = gsGetKey(roseKey) || {};
-    var clubCount = Object.keys(rose).filter(function(s) { return s !== 'INFERMERIA'; }).length;
+    var clubCount = Object.keys(rose).filter(function(s) { return s !== '_crediti' && s !== 'INFERMERIA'; }).length;
 
     if (typeof LEAGUES_DATA !== 'undefined' && LEAGUES_DATA[torneoKey]) {
       var legaObj = LEAGUES_DATA[torneoKey].leghe.find(function(l) {
