@@ -1,4 +1,4 @@
-<!-- build:20260707_1919 -->
+<!-- build:20260712_0936 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260707_1919';
+  var BUILD='20260712_0936';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
@@ -22,14 +22,12 @@
 })();
 </script>
 <script>
-var SUPABASE_URL='https://ftwmxgajfvdpshgreatj.supabase.co';
-var SUPABASE_KEY='sb_publishable_EHUvU2C9a-z0x8Tw5_ggpQ_RLKoNvBE';
-function sbLoadKey(key,callback){fetch(SUPABASE_URL+'/rest/v1/data?key=eq.'+encodeURIComponent(key)+'&select=value',{headers:{'Authorization':'Bearer '+SUPABASE_KEY,'Accept':'application/json'}}).then(r=>r.json()).then(d=>{callback(null,d.length>0?d[0].value:null);}).catch(e=>{callback(e,null);});}
-function sbSaveKey(key,value){fetch(SUPABASE_URL+'/rest/v1/data?key=eq.'+encodeURIComponent(key),{method:'GET',headers:{'Authorization':'Bearer '+SUPABASE_KEY}}).then(r=>r.json()).then(d=>{if(d.length>0){fetch(SUPABASE_URL+'/rest/v1/data?key=eq.'+encodeURIComponent(key),{method:'PATCH',headers:{'Authorization':'Bearer '+SUPABASE_KEY,'Content-Type':'application/json'},body:JSON.stringify({value:value,updated_at:new Date().toISOString()})}).then(r=>console.log('[supabase] Updated:',key));}else{fetch(SUPABASE_URL+'/rest/v1/data',{method:'POST',headers:{'Authorization':'Bearer '+SUPABASE_KEY,'Content-Type':'application/json'},body:JSON.stringify({key:key,value:value})}).then(r=>console.log('[supabase] Inserted:',key));}}).catch(e=>console.error('[supabase] Error:',e));}
-var gsLoadKey=sbLoadKey;
-var gsSaveKey=sbSaveKey;
-async function migrateLocalStorageToSupabase(){var count=0;var keysToMigrate=[];for(var i=0;i<localStorage.length;i++){var key=localStorage.key(i);if(key.startsWith('adm_')||key.startsWith('user_')||key.startsWith('admin_')||key.startsWith('storico_')||key.startsWith('_pending')){keysToMigrate.push(key);}}console.log('[migrate] Found '+keysToMigrate.length+' keys to migrate');for(var k of keysToMigrate){var val=localStorage.getItem(k);sbSaveKey(k,val);count++;}console.log('[migrate] Migrated '+count+' keys to Supabase!');alert('✅ Migrazione completata! '+count+' chiavi salvate su Supabase!');}
-console.log('[supabase] API ready');
+var gSheetData={};
+var GSHEET_API='https://script.google.com/macros/s/AKfycbxYDzf3Xv8G5G5zE5aqPUdjRL7B1tAN7n-5olSvtHvISZ310eKyLhgUZtpZYG4XZk5V/exec';
+async function loadGSheetData(){try{const r=await fetch(GSHEET_API+'?action=getAll');const json=await r.json();if(json.ok){gSheetData=json.data||{};console.log('[gsheet] Caricati '+Object.keys(gSheetData).length+' dati da Google Sheet');return true;}else{console.error('[gsheet] Errore caricamento dati');return false;}}catch(e){console.error('[gsheet] Errore fetch:',e);return false;}}
+function gsLoadKey(key,callback){const val=gSheetData[key]||null;callback(null,val);}
+function gsSaveKey(key,value){gSheetData[key]=value;fetch(GSHEET_API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'set',key:key,value:value})}).then(r=>r.json()).then(json=>{if(json.ok){console.log('[gsheet] Salvato:',key);}else{console.error('[gsheet] Errore salvataggio:',key);}}).catch(e=>console.error('[gsheet] Errore:',e));}
+console.log('[gsheet] API ready');
 </script>
 <meta name="theme-color" content="#10b981">
 <meta name="mobile-web-app-capable" content="yes">
@@ -42,6 +40,13 @@ console.log('[supabase] API ready');
 <title>Malati di Fanta</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:ital,wght@0,300;0,400;0,600;0,700;1,300&family=Barlow+Condensed:wght@300;400;600;700;800&display=swap" rel="stylesheet">
 <style>* {margin:0;padding:0;box-sizing:border-box;}html,body{width:100%;min-height:100vh;}body{font-family:"Barlow",sans-serif;background:var(--bg,#07090f);color:var(--text,#eef2ff);overflow-x:hidden;}:root[data-theme=dark]{--bg:#07090f;--bg2:#0d1220;--bg3:#131b2e;--card:#101622;--card2:#18213a;--border:rgba(255,255,255,.06);--border2:rgba(255,255,255,.11);--text:#eef2ff;--text2:#6a7d9e;--text3:#2e3e5e;--green:#10b981;}:root[data-theme=light]{--bg:#f0f4fc;--bg2:#e4eaf6;--bg3:#d6dff0;--card:#fff;--card2:#f4f7fe;--border:rgba(0,10,40,.07);--border2:rgba(0,10,40,.13);--text:#08101e;--text2:#4a5a7a;--text3:#9aacc0;--green:#059669;}.page{display:none !important;}.page.active{display:block !important;}#page-splash.active{display:flex !important;align-items:center;justify-content:center;min-height:100vh;position:relative;overflow:hidden;}.fbtn{padding:5px 10px;border-radius:6px;font-size:10px;font-weight:700;cursor:pointer;background:var(--bg3);color:var(--text2);transition:all .15s;border:1px solid var(--border);}.fbtn.active{background:rgba(16,185,129,.15);color:#10b981;border-color:rgba(16,185,129,.3);}.tbtn{padding:8px 4px;background:var(--card);border:1px solid var(--border);border-radius:8px;text-align:center;cursor:pointer;font-size:9px;font-weight:800;color:var(--text2);transition:all .15s;}.tbtn.active{background:rgba(16,185,129,.12);border-color:rgba(16,185,129,.4);color:#10b981;}</style>
+<script>
+document.addEventListener('DOMContentLoaded',function(){
+  loadGSheetData().then(function(success){
+    console.log('[init] Dati Google Sheet: '+(success?'✅ OK':'⚠️ Errore'));
+  });
+});
+</script>
 <style>/* lega */
 
 :root[data-theme="dark"]{
