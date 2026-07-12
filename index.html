@@ -1,4 +1,4 @@
-<!-- build:20260712_1710 -->
+<!-- build:20260712_1720 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260712_1710';
+  var BUILD='20260712_1720';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
@@ -4231,7 +4231,6 @@ function selectTournament(key, el) {
     var adminTorneo = ADMIN_TORNEI.find(function(t) { return t.key === key; });
     console.log('[selectTournament] adminTorneo trovato?', !!adminTorneo);
     if (adminTorneo && adminTorneo.leghe && adminTorneo.leghe.length > 0) {
-      console.log('[selectTournament] Leghe da ADMIN_TORNEI PRIMA:', adminTorneo.leghe.map(function(l){return l.key;}).join(', '));
       dati.leghe = adminTorneo.leghe.map(function(adminLega) {
         var leagueDataLega = dati.leghe.find(function(l) { return l.key === adminLega.key; });
         return {
@@ -4241,7 +4240,6 @@ function selectTournament(key, el) {
           clubs: (leagueDataLega && leagueDataLega.clubs) || 10
         };
       });
-      console.log('[selectTournament] Leghe sincronizzate DOPO:', dati.leghe.map(function(l){return l.key;}).join(', '));
     }
   }
 
@@ -12283,7 +12281,6 @@ function selectTournament(key, el) {
     var adminTorneo = ADMIN_TORNEI.find(function(t) { return t.key === key; });
     console.log('[selectTournament] adminTorneo trovato?', !!adminTorneo);
     if (adminTorneo && adminTorneo.leghe && adminTorneo.leghe.length > 0) {
-      console.log('[selectTournament] Leghe da ADMIN_TORNEI PRIMA:', adminTorneo.leghe.map(function(l){return l.key;}).join(', '));
       dati.leghe = adminTorneo.leghe.map(function(adminLega) {
         var leagueDataLega = dati.leghe.find(function(l) { return l.key === adminLega.key; });
         return {
@@ -12293,7 +12290,6 @@ function selectTournament(key, el) {
           clubs: (leagueDataLega && leagueDataLega.clubs) || 10
         };
       });
-      console.log('[selectTournament] Leghe sincronizzate DOPO:', dati.leghe.map(function(l){return l.key;}).join(', '));
     }
   }
 
