@@ -1,4 +1,4 @@
-<!-- build:20260712_1237 -->
+<!-- build:20260712_1606 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260712_1237';
+  var BUILD='20260712_1606';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
@@ -24,7 +24,7 @@
 console.log('[boot] Script iniziale');
 var gSheetData={};
 var GSHEET_API='https://script.google.com/macros/s/AKfycbxYDzf3Xv8G5G5zE5aqPUdjRL7B1tAN7n-5olSvtHvISZ310eKyLhgUZtpZYG4XZk5V/exec';
-async function loadGSheetData(){console.log('[gsheet] Iniziando caricamento...');try{const r=await fetch(GSHEET_API+'?action=getAll');console.log('[gsheet] Response status:',r.status);const json=await r.json();console.log('[gsheet] JSON ricevuto:',json.ok?'ok':'errore');if(json.ok){gSheetData=json.data||{};for(var k in gSheetData){var v=gSheetData[k];localStorage.setItem(k,typeof v==='object'?JSON.stringify(v):v);}console.log('[gsheet] ✅ Caricati '+Object.keys(gSheetData).length+' dati → localStorage');return true;}else{console.error('[gsheet] ❌ Errore API:',json);return false;}}catch(e){console.error('[gsheet] ❌ Errore fetch:',e);return false;}}
+async function loadGSheetData(){console.log('[gsheet] Iniziando caricamento...');try{const r=await fetch(GSHEET_API+'?action=getAll');console.log('[gsheet] Response status:',r.status);const json=await r.json();console.log('[gsheet] JSON ricevuto:',json.ok?'ok':'errore');if(json.ok){gSheetData=json.data||{};console.log('[gsheet] ✅ Caricati '+Object.keys(gSheetData).length+' dati da Google Sheet (NO localStorage)');return true;}else{console.error('[gsheet] ❌ Errore API:',json);return false;}}catch(e){console.error('[gsheet] ❌ Errore fetch:',e);return false;}}
 function gsLoadKey(key,callback){const val=gSheetData[key]||null;callback(null,val);}
 function gsGetKey(key){var val=gSheetData[key];if(!val)return null;if(typeof val==='string'){try{return JSON.parse(val);}catch(e){return val;}}return val;}
 function safeJSONParse(val,def){if(typeof val==='string'){try{return JSON.parse(val);}catch(e){return def||{};};}return val||def||{};}
@@ -49,6 +49,20 @@ document.addEventListener('DOMContentLoaded',function(){
   console.log('[init] ⏳ DOMContentLoaded triggered - inizio caricamento dati');
   loadGSheetData().then(function(success){
     console.log('[init] Dati Google Sheet: '+(success?'✅ OK':'⚠️ Errore'));
+    // Salva rose da memoria su GSheet se mancano (fallback: window._TEAMS_ROSE_IT, TEAMS_ROSE, etc.)
+    setTimeout(function(){
+      if(typeof window._TEAMS_ROSE_IT !== 'undefined' && Object.keys(window._TEAMS_ROSE_IT).length > 0){
+        if(!gSheetData['adm_rose_slim_it'] || Object.keys(gSheetData['adm_rose_slim_it'] || {}).length === 0){
+          console.log('[init] Fallback: salvo window._TEAMS_ROSE_IT su GSheet');
+          gsSaveKey('adm_rose_slim_it', window._TEAMS_ROSE_IT);
+        }
+      }
+      // Rimuovi Turchia da ALL_LEAGUES_DATA se esiste (per compatibilità con funzioni che la usano)
+      if(typeof ALL_LEAGUES_DATA !== 'undefined' && ALL_LEAGUES_DATA['tr']){
+        delete ALL_LEAGUES_DATA['tr'];
+        console.log('[init] Rimosso Turchia da ALL_LEAGUES_DATA');
+      }
+    }, 500);
   }).catch(function(err){
     console.error('[init] ❌ Catch error:',err);
   });
@@ -3721,7 +3735,7 @@ function getSlimConfig() {
   }
   return {n_leghe: 8, n_club: 80, leghe: ["Italia", "Inghilterra", "Germania", "Spagna", "Francia", "Portogallo", "Olanda", "Turchia"]};
 }
-var SLIM_CONFIG = {n_leghe: 8, n_club: 80, leghe: ["Italia", "Inghilterra", "Germania", "Spagna", "Francia", "Portogallo", "Olanda", "Turchia"]};
+var SLIM_CONFIG = {n_leghe: 7, n_club: 70, leghe: ["Italia", "Inghilterra", "Germania", "Spagna", "Francia", "Portogallo", "Olanda"]};
 var COPPA_TROPHIES={"cl": "", "el": "", "conf": "", "sc": ""};
 var COPPA_HUB_LOGOS={"cl": "", "el": "", "conf": "", "sc": ""};
 function getSlimLeghe() {
@@ -3731,14 +3745,14 @@ function getSlimLeghe() {
       return t.leghe.map(function(l) { return {key: l.key, label: l.label, logo: ''}; });
     }
   }
-  return [{"key": "it", "label": "Italia", "logo": ""}, {"key": "en", "label": "Inghilterra", "logo": ""}, {"key": "de", "label": "Germania", "logo": ""}, {"key": "es", "label": "Spagna", "logo": ""}, {"key": "fr", "label": "Francia", "logo": ""}, {"key": "pt", "label": "Portogallo", "logo": ""}, {"key": "nl", "label": "Olanda", "logo": ""}, {"key": "tr", "label": "Turchia", "logo": ""}];
+  return [{"key": "it", "label": "Italia", "logo": ""}, {"key": "en", "label": "Inghilterra", "logo": ""}, {"key": "de", "label": "Germania", "logo": ""}, {"key": "es", "label": "Spagna", "logo": ""}, {"key": "fr", "label": "Francia", "logo": ""}, {"key": "pt", "label": "Portogallo", "logo": ""}, {"key": "nl", "label": "Olanda", "logo": ""}];
 }
 var SLIM_GROUPS={"nazioni": [], "coppe": [{"key": "cl", "label": "Champions League", "logo": ""}, {"key": "el", "label": "Europa League", "logo": ""}, {"key": "conf", "label": "Conference League", "logo": ""}, {"key": "sc", "label": "European Supercup", "logo": ""}]};
-var SLIM_ALBO={"it": {"title": "Slim Italia", "trophy": "", "vincitori": [["2022/23", "Parma"], ["2023/24", "Salernitana"], ["2024/25", "Palermo"]]}, "en": {"title": "Slim Inghilterra", "trophy": "", "vincitori": [["2022/23", "—"], ["2023/24", "Arsenal"], ["2024/25", "West Ham"]]}, "de": {"title": "Slim Germania", "trophy": "", "vincitori": [["2022/23", "—"], ["2023/24", "St. Pauli"], ["2024/25", "St. Pauli"]]}, "es": {"title": "Slim Spagna", "trophy": "", "vincitori": [["2022/23", "—"], ["2023/24", "Atletico Madrid"], ["2024/25", "Valencia"]]}, "fr": {"title": "Slim Francia", "trophy": "", "vincitori": [["2022/23", "—"], ["2023/24", "—"], ["2024/25", "Olympique Lione"]]}, "pt": {"title": "Slim Portogallo", "trophy": "", "vincitori": [["2022/23", "—"], ["2023/24", "—"], ["2024/25", "—"]]}, "nl": {"title": "Slim Olanda", "trophy": "", "vincitori": [["2022/23", "—"], ["2023/24", "—"], ["2024/25", "—"]]}, "tr": {"title": "Slim Turchia", "trophy": "", "vincitori": [["2022/23", "—"], ["2023/24", "—"], ["2024/25", "—"]]}, "cl": {"title": "Champions League", "trophy": "", "vincitori": [["2022/23", "—"], ["2023/24", "West Ham"], ["2024/25", "Liverpool"]]}, "el": {"title": "Europa League", "trophy": "", "vincitori": [["2022/23", "—"], ["2023/24", "—"], ["2024/25", "Bari"]]}, "conf": {"title": "Conference League", "trophy": "", "vincitori": [["2022/23", "—"], ["2023/24", "—"], ["2024/25", "Napoli"]]}, "sc": {"title": "European Supercup", "trophy": "", "vincitori": [["2023", "—"], ["2024", "—"], ["2025", "Liverpool"]]}};
+var SLIM_ALBO={"it": {"title": "Slim Italia", "trophy": "", "vincitori": [["2022/23", "Parma"], ["2023/24", "Salernitana"], ["2024/25", "Palermo"]]}, "en": {"title": "Slim Inghilterra", "trophy": "", "vincitori": [["2022/23", "—"], ["2023/24", "Arsenal"], ["2024/25", "West Ham"]]}, "de": {"title": "Slim Germania", "trophy": "", "vincitori": [["2022/23", "—"], ["2023/24", "St. Pauli"], ["2024/25", "St. Pauli"]]}, "es": {"title": "Slim Spagna", "trophy": "", "vincitori": [["2022/23", "—"], ["2023/24", "Atletico Madrid"], ["2024/25", "Valencia"]]}, "fr": {"title": "Slim Francia", "trophy": "", "vincitori": [["2022/23", "—"], ["2023/24", "—"], ["2024/25", "Olympique Lione"]]}, "pt": {"title": "Slim Portogallo", "trophy": "", "vincitori": [["2022/23", "—"], ["2023/24", "—"], ["2024/25", "—"]]}, "nl": {"title": "Slim Olanda", "trophy": "", "vincitori": [["2022/23", "—"], ["2023/24", "—"], ["2024/25", "—"]]}, "cl": {"title": "Champions League", "trophy": "", "vincitori": [["2022/23", "—"], ["2023/24", "West Ham"], ["2024/25", "Liverpool"]]}, "el": {"title": "Europa League", "trophy": "", "vincitori": [["2022/23", "—"], ["2023/24", "—"], ["2024/25", "Bari"]]}, "conf": {"title": "Conference League", "trophy": "", "vincitori": [["2022/23", "—"], ["2023/24", "—"], ["2024/25", "Napoli"]]}, "sc": {"title": "European Supercup", "trophy": "", "vincitori": [["2023", "—"], ["2024", "—"], ["2025", "Liverpool"]]}};
 var TDM_GROUPS=[{"label": "🇮🇹 Italia", "items": [{"key": "serie_a_trap", "label": "Serie A Trapattoni", "logo":""}, {"key": "serie_b_trap", "label": "Serie B Trapattoni", "logo":""}, {"key": "lega_trap", "label": "Lega Pro Trapattoni", "logo":""}, {"key": "coppa_mancini", "label": "Coppa Mancini", "logo":""}, {"key": "supercoppa_lippi", "label": "Supercoppa Lippi", "logo":""}]}, {"label": "🏴 Inghilterra", "items": [{"key": "ferguson_league", "label": "Ferguson League", "logo":""}, {"key": "ferguson_championship", "label": "Ferguson Championship", "logo":""}, {"key": "ferguson_one", "label": "Ferguson One", "logo":""}, {"key": "conte_cup", "label": "Conte Cup", "logo":""}, {"key": "wenger_shield", "label": "Wenger Shield", "logo":""}]}, {"label": "🇩🇪 Germania", "items": [{"key": "guardiola_liga", "label": "Guardiola Liga", "logo":""}, {"key": "guardiola_liga2", "label": "2. Guardiola Liga", "logo":""}, {"key": "guardiola_liga3", "label": "3. Guardiola Liga", "logo":""}, {"key": "hitzfeld_pokal", "label": "Hitzfeld Pokal", "logo":""}, {"key": "klopp_supercup", "label": "Klopp Supercup", "logo":""}]}, {"label": "🇫🇷 Francia", "items": [{"key": "tuchel_ligue", "label": "Tuchel Ligue", "logo":""}, {"key": "tuchel_2_ligue", "label": "Tuchel 2 Ligue", "logo":""}, {"key": "tuchel_national", "label": "Tuchel National", "logo":""}, {"key": "coupe_deschamps", "label": "Coupe Deschamps", "logo":""}, {"key": "trophee_blanc", "label": "Trophée Blanc", "logo":""}]}, {"label": "🇪🇸 Spagna", "items": [{"key": "la_capello", "label": "La Capello", "logo":""}, {"key": "la_capello_2", "label": "La Capello 2", "logo":""}, {"key": "primera_capello", "label": "Primera Capello", "logo":""}, {"key": "copa_del_bosque", "label": "Copa Del Bosque", "logo":""}, {"key": "supercopa_simeone", "label": "Supercopa Simeone", "logo":""}]}, {"label": "🌍 Europa", "items": [{"key": "zizou_league", "label": "Zizou League", "logo":""}, {"key": "emery_league", "label": "Emery League", "logo":""}, {"key": "mou_league", "label": "Mou League", "logo":""}, {"key": "ancelotti_super_cup", "label": "Ancelotti Super Cup", "logo":""}, {"key": "terim_cup", "label": "Terim Cup", "logo":""}]}, {"label": "🏆 Altro", "items": [{"key": "royal_rumble", "label": "Royal Rumble", "logo":""}, {"key": "coppa_desperados", "label": "Coppa Desperados", "logo":""}, {"key": "coppa_intrapak", "label": "Coppa Intrapak", "logo":""}, {"key": "amateur_royal_rumble", "label": "Amateur Royal Rumble", "logo":""}]}];
 var TDM_ALBO={"serie_a_trap": {"title": "Serie A Trapattoni", "color": "#3b82f6", "trophy":"", "vincitori": [["2020/21", "Birrozza F.C."], ["2021/22", "Twenty Hunters Nine"], ["2022/23", "Kingdellagrill"], ["2023/24", "Birrozza F.C."], ["2024/25", "Birrozza F.C."]]}, "lega_trap": {"title": "Lega Pro Trapattoni", "color": "#3b82f6", "trophy":"", "vincitori": [["2024/25", "CSKA La Rissa"]]}, "serie_b_trap": {"title": "Serie B Trapattoni", "color": "#3b82f6", "trophy":"", "vincitori": [["2021/22", "Ajax Kemal"], ["2022/23", "Venezuela F.C."], ["2023/24", "Tricarico Pozzo di Sicar"], ["2024/25", "Gruppo TNT"]]}, "coppa_mancini": {"title": "Coppa Mancini", "color": "#3b82f6", "trophy":"", "vincitori": [["2020/21", "—"], ["2021/22", "Wing Slayer"], ["2022/23", "Kingdellagrill"], ["2023/24", "Tricarico Pozzo di Sicar"], ["2024/25", "CSKA La Rissa"]]}, "supercoppa_lippi": {"title": "Supercoppa Lippi", "color": "#3b82f6", "trophy":"", "vincitori": [["2021", "Birrozza F.C."], ["2022", "Ajax Kemal"], ["2023", "—"], ["2024", "Tricarico Pozzo di Sicar"], ["2025", "Real Colizzati"]]}, "ferguson_league": {"title": "Ferguson League", "color": "#3b82f6", "trophy":"", "vincitori": [["2020/21", "U.C. Diamoli"], ["2021/22", "Birrareal"], ["2022/23", "Birrareal"], ["2023/24", "Birrareal"], ["2024/25", "Birrareal"]]}, "ferguson_championship": {"title": "Ferguson Championship", "color": "#3b82f6", "trophy":"", "vincitori": [["2020/21", "—"], ["2021/22", "Paris Saint Gennar"], ["2022/23", "Terracina"], ["2023/24", "Ventuno F.C."], ["2024/25", "Masterchef United"]]}, "ferguson_one": {"title": "Ferguson One", "color": "#3b82f6", "trophy":"", "vincitori": [["2020/21", "Messi Male"], ["2021/22", "Atletico Gatozzi"], ["2022/23", "Birrareal"], ["2023/24", "Flagello's Team"], ["2024/25", "Real McChicken"]]}, "conte_cup": {"title": "Conte Cup", "color": "#3b82f6", "trophy":"", "vincitori": [["2021", "U.C. Diamoli"], ["2022", "Atletico Gatozzi"], ["2023", "—"], ["2024", "Flagello's Team"], ["2025", "Birrareal"]]}, "wenger_shield": {"title": "Wenger Shield", "color": "#3b82f6", "trophy":"", "vincitori": [["2021/22", "Atletico Gatozzi"], ["2022/23", "Birrareal"], ["2023/24", "Flagello's Team"], ["2024/25", "Flagello's Team"]]}, "guardiola_liga": {"title": "Guardiola Liga", "color": "#3b82f6", "trophy":"", "vincitori": [["2020/21", "Reggio Calcio"], ["2021/22", "Lions Team"], ["2022/23", "Lions Team"], ["2023/24", "Mignottingham Forest"], ["2024/25", "Mignottingham Forest"]]}, "guardiola_liga2": {"title": "2. Guardiola Liga", "color": "#3b82f6", "trophy":"", "vincitori": [["2020/21", "—"], ["2021/22", "Rapid Micatant"], ["2022/23", "A.S. Intomatici"], ["2023/24", "Tibia e Peroni Team"], ["2024/25", "Warriors Brianza"]]}, "guardiola_liga3": {"title": "3. Guardiola Liga", "color": "#3b82f6", "trophy":"", "vincitori": [["2020/21", "Culuster"], ["2021/22", "Militolandia"], ["2022/23", "A.S. Intomatici"], ["2023/24", "Mignottingham Forest"], ["2024/25", "Jolly Roger"]]}, "hitzfeld_pokal": {"title": "Hitzfeld Pokal", "color": "#3b82f6", "trophy":"", "vincitori": [["2021", "Escile Team"], ["2022", "Lions Team"], ["2023", "—"], ["2024", "Mignottingham Forest"], ["2025", "Mignottingham Forest"]]}, "klopp_supercup": {"title": "Klopp Supercup", "color": "#3b82f6", "trophy":"", "vincitori": [["2021/22", "Militolandia"], ["2022/23", "A.S. Intomatici"], ["2023/24", "Mignottingham Forest"], ["2024/25", "Mignottingham Forest"]]}, "tuchel_ligue": {"title": "Tuchel Ligue", "color": "#3b82f6", "trophy":"", "vincitori": [["2020/21", "Perugia A.C."], ["2021/22", "West Ham Uaua"], ["2022/23", "Più No Kessie"], ["2023/24", "A.C. Hooo"], ["2024/25", "Zeus F.C."]]}, "tuchel_2_ligue": {"title": "Tuchel 2 Ligue", "color": "#3b82f6", "trophy":"", "vincitori": [["2020/21", "—"], ["2021/22", "Milfwall"], ["2022/23", "Tengo Una Figlia"], ["2023/24", "House Stark"], ["2024/25", "Bardul 75"]]}, "tuchel_national": {"title": "Tuchel National", "color": "#3b82f6", "trophy":"", "vincitori": [["2020/21", "Perugia A.C."], ["2021/22", "Puppa Puppa"], ["2022/23", "Manchester Simy"], ["2023/24", "Zeus F.C."], ["2024/25", "Zeus F.C."]]}, "coupe_deschamps": {"title": "Coupe Deschamps", "color": "#3b82f6", "trophy":"", "vincitori": [["2021", "Perugia A.C."], ["2022", "West Ham Uaua"], ["2023", "—"], ["2024", "Zeus F.C."], ["2025", "Zeus F.C."]]}, "trophee_blanc": {"title": "Trophée Blanc", "color": "#3b82f6", "trophy":"", "vincitori": [["2021/22", "Puppa Puppa"], ["2022/23", "Manchester Simy"], ["2023/24", "Zeus F.C."], ["2024/25", "Bastoni e Carote"]]}, "la_capello": {"title": "La Capello", "color": "#3b82f6", "trophy":"", "vincitori": [["2020/21", "Pro Vercelli"], ["2021/22", "Mignottingham Forest"], ["2022/23", "Mignottingham Forest"], ["2023/24", "Pro Vercelli"], ["2024/25", "A.S. Tronzi"]]}, "la_capello_2": {"title": "La Capello 2", "color": "#3b82f6", "trophy":"", "vincitori": [["2020/21", "—"], ["2021/22", "Mvline Team"], ["2022/23", "Real Panza"], ["2023/24", "Galacticos"], ["2024/25", "Mortadella Bella"]]}, "primera_capello": {"title": "Primera Capello", "color": "#3b82f6", "trophy":"", "vincitori": [["2020/21", "Mignottingham Forest"], ["2021/22", "Union Martinellos"], ["2022/23", "Real Panza"], ["2023/24", "Mancheskin United"], ["2024/25", "Pro Vercelli"]]}, "copa_del_bosque": {"title": "Copa Del Bosque", "color": "#3b82f6", "trophy":"", "vincitori": [["2021", "Mignottingham Forest"], ["2022", "Mignottingham Forest"], ["2023", "—"], ["2024", "Pro Vercelli"], ["2024/25", "Alpignano"]]}, "supercopa_simeone": {"title": "Supercopa Simeone", "color": "#3b82f6", "trophy":"", "vincitori": [["2021/22", "Atletico Gatozzi"], ["2022/23", "—"], ["2023/24", "—"], ["2025", "A.S. Tronzi"]]}, "zizou_league": {"title": "Zizou League", "color": "#3b82f6", "trophy":"", "vincitori": [["2020/21", "Little Bears Team"], ["2021/22", "Pro Vercelli"], ["2022/23", "—"], ["2023/24", "Mignottingham Forest"], ["2024/25", "Mignottingham Forest"]]}, "emery_league": {"title": "Emery League", "color": "#3b82f6", "trophy":"", "vincitori": [["2020/21", "Tengo Una Figlia"], ["2021/22", "West Ham Uaua"], ["2022/23", "Pro Vercelli"], ["2023/24", "Tricarico Pozzo di Sicar"], ["2024/25", "Realmente Cessi"]]}, "mou_league": {"title": "Mou League", "color": "#3b82f6", "trophy":"", "vincitori": [["2020/21", "—"], ["2021/22", "—"], ["2022/23", "—"], ["2023/24", "—"], ["2024/25", "Zeus F.C."]]}, "ancelotti_super_cup": {"title": "Ancelotti Super Cup", "color": "#3b82f6", "trophy":"", "vincitori": [["2021", "Tengo Una Figlia"], ["2022", "Pro Vercelli"], ["2023", "—"], ["2024", "Mignottingham Forest"], ["2025", "Mignottingham Forest"]]}, "terim_cup": {"title": "Terim Cup", "color": "#3b82f6", "trophy":"", "vincitori": [["2020/21", "—"], ["2021/22", "—"], ["2022/23", "—"], ["2023/24", "—"], ["2024/25", "—"]]}, "royal_rumble": {"title": "Royal Rumble", "color": "#3b82f6", "trophy":"", "vincitori": [["2020/21", "—"], ["2021/22", "Curva Pericolosa"], ["2022/23", "Kingdellagrill"], ["2023/24", "House Stark"], ["2024/25", "Gruppo TNT"]]}, "coppa_desperados": {"title": "Coppa Desperados", "color": "#3b82f6", "trophy":"", "vincitori": [["2020/21", "—"], ["2021/22", "—"], ["2022/23", "—"], ["2023/24", "—"], ["2024/25", "—"]]}, "coppa_intrapak": {"title": "Coppa Intrapak", "color": "#3b82f6", "trophy":"", "vincitori": [["2020/21", "—"], ["2021/22", "—"], ["2022/23", "—"], ["2023/24", "—"], ["2024/25", "—"]]}, "amateur_royal_rumble": {"title": "Amateur Royal Rumble", "color": "#3b82f6", "trophy":"", "vincitori": [["2020/21", "—"], ["2021/22", "—"], ["2022/23", "—"], ["2023/24", "—"], ["2024/25", "CSKA La Rissa"]]}};
-var TROPHY_MAP={"Slim Italia": "", "Slim Inghilterra": "", "Slim Germania": "", "Slim Spagna": "", "Slim Francia": "", "Slim Portogallo": "", "Slim Olanda": "", "Slim Turchia": "", "Champions League": "", "Europa League": "", "Conference League": "", "European Supercup": ""};
-var ALBO_DATA={"slim": {"nome": "Scudetto Slim", "colore": "#10b981", "sezioni": [{"t": "🇮🇹 Slim Italia", "s": [["2022/23", "Parma"], ["2023/24", "Salernitana"], ["2024/25", "Palermo"]]}, {"t": "🏴 Slim Inghilterra", "s": [["2022/23", "—"], ["2023/24", "Arsenal"], ["2024/25", "West Ham"]]}, {"t": "🇩🇪 Slim Germania", "s": [["2022/23", "—"], ["2023/24", "St. Pauli"], ["2024/25", "St. Pauli"]]}, {"t": "🇪🇸 Slim Spagna", "s": [["2022/23", "—"], ["2023/24", "Atletico Madrid"], ["2024/25", "Valencia"]]}, {"t": "🇫🇷 Slim Francia", "s": [["2022/23", "—"], ["2023/24", "—"], ["2024/25", "Olympique Lione"]]}, {"t": "🇵🇹 Slim Portogallo", "s": [["2022/23", "—"], ["2023/24", "—"], ["2024/25", "—"]]}, {"t": "🇳🇱 Slim Olanda", "s": [["2022/23", "—"], ["2023/24", "—"], ["2024/25", "—"]]}, {"t": "🇹🇷 Slim Turchia", "s": [["2022/23", "—"], ["2023/24", "—"], ["2024/25", "—"]]}, {"t": "🏆 Champions League", "s": [["2022/23", "—"], ["2023/24", "West Ham"], ["2024/25", "Liverpool"]]}, {"t": "🟠 Europa League", "s": [["2022/23", "—"], ["2023/24", "—"], ["2024/25", "Bari"]]}, {"t": "⚪ Conference League", "s": [["2022/23", "—"], ["2023/24", "—"], ["2024/25", "Napoli"]]}, {"t": "⭐ European Supercup", "s": [["2023", "—"], ["2024", "—"], ["2025", "Liverpool"]]}]}, "tsm": {"nome": "TSM", "colore": "#f59e0b", "sezioni": [{"t": "🇮🇹 Italia", "s": [["2024/25", "Lazio"]]}]}, "ilm": {"nome": "Intl. League Mantra", "colore": "#8b5cf6", "sezioni": [{"t": "🅰 Girone A", "s": [["2022/23", "Liverpool"], ["2023/24", "Atalanta"], ["2024/25", "Liverpool"]]}, {"t": "🅱 Girone B", "s": [["2022/23", "Fiorentina"], ["2023/24", "Tottenham H."], ["2024/25", "Real Madrid"]]}, {"t": "© Girone C", "s": [["2022/23", "Benfica"], ["2023/24", "—"], ["2024/25", "—"]]}, {"t": "D Girone D", "s": [["2022/23", "—"], ["2023/24", "—"], ["2024/25", "—"]]}, {"t": "🏆 Champions", "s": [["2022/23", "Lille"], ["2023/24", "Atalanta"], ["2024/25", "Atalanta"]]}, {"t": "🟠 Europa League", "s": [["2022/23", "—"], ["2023/24", "Stella Rossa B."], ["2024/25", "Arsenal"]]}, {"t": "⚪ Conference", "s": [["2022/23", "—"], ["2023/24", "—"], ["2024/25", "Roma"]]}, {"t": "⭐ Supercup", "s": [["2023", "—"], ["2024", "Stella Rossa B."], ["2025", "Liverpool"]]}]}, "ilc": {"nome": "Intl. League Classic", "colore": "#ef4444", "sezioni": [{"t": "🅰 Girone A", "s": [["2024/25", "Girona"]]}, {"t": "🅱 Girone B", "s": [["2024/25", "Benfica"]]}, {"t": "🏆 Champions", "s": [["2024/25", "Benfica"]]}, {"t": "🟠 Europa League", "s": [["2024/25", "RB Lipsia"]]}, {"t": "⚪ Conference", "s": [["2024/25", "Basilea"]]}, {"t": "⭐ Supercup", "s": [["2025", "Benfica"]]}]}, "tdm": {"nome": "Tana dei Mister", "colore": "#3b82f6", "sezioni": [{"t": "🏆 Serie A Trapattoni", "s": [["2020/21", "Birrozza F.C."], ["2021/22", "Twenty Hunters Nine"], ["2022/23", "Kingdellagrill"], ["2023/24", "Birrozza F.C."], ["2024/25", "Birrozza F.C."]]}, {"t": "🥈 Serie B Trapattoni", "s": [["2021/22", "Ajax Kemal"], ["2022/23", "Venezuela F.C."], ["2023/24", "Tricarico Pozzo di Sicar"], ["2024/25", "Gruppo TNT"]]}, {"t": "🏅 Coppa Mancini", "s": [["2020/21", "—"], ["2021/22", "Wing Slayer"], ["2022/23", "Kingdellagrill"], ["2023/24", "Tricarico Pozzo di Sicar"], ["2024/25", "CSKA La Rissa"]]}, {"t": "⭐ Supercoppa Lippi", "s": [["2021", "Birrozza F.C."], ["2022", "Ajax Kemal"], ["2023", "—"], ["2024", "Tricarico Pozzo di Sicar"], ["2025", "Real Colizzati"]]}]}};
+var TROPHY_MAP={"Slim Italia": "", "Slim Inghilterra": "", "Slim Germania": "", "Slim Spagna": "", "Slim Francia": "", "Slim Portogallo": "", "Slim Olanda": "",  "Champions League": "", "Europa League": "", "Conference League": "", "European Supercup": ""};
+var ALBO_DATA={"slim": {"nome": "Scudetto Slim", "colore": "#10b981", "sezioni": [{"t": "🇮🇹 Slim Italia", "s": [["2022/23", "Parma"], ["2023/24", "Salernitana"], ["2024/25", "Palermo"]]}, {"t": "🏴 Slim Inghilterra", "s": [["2022/23", "—"], ["2023/24", "Arsenal"], ["2024/25", "West Ham"]]}, {"t": "🇩🇪 Slim Germania", "s": [["2022/23", "—"], ["2023/24", "St. Pauli"], ["2024/25", "St. Pauli"]]}, {"t": "🇪🇸 Slim Spagna", "s": [["2022/23", "—"], ["2023/24", "Atletico Madrid"], ["2024/25", "Valencia"]]}, {"t": "🇫🇷 Slim Francia", "s": [["2022/23", "—"], ["2023/24", "—"], ["2024/25", "Olympique Lione"]]}, {"t": "🇵🇹 Slim Portogallo", "s": [["2022/23", "—"], ["2023/24", "—"], ["2024/25", "—"]]}, {"t": "🇳🇱 Slim Olanda", "s": [["2022/23", "—"], ["2023/24", "—"], ["2024/25", "—"]]}, {"t": "🏆 Champions League", "s": [["2022/23", "—"], ["2023/24", "West Ham"], ["2024/25", "Liverpool"]]}, {"t": "🟠 Europa League", "s": [["2022/23", "—"], ["2023/24", "—"], ["2024/25", "Bari"]]}, {"t": "⚪ Conference League", "s": [["2022/23", "—"], ["2023/24", "—"], ["2024/25", "Napoli"]]}, {"t": "⭐ European Supercup", "s": [["2023", "—"], ["2024", "—"], ["2025", "Liverpool"]]}]}, "tsm": {"nome": "TSM", "colore": "#f59e0b", "sezioni": [{"t": "🇮🇹 Italia", "s": [["2024/25", "Lazio"]]}]}, "ilm": {"nome": "Intl. League Mantra", "colore": "#8b5cf6", "sezioni": [{"t": "🅰 Girone A", "s": [["2022/23", "Liverpool"], ["2023/24", "Atalanta"], ["2024/25", "Liverpool"]]}, {"t": "🅱 Girone B", "s": [["2022/23", "Fiorentina"], ["2023/24", "Tottenham H."], ["2024/25", "Real Madrid"]]}, {"t": "© Girone C", "s": [["2022/23", "Benfica"], ["2023/24", "—"], ["2024/25", "—"]]}, {"t": "D Girone D", "s": [["2022/23", "—"], ["2023/24", "—"], ["2024/25", "—"]]}, {"t": "🏆 Champions", "s": [["2022/23", "Lille"], ["2023/24", "Atalanta"], ["2024/25", "Atalanta"]]}, {"t": "🟠 Europa League", "s": [["2022/23", "—"], ["2023/24", "Stella Rossa B."], ["2024/25", "Arsenal"]]}, {"t": "⚪ Conference", "s": [["2022/23", "—"], ["2023/24", "—"], ["2024/25", "Roma"]]}, {"t": "⭐ Supercup", "s": [["2023", "—"], ["2024", "Stella Rossa B."], ["2025", "Liverpool"]]}]}, "ilc": {"nome": "Intl. League Classic", "colore": "#ef4444", "sezioni": [{"t": "🅰 Girone A", "s": [["2024/25", "Girona"]]}, {"t": "🅱 Girone B", "s": [["2024/25", "Benfica"]]}, {"t": "🏆 Champions", "s": [["2024/25", "Benfica"]]}, {"t": "🟠 Europa League", "s": [["2024/25", "RB Lipsia"]]}, {"t": "⚪ Conference", "s": [["2024/25", "Basilea"]]}, {"t": "⭐ Supercup", "s": [["2025", "Benfica"]]}]}, "tdm": {"nome": "Tana dei Mister", "colore": "#3b82f6", "sezioni": [{"t": "🏆 Serie A Trapattoni", "s": [["2020/21", "Birrozza F.C."], ["2021/22", "Twenty Hunters Nine"], ["2022/23", "Kingdellagrill"], ["2023/24", "Birrozza F.C."], ["2024/25", "Birrozza F.C."]]}, {"t": "🥈 Serie B Trapattoni", "s": [["2021/22", "Ajax Kemal"], ["2022/23", "Venezuela F.C."], ["2023/24", "Tricarico Pozzo di Sicar"], ["2024/25", "Gruppo TNT"]]}, {"t": "🏅 Coppa Mancini", "s": [["2020/21", "—"], ["2021/22", "Wing Slayer"], ["2022/23", "Kingdellagrill"], ["2023/24", "Tricarico Pozzo di Sicar"], ["2024/25", "CSKA La Rissa"]]}, {"t": "⭐ Supercoppa Lippi", "s": [["2021", "Birrozza F.C."], ["2022", "Ajax Kemal"], ["2023", "—"], ["2024", "Tricarico Pozzo di Sicar"], ["2025", "Real Colizzati"]]}]}};
 
 var SLIM_TEAMS = ["BARI", "COMO", "JUVENTUS", "MILAN", "NAPOLI", "PALERMO", "ROMA", "SALERNITANA", "SASSUOLO", "TORINO"];
 var SLIM_TEAMS_IT = ["Bari", "Como", "Juventus", "Milan", "Napoli", "Palermo", "Roma", "Salernitana", "Sassuolo", "Torino"];
@@ -4192,8 +4206,9 @@ try {
 } catch(e) {}
 
 function selectTournament(key, el) {
+  alert('[DEBUG] selectTournament eseguita con key: ' + key);
   var container = document.getElementById('leagues-container');
-  if (!container) { enterLeague(key); return; }
+  if (!container) { console.log('[DEBUG] Nessun container, exit'); enterLeague(key); return; }
 
   // Deseleziona tutte le card
   document.querySelectorAll('.t-card').forEach(function(c) { c.classList.remove('active'); });
@@ -4210,6 +4225,26 @@ function selectTournament(key, el) {
 
   var dati = LEAGUES_DATA[key];
   if (!dati) { enterLeague(key); return; }
+
+  // Sincronizza leghe da ADMIN_TORNEI (Google Sheet) per mantenerle sempre aggiornate
+  console.log('[selectTournament] Key:', key, '| ADMIN_TORNEI disponibile?', typeof ADMIN_TORNEI !== 'undefined');
+  if (typeof ADMIN_TORNEI !== 'undefined' && ADMIN_TORNEI.length > 0) {
+    var adminTorneo = ADMIN_TORNEI.find(function(t) { return t.key === key; });
+    console.log('[selectTournament] adminTorneo trovato?', !!adminTorneo);
+    if (adminTorneo && adminTorneo.leghe && adminTorneo.leghe.length > 0) {
+      console.log('[selectTournament] Leghe da ADMIN_TORNEI PRIMA:', adminTorneo.leghe.map(function(l){return l.key;}).join(', '));
+      dati.leghe = adminTorneo.leghe.map(function(adminLega) {
+        var leagueDataLega = dati.leghe.find(function(l) { return l.key === adminLega.key; });
+        return {
+          key: adminLega.key,
+          label: adminLega.label || (leagueDataLega && leagueDataLega.label) || '',
+          flag: (leagueDataLega && leagueDataLega.flag) || '🏁',
+          clubs: (leagueDataLega && leagueDataLega.clubs) || 10
+        };
+      });
+      console.log('[selectTournament] Leghe sincronizzate DOPO:', dati.leghe.map(function(l){return l.key;}).join(', '));
+    }
+  }
 
   var html = '<div style="padding:20px 0 4px">';
   html += '<div style="font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:'+dati.color+';margin-bottom:14px">Leghe disponibili</div>';
@@ -4894,7 +4929,7 @@ function gsPing() {
             // Sync: trofei e crediti salvati localmente ma non su GSheets
             // (accade se l'admin ha salvato prima che GS_ONLINE diventasse true)
             var _sTornei = gsGetKey('admin_tornei')||[];
-            if (!_sTornei.length) _sTornei = [{key:'slim',leghe:[{key:'it'},{key:'en'},{key:'de'},{key:'es'},{key:'fr'},{key:'pt'},{key:'nl'},{key:'tr'}]},{key:'tsm',leghe:[{key:'it'}]}];
+            if (!_sTornei.length) _sTornei = [{key:'slim',leghe:[{key:'it'},{key:'en'},{key:'de'},{key:'es'},{key:'fr'},{key:'pt'},{key:'nl'}]},{key:'tsm',leghe:[{key:'it'}]}];
             // Sync admin_tornei e logo principale
             var _atRaw = gsGetKey('admin_tornei'); if (_atRaw) gsSaveKey('admin_tornei', _atRaw);
             var _lmRaw = gsGetKey('adm_logo_main'); if (_lmRaw) gsSaveKey('adm_logo_main', _lmRaw);
@@ -5586,8 +5621,7 @@ var ADMIN_TORNEI = gsGetKey('admin_tornei') || [
   { key: 'slim', label: 'Scudetto Slim', formato: 'mantra', leghe: [
     {key:'it',label:'Italia'},{key:'en',label:'Inghilterra'},{key:'de',label:'Germania'},
     {key:'es',label:'Spagna'},{key:'fr',label:'Francia'},{key:'pt',label:'Portogallo'},
-    {key:'nl',label:'Olanda'},{key:'tr',label:'Turchia'}
-  ]},
+    {key:'nl',label:'Olanda'}  ]},
   { key: 'tsm', label: 'TSM', formato: 'classic', leghe: [
     {key:'it',label:'Italia'}
   ]}
@@ -8496,7 +8530,7 @@ function admEditLogoTorneoStatic(key, label) {
 function admResetTrofei() {
   if (!confirm('Sei sicuro? Tutti i trofei verranno cancellati da localStorage e GSheets.')) return;
   var tornei = gsGetKey('admin_tornei')||[];
-  if (!tornei.length) tornei = [{key:'slim',leghe:[{key:'it'},{key:'en'},{key:'de'},{key:'es'},{key:'fr'},{key:'pt'},{key:'nl'},{key:'tr'}]},{key:'tsm',leghe:[{key:'it'}]},{key:'tdm',leghe:[{key:'it'}]}];
+  if (!tornei.length) tornei = [{key:'slim',leghe:[{key:'it'},{key:'en'},{key:'de'},{key:'es'},{key:'fr'},{key:'pt'},{key:'nl'}]},{key:'tsm',leghe:[{key:'it'}]},{key:'tdm',leghe:[{key:'it'}]}];
   tornei.forEach(function(t) {
     (t.leghe||[]).forEach(function(l) {
       var k = 'adm_trofeo_lega_'+t.key+'_'+l.key;
@@ -9227,7 +9261,20 @@ function admLoadRoseSquadre() {
 function admLazyLoadRoseData(torneoKey, legaKey) {
   var roseKey = 'adm_rose_'+torneoKey+'_'+legaKey;
   gsLoadKey(roseKey, function(val) {
-    if (val === null || val === undefined) return;
+    if (val === null || val === undefined) {
+      // Fallback: se GSheet è vuoto, carica dalla memoria e salva su GSheet
+      var fallbackData = null;
+      if (torneoKey === 'slim' && typeof ALL_LEAGUES_DATA !== 'undefined' && ALL_LEAGUES_DATA[legaKey]) {
+        fallbackData = ALL_LEAGUES_DATA[legaKey].teams || {};
+      }
+      if (fallbackData && Object.keys(fallbackData).length > 0) {
+        console.log('[admLazyLoad] Fallback: carico da memoria e salvo su GSheet - ' + roseKey);
+        gsSaveKey(roseKey, fallbackData);
+        var str = JSON.stringify(fallbackData);
+        localStorage.setItem(roseKey, str);
+      }
+      return;
+    }
     var str = typeof val === 'string' ? val : JSON.stringify(val);
     localStorage.setItem(roseKey, str);
     if (torneoKey === 'slim' && legaKey === 'it') {
@@ -12212,8 +12259,9 @@ try {
 } catch(e) {}
 
 function selectTournament(key, el) {
+  alert('[DEBUG] selectTournament eseguita con key: ' + key);
   var container = document.getElementById('leagues-container');
-  if (!container) { enterLeague(key); return; }
+  if (!container) { console.log('[DEBUG] Nessun container, exit'); enterLeague(key); return; }
 
   // Deseleziona tutte le card
   document.querySelectorAll('.t-card').forEach(function(c) { c.classList.remove('active'); });
@@ -12230,6 +12278,26 @@ function selectTournament(key, el) {
 
   var dati = LEAGUES_DATA[key];
   if (!dati) { enterLeague(key); return; }
+
+  // Sincronizza leghe da ADMIN_TORNEI (Google Sheet) per mantenerle sempre aggiornate
+  console.log('[selectTournament] Key:', key, '| ADMIN_TORNEI disponibile?', typeof ADMIN_TORNEI !== 'undefined');
+  if (typeof ADMIN_TORNEI !== 'undefined' && ADMIN_TORNEI.length > 0) {
+    var adminTorneo = ADMIN_TORNEI.find(function(t) { return t.key === key; });
+    console.log('[selectTournament] adminTorneo trovato?', !!adminTorneo);
+    if (adminTorneo && adminTorneo.leghe && adminTorneo.leghe.length > 0) {
+      console.log('[selectTournament] Leghe da ADMIN_TORNEI PRIMA:', adminTorneo.leghe.map(function(l){return l.key;}).join(', '));
+      dati.leghe = adminTorneo.leghe.map(function(adminLega) {
+        var leagueDataLega = dati.leghe.find(function(l) { return l.key === adminLega.key; });
+        return {
+          key: adminLega.key,
+          label: adminLega.label || (leagueDataLega && leagueDataLega.label) || '',
+          flag: (leagueDataLega && leagueDataLega.flag) || '🏁',
+          clubs: (leagueDataLega && leagueDataLega.clubs) || 10
+        };
+      });
+      console.log('[selectTournament] Leghe sincronizzate DOPO:', dati.leghe.map(function(l){return l.key;}).join(', '));
+    }
+  }
 
   var html = '<div style="padding:20px 0 4px">';
   html += '<div style="font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:'+dati.color+';margin-bottom:14px">Leghe disponibili</div>';
@@ -12792,8 +12860,7 @@ var ADMIN_TORNEI = gsGetKey('admin_tornei') || [
   { key: 'slim', label: 'Scudetto Slim', formato: 'mantra', leghe: [
     {key:'it',label:'Italia'},{key:'en',label:'Inghilterra'},{key:'de',label:'Germania'},
     {key:'es',label:'Spagna'},{key:'fr',label:'Francia'},{key:'pt',label:'Portogallo'},
-    {key:'nl',label:'Olanda'},{key:'tr',label:'Turchia'}
-  ]},
+    {key:'nl',label:'Olanda'}  ]},
   { key: 'tsm', label: 'TSM', formato: 'classic', leghe: [
     {key:'it',label:'Italia'}
   ]}
@@ -15088,7 +15155,7 @@ function admEditLogoTorneoStatic(key, label) {
 function admResetTrofei() {
   if (!confirm('Sei sicuro? Tutti i trofei verranno cancellati da localStorage e GSheets.')) return;
   var tornei = gsGetKey('admin_tornei')||[];
-  if (!tornei.length) tornei = [{key:'slim',leghe:[{key:'it'},{key:'en'},{key:'de'},{key:'es'},{key:'fr'},{key:'pt'},{key:'nl'},{key:'tr'}]},{key:'tsm',leghe:[{key:'it'}]},{key:'tdm',leghe:[{key:'it'}]}];
+  if (!tornei.length) tornei = [{key:'slim',leghe:[{key:'it'},{key:'en'},{key:'de'},{key:'es'},{key:'fr'},{key:'pt'},{key:'nl'}]},{key:'tsm',leghe:[{key:'it'}]},{key:'tdm',leghe:[{key:'it'}]}];
   tornei.forEach(function(t) {
     (t.leghe||[]).forEach(function(l) {
       var k = 'adm_trofeo_lega_'+t.key+'_'+l.key;
@@ -15605,6 +15672,7 @@ function admConfirmImport(){
   localStorage.setItem(_roseKey, JSON.stringify(sk));
   localStorage.setItem('adm_rose_import_'+tk+'_'+lk, JSON.stringify(sk));
   syncLeagueClubCount(tk, lk);
+  console.log('[admConfirmImport] Salvo su GSheet: ' + _roseKey + ' (' + Object.keys(sk).length + ' squadre)');
   gsSaveKey(_roseKey, JSON.stringify(sk));
   // Aggiorna variabili runtime in-memoria per refresh UI immediato
   if(tk==='slim'&&lk==='it'){Object.keys(sk).forEach(function(s){TEAMS_ROSE[s]=sk[s];});}
