@@ -1,4 +1,4 @@
-<!-- build:20260712_1744 -->
+<!-- build:20260712_1748 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260712_1744';
+  var BUILD='20260712_1748';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
@@ -4266,8 +4266,8 @@ function selectTournament(key, el) {
     // Club count: rose da localStorage (fonte più aggiornata) > config
     var _realLk = _lk.indexOf(key+'_') === 0 ? _lk.slice(key.length+1) : _lk;
     var _nClub = 0;
-    try { _nClub = Object.keys(safeJSONParse(gsGetKey('adm_rose_'+key+'_'+_realLk),'{}')).length; } catch(e){}
-    if (!_nClub && _realLk !== _lk) { try { _nClub = Object.keys(safeJSONParse(gsGetKey('adm_rose_'+key+'_'+_lk),'{}')).length; } catch(e){} }
+    try { _nClub = Object.keys(safeJSONParse(gsGetKey('adm_rose_'+key+'_'+_realLk),'{}')).filter(function(s) { return s !== '_crediti' && s !== 'INFERMERIA'; }).length; } catch(e){}
+    if (!_nClub && _realLk !== _lk) { try { _nClub = Object.keys(safeJSONParse(gsGetKey('adm_rose_'+key+'_'+_lk),'{}')).filter(function(s) { return s !== '_crediti' && s !== 'INFERMERIA'; }).length; } catch(e){} }
     if (!_nClub) _nClub = lega.clubs || _cfgClub;
     html += '<div onclick="enterLeague(\''+key+'\',\''+lega.key+'\')" style="background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:14px 10px;cursor:pointer;text-align:center;transition:all .2s;display:flex;flex-direction:column;align-items:center;gap:8px;" '
           + 'onmouseover="this.style.borderColor=\''+dati.color+'\';this.style.background=\''+dati.color+'1a\'" '
@@ -12316,8 +12316,8 @@ function selectTournament(key, el) {
     // Club count: rose da localStorage (fonte più aggiornata) > config
     var _realLk = _lk.indexOf(key+'_') === 0 ? _lk.slice(key.length+1) : _lk;
     var _nClub = 0;
-    try { _nClub = Object.keys(safeJSONParse(gsGetKey('adm_rose_'+key+'_'+_realLk),'{}')).length; } catch(e){}
-    if (!_nClub && _realLk !== _lk) { try { _nClub = Object.keys(safeJSONParse(gsGetKey('adm_rose_'+key+'_'+_lk),'{}')).length; } catch(e){} }
+    try { _nClub = Object.keys(safeJSONParse(gsGetKey('adm_rose_'+key+'_'+_realLk),'{}')).filter(function(s) { return s !== '_crediti' && s !== 'INFERMERIA'; }).length; } catch(e){}
+    if (!_nClub && _realLk !== _lk) { try { _nClub = Object.keys(safeJSONParse(gsGetKey('adm_rose_'+key+'_'+_lk),'{}')).filter(function(s) { return s !== '_crediti' && s !== 'INFERMERIA'; }).length; } catch(e){} }
     if (!_nClub) _nClub = lega.clubs || _cfgClub;
     html += '<div onclick="enterLeague(\''+key+'\',\''+lega.key+'\')" style="background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:14px 10px;cursor:pointer;text-align:center;transition:all .2s;display:flex;flex-direction:column;align-items:center;gap:8px;" '
           + 'onmouseover="this.style.borderColor=\''+dati.color+'\';this.style.background=\''+dati.color+'1a\'" '
