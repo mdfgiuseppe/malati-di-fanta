@@ -1,20 +1,15 @@
 {
   "permissions": {
     "allow": [
-      "Bash(git add *)",
-      "Bash(git commit -m ' *)",
       "Bash(git push *)",
-      "Bash(grep -v \"^.*:.*\\\\..*{\")",
-      "WebFetch(domain:mdfgiuseppe.github.io)",
-      "Bash(gh api *)",
-      "Bash(git ls-remote *)",
-      "WebFetch(domain:script.google.com)",
-      "WebFetch(domain:script.googleusercontent.com)",
-      "Bash(git commit *)",
-      "Bash(git checkout *)",
-      "Bash(git merge *)",
-      "WebFetch(domain:raw.githubusercontent.com)",
-      "Read(//c/Users/Utente/.claude/projects/c--Users-Utente-mdf-final/memory/**)"
+      "Bash(git add *)",
+      "Bash(git commit -m 'fix: carica qualificazioni manuali \\(adm_qualif_manual_slim_*\\) da Google Sheet al ping *)",
+      "Bash(git commit -m 'fix: carica override della classifica qualificazioni da Google Sheet *)",
+      "Bash(git commit -m 'fix: usa override della classifica anche se lunghezza diversa *)",
+      "Bash(sed -i \"s/if\\(override\\\\.length===ranking\\\\.length\\){ranking=override\\\\.map\\(function\\(sq\\){var r=ranking\\\\.find\\(function\\(x\\){return x\\\\.squadra===sq;}\\);return r||{squadra:sq,pt:0};}\\);}/ranking=override.map\\(function\\(sq\\){var r=ranking.find\\(function\\(x\\){return x.squadra===sq;}\\);return r||{squadra:sq,pt:0};}\\).filter\\(function\\(x\\){return ranking.some\\(function\\(y\\){return y.squadra===x.squadra;}\\);}\\);/g\" /c/Users/Utente/mdf-final/index.html)",
+      "Bash(git commit -m 'fix: rimuovi tutti i check sulla lunghezza dell'\\\\''override *)",
+      "Bash(git commit -m 'fix: ricarica UI qualificazioni dopo caricamento da Google Sheet *)",
+      "Bash(git commit -m 'fix: chiama initCoppaLogos\\(\\) per renderizzare qualificazioni lato utente *)"
     ]
   }
 }
