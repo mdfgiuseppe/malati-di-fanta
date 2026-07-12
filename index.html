@@ -1,4 +1,4 @@
-<!-- build:20260712_1606 -->
+<!-- build:20260712_1647 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260712_1606';
+  var BUILD='20260712_1647';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
@@ -15652,10 +15652,10 @@ function admConfirmImport(){
   var _scadenzeMap={};
   var _existingRaw=gsGetKey('adm_rose_'+tk+'_'+lk);
   if(_existingRaw){try{var _exRose=JSON.parse(_existingRaw);Object.values(_exRose).forEach(function(pl){if(!Array.isArray(pl))return;pl.forEach(function(g){if(g.nome&&g.scadenza)_scadenzeMap[g.nome]=g.scadenza;});});}catch(e){}}
-  if(Object.keys(_scadenzeMap).length){Object.values(sk).forEach(function(pl){pl.forEach(function(g){if(g.nome&&!g.scadenza&&_scadenzeMap[g.nome])g.scadenza=_scadenzeMap[g.nome];});});}
+  if(Object.keys(_scadenzeMap).length){Object.values(sk).forEach(function(pl){if(!Array.isArray(pl))return;pl.forEach(function(g){if(g.nome&&!g.scadenza&&_scadenzeMap[g.nome])g.scadenza=_scadenzeMap[g.nome];});});}
   // Giocatori nuovi (non trovati in nessuna rosa): contratto default 30/06 di anno+3
   var _impNow=new Date(); var _defScad='06/'+String(_impNow.getFullYear()+3).slice(-2);
-  Object.values(sk).forEach(function(pl){pl.forEach(function(g){if(g.nome&&!g.scadenza)g.scadenza=_defScad;});});
+  Object.values(sk).forEach(function(pl){if(!Array.isArray(pl))return;pl.forEach(function(g){if(g.nome&&!g.scadenza)g.scadenza=_defScad;});});
   // Salva crediti base da import: aggiungi le multe per non scalare due volte
   var _crBase = window._admImportPending && window._admImportPending.crediti ? window._admImportPending.crediti : {};
   var _multeKeyImp = typeof admGetMulteKey==='function' ? admGetMulteKey(tk, lk) : tk+'_multe_'+lk;
