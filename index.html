@@ -1,4 +1,4 @@
-<!-- build:20260712_1647 -->
+<!-- build:20260712_1710 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260712_1647';
+  var BUILD='20260712_1710';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
@@ -3730,7 +3730,7 @@ function getSlimConfig() {
   if (typeof ADMIN_TORNEI !== 'undefined') {
     var t = ADMIN_TORNEI.find(function(x){ return x.key === 'slim'; });
     if (t && t.leghe) {
-      return {n_leghe: t.leghe.length, n_club: 80, leghe: t.leghe.map(function(l){ return l.label; })};
+      return {n_leghe: t.leghe.length, n_club: t.leghe.length * 10, leghe: t.leghe.map(function(l){ return l.label; })};
     }
   }
   return {n_leghe: 8, n_club: 80, leghe: ["Italia", "Inghilterra", "Germania", "Spagna", "Francia", "Portogallo", "Olanda", "Turchia"]};
@@ -4206,7 +4206,6 @@ try {
 } catch(e) {}
 
 function selectTournament(key, el) {
-  alert('[DEBUG] selectTournament eseguita con key: ' + key);
   var container = document.getElementById('leagues-container');
   if (!container) { console.log('[DEBUG] Nessun container, exit'); enterLeague(key); return; }
 
@@ -12259,7 +12258,6 @@ try {
 } catch(e) {}
 
 function selectTournament(key, el) {
-  alert('[DEBUG] selectTournament eseguita con key: ' + key);
   var container = document.getElementById('leagues-container');
   if (!container) { console.log('[DEBUG] Nessun container, exit'); enterLeague(key); return; }
 
