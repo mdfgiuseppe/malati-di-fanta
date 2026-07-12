@@ -1,4 +1,4 @@
-<!-- build:20260712_1105 -->
+<!-- build:20260712_1140 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260712_1105';
+  var BUILD='20260712_1140';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
@@ -28,6 +28,7 @@ var GSHEET_API='https://script.google.com/macros/s/AKfycbxYDzf3Xv8G5G5zE5aqPUdjR
 async function loadGSheetData(){console.log('[gsheet] Iniziando caricamento...');try{const r=await fetch(GSHEET_API+'?action=getAll');console.log('[gsheet] Response status:',r.status);const json=await r.json();console.log('[gsheet] JSON ricevuto:',json.ok?'ok':'errore');if(json.ok){gSheetData=json.data||{};for(var k in gSheetData){var v=gSheetData[k];localStorage.setItem(k,typeof v==='object'?JSON.stringify(v):v);}console.log('[gsheet] ✅ Caricati '+Object.keys(gSheetData).length+' dati → localStorage');return true;}else{console.error('[gsheet] ❌ Errore API:',json);return false;}}catch(e){console.error('[gsheet] ❌ Errore fetch:',e);return false;}}
 function gsLoadKey(key,callback){const val=gSheetData[key]||null;callback(null,val);}
 function gsGetKey(key){var val=gSheetData[key];if(!val)return null;if(typeof val==='string'){try{return JSON.parse(val);}catch(e){return val;}}return val;}
+function safeJSONParse(val,def){if(typeof val==='string'){try{return JSON.parse(val);}catch(e){return def||{};};}return val||def||{};}
 function gsSaveKey(key,value){gSheetData[key]=value;fetch(GSHEET_API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'set',key:key,value:value})}).then(r=>r.json()).then(json=>{if(json.ok){console.log('[gsheet] ✅ Salvato:',key);}else{console.error('[gsheet] ❌ Errore salvataggio:',key);}}).catch(e=>console.error('[gsheet] ❌ Errore:',e));}
 function reloadAllData(){console.log('[reload] Ricaricando tutti i dati...');loadGSheetData().then(function(success){if(success){console.log('[reload] ✅ Dati ricaricati - reload pagina');setTimeout(function(){location.reload();},500);}else{alert('❌ Errore nel ricaricamento dati');}});}
 console.log('[gsheet] ✅ API ready');
@@ -3756,21 +3757,21 @@ function genericGetCalendar(torneoKey, legaKey) {
     var key = (lk === 'it') ? 'slim_calendar' : 'slim_calendar_' + lk;
     window._currentLeagueCalKey = key;
     var raw = gsGetKey(key);
-    if (raw) return JSON.parse(raw);
+    if (raw) return (typeof raw === 'string') ? JSON.parse(raw) : raw;
     var admKey = 'adm_cal_' + torneoKey + '_' + (lk==='it'?'it':lk);
     var admRaw = gsGetKey(admKey);
-    if (admRaw) { try { var parsed = JSON.parse(admRaw); localStorage.setItem(key, admRaw); return parsed; } catch(e) {} }
+    if (admRaw) { try { var parsed = (typeof admRaw === 'string') ? JSON.parse(admRaw) : admRaw; localStorage.setItem(key, (typeof admRaw === 'string') ? admRaw : JSON.stringify(admRaw)); return parsed; } catch(e) {} }
     if (key !== 'slim_calendar' && typeof ALL_SEASON_DATA !== 'undefined') { if (ALL_SEASON_DATA[lk]) return ALL_SEASON_DATA[lk].calendario || {}; }
     return SLIM_INITIAL_CALENDAR;
   } else if (torneoKey === 'tsm') {
     var key = (legaKey === 'it') ? 'tsm_calendar_it' : 'tsm_calendar_' + legaKey;
     var raw = gsGetKey(key);
-    if (raw) return JSON.parse(raw);
+    if (raw) return (typeof raw === 'string') ? JSON.parse(raw) : raw;
     return TSM_INITIAL_CALENDAR_IT || {};
   } else {
     var key = 'adm_cal_' + torneoKey + '_' + legaKey;
     var raw = gsGetKey(key);
-    if (raw) return JSON.parse(raw);
+    if (raw) return (typeof raw === 'string') ? JSON.parse(raw) : raw;
     return {};
   }
 }
@@ -3808,11 +3809,11 @@ function genericCalcStandings(torneoKey, legaKey) {
   var stadio = genericGetStadio(torneoKey, legaKey);
 
   var _stR = gsGetKey('adm_stadio_table_' + torneoKey);
-  var _ST = (_stR ? (function(){try{return JSON.parse(_stR);}catch(e){return null;}})() : null) || (torneoKey === 'slim' ? SLIM_STADIO_TABLE : TSM_STADIO_TABLE_IT) || {};
+  var _ST = (_stR ? (function(){try{return (typeof _stR === 'string') ? JSON.parse(_stR) : _stR;}catch(e){return null;}})() : null) || (torneoKey === 'slim' ? SLIM_STADIO_TABLE : TSM_STADIO_TABLE_IT) || {};
 
   var multeKey = torneoKey + '_multe_' + legaKey;
   var multeRaw = gsGetKey(multeKey);
-  var multeData = multeRaw ? JSON.parse(multeRaw) : {};
+  var multeData = multeRaw ? ((typeof multeRaw === 'string') ? JSON.parse(multeRaw) : multeRaw) : {};
 
   var squadre = (torneoKey === 'slim') ? SLIM_TEAMS : (torneoKey === 'tsm') ? ((typeof TSM_TEAMS_IT !== 'undefined' && TSM_TEAMS_IT.length) ? TSM_TEAMS_IT : SLIM_TEAMS) : gsGetKey('adm_squadre_'+torneoKey)||[];
 
@@ -3847,10 +3848,10 @@ function genericCalcStandings(torneoKey, legaKey) {
   });
 
   var _ptsRaw = gsGetKey('adm_cal_pts_'+torneoKey+'_'+legaKey);
-  if(_ptsRaw){try{var _pts=JSON.parse(_ptsRaw);Object.keys(_pts).forEach(function(gk){Object.keys(_pts[gk]).forEach(function(tn){var tk2=teamKeyMap[tn.toUpperCase()]||tn;if(s[tk2])s[tk2].totalPts+=(_pts[gk][tn]||0);});});}catch(e){}}
+  if(_ptsRaw){try{var _pts=(typeof _ptsRaw === 'string') ? JSON.parse(_ptsRaw) : _ptsRaw;Object.keys(_pts).forEach(function(gk){Object.keys(_pts[gk]).forEach(function(tn){var tk2=teamKeyMap[tn.toUpperCase()]||tn;if(s[tk2])s[tk2].totalPts+=(_pts[gk][tn]||0);});});}catch(e){}}
 
   var _scRaw = gsGetKey('adm_cal_score_'+torneoKey+'_'+legaKey);
-  if(_scRaw){try{var _sc=JSON.parse(_scRaw);Object.keys(_sc).forEach(function(g){var gg=_sc[g];for(var tn in gg){var tk2=teamKeyMap[tn.toUpperCase()]||tn;if(s[tk2]){s[tk2].gf+=(gg[tn].pf||0);s[tk2].gs+=(gg[tn].ps||0);};}})}catch(e){}}
+  if(_scRaw){try{var _sc=(typeof _scRaw === 'string') ? JSON.parse(_scRaw) : _scRaw;Object.keys(_sc).forEach(function(g){var gg=_sc[g];for(var tn in gg){var tk2=teamKeyMap[tn.toUpperCase()]||tn;if(s[tk2]){s[tk2].gf+=(gg[tn].pf||0);s[tk2].gs+=(gg[tn].ps||0);};}})}catch(e){}}
 
   var sorted = squadre.slice().sort(function(a, b) {
     var diff = (s[b].pt || 0) - (s[a].pt || 0);
@@ -3989,7 +3990,7 @@ function genericRenderCalendario(torneoKey, legaKey) {
 
   var containerId = (torneoKey === 'slim') ? 'slim-calendario-body' : (torneoKey === 'tsm') ? 'tsm-calendario-body' : torneoKey + '-calendario-body';
   var _schRaw = gsGetKey('adm_cal_schedule_' + torneoKey + '_' + legaKey);
-  var _schP = _schRaw ? (function(){try{return JSON.parse(_schRaw);}catch(e){return null;}})() : null;
+  var _schP = _schRaw ? (function(){try{return (typeof _schRaw === 'string') ? JSON.parse(_schRaw) : _schRaw;}catch(e){return null;}})() : null;
   var _schN = _schP ? Object.keys(_schP.giornate || _schP).length : 0;
   var _calNums = Object.keys(genericGetCalendar(torneoKey, legaKey)).map(Number).filter(function(n){return n>0;});
   var _nG = _schN > 0 ? _schN : (torneoKey !== 'slim' ? (_calNums.length > 0 ? Math.max.apply(null, _calNums) : 30) : (typeof SLIM_TOTAL_GIORNATE !== 'undefined' ? SLIM_TOTAL_GIORNATE : 36));
@@ -4132,11 +4133,11 @@ function updateDashboardCounters() {
       if (clubEl) {
         var totalClub = 0;
         var _cfgN = 0;
-        try { _cfgN = JSON.parse(gsGetKey('adm_config_'+t.key)||'{}').nSquadre || 0; } catch(e){}
+        try { _cfgN = safeJSONParse(gsGetKey('adm_config_'+t.key),'{}').nSquadre || 0; } catch(e){}
         var _ldLeghe = (typeof LEAGUES_DATA !== 'undefined' && LEAGUES_DATA[t.key]) ? LEAGUES_DATA[t.key].leghe : [];
         t.leghe.forEach(function(l) {
           var rose = {};
-          try { rose = JSON.parse(gsGetKey('adm_rose_'+t.key+'_'+l.key)||'{}'); } catch(e){}
+          try { rose = safeJSONParse(gsGetKey('adm_rose_'+t.key+'_'+l.key),'{}'); } catch(e){}
           if (Object.keys(rose).length) {
             totalClub += Object.keys(rose).length;
           } else if (_cfgN) {
@@ -4217,7 +4218,7 @@ function selectTournament(key, el) {
 
   // Numero club per lega da adm_config o da adm_rose
   var _cfgClub = 0;
-  try { _cfgClub = JSON.parse(gsGetKey('adm_config_'+key)||'{}').nSquadre || 0; } catch(e){}
+  try { _cfgClub = safeJSONParse(gsGetKey('adm_config_'+key),'{}').nSquadre || 0; } catch(e){}
 
   dati.leghe.slice().sort(function(a,b){return a.label.localeCompare(b.label);}).forEach(function(lega) {
     var _lk = lega.key;
@@ -4239,8 +4240,8 @@ function selectTournament(key, el) {
     // Club count: rose da localStorage (fonte più aggiornata) > config
     var _realLk = _lk.indexOf(key+'_') === 0 ? _lk.slice(key.length+1) : _lk;
     var _nClub = 0;
-    try { _nClub = Object.keys(JSON.parse(gsGetKey('adm_rose_'+key+'_'+_realLk)||'{}')).length; } catch(e){}
-    if (!_nClub && _realLk !== _lk) { try { _nClub = Object.keys(JSON.parse(gsGetKey('adm_rose_'+key+'_'+_lk)||'{}')).length; } catch(e){} }
+    try { _nClub = Object.keys(safeJSONParse(gsGetKey('adm_rose_'+key+'_'+_realLk),'{}')).length; } catch(e){}
+    if (!_nClub && _realLk !== _lk) { try { _nClub = Object.keys(safeJSONParse(gsGetKey('adm_rose_'+key+'_'+_lk),'{}')).length; } catch(e){} }
     if (!_nClub) _nClub = lega.clubs || _cfgClub;
     html += '<div onclick="enterLeague(\''+key+'\',\''+lega.key+'\')" style="background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:14px 10px;cursor:pointer;text-align:center;transition:all .2s;display:flex;flex-direction:column;align-items:center;gap:8px;" '
           + 'onmouseover="this.style.borderColor=\''+dati.color+'\';this.style.background=\''+dati.color+'1a\'" '
@@ -4362,10 +4363,10 @@ function _updateLegaDashboard(leagueKey) {
     var _standRes = (_admTK === 'tsm' && typeof tsmCalcStandings === 'function') ? tsmCalcStandings() : ((typeof slimCalcStandings === 'function') ? slimCalcStandings() : null);
     if (_standRes && _standRes.sorted && _standRes.sorted.length > 0 && _standRes.giocate > 0) {
       var _calRaw = gsGetKey('adm_cal_'+_admTK+'_'+_realLK);
-      var _cal = _calRaw ? (function(){try{return JSON.parse(_calRaw);}catch(e){return{};}})() : {};
+      var _cal = _calRaw ? (function(){try{return (typeof _calRaw === 'string') ? JSON.parse(_calRaw) : _calRaw;}catch(e){return{};}})() : {};
       var _totGiornate = Object.keys(_cal).filter(function(g){return Object.values(_cal[g]||{}).some(function(v){return v;});}).length || 0;
       var _schRaw = gsGetKey('adm_cal_schedule_'+_admTK+'_'+_realLK);
-      var _schP = _schRaw ? (function(){try{return JSON.parse(_schRaw);}catch(e){return null;}})() : null;
+      var _schP = _schRaw ? (function(){try{return (typeof _schRaw === 'string') ? JSON.parse(_schRaw) : _schRaw;}catch(e){return null;}})() : null;
       var _totAttese = _schP ? ((_schP.andata_ritorno||0) + (_schP.neutre||0)) : (_admTK==='tsm'?(typeof TSM_TOTAL_GIORNATE!=='undefined'?TSM_TOTAL_GIORNATE:36):(typeof SLIM_TOTAL_GIORNATE!=='undefined'?SLIM_TOTAL_GIORNATE:36));
       if (_totGiornate === _totAttese) {
         var _campTeam = _standRes.sorted[0];
@@ -4518,7 +4519,7 @@ function tsmUpdateHeader() {
   if(cb) cb.style.display='block';
   if(cv){
     var _admCrTSM = gsGetKey('adm_crediti_base_tsm_it')||{};
-    var _userCredTSM = JSON.parse(gsGetKey('user_crediti_tsm_it')||'{}');
+    var _userCredTSM = safeJSONParse(gsGetKey('user_crediti_tsm_it'),'{}');
     var _baseTSM = (_admCrTSM[tsmCurrentTeam]!==undefined) ? _admCrTSM[tsmCurrentTeam]
       : (_admCrTSM[tsmCurrentTeam.toUpperCase()]!==undefined) ? _admCrTSM[tsmCurrentTeam.toUpperCase()]
       : (_userCredTSM[tsmCurrentTeam]!==undefined) ? _userCredTSM[tsmCurrentTeam]
@@ -4911,7 +4912,7 @@ function gsPing() {
                 try {
                   var _roseRaw = gsGetKey('adm_rose_'+t.key+'_'+l.key);
                   if (_roseRaw) {
-                    var _roseObj = JSON.parse(_roseRaw);
+                    var _roseObj = (typeof _roseRaw === 'string') ? JSON.parse(_roseRaw) : _roseRaw;
                     Object.keys(_roseObj).forEach(function(team) {
                       var _tlk = 'adm_logo_'+t.key+'_'+l.key+'_'+team;
                       var _tlv = gsGetKey(_tlk) || gsGetKey('adm_logo_'+t.key+'_'+l.key+'_'+team.toUpperCase());
@@ -5285,7 +5286,7 @@ function gsPing() {
           (function(_tk, _lk) {
             var _roseRaw = gsGetKey('adm_rose_'+_tk+'_'+_lk);
             var _tl = [];
-            try { if(_roseRaw) _tl = Object.keys(JSON.parse(_roseRaw)); } catch(e) {}
+            try { if(_roseRaw) _tl = Object.keys((typeof _roseRaw === 'string') ? JSON.parse(_roseRaw) : _roseRaw); } catch(e) {}
             if (!_tl.length && _tk==='tsm' && _lk==='it' && typeof TSM_TEAMS_IT!=='undefined') _tl = TSM_TEAMS_IT.slice();
             if (!_tl.length && _tk==='slim' && _lk==='it' && typeof SLIM_TEAMS_IT!=='undefined') _tl = SLIM_TEAMS_IT.slice();
             _tl.concat(['INFERMERIA']).forEach(function(sq) {
@@ -7112,7 +7113,7 @@ function admAddCoppa() {
   var rounds=[]; var n=teams; while(n>1){rounds.push(_rnames[n]||('Turno '+n));n=Math.floor(n/2);}
   var key = label.toLowerCase().replace(/[^a-z0-9]/g,'_').replace(/_+/g,'_').slice(0,12)+'_'+Date.now().toString().slice(-4);
   var _curRaw = gsGetKey('adm_coppe_config_'+torneoKey);
-  var _cur=[]; if(_curRaw){try{_cur=JSON.parse(_curRaw);}catch(e){}}
+  var _cur=[]; if(_curRaw){try{_cur=(typeof _curRaw === 'string') ? JSON.parse(_curRaw) : _curRaw;}catch(e){}}
   _cur.push({key:key, label:label, color:'#6b7280', rounds:rounds, teams:teams, visible:true});
   admSaveCoppeConfig(torneoKey, _cur);
   admLoadCoppeTorneo();
@@ -8570,7 +8571,7 @@ function admAddLegaWizard(ti, legaKey, legaLabel) {
   if (!torneo) return;
   // Recupera config dal torneo (da altra lega esistente o da adm_config)
   var config = {};
-  try { config = JSON.parse(gsGetKey('adm_config_'+torneo.key)||'{}'); } catch(e){}
+  try { config = safeJSONParse(gsGetKey('adm_config_'+torneo.key),'{}'); } catch(e){}
   var giornate = config.giornate || 34;
   var nSquadre = config.nSquadre || 10;
   var crediti = config.crediti || 250;
@@ -9286,7 +9287,8 @@ function admLazyLoadRoseData(torneoKey, legaKey) {
 function admGetTeams(torneoKey, legaKey) {
   // PRIORITA': carica PRIMA da localStorage (aggiornato dopo HR), poi fallback a memoria
   try {
-    var _rose = JSON.parse(gsGetKey('adm_rose_'+torneoKey+'_'+legaKey)||'{}');
+    var _roseRaw = gsGetKey('adm_rose_'+torneoKey+'_'+legaKey);
+    var _rose = (typeof _roseRaw === 'string') ? JSON.parse(_roseRaw || '{}') : (_roseRaw || {});
     var _teams = Object.keys(_rose).sort();
     if (_teams.length) return _teams;
   } catch(e) {}
@@ -9349,7 +9351,7 @@ function admLoadRosaGiocatori() {
 function admGetPlayers(torneoKey, legaKey, squadra) {
   if (torneoKey==='slim') {
     if (legaKey==='it') {
-      if (squadra==='INFERMERIA') { var inf=gsGetKey('adm_infermeria_slim_it'); if(inf) try{return JSON.parse(inf);}catch(e){} return typeof INFERMERIA!=='undefined'?INFERMERIA:[]; }
+      if (squadra==='INFERMERIA') { var inf=gsGetKey('adm_infermeria_slim_it'); if(inf) try{return (typeof inf === 'string') ? JSON.parse(inf) : inf;}catch(e){} return typeof INFERMERIA!=='undefined'?INFERMERIA:[]; }
       // 1. localStorage (rose aggiornate con scambi)
       var _roseLS={}; try{var _raw=gsGetKey('adm_rose_slim_it'); if(_raw) _roseLS=_raw;}catch(e){}
       if(_roseLS[squadra]&&_roseLS[squadra].length>0) return _roseLS[squadra];
@@ -9431,7 +9433,7 @@ function admRenderRosaEditor(players, torneoKey, legaKey, squadra) {
   var _multeKey = typeof admGetMulteKey==='function' ? admGetMulteKey(torneoKey, legaKey) : 'slim_multe_'+legaKey;
   var _multeRaw = gsGetKey(_multeKey);
   var _crMulte = 0;
-  if (_multeRaw) { try { var _md=JSON.parse(_multeRaw); var _mq=_md[squadra]||_md[squadra.toUpperCase()]||{}; _crMulte=parseFloat(_mq.multe)||0; } catch(e){} }
+  if (_multeRaw) { try { var _md=(typeof _multeRaw === 'string') ? JSON.parse(_multeRaw) : _multeRaw; var _mq=_md[squadra]||_md[squadra.toUpperCase()]||{}; _crMulte=parseFloat(_mq.multe)||0; } catch(e){} }
   var crAttuali = Math.round((_crBase + _movimenti - _crMulte) * 10) / 10;
 
   h += '<div class="card" style="padding:16px;margin-top:12px">'
@@ -9709,7 +9711,7 @@ function admLoadCalBody() {
   var legaKey = document.getElementById('adm-cal-lega').value;
   var el = document.getElementById('adm-cal-body'); if(!el||!legaKey) return;
   var _schStored=gsGetKey('adm_cal_schedule_'+torneoKey+'_'+legaKey);
-  var _schParsed=_schStored?(function(){try{return JSON.parse(_schStored);}catch(e){return null;}})():null;
+  var _schParsed=_schStored?(function(){try{return (typeof _schStored === 'string') ? JSON.parse(_schStored) : _schStored;}catch(e){return null;}})():null;
   var _schGiornate=_schParsed?(_schParsed.giornate||_schParsed):{};
   var _schN=Object.keys(_schGiornate).length;
   var _schAr=_schParsed?(_schParsed.andata_ritorno||0):0;
@@ -9725,7 +9727,7 @@ function admLoadCalBody() {
   var RC = {VC:'#10b981',VF:'#34d399',V:'#6ee7b7',PC:'#3b82f6',PF:'#60a5fa',P:'#93c5fd',SC:'#ef4444',SF:'#f87171',S:'#fca5a5'};
   var RC2 = {VC:'rgba(16,185,129,.15);color:#10b981',VF:'rgba(16,185,129,.1);color:#34d399',V:'rgba(110,231,183,.15);color:#6ee7b7',PC:'rgba(59,130,246,.12);color:#3b82f6',PF:'rgba(59,130,246,.08);color:#60a5fa',P:'rgba(147,197,253,.12);color:#93c5fd',SC:'rgba(239,68,68,.12);color:#ef4444',SF:'rgba(239,68,68,.08);color:#f87171',S:'rgba(252,165,165,.12);color:#fca5a5'};
   var _admScRaw=gsGetKey('adm_cal_score_'+torneoKey+'_'+legaKey);
-  var _scores=_admScRaw?(function(){try{return JSON.parse(_admScRaw);}catch(e){return null;}})():null;
+  var _scores=_admScRaw?(function(){try{return (typeof _admScRaw === 'string') ? JSON.parse(_admScRaw) : _admScRaw;}catch(e){return null;}})():null;
   var _logos={};
   function headerRow() {
     return '<tr style="background:var(--bg2);font-size:9px;font-weight:800;text-transform:uppercase;color:var(--text3);position:sticky;top:0;z-index:2">'
@@ -9854,7 +9856,27 @@ function admUpdateCalEl(el) {
   admUpdateCal(el.dataset.t, el.dataset.l, +el.dataset.g, el.dataset.team, el.value);
 }
 function admGetCalendar(torneoKey, legaKey) {
-  // Ottieni il calendario base embedded
+  // PRIMO: Carica dati salvati da localStorage
+  var saved = gsGetKey('adm_cal_'+torneoKey+'_'+legaKey);
+
+  // Se ci sono dati salvati, usali direttamente (FALLBACK, non merge!)
+  if (saved) {
+    var parsed;
+    if (typeof saved === 'string') {
+      try {
+        parsed = JSON.parse(saved);
+      } catch(e) {
+        parsed = null;
+      }
+    } else {
+      parsed = saved;
+    }
+    if (parsed && typeof parsed === 'object' && Object.keys(parsed).length > 0) {
+      return parsed;  // ← USA DIRETTAMENTE, NON MERGE!
+    }
+  }
+
+  // FALLBACK: Se NON ci sono dati salvati, usa base calendar
   var base = {};
   if (torneoKey==='tsm' && legaKey==='it') {
     base = (typeof TSM_INITIAL_CALENDAR_IT!=='undefined') ? JSON.parse(JSON.stringify(TSM_INITIAL_CALENDAR_IT)) : {};
@@ -9865,28 +9887,12 @@ function admGetCalendar(torneoKey, legaKey) {
       base = JSON.parse(JSON.stringify(ALL_SEASON_DATA[legaKey].calendario || {}));
     }
   }
-  // Sovrapponi le modifiche Admin salvate (merge, non sostituzione)
-  var stored = gsGetKey('adm_cal_'+torneoKey+'_'+legaKey);
-  if (stored) {
-    try {
-      var parsed = JSON.parse(stored);
-      Object.keys(parsed).forEach(function(g) {
-        if (typeof parsed[g]!=='object'||!parsed[g]) return;
-        if (!base[g]) base[g] = {};
-        var bkMap={};Object.keys(base[g]).forEach(function(k){bkMap[k.toUpperCase()]=k;});
-        Object.keys(parsed[g]).forEach(function(team) {
-          var bk=bkMap[team.toUpperCase()]||team;
-          base[g][bk]=parsed[g][team];
-        });
-      });
-    } catch(e) {}
-  }
   return base;
 }
 function admUpdateCal(t,l,g,team,val) {
   // Legge solo delta utente (senza merge con base pre-compilata)
   var _uRaw=gsGetKey('adm_cal_'+t+'_'+l);
-  var cal=_uRaw?(function(){try{return JSON.parse(_uRaw);}catch(e){return{};}}()):{};
+  var cal=_uRaw?(function(){try{return (typeof _uRaw === 'string') ? JSON.parse(_uRaw) : _uRaw;}catch(e){return{};}}()):{};
   if(!cal[String(g)])cal[String(g)]={};
   cal[String(g)][(team||'').toUpperCase()]=val;
   localStorage.setItem('adm_cal_'+t+'_'+l,JSON.stringify(cal));
@@ -9922,7 +9928,7 @@ function admCalSaveAndClose(g,t,l){
 function admCalSaveScoreAndClose(g,t,l){
   var scKey='adm_cal_score_'+t+'_'+l;
   var scRaw=gsGetKey(scKey);
-  var scores=scRaw?(function(){try{return JSON.parse(scRaw);}catch(e){return{};}}()):{};
+  var scores=scRaw?(function(){try{return (typeof scRaw === 'string') ? JSON.parse(scRaw) : scRaw;}catch(e){return{};}}()):{};
   if(!scores[String(g)])scores[String(g)]={};
   var inputs=document.querySelectorAll('[data-score-g="'+g+'"][data-score-t="'+t+'"][data-score-l="'+l+'"]');
   var matchMap={};
@@ -9941,11 +9947,11 @@ function admCalSaveScoreAndClose(g,t,l){
   // Aggiorna V/P/S in adm_cal_ in base al nuovo punteggio reale
   (function(){
     var _schRaw=gsGetKey('adm_cal_schedule_'+t+'_'+l);
-    var _schP=_schRaw?(function(){try{return JSON.parse(_schRaw);}catch(e){return null;}})():null;
+    var _schP=_schRaw?(function(){try{return (typeof _schRaw === 'string') ? JSON.parse(_schRaw) : _schRaw;}catch(e){return null;}})():null;
     var _schMatches=_schP?(_schP.giornate||_schP)[String(g)]||[]:[];
     if(!_schMatches.length)return;
     var _uRaw=gsGetKey('adm_cal_'+t+'_'+l);
-    var _uCal=_uRaw?(function(){try{return JSON.parse(_uRaw);}catch(e){return{};}}()):{};
+    var _uCal=_uRaw?(function(){try{return (typeof _uRaw === 'string') ? JSON.parse(_uRaw) : _uRaw;}catch(e){return{};}}()):{};
     if(!_uCal[String(g)])_uCal[String(g)]={};
     var _ar=_schP?(_schP.andata_ritorno||0):0,_ne=_schP?(_schP.neutre||0):0;
     var _isNeutral=_ar>0&&g>_ar&&g<=(_ar+_ne);
@@ -9999,7 +10005,7 @@ function admProcessCalScheduleXlsx(input){
       var nG=Object.keys(schedule).length;
       if(!nG){alert('Nessuna giornata trovata. Verifica il formato file (atteso: "Nª Giornata" in col A o G).');input.value='';return;}
       var existing=gsGetKey('adm_cal_schedule_'+t+'_'+l);
-      if(existing){var exP=JSON.parse(existing);var exN=Object.keys(exP.giornate||exP).length;if(!confirm('Schedule già presente ('+exN+' giornate). Sovrascrivere?')){input.value='';return;}}
+      if(existing){var exP=(typeof existing === 'string') ? JSON.parse(existing) : existing;var exN=Object.keys(exP.giornate||exP).length;if(!confirm('Schedule già presente ('+exN+' giornate). Sovrascrivere?')){input.value='';return;}}
       var ar=parseInt((document.getElementById('adm-cal-ar')||{}).value)||0;
       var ne=parseInt((document.getElementById('adm-cal-ne')||{}).value)||0;
       var toStore={giornate:schedule,andata_ritorno:ar,neutre:ne};
@@ -10068,7 +10074,7 @@ function admProcessGiornataXlsx(input){
         input.value='';return;
       }
       var _schRawI=gsGetKey('adm_cal_schedule_'+t+'_'+l);
-      var _schPI=_schRawI?(function(){try{return JSON.parse(_schRawI);}catch(e){return null;}})():null;
+      var _schPI=_schRawI?(function(){try{return (typeof _schRawI === 'string') ? JSON.parse(_schRawI) : _schRawI;}catch(e){return null;}})():null;
       var _schMI=_schPI?(_schPI.giornate||_schPI)[String(g)]||[]:[];
       function _getHA(m){var u1=(m.team1||'').toUpperCase(),u2=(m.team2||'').toUpperCase();for(var _i=0;_i<_schMI.length;_i++){var _sm=_schMI[_i];var _sh=(_sm.h||'').toUpperCase(),_sa=(_sm.a||'').toUpperCase();if((_sh===u1&&_sa===u2)||(_sh===u2&&_sa===u1))return{team1IsHome:_sh===u1};}return{team1IsHome:true};}
       // Usa punteggio reale (scoreStr) per W/D/L; fallback a totali fantacalcio
@@ -10088,8 +10094,8 @@ function admProcessGiornataXlsx(input){
       var appKey=(t==='tsm'&&l==='it')?'tsm_calendar_it':(t!=='slim'?'adm_cal_'+t+'_'+l:(l==='it'?'slim_calendar':'slim_calendar_'+l));
       localStorage.setItem(appKey,JSON.stringify(cal));
       gsSaveCalendario(t,l,cal);
-      var ptsKey='adm_cal_pts_'+t+'_'+l;var ptsRaw=gsGetKey(ptsKey);var pts=ptsRaw?(function(){try{return JSON.parse(ptsRaw);}catch(e){return{};}}()):{}; if(!pts[String(g)])pts[String(g)]={};matches.forEach(function(m){var pk1=_ck(cal[String(g)],m.team1),pk2=_ck(cal[String(g)],m.team2);pts[String(g)][pk1]=m.total1;pts[String(g)][pk2]=m.total2;});localStorage.setItem(ptsKey,JSON.stringify(pts));gsSaveKey(ptsKey,JSON.stringify(pts));
-      var scKey='adm_cal_score_'+t+'_'+l;var scRaw=gsGetKey(scKey);var scores=scRaw?(function(){try{return JSON.parse(scRaw);}catch(e){return{};}}()):{}; if(!scores[String(g)])scores[String(g)]={};matches.forEach(function(m){if(m.scoreStr){var sk1=_ck(cal[String(g)],m.team1),sk2=_ck(cal[String(g)],m.team2);var _sp=m.scoreStr.split('-');var gf=parseInt(_sp[0])||0,gs=parseInt(_sp[1])||0;scores[String(g)][sk1]={pf:gf,ps:gs};scores[String(g)][sk2]={pf:gs,ps:gf};}});localStorage.setItem(scKey,JSON.stringify(scores));gsSaveKey(scKey,JSON.stringify(scores));
+      var ptsKey='adm_cal_pts_'+t+'_'+l;var ptsRaw=gsGetKey(ptsKey);var pts=ptsRaw?(function(){try{return (typeof ptsRaw === 'string') ? JSON.parse(ptsRaw) : ptsRaw;}catch(e){return{};}}()):{}; if(!pts[String(g)])pts[String(g)]={};matches.forEach(function(m){var pk1=_ck(cal[String(g)],m.team1),pk2=_ck(cal[String(g)],m.team2);pts[String(g)][pk1]=m.total1;pts[String(g)][pk2]=m.total2;});localStorage.setItem(ptsKey,JSON.stringify(pts));gsSaveKey(ptsKey,JSON.stringify(pts));
+      var scKey='adm_cal_score_'+t+'_'+l;var scRaw=gsGetKey(scKey);var scores=scRaw?(function(){try{return (typeof scRaw === 'string') ? JSON.parse(scRaw) : scRaw;}catch(e){return{};}}()):{}; if(!scores[String(g)])scores[String(g)]={};matches.forEach(function(m){if(m.scoreStr){var sk1=_ck(cal[String(g)],m.team1),sk2=_ck(cal[String(g)],m.team2);var _sp=m.scoreStr.split('-');var gf=parseInt(_sp[0])||0,gs=parseInt(_sp[1])||0;scores[String(g)][sk1]={pf:gf,ps:gs};scores[String(g)][sk2]={pf:gs,ps:gf};}});localStorage.setItem(scKey,JSON.stringify(scores));gsSaveKey(scKey,JSON.stringify(scores));
       var msg=document.createElement('div');msg.textContent='✅ G'+g+': '+matches.length+' partite importate'+(neutral?' [neutrale]':'');msg.style.cssText='position:fixed;top:70px;right:20px;background:#10b981;color:#fff;padding:8px 16px;border-radius:8px;font-weight:700;font-size:12px;z-index:9999';document.body.appendChild(msg);setTimeout(function(){msg.remove();},3000);
       admLoadCalBody();
     }catch(ex){alert('Errore parsing xlsx: '+ex.message);}
@@ -10119,7 +10125,7 @@ function admCalSaveArNe(){
   if(!t||!l)return;
   var key='adm_cal_schedule_'+t+'_'+l;
   var raw=gsGetKey(key);
-  var sch=raw?(function(){try{return JSON.parse(raw);}catch(e){return null;}})():null;
+  var sch=raw?(function(){try{return (typeof raw === 'string') ? JSON.parse(raw) : raw;}catch(e){return null;}})():null;
   if(!sch)sch={giornate:{},andata_ritorno:0,neutre:0};
   sch.andata_ritorno=parseInt((document.getElementById('adm-cal-ar')||{}).value)||0;
   sch.neutre=parseInt((document.getElementById('adm-cal-ne')||{}).value)||0;
@@ -11137,8 +11143,8 @@ function updateHeader(){
     var _legaKey = window.currentLeagueKey||'it';
     var _tk = window._currentTourneyKey || 'slim';
     // Crediti: base (adm_crediti_base) + movimenti (diff costi rosa) - multe
-    var _admCrObj = JSON.parse(gsGetKey('adm_crediti_base_'+_tk+'_'+_legaKey)||'{}');
-    var _userCred = JSON.parse(gsGetKey('user_crediti_'+_tk+'_'+_legaKey)||'{}');
+    var _admCrObj = safeJSONParse(gsGetKey('adm_crediti_base_'+_tk+'_'+_legaKey),'{}');
+    var _userCred = safeJSONParse(gsGetKey('user_crediti_'+_tk+'_'+_legaKey),'{}');
     var _baseCr = (_admCrObj[currentTeam]!==undefined) ? _admCrObj[currentTeam]
                 : (_userCred[currentTeam]!==undefined) ? _userCred[currentTeam]
                 : (CREDITS[currentTeam]!==undefined ? CREDITS[currentTeam] : null);
@@ -11393,7 +11399,7 @@ function genericRenderStadio(torneoKey, legaKey) {
 function slimRenderStadio(){var el=document.getElementById('slim-stadio-body');if(!el)return;var stadio=slimGetStadio();
   var _tk=window._currentTourneyKey||'slim';
   var _stR=gsGetKey('adm_stadio_table_'+_tk);
-  var _ST=(_stR?(function(){try{return JSON.parse(_stR);}catch(e){return null;}})():null)||SLIM_STADIO_TABLE||{};
+  var _ST=(_stR?(function(){try{return (typeof _stR === 'string') ? JSON.parse(_stR) : _stR;}catch(e){return null;}})():null)||SLIM_STADIO_TABLE||{};
   var stadioN={};Object.keys(stadio).forEach(function(k){stadioN[k]=stadio[k];stadioN[k.toUpperCase()]=stadio[k];});
   stadio=stadioN;
   var _lvK=Object.keys(_ST).sort(function(a,b){return +a-+b;});
@@ -12147,11 +12153,11 @@ function updateDashboardCounters() {
       if (clubEl) {
         var totalClub = 0;
         var _cfgN = 0;
-        try { _cfgN = JSON.parse(gsGetKey('adm_config_'+t.key)||'{}').nSquadre || 0; } catch(e){}
+        try { _cfgN = safeJSONParse(gsGetKey('adm_config_'+t.key),'{}').nSquadre || 0; } catch(e){}
         var _ldLeghe = (typeof LEAGUES_DATA !== 'undefined' && LEAGUES_DATA[t.key]) ? LEAGUES_DATA[t.key].leghe : [];
         t.leghe.forEach(function(l) {
           var rose = {};
-          try { rose = JSON.parse(gsGetKey('adm_rose_'+t.key+'_'+l.key)||'{}'); } catch(e){}
+          try { rose = safeJSONParse(gsGetKey('adm_rose_'+t.key+'_'+l.key),'{}'); } catch(e){}
           if (Object.keys(rose).length) {
             totalClub += Object.keys(rose).length;
           } else if (_cfgN) {
@@ -12232,7 +12238,7 @@ function selectTournament(key, el) {
 
   // Numero club per lega da adm_config o da adm_rose
   var _cfgClub = 0;
-  try { _cfgClub = JSON.parse(gsGetKey('adm_config_'+key)||'{}').nSquadre || 0; } catch(e){}
+  try { _cfgClub = safeJSONParse(gsGetKey('adm_config_'+key),'{}').nSquadre || 0; } catch(e){}
 
   dati.leghe.slice().sort(function(a,b){return a.label.localeCompare(b.label);}).forEach(function(lega) {
     var _lk = lega.key;
@@ -12254,8 +12260,8 @@ function selectTournament(key, el) {
     // Club count: rose da localStorage (fonte più aggiornata) > config
     var _realLk = _lk.indexOf(key+'_') === 0 ? _lk.slice(key.length+1) : _lk;
     var _nClub = 0;
-    try { _nClub = Object.keys(JSON.parse(gsGetKey('adm_rose_'+key+'_'+_realLk)||'{}')).length; } catch(e){}
-    if (!_nClub && _realLk !== _lk) { try { _nClub = Object.keys(JSON.parse(gsGetKey('adm_rose_'+key+'_'+_lk)||'{}')).length; } catch(e){} }
+    try { _nClub = Object.keys(safeJSONParse(gsGetKey('adm_rose_'+key+'_'+_realLk),'{}')).length; } catch(e){}
+    if (!_nClub && _realLk !== _lk) { try { _nClub = Object.keys(safeJSONParse(gsGetKey('adm_rose_'+key+'_'+_lk),'{}')).length; } catch(e){} }
     if (!_nClub) _nClub = lega.clubs || _cfgClub;
     html += '<div onclick="enterLeague(\''+key+'\',\''+lega.key+'\')" style="background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:14px 10px;cursor:pointer;text-align:center;transition:all .2s;display:flex;flex-direction:column;align-items:center;gap:8px;" '
           + 'onmouseover="this.style.borderColor=\''+dati.color+'\';this.style.background=\''+dati.color+'1a\'" '
@@ -12377,10 +12383,10 @@ function _updateLegaDashboard(leagueKey) {
     var _standRes = (_admTK === 'tsm' && typeof tsmCalcStandings === 'function') ? tsmCalcStandings() : ((typeof slimCalcStandings === 'function') ? slimCalcStandings() : null);
     if (_standRes && _standRes.sorted && _standRes.sorted.length > 0 && _standRes.giocate > 0) {
       var _calRaw = gsGetKey('adm_cal_'+_admTK+'_'+_realLK);
-      var _cal = _calRaw ? (function(){try{return JSON.parse(_calRaw);}catch(e){return{};}})() : {};
+      var _cal = _calRaw ? (function(){try{return (typeof _calRaw === 'string') ? JSON.parse(_calRaw) : _calRaw;}catch(e){return{};}})() : {};
       var _totGiornate = Object.keys(_cal).filter(function(g){return Object.values(_cal[g]||{}).some(function(v){return v;});}).length || 0;
       var _schRaw = gsGetKey('adm_cal_schedule_'+_admTK+'_'+_realLK);
-      var _schP = _schRaw ? (function(){try{return JSON.parse(_schRaw);}catch(e){return null;}})() : null;
+      var _schP = _schRaw ? (function(){try{return (typeof _schRaw === 'string') ? JSON.parse(_schRaw) : _schRaw;}catch(e){return null;}})() : null;
       var _totAttese = _schP ? ((_schP.andata_ritorno||0) + (_schP.neutre||0)) : (_admTK==='tsm'?(typeof TSM_TOTAL_GIORNATE!=='undefined'?TSM_TOTAL_GIORNATE:36):(typeof SLIM_TOTAL_GIORNATE!=='undefined'?SLIM_TOTAL_GIORNATE:36));
       if (_totGiornate === _totAttese) {
         var _campTeam = _standRes.sorted[0];
@@ -12533,7 +12539,7 @@ function tsmUpdateHeader() {
   if(cb) cb.style.display='block';
   if(cv){
     var _admCrTSM = gsGetKey('adm_crediti_base_tsm_it')||{};
-    var _userCredTSM = JSON.parse(gsGetKey('user_crediti_tsm_it')||'{}');
+    var _userCredTSM = safeJSONParse(gsGetKey('user_crediti_tsm_it'),'{}');
     var _baseTSM = (_admCrTSM[tsmCurrentTeam]!==undefined) ? _admCrTSM[tsmCurrentTeam]
       : (_admCrTSM[tsmCurrentTeam.toUpperCase()]!==undefined) ? _admCrTSM[tsmCurrentTeam.toUpperCase()]
       : (_userCredTSM[tsmCurrentTeam]!==undefined) ? _userCredTSM[tsmCurrentTeam]
@@ -14101,7 +14107,7 @@ function admAddCoppa() {
   var rounds=[]; var n=teams; while(n>1){rounds.push(_rnames[n]||('Turno '+n));n=Math.floor(n/2);}
   var key = label.toLowerCase().replace(/[^a-z0-9]/g,'_').replace(/_+/g,'_').slice(0,12)+'_'+Date.now().toString().slice(-4);
   var _curRaw = gsGetKey('adm_coppe_config_'+torneoKey);
-  var _cur=[]; if(_curRaw){try{_cur=JSON.parse(_curRaw);}catch(e){}}
+  var _cur=[]; if(_curRaw){try{_cur=(typeof _curRaw === 'string') ? JSON.parse(_curRaw) : _curRaw;}catch(e){}}
   _cur.push({key:key, label:label, color:'#6b7280', rounds:rounds, teams:teams, visible:true});
   admSaveCoppeConfig(torneoKey, _cur);
   admLoadCoppeTorneo();
@@ -15157,7 +15163,7 @@ function admAddLegaWizard(ti, legaKey, legaLabel) {
   if (!torneo) return;
   // Recupera config dal torneo (da altra lega esistente o da adm_config)
   var config = {};
-  try { config = JSON.parse(gsGetKey('adm_config_'+torneo.key)||'{}'); } catch(e){}
+  try { config = safeJSONParse(gsGetKey('adm_config_'+torneo.key),'{}'); } catch(e){}
   var giornate = config.giornate || 34;
   var nSquadre = config.nSquadre || 10;
   var crediti = config.crediti || 250;
@@ -15777,7 +15783,8 @@ function admCsEditLogo(ki) {
 function admGetTeams(torneoKey, legaKey) {
   // PRIORITA': carica PRIMA da localStorage (aggiornato dopo HR), poi fallback a memoria
   try {
-    var _rose = JSON.parse(gsGetKey('adm_rose_'+torneoKey+'_'+legaKey)||'{}');
+    var _roseRaw = gsGetKey('adm_rose_'+torneoKey+'_'+legaKey);
+    var _rose = (typeof _roseRaw === 'string') ? JSON.parse(_roseRaw || '{}') : (_roseRaw || {});
     var _teams = Object.keys(_rose).sort();
     if (_teams.length) return _teams;
   } catch(e) {}
@@ -15793,7 +15800,7 @@ function admGetTeams(torneoKey, legaKey) {
 function admGetPlayers(torneoKey, legaKey, squadra) {
   if (torneoKey==='slim') {
     if (legaKey==='it') {
-      if (squadra==='INFERMERIA') { var inf=gsGetKey('adm_infermeria_slim_it'); if(inf) try{return JSON.parse(inf);}catch(e){} return typeof INFERMERIA!=='undefined'?INFERMERIA:[]; }
+      if (squadra==='INFERMERIA') { var inf=gsGetKey('adm_infermeria_slim_it'); if(inf) try{return (typeof inf === 'string') ? JSON.parse(inf) : inf;}catch(e){} return typeof INFERMERIA!=='undefined'?INFERMERIA:[]; }
       var _tr=TEAMS_ROSE||{}; if(_tr[squadra]) return _tr[squadra];
       var _k=Object.keys(_tr).find(function(k){return k.toUpperCase()===squadra.toUpperCase();}); return _k?_tr[_k]:[];
     }
@@ -15994,7 +16001,7 @@ function admLoadCalBody() {
   var legaKey = document.getElementById('adm-cal-lega').value;
   var el = document.getElementById('adm-cal-body'); if(!el||!legaKey) return;
   var _schStored=gsGetKey('adm_cal_schedule_'+torneoKey+'_'+legaKey);
-  var _schParsed=_schStored?(function(){try{return JSON.parse(_schStored);}catch(e){return null;}})():null;
+  var _schParsed=_schStored?(function(){try{return (typeof _schStored === 'string') ? JSON.parse(_schStored) : _schStored;}catch(e){return null;}})():null;
   var _schGiornate=_schParsed?(_schParsed.giornate||_schParsed):{};
   var _schN=Object.keys(_schGiornate).length;
   var _schAr=_schParsed?(_schParsed.andata_ritorno||0):0;
@@ -16010,7 +16017,7 @@ function admLoadCalBody() {
   var RC = {VC:'#10b981',VF:'#34d399',V:'#6ee7b7',PC:'#3b82f6',PF:'#60a5fa',P:'#93c5fd',SC:'#ef4444',SF:'#f87171',S:'#fca5a5'};
   var RC2 = {VC:'rgba(16,185,129,.15);color:#10b981',VF:'rgba(16,185,129,.1);color:#34d399',V:'rgba(110,231,183,.15);color:#6ee7b7',PC:'rgba(59,130,246,.12);color:#3b82f6',PF:'rgba(59,130,246,.08);color:#60a5fa',P:'rgba(147,197,253,.12);color:#93c5fd',SC:'rgba(239,68,68,.12);color:#ef4444',SF:'rgba(239,68,68,.08);color:#f87171',S:'rgba(252,165,165,.12);color:#fca5a5'};
   var _admScRaw=gsGetKey('adm_cal_score_'+torneoKey+'_'+legaKey);
-  var _scores=_admScRaw?(function(){try{return JSON.parse(_admScRaw);}catch(e){return null;}})():null;
+  var _scores=_admScRaw?(function(){try{return (typeof _admScRaw === 'string') ? JSON.parse(_admScRaw) : _admScRaw;}catch(e){return null;}})():null;
   var _logos={};
   function headerRow() {
     return '<tr style="background:var(--bg2);font-size:9px;font-weight:800;text-transform:uppercase;color:var(--text3);position:sticky;top:0;z-index:2">'
@@ -16139,7 +16146,27 @@ function admUpdateCalEl(el) {
   admUpdateCal(el.dataset.t, el.dataset.l, +el.dataset.g, el.dataset.team, el.value);
 }
 function admGetCalendar(torneoKey, legaKey) {
-  // Ottieni il calendario base embedded
+  // PRIMO: Carica dati salvati da localStorage
+  var saved = gsGetKey('adm_cal_'+torneoKey+'_'+legaKey);
+
+  // Se ci sono dati salvati, usali direttamente (FALLBACK, non merge!)
+  if (saved) {
+    var parsed;
+    if (typeof saved === 'string') {
+      try {
+        parsed = JSON.parse(saved);
+      } catch(e) {
+        parsed = null;
+      }
+    } else {
+      parsed = saved;
+    }
+    if (parsed && typeof parsed === 'object' && Object.keys(parsed).length > 0) {
+      return parsed;  // ← USA DIRETTAMENTE, NON MERGE!
+    }
+  }
+
+  // FALLBACK: Se NON ci sono dati salvati, usa base calendar
   var base = {};
   if (torneoKey==='tsm' && legaKey==='it') {
     base = (typeof TSM_INITIAL_CALENDAR_IT!=='undefined') ? JSON.parse(JSON.stringify(TSM_INITIAL_CALENDAR_IT)) : {};
@@ -16150,28 +16177,12 @@ function admGetCalendar(torneoKey, legaKey) {
       base = JSON.parse(JSON.stringify(ALL_SEASON_DATA[legaKey].calendario || {}));
     }
   }
-  // Sovrapponi le modifiche Admin salvate (merge, non sostituzione)
-  var stored = gsGetKey('adm_cal_'+torneoKey+'_'+legaKey);
-  if (stored) {
-    try {
-      var parsed = JSON.parse(stored);
-      Object.keys(parsed).forEach(function(g) {
-        if (typeof parsed[g]!=='object'||!parsed[g]) return;
-        if (!base[g]) base[g] = {};
-        var bkMap={};Object.keys(base[g]).forEach(function(k){bkMap[k.toUpperCase()]=k;});
-        Object.keys(parsed[g]).forEach(function(team) {
-          var bk=bkMap[team.toUpperCase()]||team;
-          base[g][bk]=parsed[g][team];
-        });
-      });
-    } catch(e) {}
-  }
   return base;
 }
 function admUpdateCal(t,l,g,team,val) {
   // Legge solo delta utente (senza merge con base pre-compilata)
   var _uRaw=gsGetKey('adm_cal_'+t+'_'+l);
-  var cal=_uRaw?(function(){try{return JSON.parse(_uRaw);}catch(e){return{};}}()):{};
+  var cal=_uRaw?(function(){try{return (typeof _uRaw === 'string') ? JSON.parse(_uRaw) : _uRaw;}catch(e){return{};}}()):{};
   if(!cal[String(g)])cal[String(g)]={};
   cal[String(g)][(team||'').toUpperCase()]=val;
   localStorage.setItem('adm_cal_'+t+'_'+l,JSON.stringify(cal));
@@ -16636,13 +16647,13 @@ function enterDynamicLeague(torneoKey, legaKey) {
 
   // Carica configurazione torneo
   var config = {};
-  try { config = JSON.parse(gsGetKey('adm_config_'+torneoKey)||'{}'); } catch(e){}
+  try { config = safeJSONParse(gsGetKey('adm_config_'+torneoKey),'{}'); } catch(e){}
   var giornate = config.giornate || 34;
   var formato = config.formato || 'classic';
 
   // Carica rose
   var rose = {};
-  try { rose = JSON.parse(gsGetKey('adm_rose_'+torneoKey+'_'+legaKey)||'{}'); } catch(e){}
+  try { rose = safeJSONParse(gsGetKey('adm_rose_'+torneoKey+'_'+legaKey),'{}'); } catch(e){}
   var squadre = Object.keys(rose).sort(function(a,b){return a.localeCompare(b);});
 
   // Carica calendario
@@ -16651,7 +16662,7 @@ function enterDynamicLeague(torneoKey, legaKey) {
 
   // Carica crediti base
   var cr = {};
-  try { cr = JSON.parse(gsGetKey('adm_crediti_base_'+torneoKey+'_'+legaKey)||'{}'); } catch(e){}
+  try { cr = safeJSONParse(gsGetKey('adm_crediti_base_'+torneoKey+'_'+legaKey),'{}'); } catch(e){}
 
   // Trova utente corrente
   var u = JSON.parse(loggedUser);
@@ -17237,8 +17248,8 @@ function updateHeader(){
     var _legaKey = window.currentLeagueKey||'it';
     var _tk = window._currentTourneyKey || 'slim';
     // Crediti: base (adm_crediti_base) + movimenti (diff costi rosa) - multe
-    var _admCrObj = JSON.parse(gsGetKey('adm_crediti_base_'+_tk+'_'+_legaKey)||'{}');
-    var _userCred = JSON.parse(gsGetKey('user_crediti_'+_tk+'_'+_legaKey)||'{}');
+    var _admCrObj = safeJSONParse(gsGetKey('adm_crediti_base_'+_tk+'_'+_legaKey),'{}');
+    var _userCred = safeJSONParse(gsGetKey('user_crediti_'+_tk+'_'+_legaKey),'{}');
     var _baseCr = (_admCrObj[currentTeam]!==undefined) ? _admCrObj[currentTeam]
                 : (_userCred[currentTeam]!==undefined) ? _userCred[currentTeam]
                 : (CREDITS[currentTeam]!==undefined ? CREDITS[currentTeam] : null);
@@ -17493,7 +17504,7 @@ function genericRenderStadio(torneoKey, legaKey) {
 function slimRenderStadio(){var el=document.getElementById('slim-stadio-body');if(!el)return;var stadio=slimGetStadio();
   var _tk=window._currentTourneyKey||'slim';
   var _stR=gsGetKey('adm_stadio_table_'+_tk);
-  var _ST=(_stR?(function(){try{return JSON.parse(_stR);}catch(e){return null;}})():null)||SLIM_STADIO_TABLE||{};
+  var _ST=(_stR?(function(){try{return (typeof _stR === 'string') ? JSON.parse(_stR) : _stR;}catch(e){return null;}})():null)||SLIM_STADIO_TABLE||{};
   var stadioN={};Object.keys(stadio).forEach(function(k){stadioN[k]=stadio[k];stadioN[k.toUpperCase()]=stadio[k];});
   stadio=stadioN;
   var _lvK=Object.keys(_ST).sort(function(a,b){return +a-+b;});
