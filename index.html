@@ -1,4 +1,4 @@
-<!-- build:20260806_0932 -->
+<!-- build:20260806_0934 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260806_0932';
+  var BUILD='20260806_0934';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
@@ -23,7 +23,7 @@
 <script>
 var gSheetData={};
 var GSHEET_API='https://script.google.com/macros/s/AKfycbxvNeo7w-OLWkfTDKFtuyUcUsppTQRmdSw3j7Hfi5pVmK8stwgGVSHgPbjw_6Wpmc0n/exec';
-async function loadGSheetData(){try{const r=await fetch(GSHEET_API+'?action=getAll');const json=await r.json();if(json.ok){gSheetData=json.data||{};return true;}else{console.error('[gsheet] ❌ Errore API:',json);return false;}}catch(e){console.error('[gsheet] ❌ Errore fetch:',e);return false;}}
+function loadGSheetData(){return new Promise(function(resolve){gsCall({action:'getAll'},function(err,data){if(err||!data||!data.ok){console.error('[gsheet] ❌ Errore caricamento:',err);gSheetData={};resolve(false);}else{gSheetData=data.data||{};resolve(true);}});})}
 function gsLoadKey(key,callback){const val=gSheetData[key]||null;callback(null,val);}
 function gsGetKey(key){var val=gSheetData[key];if(!val)return null;if(typeof val==='string'){try{return JSON.parse(val);}catch(e){return val;}}return val;}
 function safeJSONParse(val,def){if(typeof val==='string'){try{return JSON.parse(val);}catch(e){return def||{};};}return val||def||{};}
