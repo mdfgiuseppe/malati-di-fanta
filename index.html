@@ -1,4 +1,4 @@
-<!-- build:20260809_1742 -->
+<!-- build:20260809_1751 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260809_1742';
+  var BUILD='20260809_1751';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
@@ -22,7 +22,7 @@
 </script>
 <script>
 var gSheetData={};
-var GSHEET_API='https://script.google.com/macros/s/AKfycbxvNeo7w-OLWkfTDKFtuyUcUsppTQRmdSw3j7Hfi5pVmK8stwgGVSHgPbjw_6Wpmc0n/exec';
+var GSHEET_API='https://script.google.com/macros/s/AKfycbyue3I7pOnBejJ3Tcief54z0W2NEUoZdlIrhZHKj9A6LxH_tPHoZQW7nO23AZSRpXw3/exec';
 function loadGSheetData(){return new Promise(function(resolve){gsCall({action:'getAll'},function(err,data){if(err||!data||!data.ok){console.error('[gsheet] ❌ Errore caricamento:',err);gSheetData={};resolve(false);}else{gSheetData=data.data||{};resolve(true);}});})}
 function gsLoadKey(key,callback){const val=gSheetData[key]||null;callback(null,val);}
 function gsGetKey(key){var val=gSheetData[key];if(!val)return null;if(typeof val==='string'){try{return JSON.parse(val);}catch(e){return val;}}return val;}
@@ -4808,7 +4808,7 @@ function modSelLegaChange() {
 // ═══════════════════════════════════════════════════════
 // GOOGLE SHEETS — Layer di sincronizzazione
 // ═══════════════════════════════════════════════════════
-var GS_URL = 'https://script.google.com/macros/s/AKfycbxvNeo7w-OLWkfTDKFtuyUcUsppTQRmdSw3j7Hfi5pVmK8stwgGVSHgPbjw_6Wpmc0n/exec';
+var GS_URL = 'https://script.google.com/macros/s/AKfycbyue3I7pOnBejJ3Tcief54z0W2NEUoZdlIrhZHKj9A6LxH_tPHoZQW7nO23AZSRpXw3/exec';
 var GS_ONLINE = false; // diventa true dopo il primo ping riuscito
 
 // Throttling: max 50 richieste simultanee (letture sono safe, no conflitti di lock)
