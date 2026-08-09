@@ -1,4 +1,4 @@
-<!-- build:20260809_1729 -->
+<!-- build:20260809_1731 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260809_1729';
+  var BUILD='20260809_1731';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
@@ -27,7 +27,6 @@ function loadGSheetData(){return new Promise(function(resolve){gsCall({action:'g
 function gsLoadKey(key,callback){const val=gSheetData[key]||null;callback(null,val);}
 function gsGetKey(key){var val=gSheetData[key];if(!val)return null;if(typeof val==='string'){try{return JSON.parse(val);}catch(e){return val;}}return val;}
 function safeJSONParse(val,def){if(typeof val==='string'){try{return JSON.parse(val);}catch(e){return def||{};};}return val||def||{};}
-function gsSaveKey(key,value){gSheetData[key]=value;fetch(GSHEET_API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'set',key:key,value:value})}).then(r=>r.json()).then(json=>{if(!json.ok){console.error('[gsheet] ❌ Errore salvataggio:',key);}}).catch(e=>console.error('[gsheet] ❌ Errore:',e));}
 function reloadAllData(){loadGSheetData().then(function(success){if(success){setTimeout(function(){location.reload();},500);}else{alert('❌ Errore nel ricaricamento dati');}});}
 </script>
 <meta name="theme-color" content="#10b981">
