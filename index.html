@@ -1,4 +1,4 @@
-<!-- build:20260809_1714 -->
+<!-- build:20260809_1725 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260809_1714';
+  var BUILD='20260809_1725';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
@@ -55,8 +55,11 @@ document.addEventListener('DOMContentLoaded',function(){
       // Rimuovi Turchia da ALL_LEAGUES_DATA se esiste (per compatibilità con funzioni che la usano)
       if(typeof ALL_LEAGUES_DATA !== 'undefined' && ALL_LEAGUES_DATA['tr']){
         delete ALL_LEAGUES_DATA['tr'];
-        console.log('[init] Rimosso Turchia da ALL_LEAGUES_DATA');
       }
+      // Renderizza calendario, classifica e stadio DOPO che i dati sono caricati
+      if(typeof slimRenderCalendario === 'function') slimRenderCalendario();
+      if(typeof slimRenderClassifica === 'function') slimRenderClassifica();
+      if(typeof slimRenderStadio === 'function') slimRenderStadio();
     }, 500);
   }).catch(function(err){
     console.error('[init] ❌ Catch error:',err);
@@ -11588,9 +11591,6 @@ document.addEventListener('DOMContentLoaded',function(){
   window._currentLeagueCalKey = 'slim_calendar';
   window._currentLeagueStaKey = 'slim_stadio';
   initCoppaLogos();
-  slimRenderClassifica();
-  slimRenderCalendario();
-  slimRenderStadio();
   updateDashboardCounters();
   // Aggiorna dashboard lega con trofeo della nazione corrente
   _updateLegaDashboard('slim_it');
@@ -17711,9 +17711,6 @@ document.addEventListener('DOMContentLoaded',function(){
   window._currentLeagueCalKey = 'slim_calendar';
   window._currentLeagueStaKey = 'slim_stadio';
   initCoppaLogos();
-  slimRenderClassifica();
-  slimRenderCalendario();
-  slimRenderStadio();
   updateDashboardCounters();
   // Aggiorna dashboard lega con trofeo della nazione corrente
   _updateLegaDashboard('slim_it');
