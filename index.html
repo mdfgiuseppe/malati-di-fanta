@@ -1,4 +1,4 @@
-<!-- build:20260809_1731 -->
+<!-- build:20260809_1736 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260809_1731';
+  var BUILD='20260809_1736';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
@@ -55,6 +55,8 @@ document.addEventListener('DOMContentLoaded',function(){
       if(typeof ALL_LEAGUES_DATA !== 'undefined' && ALL_LEAGUES_DATA['tr']){
         delete ALL_LEAGUES_DATA['tr'];
       }
+      // Inizializza la lega corrente lato utente prima di renderizzare
+      if(typeof selectTournament === 'function') selectTournament('slim', null);
       // Renderizza calendario, classifica e stadio DOPO che i dati sono caricati
       if(typeof slimRenderCalendario === 'function') slimRenderCalendario();
       if(typeof slimRenderClassifica === 'function') slimRenderClassifica();
