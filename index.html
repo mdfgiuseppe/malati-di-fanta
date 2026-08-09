@@ -1,4 +1,4 @@
-<!-- build:20260809_1725 -->
+<!-- build:20260809_1729 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260809_1725';
+  var BUILD='20260809_1729';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
@@ -5426,28 +5426,7 @@ function syncCreditiToUser(torneoKey, legaKey, crObj) {
 }
 
 function gsPost(params, callback) {
-  // Salvataggio sempre via POST — evita il problema JSONP callback not defined
-  var body = Object.keys(params).map(function(k){
-    return encodeURIComponent(k) + '=' + encodeURIComponent(typeof params[k]==='string' ? params[k] : JSON.stringify(params[k]));
-  }).join('&');
-  console.log('[gsPost] Inviando:', params.action, 'key:', params.key);
-  fetch(GS_URL, {
-    method: 'POST',
-    headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-    body: body
-  })
-  .then(function(r){
-    console.log('[gsPost] Risposta:', params.action, 'status:', r.status);
-    return r.json();
-  })
-  .then(function(data){
-    console.log('[gsPost] OK:', params.action, 'ok:', data.ok);
-    if(callback) callback(null, data);
-  })
-  .catch(function(e){
-    console.log('[gsPost] ERRORE:', params.action, 'error:', e.message);
-    if(callback) callback(e, null);
-  });
+  gsCall(params, callback);
 }
 
 function _gsMarkPending(key) {
