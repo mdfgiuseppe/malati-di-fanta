@@ -1,4 +1,4 @@
-<!-- build:20260809_1736 -->
+<!-- build:20260809_1742 -->
 <!DOCTYPE html>
 <html lang="it" data-theme="dark">
 <head>
@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var BUILD='20260809_1736';
+  var BUILD='20260809_1742';
   var stored=localStorage.getItem('_mdf_build');
   localStorage.setItem('_mdf_build',BUILD);
   if(location.search) history.replaceState(null,'',location.pathname);
@@ -10186,7 +10186,7 @@ function calRenderGeneric(t, l, bodyId, nG, teams, callbackFn) {
   var view=_tog?(window[viewKey]||'calendario'):'calendario';
   var cal = admGetCalendar(t, l);
   var schRaw = gsGetKey('adm_cal_schedule_'+t+'_'+l);
-  var schParsed = schRaw ? (function(){try{return JSON.parse(schRaw);}catch(e){return null;}})() : null;
+  var schParsed = schRaw ? (typeof schRaw === 'object' ? schRaw : (function(){try{return JSON.parse(schRaw);}catch(e){return null;}})()) : null;
   var sch = schParsed ? (schParsed.giornate || schParsed) : null;
   var _scoresRaw = gsGetKey('adm_cal_score_'+t+'_'+l);
   var _scores = _scoresRaw ? (function(){try{return JSON.parse(_scoresRaw);}catch(e){return null;}})() : null;
